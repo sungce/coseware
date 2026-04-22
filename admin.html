@@ -11,6 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
         tailwind.config = {
             theme: { extend: { fontFamily: { sans: ['Pretendard', 'sans-serif'] } } }
@@ -329,8 +330,10 @@
         const ADMIN_EMAILS    = ['sungce27@gmail.com'];
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYheQ0HV-xFjmceYzHPjAlF5JmvwRhULsCIH9mBOUZbWeP1Y0EBUhsAEpwh3hHml7M/exec';
 
-        const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(app);
+        const app      = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        const auth     = firebase.auth(app);
+        const db       = firebase.firestore(app);   // Firestore
+        const storage  = firebase.storage(app);     // Storage (파일)
 
         auth.onAuthStateChanged((user) => {
             if (!user || !ADMIN_EMAILS.includes(user.email)) {
@@ -462,14 +465,13 @@
         // 학습자료 추가 (Google Sheets 저장)
         // ==========================================
         // ==========================================
-        // 학습자료 추가 (Firebase Storage + Google Sheets)
+        // 학습자료 추가 (Firebase Storage + Firestore)
         // ==========================================
-        // 파일 선택 시 라벨 업데이트
         document.addEventListener('DOMContentLoaded', () => {
             const fileInput = document.getElementById('mat-file');
             if (fileInput) {
                 fileInput.addEventListener('change', () => {
-                    const file = fileInput.files[0];
+                    const file  = fileInput.files[0];
                     const label = document.getElementById('file-label');
                     const icon  = document.getElementById('file-upload-icon');
                     if (file) {
@@ -501,7 +503,7 @@
                 let fileUrl  = '';
                 let fileName = '';
 
-                // 파일이 첨부된 경우 Firebase Storage 업로드
+                // ── 1. 파일 → Firebase Storage 업로드 ──────────────
                 if (file) {
                     if (file.size > 10 * 1024 * 1024) {
                         showToast('파일 크기는 10MB 이하여야 합니다.', 'error');
@@ -510,40 +512,34 @@
                         lucide.createIcons();
                         return;
                     }
-
-                    const storage  = firebase.storage();
-                    const timestamp = Date.now();
-                    const storageRef = storage.ref(`materials/${unit}/${timestamp}_${file.name}`);
-
-                    // 진행률 표시
                     document.getElementById('upload-progress-wrap').classList.remove('hidden');
-                    const uploadTask = storageRef.put(file);
+                    const ref         = storage.ref(`materials/${unit}/${Date.now()}_${file.name}`);
+                    const uploadTask  = ref.put(file);
 
-                    fileUrl  = await new Promise((resolve, reject) => {
+                    fileUrl = await new Promise((resolve, reject) => {
                         uploadTask.on('state_changed',
-                            (snapshot) => {
-                                const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                                document.getElementById('upload-bar').style.width    = pct + '%';
-                                document.getElementById('upload-percent').textContent = pct + '%';
+                            (snap) => {
+                                const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+                                document.getElementById('upload-bar').style.width     = pct + '%';
+                                document.getElementById('upload-percent').textContent  = pct + '%';
                                 document.getElementById('upload-progress-text').textContent = '파일 업로드 중...';
                             },
-                            (err) => reject(err),
-                            async () => {
-                                const url = await uploadTask.snapshot.ref.getDownloadURL();
-                                resolve(url);
-                            }
+                            reject,
+                            async () => resolve(await uploadTask.snapshot.ref.getDownloadURL())
                         );
                     });
                     fileName = file.name;
                     document.getElementById('upload-progress-text').textContent = '업로드 완료!';
                 }
 
-                // Google Sheets 저장
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ type: 'material', unit, title, content, fileUrl, fileName })
+                // ── 2. Firestore에 자료 메타데이터 저장 ───────────
+                await db.collection('materials').add({
+                    unit,
+                    title,
+                    content,
+                    fileName : fileName || '',
+                    fileUrl  : fileUrl  || '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 });
 
                 // 폼 초기화
@@ -553,8 +549,8 @@
                 document.getElementById('file-label').textContent = '클릭 또는 파일을 드래그하세요';
                 document.getElementById('file-label').classList.remove('text-emerald-600');
                 document.getElementById('file-upload-icon').setAttribute('data-lucide', 'upload-cloud');
-                document.getElementById('file-upload-icon').classList.remove('text-emerald-500');
                 document.getElementById('file-upload-icon').classList.add('text-slate-300');
+                document.getElementById('file-upload-icon').classList.remove('text-emerald-500');
                 document.getElementById('upload-progress-wrap').classList.add('hidden');
                 document.getElementById('upload-bar').style.width = '0%';
                 lucide.createIcons();
@@ -562,7 +558,7 @@
                 showToast(`[단원 ${unit}] ${title} 자료가 등록되었습니다! 📚`);
             } catch(e) {
                 console.error(e);
-                showToast('등록 중 오류가 발생했습니다: ' + e.message, 'error');
+                showToast('등록 오류: ' + e.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i data-lucide="upload" class="w-4 h-4"></i><span>자료 등록</span>';

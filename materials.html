@@ -8,6 +8,8 @@
     <link rel="stylesheet" as="style" crossorigin
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <style>
         body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
         .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
@@ -261,7 +263,17 @@
     </div>
 
     <script>
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYheQ0HV-xFjmceYzHPjAlF5JmvwRhULsCIH9mBOUZbWeP1Y0EBUhsAEpwh3hHml7M/exec';
+        // ── Firebase 초기화 ───────────────────────────────────
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM",
+            authDomain: "book-c2d05.firebaseapp.com",
+            projectId: "book-c2d05",
+            storageBucket: "book-c2d05.firebasestorage.app",
+            messagingSenderId: "566939045493",
+            appId: "1:566939045493:web:da65c6ad61f528d446f23c"
+        };
+        const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        const db  = firebase.firestore(app);
 
         const UNIT_MAP = { 'I':'unit1', 'II':'unit2', 'III':'unit3', 'IV':'unit4', 'V':'unit5' };
         const UNIT_NAMES = {
@@ -269,34 +281,37 @@
             'III':'III. 알고리즘과 프로그래밍', 'IV':'IV. 인공지능', 'V':'V. 디지털 문화'
         };
 
-        let allMaterials = [];
         let loaded = false;
 
-        function loadMaterials() {
+        // ── Firestore에서 자료 불러오기 ──────────────────────
+        async function loadMaterials() {
             if (loaded) return;
-            const old = document.getElementById('jsonp-mat');
-            if (old) old.remove();
+            loaded = true;
 
-            const timer = setTimeout(() => {
-                Object.values(UNIT_MAP).forEach(uid => renderUnitMaterials(uid, []));
-            }, 8000);
+            try {
+                const snapshot = await db.collection('materials')
+                    .orderBy('createdAt', 'desc')
+                    .get();
 
-            window.__matCallback = function(data) {
-                clearTimeout(timer);
-                const s = document.getElementById('jsonp-mat');
-                if (s) s.remove();
-                allMaterials = data.materials || [];
-                loaded = true;
+                const allMaterials = snapshot.docs.map(doc => {
+                    const d = doc.data();
+                    const ts = d.createdAt;
+                    const date = ts ? ts.toDate().toLocaleDateString('ko-KR', {
+                        year:'numeric', month:'2-digit', day:'2-digit'
+                    }).replace(/\. /g,'.').replace(/\.$/,'') : '';
+                    return { id: doc.id, unit: d.unit, title: d.title,
+                             content: d.content, fileName: d.fileName || '',
+                             fileUrl: d.fileUrl || '', date };
+                });
+
                 Object.entries(UNIT_MAP).forEach(([roman, uid]) => {
                     const items = allMaterials.filter(m => m.unit === roman);
                     renderUnitMaterials(uid, items);
                 });
-            };
-
-            const script = document.createElement('script');
-            script.id  = 'jsonp-mat';
-            script.src = `${APPS_SCRIPT_URL}?action=getMaterials&callback=__matCallback`;
-            document.body.appendChild(script);
+            } catch(e) {
+                console.error(e);
+                Object.values(UNIT_MAP).forEach(uid => renderUnitMaterials(uid, []));
+            }
         }
 
         function renderUnitMaterials(uid, items) {
