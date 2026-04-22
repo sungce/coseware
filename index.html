@@ -15,6 +15,7 @@
     <!-- Firebase SDK (compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -114,6 +115,15 @@
         .nav-link:hover::after {
             width: 100%;
         }
+
+        .nav-link.active {
+            color: #2563eb;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+            background-color: #2563eb;
+        }
     </style>
 </head>
 
@@ -137,18 +147,18 @@
                 <div class="hidden lg:flex items-center space-x-8">
                     <div class="flex space-x-8 text-[15px] font-bold text-slate-600">
                         <a href="#" onclick="showSection('home')"
-                            class="nav-link hover:text-blue-600 transition-colors">홈</a>
+                            class="nav-link hover:text-blue-600 transition-colors" id="nav-home">홈</a>
                         <a href="#" onclick="showSection('notices')"
-                            class="nav-link hover:text-blue-600 transition-colors">공지사항</a>
+                            class="nav-link hover:text-blue-600 transition-colors" id="nav-notices">공지사항</a>
                         <!-- 교과수업 외부 링크로 변경 -->
                         <a href="https://sungce.github.io/visang" target="_blank"
                             class="nav-link hover:text-blue-600 transition-colors">교과수업</a>
-                        <a href="materials.html"
-                            class="nav-link hover:text-blue-600 transition-colors">학습자료실</a>
+                        <a href="#" onclick="showSection('materials')"
+                            class="nav-link hover:text-blue-600 transition-colors" id="nav-materials">학습자료실</a>
                         <a href="#" onclick="showSection('assignments')"
-                            class="nav-link hover:text-blue-600 transition-colors">수행평가 제출</a>
+                            class="nav-link hover:text-blue-600 transition-colors" id="nav-assignments">수행평가 제출</a>
                         <a href="#" onclick="showSection('gallery')"
-                            class="nav-link hover:text-blue-600 transition-colors">갤러리</a>
+                            class="nav-link hover:text-blue-600 transition-colors" id="nav-gallery">갤러리</a>
                     </div>
 
                     <!-- 데스크탑 로그인 버튼 -->
@@ -210,7 +220,7 @@
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">공지사항</a>
                 <a href="https://sungce.github.io/visang" target="_blank"
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">교과수업</a>
-                <a href="#" href="materials.html"
+                <a href="#" href="#" onclick="showSection('materials')"
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">학습자료실</a>
                 <a href="#" onclick="showSection('assignments')"
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">수행평가 제출</a>
@@ -416,7 +426,7 @@
 
                 <!-- 학습자료실 -->
                 <div class="md:col-span-1 lg:col-span-1 group glass-card rounded-[2rem] p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-                    href="materials.html">
+                    onclick="showSection('materials')"
                     <div
                         class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <i data-lucide="folder-search" class="w-6 h-6"></i>
@@ -505,18 +515,50 @@
 
         <!-- ==================== 4. 학습자료실 섹션 ==================== -->
         <section id="materials" class="fade-in hidden max-w-4xl mx-auto">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h2 class="text-3xl font-black text-slate-900 tracking-tight mb-2">학습 자료실</h2>
-                    <p class="text-slate-500 font-medium">수업 진도에 맞춘 최신 자료들이 업데이트 됩니다.</p>
-                </div>
-                <button
-                    class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20">
-                    전체 다운로드
-                </button>
+            <div class="mb-8">
+                <h2 class="text-3xl font-black text-slate-900 tracking-tight mb-1">학습 자료실</h2>
+                <p class="text-slate-500 font-medium">2022 개정 교육과정 · 중학교 정보</p>
             </div>
-            <div class="space-y-4" id="materials-list">
-                <!-- JS Data injected here -->
+            <!-- 단원 필터 -->
+            <div class="flex flex-wrap gap-2 mb-5" id="mat-filter-btns">
+                <button onclick="matFilterUnit('all')" id="mat-btn-all"
+                    class="px-4 py-2 rounded-full text-sm font-bold bg-emerald-500 text-white transition-all">전체</button>
+                <button onclick="matFilterUnit('I')"   id="mat-btn-I"   class="px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all">I. 컴퓨팅</button>
+                <button onclick="matFilterUnit('II')"  id="mat-btn-II"  class="px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all">II. 데이터</button>
+                <button onclick="matFilterUnit('III')" id="mat-btn-III" class="px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all">III. 알고리즘</button>
+                <button onclick="matFilterUnit('IV')"  id="mat-btn-IV"  class="px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all">IV. 인공지능</button>
+                <button onclick="matFilterUnit('V')"   id="mat-btn-V"   class="px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all">V. 디지털문화</button>
+            </div>
+            <p class="text-sm text-slate-400 font-medium mb-4" id="mat-count-label"></p>
+            <div id="mat-inline-list" class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="py-14 flex flex-col items-center space-y-3 text-slate-400">
+                    <i data-lucide="loader" class="w-7 h-7 animate-spin text-emerald-400"></i>
+                    <span class="font-medium">자료를 불러오는 중...</span>
+                </div>
+            </div>
+            <!-- 자료 내용 모달 -->
+            <div id="mat-inline-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+                onclick="if(event.target===this) matCloseModal()">
+                <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+                    <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                        <div>
+                            <p class="text-xs font-bold text-emerald-600 mb-1" id="mat-modal-unit"></p>
+                            <h3 class="text-xl font-black text-slate-900" id="mat-modal-title"></h3>
+                            <p class="text-xs text-slate-400 font-medium mt-1" id="mat-modal-date"></p>
+                        </div>
+                        <button onclick="matCloseModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    <div class="overflow-y-auto px-8 py-6">
+                        <div id="mat-modal-content" class="text-slate-700 font-medium leading-relaxed text-sm whitespace-pre-wrap mb-6"></div>
+                        <a id="mat-modal-file" href="#" target="_blank"
+                            class="hidden items-center justify-center space-x-2 w-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold py-3.5 rounded-2xl hover:bg-emerald-100 transition-colors">
+                            <i data-lucide="download" class="w-5 h-5"></i>
+                            <span id="mat-modal-filename">첨부파일 다운로드</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -676,6 +718,113 @@
         // Firebase 초기화
         firebase.initializeApp(firebaseConfig);
         auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ── 인라인 학습자료 (Firestore) ────────────────────────
+        const MAT_UNIT_NAMES = {
+            'I':'I. 컴퓨팅 시스템','II':'II. 데이터',
+            'III':'III. 알고리즘과 프로그래밍','IV':'IV. 인공지능','V':'V. 디지털 문화'
+        };
+        const MAT_BADGE = {
+            'I':'bg-indigo-50 text-indigo-600 border-indigo-100',
+            'II':'bg-emerald-50 text-emerald-600 border-emerald-100',
+            'III':'bg-rose-50 text-rose-600 border-rose-100',
+            'IV':'bg-blue-50 text-blue-600 border-blue-100',
+            'V':'bg-amber-50 text-amber-600 border-amber-100',
+        };
+        let matAllItems = [];
+        let matCurrentUnit = 'all';
+        let matLoaded = false;
+
+        async function loadInlineMaterials() {
+            if (matLoaded) return;
+            matLoaded = true;
+            try {
+                const snap = await db.collection('materials').orderBy('createdAt','desc').get();
+                matAllItems = snap.docs.map(doc => {
+                    const d = doc.data();
+                    const ts = d.createdAt;
+                    const date = ts ? ts.toDate().toLocaleDateString('ko-KR',{
+                        year:'numeric',month:'2-digit',day:'2-digit'
+                    }).replace(/\. /g,'.').replace(/\.$/,'') : '';
+                    return {id:doc.id,unit:d.unit||'',title:d.title||'',
+                            content:d.content||'',fileName:d.fileName||'',
+                            fileUrl:d.fileUrl||'',date};
+                });
+                matRenderList();
+            } catch(e) {
+                document.getElementById('mat-inline-list').innerHTML =
+                    `<div class="py-12 text-center text-slate-400 font-medium">불러오기 실패: ${e.message}</div>`;
+            }
+        }
+
+        function matRenderList() {
+            const filtered = matCurrentUnit === 'all'
+                ? matAllItems : matAllItems.filter(m => m.unit === matCurrentUnit);
+            const total = matAllItems.length;
+            document.getElementById('mat-count-label').textContent =
+                `전체 ${total}개${matCurrentUnit !== 'all' ? ' · 필터 '+filtered.length+'개' : ''}`;
+            const list = document.getElementById('mat-inline-list');
+            if (!filtered.length) {
+                list.innerHTML = `<div class="py-14 flex flex-col items-center space-y-2 text-slate-400">
+                    <i data-lucide="inbox" class="w-8 h-8 text-slate-300"></i>
+                    <p class="font-medium text-sm">등록된 자료가 없습니다.</p></div>`;
+                lucide.createIcons(); return;
+            }
+            list.innerHTML = filtered.map((item, idx) => {
+                const badge  = MAT_BADGE[item.unit] || 'bg-slate-50 text-slate-500 border-slate-100';
+                const border = idx < filtered.length-1 ? 'border-b border-slate-100' : '';
+                const fileIco = item.fileName
+                    ? `<span class="flex items-center space-x-1"><i data-lucide="paperclip" class="w-3.5 h-3.5"></i><span>${item.fileName}</span></span>` : '';
+                return `<button onclick='matOpenModal(${JSON.stringify(item).replace(/\\/g,'\\\\').replace(/'/g,"\\'")})'
+                    class="w-full flex items-center px-6 py-4 hover:bg-slate-50 transition-colors text-left group ${border}">
+                    <span class="text-xs font-black px-2.5 py-1 rounded-lg border shrink-0 mr-5 ${badge}">단원 ${item.unit}</span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">${item.title}</p>
+                        <div class="flex flex-wrap items-center gap-3 mt-0.5 text-xs text-slate-400 font-medium">
+                            <span>${item.date}</span>${fileIco}
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-emerald-500 shrink-0 ml-3"></i>
+                </button>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function matFilterUnit(unit) {
+            matCurrentUnit = unit;
+            ['all','I','II','III','IV','V'].forEach(u => {
+                const btn = document.getElementById('mat-btn-' + u);
+                if (!btn) return;
+                btn.className = u === unit
+                    ? 'px-4 py-2 rounded-full text-sm font-bold bg-emerald-500 text-white transition-all'
+                    : 'px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all';
+            });
+            matRenderList();
+        }
+
+        function matOpenModal(item) {
+            document.getElementById('mat-modal-unit').textContent    = MAT_UNIT_NAMES[item.unit] || ('단원 '+item.unit);
+            document.getElementById('mat-modal-title').textContent   = item.title;
+            document.getElementById('mat-modal-date').textContent    = item.date + ' 등록';
+            document.getElementById('mat-modal-content').textContent = item.content;
+            const fileBtn = document.getElementById('mat-modal-file');
+            if (item.fileUrl) {
+                fileBtn.href = item.fileUrl;
+                document.getElementById('mat-modal-filename').textContent = item.fileName || '첨부파일';
+                fileBtn.classList.remove('hidden'); fileBtn.classList.add('flex');
+            } else {
+                fileBtn.classList.add('hidden'); fileBtn.classList.remove('flex');
+            }
+            const modal = document.getElementById('mat-inline-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function matCloseModal() {
+            const modal = document.getElementById('mat-inline-modal');
+            modal.classList.add('hidden'); modal.classList.remove('flex');
+        }
 
         // 로그인/로그아웃 상태 실시간 감지
         auth.onAuthStateChanged((user) => {
@@ -856,8 +1005,16 @@
                 targetSection.classList.add('block');
             }
 
-            // 공지사항 섹션 진입 시 데이터 로드
-            if (sectionId === 'notices') loadNotices();
+            // 활성 메뉴 스타일
+            ['home','notices','materials','assignments','gallery'].forEach(id => {
+                const navEl = document.getElementById('nav-' + id);
+                if (navEl) navEl.classList.remove('active');
+            });
+            const activeNav = document.getElementById('nav-' + sectionId);
+            if (activeNav) activeNav.classList.add('active');
+
+            if (sectionId === 'notices')   loadNotices();
+            if (sectionId === 'materials') loadInlineMaterials();
 
             mobileMenu.classList.add('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
