@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학생 작품 - 정보 클래스룸</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
+        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+        .card-hover { transition: all 0.3s cubic-bezier(0.16,1,0.3,1); }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(0,0,0,.12); }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen" style="background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:32px 32px;">
+
+    <!-- 네비게이션 -->
+    <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-slate-400 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </a>
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-br from-amber-400 to-orange-500 text-white p-2.5 rounded-xl shadow-lg shadow-amber-500/30">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-black text-xl text-slate-900">학생 작품</span>
+                    </div>
+                </div>
+                <a href="index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 transition-colors text-sm font-bold">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">메인으로</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 pt-28 pb-24 fade-in">
+
+        <!-- 헤더 배너 -->
+        <div class="relative bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-900/20 mb-12 p-1">
+            <div class="absolute top-0 -left-4 w-72 h-72 bg-amber-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+            <div class="absolute top-0 -right-4 w-72 h-72 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+            <div class="relative bg-slate-900/40 backdrop-blur-3xl rounded-[2.25rem] px-10 py-14 text-center border border-white/10">
+                <div class="inline-flex items-center space-x-2 py-1.5 px-4 rounded-full bg-amber-500/10 border border-amber-400/20 text-amber-300 text-xs font-bold tracking-widest mb-5">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    <span>수완하나중학교 정보 수업</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
+                    학생 <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">작품</span>
+                </h1>
+                <p class="text-slate-400 text-lg font-light">학생들의 창의적인 아이디어가 현실이 된 공간입니다.</p>
+                <div class="flex items-center justify-center space-x-6 mt-8 text-slate-400 text-sm font-medium">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="layout-grid" class="w-4 h-4 text-amber-400"></i>
+                        <span id="total-count">0개 작품</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 검색 + 필터 -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <div class="relative flex-1">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <input type="text" id="gallery-search" placeholder="프로젝트 검색..."
+                    oninput="filterGallery()"
+                    class="w-full bg-white border border-slate-200 rounded-2xl pl-10 pr-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all shadow-sm">
+            </div>
+            <div class="flex gap-2" id="year-filter">
+                <button onclick="setYearFilter('all')" id="year-all"
+                    class="px-4 py-3 rounded-2xl text-sm font-bold bg-amber-500 text-white transition-all shadow-sm">전체</button>
+                <button onclick="setYearFilter('2026')" id="year-2026"
+                    class="px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 transition-all">2026</button>
+                <button onclick="setYearFilter('2025')" id="year-2025"
+                    class="px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 transition-all">2025</button>
+            </div>
+        </div>
+
+        <!-- 갤러리 그리드 -->
+        <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        </div>
+
+        <!-- 빈 상태 -->
+        <div id="gallery-empty" class="hidden text-center py-20">
+            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="search-x" class="w-8 h-8"></i>
+            </div>
+            <p class="text-lg font-bold text-slate-500">검색 결과가 없습니다.</p>
+        </div>
+
+    </main>
+
+    <!-- 작품 상세 모달 -->
+    <div id="project-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4"
+        onclick="if(event.target===this) closeProjectModal()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg">
+            <div class="h-52 rounded-t-[2rem] flex items-center justify-center relative overflow-hidden" id="modal-cover">
+                <h2 class="text-2xl font-black text-white text-center px-6 z-10 drop-shadow-lg" id="modal-title-display"></h2>
+            </div>
+            <div class="p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1.5 rounded-xl" id="modal-team"></span>
+                    <div class="flex items-center space-x-2 text-sm font-bold text-slate-400">
+                        <span id="modal-year"></span>
+                    </div>
+                </div>
+                <p class="text-slate-600 font-medium leading-relaxed mb-6" id="modal-desc"></p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2 text-rose-500 font-bold text-sm">
+                        <i data-lucide="heart" class="w-4 h-4"></i>
+                        <span id="modal-likes"></span>
+                    </div>
+                    <a id="modal-link" href="#" target="_blank"
+                        class="hidden items-center space-x-2 bg-slate-900 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-colors text-sm">
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                        <span>프로젝트 보기</span>
+                    </a>
+                </div>
+            </div>
+            <button onclick="closeProjectModal()"
+                class="absolute top-5 right-5 w-8 h-8 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="border-t border-slate-200/60 bg-white/60 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-6 py-6 text-center text-sm text-slate-400 font-medium">
+            © 2026 수완하나중학교 정보 교과. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // 갤러리 데이터 — 실제 작품으로 교체해 주세요
+        // ==========================================
+        const projects = [
+            { id:1, year:'2026', team:'Team Alpha', title:'스마트 급식 알리미',   desc:'매일 아침 오늘의 급식을 알려주는 웹앱입니다. 알림 기능과 영양 정보를 함께 제공합니다.', imgColor:'from-blue-400 to-indigo-500',   likes:34, link:'' },
+            { id:2, year:'2026', team:'Team Beta',  title:'재활용 분리수거 도우미', desc:'쓰레기를 카메라로 인식하여 올바른 분리수거 방법을 안내해주는 AI 앱입니다.',               imgColor:'from-emerald-400 to-teal-500',  likes:28, link:'' },
+            { id:3, year:'2026', team:'Team Gamma', title:'교내 분실물 센터',       desc:'학교 내 분실물을 사진과 함께 등록하고 찾을 수 있는 커뮤니티 플랫폼입니다.',             imgColor:'from-orange-400 to-rose-400',   likes:45, link:'' },
+            { id:4, year:'2026', team:'Team Delta', title:'집중력 향상 타이머',     desc:'뽀모도로 기법을 활용해 공부와 휴식을 리듬감 있게 관리하는 스터디 타이머입니다.',         imgColor:'from-purple-400 to-pink-500',   likes:19, link:'' },
+            { id:5, year:'2025', team:'Team Sigma', title:'학교 버스 알리미',       desc:'실시간으로 학교 버스 위치를 확인하고 도착 예정 시간을 알려주는 서비스입니다.',           imgColor:'from-cyan-400 to-blue-500',     likes:37, link:'' },
+            { id:6, year:'2025', team:'Team Pi',    title:'우리반 독서 기록장',     desc:'반 친구들과 읽은 책을 공유하고 짧은 감상을 남기는 독서 커뮤니티 앱입니다.',             imgColor:'from-lime-400 to-emerald-500',  likes:22, link:'' },
+        ];
+
+        let currentFilter = { year: 'all', query: '' };
+
+        function renderGallery() {
+            const grid  = document.getElementById('gallery-grid');
+            const empty = document.getElementById('gallery-empty');
+            const filtered = projects.filter(p => {
+                const matchYear  = currentFilter.year === 'all' || p.year === currentFilter.year;
+                const matchQuery = p.title.toLowerCase().includes(currentFilter.query) ||
+                                   p.team.toLowerCase().includes(currentFilter.query) ||
+                                   p.desc.toLowerCase().includes(currentFilter.query);
+                return matchYear && matchQuery;
+            });
+
+            document.getElementById('total-count').textContent = `${filtered.length}개 작품`;
+
+            if (!filtered.length) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            grid.innerHTML = filtered.map(p => `
+                <div onclick='openProjectModal(${p.id})'
+                    class="card-hover bg-white rounded-[1.75rem] overflow-hidden border border-slate-100 shadow-sm cursor-pointer group">
+                    <div class="h-44 bg-gradient-to-br ${p.imgColor} flex items-center justify-center p-5 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                        <h3 class="text-white font-black text-xl text-center z-10 drop-shadow-md leading-snug
+                                   transform group-hover:scale-105 transition-transform duration-500">${p.title}</h3>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1 rounded-lg">${p.team}</span>
+                            <span class="text-xs font-bold text-slate-300">${p.year}</span>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed line-clamp-2">${p.desc}</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <div class="flex items-center space-x-1 text-xs font-bold text-slate-400">
+                                <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-400"></i>
+                                <span>${p.likes}</span>
+                            </div>
+                            <span class="text-xs text-amber-500 font-bold group-hover:underline">자세히 보기 →</span>
+                        </div>
+                    </div>
+                </div>`).join('');
+            lucide.createIcons();
+        }
+
+        function setYearFilter(year) {
+            currentFilter.year = year;
+            ['all','2026','2025'].forEach(y => {
+                const btn = document.getElementById('year-' + y);
+                btn.className = y === year
+                    ? 'px-4 py-3 rounded-2xl text-sm font-bold bg-amber-500 text-white transition-all shadow-sm'
+                    : 'px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 transition-all';
+            });
+            renderGallery();
+        }
+
+        function filterGallery() {
+            currentFilter.query = document.getElementById('gallery-search').value.toLowerCase();
+            renderGallery();
+        }
+
+        function openProjectModal(id) {
+            const p = projects.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('modal-cover').className =
+                `h-52 rounded-t-[2rem] flex items-center justify-center relative overflow-hidden bg-gradient-to-br ${p.imgColor}`;
+            document.getElementById('modal-title-display').textContent = p.title;
+            document.getElementById('modal-team').textContent = p.team;
+            document.getElementById('modal-year').textContent = p.year + '년';
+            document.getElementById('modal-desc').textContent = p.desc;
+            document.getElementById('modal-likes').textContent = p.likes;
+            const linkBtn = document.getElementById('modal-link');
+            if (p.link) {
+                linkBtn.href = p.link;
+                linkBtn.classList.remove('hidden');
+                linkBtn.classList.add('flex');
+            } else {
+                linkBtn.classList.add('hidden');
+                linkBtn.classList.remove('flex');
+            }
+            const modal = document.getElementById('project-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeProjectModal() {
+            document.getElementById('project-modal').classList.add('hidden');
+            document.getElementById('project-modal').classList.remove('flex');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderGallery();
+        });
+    </script>
+</body>
+</html>
