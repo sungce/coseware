@@ -3,10 +3,11 @@
 // 연결된 스프레드시트 ID: 1EIA8zU82F9UXBOQz-6u92Su1zUFPsT_RFqS0Yuqpz2c
 // ================================================
 
-const SPREADSHEET_ID = '1EIA8zU82F9UXBOQz-6u92Su1zUFPsT_RFqS0Yuqpz2c';
-const SHEET_MEMBERS  = 'Sheet1';       // 회원 목록
-const SHEET_SUBMIT   = 'Submissions';  // 수행평가 제출
-const SHEET_NOTICES  = 'Notices';      // 공지사항
+const SPREADSHEET_ID  = '1EIA8zU82F9UXBOQz-6u92Su1zUFPsT_RFqS0Yuqpz2c';
+const SHEET_MEMBERS   = 'Sheet1';      // 회원 목록
+const SHEET_SUBMIT    = 'Submissions'; // 수행평가 제출
+const SHEET_NOTICES   = 'Notices';     // 공지사항
+const SHEET_MATERIALS = 'Materials';   // 학습자료
 
 // ── GET ──────────────────────────────────────────────────────
 function doGet(e) {
@@ -38,21 +39,42 @@ function doGet(e) {
   else if (action === 'getNotices') {
     try {
       const ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
-      let sheet   = ss.getSheetByName(SHEET_NOTICES);
+      const sheet = ss.getSheetByName(SHEET_NOTICES);
       let notices = [];
       if (sheet && sheet.getLastRow() > 1) {
-        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues();
-        notices = rows.filter(r => r[1]).map((r, i) => ({
+        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues();
+        notices = rows.filter(r => r[2]).map((r, i) => ({
           id    : r[0] ? String(r[0]) : String(i + 1),
           type  : r[1] ? String(r[1]) : 'normal',
           title : r[2] ? String(r[2]) : '',
           date  : r[3] ? String(r[3]) : '',
           author: r[4] ? String(r[4]) : '정보선생님',
         }));
-        notices.reverse(); // 최신순
+        notices.reverse();
       }
       result = { notices };
     } catch (err) { result = { notices: [], error: err.message }; }
+  }
+
+  // 학습자료 목록 (단원별)
+  else if (action === 'getMaterials') {
+    try {
+      const ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName(SHEET_MATERIALS);
+      let materials = [];
+      if (sheet && sheet.getLastRow() > 1) {
+        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
+        materials = rows.filter(r => r[2]).map(r => ({
+          id   : r[0] ? String(r[0]) : '',
+          unit : r[1] ? String(r[1]) : '',   // I / II / III / IV / V
+          title: r[2] ? String(r[2]) : '',
+          type : r[3] ? String(r[3]) : '',   // PDF/Slide/Code/Video/Link
+          url  : r[4] ? String(r[4]) : '',
+          date : r[5] ? String(r[5]) : '',
+        }));
+      }
+      result = { materials };
+    } catch (err) { result = { materials: [], error: err.message }; }
   }
 
   // 특정 학생 제출 내역
@@ -118,6 +140,34 @@ function doPost(e) {
     const ss   = SpreadsheetApp.openById(SPREADSHEET_ID);
     const type = data.type || 'member';
 
+    // 학습자료 저장
+    if (type === 'material') {
+      let sheet = ss.getSheetByName(SHEET_MATERIALS);
+      if (!sheet) {
+        sheet = ss.insertSheet(SHEET_MATERIALS);
+        sheet.appendRow(['ID', '단원', '제목', '유형', 'URL', '등록일']);
+        sheet.getRange(1, 1, 1, 6).setFontWeight('bold').setBackground('#0f9d58').setFontColor('#ffffff');
+      }
+      const id   = String(sheet.getLastRow());
+      const date = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul',
+        year: 'numeric', month: '2-digit', day: '2-digit'
+      }).replace(/\. /g, '.').replace(/\.$/, '');
+      sheet.appendRow([id, data.unit || '', data.title || '', data.matType || '', data.url || '', date]);
+      return jsonResponse({ result: 'success' });
+    }
+
+    // 학습자료 삭제
+    if (type === 'deleteMaterial') {
+      const sheet = ss.getSheetByName(SHEET_MATERIALS);
+      if (sheet) {
+        const rows = sheet.getDataRange().getValues();
+        for (let i = rows.length - 1; i >= 1; i--) {
+          if (String(rows[i][0]) === String(data.id)) { sheet.deleteRow(i + 1); break; }
+        }
+      }
+      return jsonResponse({ result: 'success' });
+    }
+
     // 공지사항 저장
     if (type === 'notice') {
       let sheet = ss.getSheetByName(SHEET_NOTICES);
@@ -126,7 +176,7 @@ function doPost(e) {
         sheet.appendRow(['ID', '유형', '제목', '날짜', '작성자']);
         sheet.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#ea4335').setFontColor('#ffffff');
       }
-      const id   = String(sheet.getLastRow()); // 순번
+      const id   = String(sheet.getLastRow());
       const date = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul',
         year: 'numeric', month: '2-digit', day: '2-digit'
       }).replace(/\. /g, '.').replace(/\.$/, '');
@@ -140,10 +190,7 @@ function doPost(e) {
       if (sheet) {
         const rows = sheet.getDataRange().getValues();
         for (let i = rows.length - 1; i >= 1; i--) {
-          if (String(rows[i][0]) === String(data.id)) {
-            sheet.deleteRow(i + 1);
-            break;
-          }
+          if (String(rows[i][0]) === String(data.id)) { sheet.deleteRow(i + 1); break; }
         }
       }
       return jsonResponse({ result: 'success' });
@@ -173,10 +220,7 @@ function doPost(e) {
     }
     sheet.appendRow([
       new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
-      data.name      || '',
-      data.studentId || '',
-      data.email     || '',
-      data.uid       || '',
+      data.name || '', data.studentId || '', data.email || '', data.uid || '',
     ]);
     return jsonResponse({ result: 'success' });
 
