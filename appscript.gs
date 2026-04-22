@@ -214,13 +214,21 @@ function doPost(e) {
 
     // 회원가입 저장
     let sheet = ss.getSheetByName(SHEET_MEMBERS);
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['가입일시', '성명', '학번', '이메일', 'Firebase UID']);
+    // 헤더가 없거나 5열 미만이면 헤더 재설정
+    if (sheet.getLastRow() === 0 || sheet.getLastColumn() < 5) {
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow(['가입일시', '성명', '학번', '이메일', 'Firebase UID']);
+      } else {
+        sheet.getRange(1, 1, 1, 5).setValues([['가입일시', '성명', '학번', '이메일', 'Firebase UID']]);
+      }
       sheet.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#4285f4').setFontColor('#ffffff');
     }
     sheet.appendRow([
       new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
-      data.name || '', data.studentId || '', data.email || '', data.uid || '',
+      data.name      || '',
+      data.studentId || '',
+      data.email     || '',
+      data.uid       || '',
     ]);
     return jsonResponse({ result: 'success' });
 
