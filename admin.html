@@ -10,7 +10,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
         tailwind.config = {
@@ -330,10 +329,13 @@
         const ADMIN_EMAILS    = ['sungce27@gmail.com'];
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYheQ0HV-xFjmceYzHPjAlF5JmvwRhULsCIH9mBOUZbWeP1Y0EBUhsAEpwh3hHml7M/exec';
 
-        const app      = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
-        const auth     = firebase.auth(app);
-        const db       = firebase.firestore(app);   // Firestore
-        const storage  = firebase.storage(app);     // Storage (파일)
+        // ☁️ Cloudinary 설정 (가입 후 아래 두 값을 교체해주세요)
+        const CLOUDINARY_CLOUD_NAME  = 'YOUR_CLOUD_NAME';   // 예: dxyz1234
+        const CLOUDINARY_UPLOAD_PRESET = 'YOUR_UPLOAD_PRESET'; // 예: school_materials
+
+        const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(app);
+        const db   = firebase.firestore(app);
 
         auth.onAuthStateChanged((user) => {
             if (!user || !ADMIN_EMAILS.includes(user.email)) {
@@ -465,7 +467,7 @@
         // 학습자료 추가 (Google Sheets 저장)
         // ==========================================
         // ==========================================
-        // 학습자료 추가 (Firebase Storage + Firestore)
+        // 학습자료 추가 (Cloudinary 파일 업로드 + Firestore)
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             const fileInput = document.getElementById('mat-file');
@@ -475,7 +477,7 @@
                     const label = document.getElementById('file-label');
                     const icon  = document.getElementById('file-upload-icon');
                     if (file) {
-                        label.textContent = file.name;
+                        label.textContent = `${file.name} (${(file.size/1024/1024).toFixed(1)}MB)`;
                         label.classList.add('text-emerald-600');
                         icon.setAttribute('data-lucide', 'file-check');
                         icon.classList.remove('text-slate-300');
@@ -494,6 +496,11 @@
 
             if (!title || !content) { showToast('제목과 내용을 입력해주세요.', 'error'); return; }
 
+            // Cloudinary 미설정 시 파일 없이도 등록 가능
+            if (file && CLOUDINARY_CLOUD_NAME === 'YOUR_CLOUD_NAME') {
+                showToast('Cloudinary 설정값을 먼저 입력해주세요.', 'error'); return;
+            }
+
             const btn = document.querySelector('button[onclick="addMaterial()"]');
             btn.disabled = true;
             btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>등록 중...</span>';
@@ -503,7 +510,7 @@
                 let fileUrl  = '';
                 let fileName = '';
 
-                // ── 1. 파일 → Firebase Storage 업로드 ──────────────
+                // ── 1. 파일 → Cloudinary 업로드 ────────────────
                 if (file) {
                     if (file.size > 10 * 1024 * 1024) {
                         showToast('파일 크기는 10MB 이하여야 합니다.', 'error');
@@ -512,27 +519,43 @@
                         lucide.createIcons();
                         return;
                     }
-                    document.getElementById('upload-progress-wrap').classList.remove('hidden');
-                    const ref         = storage.ref(`materials/${unit}/${Date.now()}_${file.name}`);
-                    const uploadTask  = ref.put(file);
 
+                    document.getElementById('upload-progress-wrap').classList.remove('hidden');
+                    document.getElementById('upload-progress-text').textContent = '파일 업로드 중...';
+
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+                    formData.append('folder', `materials/${unit}`);
+
+                    // XMLHttpRequest로 진행률 표시
                     fileUrl = await new Promise((resolve, reject) => {
-                        uploadTask.on('state_changed',
-                            (snap) => {
-                                const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`);
+
+                        xhr.upload.onprogress = (e) => {
+                            if (e.lengthComputable) {
+                                const pct = Math.round((e.loaded / e.total) * 100);
                                 document.getElementById('upload-bar').style.width     = pct + '%';
                                 document.getElementById('upload-percent').textContent  = pct + '%';
-                                document.getElementById('upload-progress-text').textContent = '파일 업로드 중...';
-                            },
-                            reject,
-                            async () => resolve(await uploadTask.snapshot.ref.getDownloadURL())
-                        );
+                            }
+                        };
+                        xhr.onload = () => {
+                            if (xhr.status === 200) {
+                                const res = JSON.parse(xhr.responseText);
+                                document.getElementById('upload-progress-text').textContent = '업로드 완료!';
+                                resolve(res.secure_url);
+                            } else {
+                                reject(new Error('Cloudinary 업로드 실패: ' + xhr.responseText));
+                            }
+                        };
+                        xhr.onerror = () => reject(new Error('네트워크 오류'));
+                        xhr.send(formData);
                     });
                     fileName = file.name;
-                    document.getElementById('upload-progress-text').textContent = '업로드 완료!';
                 }
 
-                // ── 2. Firestore에 자료 메타데이터 저장 ───────────
+                // ── 2. Firestore 저장 ───────────────────────────
                 await db.collection('materials').add({
                     unit,
                     title,
@@ -558,7 +581,7 @@
                 showToast(`[단원 ${unit}] ${title} 자료가 등록되었습니다! 📚`);
             } catch(e) {
                 console.error(e);
-                showToast('등록 오류: ' + e.message, 'error');
+                showToast('오류: ' + e.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i data-lucide="upload" class="w-4 h-4"></i><span>자료 등록</span>';
