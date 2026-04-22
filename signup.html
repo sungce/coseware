@@ -273,13 +273,19 @@
                 }, 2000);
 
             } catch (error) {
+                console.error('Firebase 에러:', error.code, error.message);
                 const errorMessages = {
-                    'auth/email-already-in-use': '이미 사용 중인 이메일입니다.',
-                    'auth/invalid-email':        '이메일 형식이 올바르지 않습니다.',
-                    'auth/weak-password':        '비밀번호는 6자리 이상이어야 합니다.',
-                    'auth/too-many-requests':    '잠시 후 다시 시도해주세요.',
+                    'auth/email-already-in-use'  : '이미 사용 중인 이메일입니다.',
+                    'auth/invalid-email'         : '이메일 형식이 올바르지 않습니다.',
+                    'auth/weak-password'         : '비밀번호는 6자리 이상이어야 합니다.',
+                    'auth/too-many-requests'     : '잠시 후 다시 시도해주세요.',
+                    'auth/operation-not-allowed' : '이메일/비밀번호 로그인이 비활성화되어 있습니다. Firebase 콘솔에서 활성화해주세요.',
+                    'auth/network-request-failed': '네트워크 오류입니다. 인터넷 연결을 확인해주세요.',
+                    'auth/unauthorized-domain'   : '현재 도메인이 Firebase에 허용되지 않았습니다.',
+                    'auth/internal-error'        : 'Firebase 내부 오류입니다. 잠시 후 다시 시도해주세요.',
                 };
-                showToast(errorMessages[error.code] || `에러: ${error.message}`, 'error');
+                const msg = errorMessages[error.code] || `에러(${error.code}): ${error.message}`;
+                showToast(msg, 'error');
                 setLoading(false);
             }
         }
