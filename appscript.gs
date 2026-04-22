@@ -8,33 +8,54 @@ const SHEET_NAME     = 'Sheet1';
 
 // 회원 목록 조회 (GET) - 관리자 페이지에서 호출
 function doGet(e) {
-  const action = e.parameter.action;
+  const action   = e.parameter.action;
+  const callback = e.parameter.callback; // JSONP 콜백
 
   if (action === 'getMembers') {
     try {
-      const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+      const sheet   = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
       const lastRow = sheet.getLastRow();
+      let members   = [];
 
-      if (lastRow <= 1) {
-        return jsonResponse({ members: [] });
+      if (lastRow > 1) {
+        const rows = sheet.getRange(2, 1, lastRow - 1, 4).getValues();
+        members = rows
+          .filter(row => row[2]) // 이메일 있는 행만
+          .map(row => ({
+            date : row[0] ? String(row[0]) : '',
+            name : row[1] ? String(row[1]) : '',
+            email: row[2] ? String(row[2]) : '',
+            uid  : row[3] ? String(row[3]) : '',
+          }));
       }
 
-      // 2행부터 데이터 읽기 (1행은 헤더)
-      const rows = sheet.getRange(2, 1, lastRow - 1, 4).getValues();
-      const members = rows.map(row => ({
-        date : row[0] ? String(row[0]) : '',
-        name : row[1] ? String(row[1]) : '',
-        email: row[2] ? String(row[2]) : '',
-        uid  : row[3] ? String(row[3]) : '',
-      }));
+      const result = JSON.stringify({ members });
 
-      return jsonResponse({ members });
+      // JSONP 요청이면 콜백으로 감싸서 반환
+      if (callback) {
+        return ContentService
+          .createTextOutput(`${callback}(${result})`)
+          .setMimeType(ContentService.MimeType.JAVASCRIPT);
+      }
+
+      return ContentService
+        .createTextOutput(result)
+        .setMimeType(ContentService.MimeType.JSON);
+
     } catch (err) {
-      return jsonResponse({ members: [], error: err.message });
+      const result = JSON.stringify({ members: [], error: err.message });
+      if (callback) {
+        return ContentService
+          .createTextOutput(`${callback}(${result})`)
+          .setMimeType(ContentService.MimeType.JAVASCRIPT);
+      }
+      return ContentService.createTextOutput(result).setMimeType(ContentService.MimeType.JSON);
     }
   }
 
-  return jsonResponse({ error: 'Unknown action' });
+  return ContentService
+    .createTextOutput(JSON.stringify({ error: 'Unknown action' }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 // 회원 가입 데이터 저장 (POST)

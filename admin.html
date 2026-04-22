@@ -293,11 +293,11 @@
         }
 
         // ==========================================
-        // 회원 목록 로드 (Google Sheets)
+        // 회원 목록 로드 (JSONP 방식 - CORS 우회)
         // ==========================================
         let allMembers = [];
 
-        async function loadMembers() {
+        function loadMembers() {
             const tbody = document.getElementById('member-table-body');
             tbody.innerHTML = `
                 <tr><td colspan="4" class="text-center py-12 text-slate-400 font-medium">
@@ -308,23 +308,47 @@
                 </td></tr>`;
             lucide.createIcons();
 
-            try {
-                const res  = await fetch(`${APPS_SCRIPT_URL}?action=getMembers`);
-                const data = await res.json();
+            // 기존 JSONP 스크립트 제거
+            const old = document.getElementById('jsonp-script');
+            if (old) old.remove();
+
+            // JSONP 콜백 함수 등록
+            window.__membersCallback = function(data) {
                 allMembers = data.members || [];
                 document.getElementById('stat-members').textContent = allMembers.length;
                 renderMembers(allMembers);
-            } catch (e) {
+                document.getElementById('jsonp-script').remove();
+            };
+
+            // 타임아웃 처리
+            const timer = setTimeout(() => {
                 tbody.innerHTML = `
-                    <tr><td colspan="4" class="text-center py-12 text-slate-400 font-medium">
-                        <div class="flex flex-col items-center space-y-2">
+                    <tr><td colspan="4" class="text-center py-12">
+                        <div class="flex flex-col items-center space-y-3">
                             <i data-lucide="wifi-off" class="w-6 h-6 text-rose-400"></i>
-                            <span>데이터를 불러오지 못했습니다.</span>
-                            <span class="text-xs text-slate-300">Apps Script doGet()이 배포되어 있는지 확인해주세요.</span>
+                            <span class="text-slate-500 font-medium">데이터를 불러오지 못했습니다.</span>
+                            <span class="text-xs text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg">
+                                Apps Script를 <b>새 배포</b>로 다시 배포해주세요.
+                            </span>
                         </div>
                     </td></tr>`;
                 lucide.createIcons();
-            }
+            }, 8000);
+
+            window.__membersCallback = function(data) {
+                clearTimeout(timer);
+                allMembers = data.members || [];
+                document.getElementById('stat-members').textContent = allMembers.length;
+                renderMembers(allMembers);
+                const s = document.getElementById('jsonp-script');
+                if (s) s.remove();
+            };
+
+            // JSONP 스크립트 태그 삽입
+            const script = document.createElement('script');
+            script.id  = 'jsonp-script';
+            script.src = `${APPS_SCRIPT_URL}?action=getMembers&callback=__membersCallback`;
+            document.body.appendChild(script);
         }
 
         function renderMembers(list) {
