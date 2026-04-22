@@ -169,8 +169,13 @@
                                     <i data-lucide="user" class="w-4 h-4 text-white"></i>
                                 </div>
                                 <span id="desktop-user-name" class="text-sm font-bold text-slate-800"></span>
-                                <span class="text-xs text-blue-500 font-bold bg-blue-100 px-2 py-0.5 rounded-full">학생</span>
+                                <span id="desktop-role-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-500">학생</span>
                             </div>
+                            <!-- 관리자 전용 버튼 -->
+                            <a id="admin-page-btn" href="admin.html" class="hidden items-center space-x-1.5 bg-amber-500 text-white px-4 py-2 rounded-xl hover:bg-amber-600 transition-all text-sm font-bold shadow-lg shadow-amber-500/30">
+                                <i data-lucide="shield" class="w-4 h-4"></i>
+                                <span>관리자</span>
+                            </a>
                             <button onclick="handleSignOut()"
                                 class="text-slate-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50"
                                 title="로그아웃">
@@ -714,11 +719,20 @@
             }
         }
 
+        // ✅ 관리자 이메일 목록 (선생님 이메일로 변경해주세요)
+        const ADMIN_EMAILS = ['sungcewow@gmail.com'];
+
+        function isAdmin(user) {
+            return user && ADMIN_EMAILS.includes(user.email);
+        }
+
         // 로그인 상태에 따른 UI 변경
         function updateAuthUI() {
             const desktopBtn      = document.getElementById('desktop-auth-btn');
             const desktopUserInfo = document.getElementById('desktop-user-info');
             const desktopUserName = document.getElementById('desktop-user-name');
+            const desktopRoleBadge= document.getElementById('desktop-role-badge');
+            const adminPageBtn    = document.getElementById('admin-page-btn');
             const mobileBtn       = document.getElementById('mobile-auth-btn');
             const mobileUserInfo  = document.getElementById('mobile-user-info');
             const mobileUserName  = document.getElementById('mobile-user-name');
@@ -726,29 +740,42 @@
             const welcomeName     = document.getElementById('welcome-name');
 
             if (currentUser) {
-                const name = currentUser.displayName || currentUser.email.split('@')[0];
+                const name  = currentUser.displayName || currentUser.email.split('@')[0];
+                const admin = isAdmin(currentUser);
 
-                // 데스크탑: 로그인 버튼 숨기고 유저 정보 표시
+                // 데스크탑 유저 정보
                 desktopBtn.classList.add('hidden');
                 desktopUserInfo.classList.remove('hidden');
                 desktopUserInfo.classList.add('flex');
                 desktopUserName.textContent = name;
 
-                // 모바일: 로그인 버튼 숨기고 유저 정보 표시
+                // 관리자 배지 & 버튼
+                if (admin) {
+                    desktopRoleBadge.textContent = '관리자';
+                    desktopRoleBadge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-600';
+                    adminPageBtn.classList.remove('hidden');
+                    adminPageBtn.classList.add('flex');
+                } else {
+                    desktopRoleBadge.textContent = '학생';
+                    desktopRoleBadge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-500';
+                    adminPageBtn.classList.add('hidden');
+                }
+
+                // 모바일 유저 정보
                 mobileBtn.classList.add('hidden');
                 mobileUserInfo.classList.remove('hidden');
                 mobileUserName.textContent = name;
 
-                // 환영 배너 표시
+                // 환영 배너
                 welcomeName.textContent = name;
                 welcomeBanner.classList.remove('hidden');
                 welcomeBanner.classList.add('flex');
 
             } else {
-                // 로그아웃 상태 복원
                 desktopBtn.classList.remove('hidden');
                 desktopUserInfo.classList.add('hidden');
                 desktopUserInfo.classList.remove('flex');
+                adminPageBtn.classList.add('hidden');
 
                 mobileBtn.classList.remove('hidden');
                 mobileUserInfo.classList.add('hidden');

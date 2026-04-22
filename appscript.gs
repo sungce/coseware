@@ -1,11 +1,43 @@
 // ================================================
-// Google Apps Script - 회원가입 데이터 수신
+// Google Apps Script - 회원가입 데이터 수신 & 조회
 // 연결된 스프레드시트 ID: 1EIA8zU82F9UXBOQz-6u92Su1zUFPsT_RFqS0Yuqpz2c
 // ================================================
 
 const SPREADSHEET_ID = '1EIA8zU82F9UXBOQz-6u92Su1zUFPsT_RFqS0Yuqpz2c';
-const SHEET_NAME     = 'Sheet1'; // 실제 시트 탭 이름으로 변경
+const SHEET_NAME     = 'Sheet1';
 
+// 회원 목록 조회 (GET) - 관리자 페이지에서 호출
+function doGet(e) {
+  const action = e.parameter.action;
+
+  if (action === 'getMembers') {
+    try {
+      const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+      const lastRow = sheet.getLastRow();
+
+      if (lastRow <= 1) {
+        return jsonResponse({ members: [] });
+      }
+
+      // 2행부터 데이터 읽기 (1행은 헤더)
+      const rows = sheet.getRange(2, 1, lastRow - 1, 4).getValues();
+      const members = rows.map(row => ({
+        date : row[0] ? String(row[0]) : '',
+        name : row[1] ? String(row[1]) : '',
+        email: row[2] ? String(row[2]) : '',
+        uid  : row[3] ? String(row[3]) : '',
+      }));
+
+      return jsonResponse({ members });
+    } catch (err) {
+      return jsonResponse({ members: [], error: err.message });
+    }
+  }
+
+  return jsonResponse({ error: 'Unknown action' });
+}
+
+// 회원 가입 데이터 저장 (POST)
 function doPost(e) {
   try {
     const sheet = SpreadsheetApp
@@ -27,18 +59,20 @@ function doPost(e) {
       data.uid
     ]);
 
-    return ContentService
-      .createTextOutput(JSON.stringify({ result: 'success' }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return jsonResponse({ result: 'success' });
 
   } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ result: 'error', message: err.message }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return jsonResponse({ result: 'error', message: err.message });
   }
 }
 
-// 배포 전 테스트용 함수 (실행 버튼으로 직접 테스트 가능)
+function jsonResponse(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// 배포 전 테스트용 함수
 function testDoPost() {
   const mockEvent = {
     postData: {
@@ -49,6 +83,6 @@ function testDoPost() {
       })
     }
   };
-  const result = doPost(mockEvent);
-  Logger.log(result.getContent());
+  Logger.log(doPost(mockEvent).getContent());
 }
+
