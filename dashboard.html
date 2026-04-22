@@ -76,8 +76,16 @@
                     <i data-lucide="user" class="w-8 h-8 text-white"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-black text-slate-900" id="profile-name">-</h1>
+                    <div class="flex items-center space-x-3">
+                        <h1 class="text-2xl font-black text-slate-900" id="profile-name">-</h1>
+                        <button onclick="openEditProfile()"
+                            class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="프로필 수정">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                     <p class="text-slate-400 font-medium text-sm" id="profile-email">-</p>
+                    <p class="text-slate-500 font-medium text-sm mt-0.5" id="profile-studentid"></p>
                 </div>
             </div>
             <div class="flex items-center space-x-4 text-center">
@@ -152,6 +160,58 @@
         </div>
     </main>
 
+    <!-- 프로필 수정 모달 -->
+    <div id="edit-profile-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+        onclick="if(event.target===this) closeEditProfile()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="user-pen" class="w-5 h-5 text-blue-500"></i>
+                    <span>학생 정보 수정</span>
+                </h3>
+                <button onclick="closeEditProfile()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-8 py-6 space-y-5">
+                <!-- 이름 -->
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">성명</label>
+                    <input type="text" id="edit-name" placeholder="홍길동"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                </div>
+                <!-- 학번 -->
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">학번</label>
+                    <input type="text" id="edit-studentid" placeholder="예: 30101"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                </div>
+                <!-- 비밀번호 변경 -->
+                <div class="border-t border-slate-100 pt-5">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">비밀번호 변경 (선택)</p>
+                    <div class="space-y-3">
+                        <input type="password" id="edit-new-pw" placeholder="새 비밀번호 (6자리 이상)"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                        <input type="password" id="edit-confirm-pw" placeholder="새 비밀번호 확인"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                    </div>
+                </div>
+                <p class="text-xs text-slate-400 font-medium flex items-center space-x-1">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                    <span>이메일은 변경할 수 없습니다.</span>
+                </p>
+            </div>
+            <div class="px-8 pb-8 flex space-x-3">
+                <button onclick="closeEditProfile()"
+                    class="flex-1 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-200 transition-colors">취소</button>
+                <button onclick="saveProfile()"
+                    class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-2" id="save-profile-btn">
+                    <i data-lucide="save" class="w-4 h-4"></i><span>저장</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==========================================
         // Firebase 초기화
@@ -190,6 +250,9 @@
             document.getElementById('nav-user-name').textContent  = name;
             document.getElementById('profile-name').textContent   = name;
             document.getElementById('profile-email').textContent  = user.email;
+            // 학번은 localStorage에서 (가입 시 저장 or 수정 시 저장)
+            const savedId = localStorage.getItem('studentId_' + user.uid) || '';
+            if (savedId) document.getElementById('profile-studentid').textContent = '학번: ' + savedId;
             lucide.createIcons();
             loadDashboard();
         });
@@ -197,6 +260,71 @@
         async function handleSignOut() {
             await auth.signOut();
             window.location.href = 'index.html';
+        }
+
+        // ==========================================
+        // 프로필 수정
+        // ==========================================
+        function openEditProfile() {
+            document.getElementById('edit-name').value       = currentUser.displayName || '';
+            document.getElementById('edit-studentid').value  = localStorage.getItem('studentId_' + currentUser.uid) || '';
+            document.getElementById('edit-new-pw').value     = '';
+            document.getElementById('edit-confirm-pw').value = '';
+            const modal = document.getElementById('edit-profile-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeEditProfile() {
+            const modal = document.getElementById('edit-profile-modal');
+            modal.classList.add('hidden'); modal.classList.remove('flex');
+        }
+
+        async function saveProfile() {
+            const name      = document.getElementById('edit-name').value.trim();
+            const studentId = document.getElementById('edit-studentid').value.trim();
+            const newPw     = document.getElementById('edit-new-pw').value;
+            const confirmPw = document.getElementById('edit-confirm-pw').value;
+
+            if (!name) { showToast('성명을 입력해주세요.', 'error'); return; }
+            if (newPw && newPw.length < 6) { showToast('비밀번호는 6자리 이상이어야 합니다.', 'error'); return; }
+            if (newPw && newPw !== confirmPw) { showToast('비밀번호가 일치하지 않습니다.', 'error'); return; }
+
+            const btn = document.getElementById('save-profile-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>저장 중...</span>';
+            lucide.createIcons();
+
+            try {
+                // Firebase displayName 업데이트
+                await currentUser.updateProfile({ displayName: name });
+
+                // 비밀번호 변경
+                if (newPw) await currentUser.updatePassword(newPw);
+
+                // 학번 localStorage 저장
+                if (studentId) {
+                    localStorage.setItem('studentId_' + currentUser.uid, studentId);
+                }
+
+                // UI 즉시 반영
+                document.getElementById('profile-name').textContent      = name;
+                document.getElementById('nav-user-name').textContent     = name;
+                document.getElementById('profile-studentid').textContent = studentId ? '학번: ' + studentId : '';
+
+                closeEditProfile();
+                showToast('정보가 저장되었습니다! ✅');
+            } catch(e) {
+                const msgs = {
+                    'auth/requires-recent-login': '보안을 위해 재로그인 후 다시 시도해주세요.',
+                    'auth/weak-password'        : '비밀번호는 6자리 이상이어야 합니다.',
+                };
+                showToast(msgs[e.code] || '저장 오류: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i><span>저장</span>';
+                lucide.createIcons();
+            }
         }
 
         // ==========================================
@@ -302,6 +430,34 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+
+        // 토스트
+        let toastTimeout;
+        function showToast(message, type = 'success') {
+            let toast = document.getElementById('dash-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'dash-toast';
+                toast.className = 'fixed bottom-8 right-8 bg-slate-900/95 backdrop-blur-md text-white px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-32 opacity-0 z-50 flex items-center space-x-3 border border-slate-700';
+                toast.innerHTML = `<div class="p-1.5 rounded-full" id="dash-toast-icon-wrap"><i data-lucide="check" class="w-4 h-4 text-emerald-400" id="dash-toast-icon"></i></div><span class="font-medium text-sm" id="dash-toast-msg"></span>`;
+                document.body.appendChild(toast);
+            }
+            const wrap = document.getElementById('dash-toast-icon-wrap');
+            const icon = document.getElementById('dash-toast-icon');
+            const msg  = document.getElementById('dash-toast-msg');
+            msg.textContent = message;
+            if (type === 'error') {
+                wrap.className = 'p-1.5 rounded-full bg-rose-500/20';
+                icon.setAttribute('data-lucide','alert-circle'); icon.className = 'w-4 h-4 text-rose-400';
+            } else {
+                wrap.className = 'p-1.5 rounded-full bg-emerald-500/20';
+                icon.setAttribute('data-lucide','check'); icon.className = 'w-4 h-4 text-emerald-400';
+            }
+            lucide.createIcons();
+            clearTimeout(toastTimeout);
+            toast.classList.remove('translate-y-32','opacity-0');
+            toastTimeout = setTimeout(() => toast.classList.add('translate-y-32','opacity-0'), 4000);
+        }
     </script>
 </body>
 </html>
