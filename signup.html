@@ -208,13 +208,19 @@
 
         let auth = null;
 
-        firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
+        try {
+            // 이미 초기화된 앱이 있으면 재사용, 없으면 새로 초기화
+            const existingApp = firebase.apps.length
+                ? firebase.app()
+                : firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth(existingApp);
+        } catch (e) {
+            console.error('Firebase 초기화 오류:', e);
+        }
 
         // ==========================================
         // Google Sheets 연동 설정
         // ==========================================
-        // ✅ Apps Script 배포 후 아래 URL을 교체해주세요
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxFxsKSOyFFOhSNE8kubUw69P4c0aKkBAgaBTxU8aeQzfU0vUwoOsvcWRC599KWCfWC/exec';
 
         async function sendToSheet(name, email, uid) {
@@ -236,11 +242,6 @@
         // ==========================================
         async function handleSignup(event) {
             event.preventDefault();
-
-            if (!auth) {
-                showToast('Firebase 설정값(firebaseConfig)을 먼저 입력해주세요!', 'error');
-                return;
-            }
 
             const name     = document.getElementById('signup-name').value.trim();
             const email    = document.getElementById('signup-email').value.trim();
