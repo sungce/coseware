@@ -154,11 +154,29 @@
                     <!-- 데스크탑 로그인 버튼 -->
                     <div class="flex items-center space-x-6">
                         <div class="h-5 w-px bg-slate-300"></div>
+
+                        <!-- 비로그인 상태 -->
                         <button id="desktop-auth-btn" onclick="toggleLoginModal()"
                             class="bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 flex items-center text-sm font-bold">
-                            <i data-lucide="log-in" class="w-4 h-4 mr-2" id="desktop-auth-icon"></i> <span
-                                id="desktop-auth-text">로그인</span>
+                            <i data-lucide="log-in" class="w-4 h-4 mr-2" id="desktop-auth-icon"></i>
+                            <span id="desktop-auth-text">로그인</span>
                         </button>
+
+                        <!-- 로그인 상태 (기본 숨김) -->
+                        <div id="desktop-user-info" class="hidden items-center space-x-3">
+                            <div class="flex items-center space-x-2.5 bg-blue-50 border border-blue-100 px-4 py-2 rounded-xl">
+                                <div class="w-7 h-7 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                                </div>
+                                <span id="desktop-user-name" class="text-sm font-bold text-slate-800"></span>
+                                <span class="text-xs text-blue-500 font-bold bg-blue-100 px-2 py-0.5 rounded-full">학생</span>
+                            </div>
+                            <button onclick="handleSignOut()"
+                                class="text-slate-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50"
+                                title="로그아웃">
+                                <i data-lucide="log-out" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -190,12 +208,32 @@
 
                 <!-- 모바일 로그인 버튼 -->
                 <div class="pt-4 mt-2 border-t border-slate-200">
+                    <!-- 비로그인 -->
                     <button id="mobile-auth-btn"
                         onclick="toggleLoginModal(); document.getElementById('mobile-menu').classList.add('hidden');"
                         class="w-full bg-slate-900 text-white py-3.5 px-4 rounded-xl hover:bg-slate-800 transition-colors flex justify-center items-center font-bold">
-                        <i data-lucide="log-in" class="w-5 h-5 mr-2" id="mobile-auth-icon"></i> <span
-                            id="mobile-auth-text">로그인</span>
+                        <i data-lucide="log-in" class="w-5 h-5 mr-2" id="mobile-auth-icon"></i>
+                        <span id="mobile-auth-text">로그인</span>
                     </button>
+                    <!-- 로그인 상태 (기본 숨김) -->
+                    <div id="mobile-user-info" class="hidden">
+                        <div class="flex items-center justify-between bg-blue-50 border border-blue-100 px-4 py-3 rounded-xl mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                                </div>
+                                <div>
+                                    <p id="mobile-user-name" class="text-sm font-black text-slate-800"></p>
+                                    <p class="text-xs text-blue-500 font-bold">로그인됨</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="handleSignOut(); document.getElementById('mobile-menu').classList.add('hidden');"
+                            class="w-full bg-rose-50 text-rose-600 border border-rose-100 py-3 px-4 rounded-xl hover:bg-rose-100 transition-colors flex justify-center items-center font-bold text-sm">
+                            <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> 로그아웃
+                        </button>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -259,6 +297,24 @@
 
         <!-- ==================== 1. 홈 섹션 ==================== -->
         <section id="home" class="fade-in block space-y-8">
+
+            <!-- 로그인 환영 배너 (로그인 시에만 표시) -->
+            <div id="welcome-banner" class="hidden items-center justify-between bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl px-6 py-4 shadow-lg shadow-blue-500/20">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <p class="font-black text-base"><span id="welcome-name"></span> 학생, 반갑습니다! 👋</p>
+                        <p class="text-blue-100 text-sm font-medium">오늘도 멋진 하루 되세요. 수업 자료와 과제를 확인해보세요.</p>
+                    </div>
+                </div>
+                <button onclick="handleSignOut()" class="hidden sm:flex items-center space-x-1.5 bg-white/15 hover:bg-white/25 transition-colors px-4 py-2 rounded-xl text-sm font-bold">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>로그아웃</span>
+                </button>
+            </div>
+
             <!-- 화려한 Hero Banner -->
             <div class="relative bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/20 p-1">
                 <!-- Animated Background Blobs -->
@@ -658,30 +714,47 @@
             }
         }
 
-        // 로그인 상태에 따른 UI 변경 (상단 버튼 텍스트 변경)
+        // 로그인 상태에 따른 UI 변경
         function updateAuthUI() {
-            const btnTexts = [document.getElementById('desktop-auth-text'), document.getElementById('mobile-auth-text')];
-            const btnIcons = [document.getElementById('desktop-auth-icon'), document.getElementById('mobile-auth-icon')];
-            const btns = [document.getElementById('desktop-auth-btn'), document.getElementById('mobile-auth-btn')];
+            const desktopBtn      = document.getElementById('desktop-auth-btn');
+            const desktopUserInfo = document.getElementById('desktop-user-info');
+            const desktopUserName = document.getElementById('desktop-user-name');
+            const mobileBtn       = document.getElementById('mobile-auth-btn');
+            const mobileUserInfo  = document.getElementById('mobile-user-info');
+            const mobileUserName  = document.getElementById('mobile-user-name');
+            const welcomeBanner   = document.getElementById('welcome-banner');
+            const welcomeName     = document.getElementById('welcome-name');
 
             if (currentUser) {
-                // 로그인 상태
-                btnTexts.forEach(el => { if (el) el.textContent = '로그아웃' });
-                btnIcons.forEach(el => { if (el) el.setAttribute('data-lucide', 'log-out') });
-                btns.forEach(btn => {
-                    if (btn) btn.onclick = handleSignOut;
-                });
+                const name = currentUser.displayName || currentUser.email.split('@')[0];
+
+                // 데스크탑: 로그인 버튼 숨기고 유저 정보 표시
+                desktopBtn.classList.add('hidden');
+                desktopUserInfo.classList.remove('hidden');
+                desktopUserInfo.classList.add('flex');
+                desktopUserName.textContent = name;
+
+                // 모바일: 로그인 버튼 숨기고 유저 정보 표시
+                mobileBtn.classList.add('hidden');
+                mobileUserInfo.classList.remove('hidden');
+                mobileUserName.textContent = name;
+
+                // 환영 배너 표시
+                welcomeName.textContent = name;
+                welcomeBanner.classList.remove('hidden');
+                welcomeBanner.classList.add('flex');
+
             } else {
-                // 로그아웃 상태
-                btnTexts.forEach(el => { if (el) el.textContent = '로그인' });
-                btnIcons.forEach(el => { if (el) el.setAttribute('data-lucide', 'log-in') });
-                btns.forEach(btn => {
-                    if (btn) btn.onclick = () => {
-                        toggleLoginModal();
-                        const mobileMenu = document.getElementById('mobile-menu');
-                        if (mobileMenu) mobileMenu.classList.add('hidden');
-                    };
-                });
+                // 로그아웃 상태 복원
+                desktopBtn.classList.remove('hidden');
+                desktopUserInfo.classList.add('hidden');
+                desktopUserInfo.classList.remove('flex');
+
+                mobileBtn.classList.remove('hidden');
+                mobileUserInfo.classList.add('hidden');
+
+                welcomeBanner.classList.add('hidden');
+                welcomeBanner.classList.remove('flex');
             }
             lucide.createIcons();
         }
