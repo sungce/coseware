@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 정보 클래스룸</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pretendard 폰트 -->
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDK (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: { 850: '#151e2e', 900: '#0f172a' }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'blob': 'blob 7s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-field {
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn {
+            transition: all 0.25s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(59,130,246,0.35);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 flex items-center justify-center px-4 py-12 relative overflow-hidden">
+
+    <!-- 배경 블롭 애니메이션 -->
+    <div class="absolute top-0 -left-20 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+    <div class="absolute bottom-0 -right-20 w-96 h-96 bg-indigo-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" style="animation-delay:2s"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob" style="animation-delay:4s"></div>
+
+    <!-- 카드 -->
+    <div class="fade-in relative z-10 w-full max-w-md">
+
+        <!-- 로고 / 헤더 -->
+        <div class="text-center mb-8">
+            <a href="index.html" class="inline-flex items-center space-x-3 group mb-8">
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-3 rounded-2xl group-hover:rotate-12 transition-transform duration-300 shadow-lg shadow-blue-500/40">
+                    <i data-lucide="terminal" class="w-6 h-6"></i>
+                </div>
+                <span class="font-bold text-2xl tracking-tight text-white">Sungce Teacher Web</span>
+            </a>
+            <h1 class="text-3xl font-black text-white mb-2 mt-4">회원가입</h1>
+            <p class="text-slate-400 font-medium text-sm">계정을 만들고 클래스룸에 참여하세요.</p>
+        </div>
+
+        <!-- 폼 카드 -->
+        <div class="bg-white/10 backdrop-blur-2xl rounded-[2rem] border border-white/15 shadow-2xl p-8 md:p-10">
+
+            <form id="signup-form" class="space-y-5" onsubmit="handleSignup(event)">
+
+                <!-- 성명 -->
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-200 flex items-center space-x-2">
+                        <i data-lucide="user" class="w-4 h-4 text-blue-400"></i>
+                        <span>성명</span>
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="signup-name" placeholder="홍길동"
+                            class="input-field w-full bg-white/8 border border-white/15 text-white placeholder-slate-500 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white/15 transition-all font-medium"
+                            required autocomplete="name">
+                    </div>
+                </div>
+
+                <!-- 이메일 -->
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-200 flex items-center space-x-2">
+                        <i data-lucide="mail" class="w-4 h-4 text-blue-400"></i>
+                        <span>이메일</span>
+                    </label>
+                    <input type="email" id="signup-email" placeholder="student@school.com"
+                        class="input-field w-full bg-white/8 border border-white/15 text-white placeholder-slate-500 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white/15 transition-all font-medium"
+                        required autocomplete="email">
+                </div>
+
+                <!-- 비밀번호 -->
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-200 flex items-center space-x-2">
+                        <i data-lucide="lock" class="w-4 h-4 text-blue-400"></i>
+                        <span>비밀번호</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="signup-password" placeholder="6자리 이상 입력"
+                            class="input-field w-full bg-white/8 border border-white/15 text-white placeholder-slate-500 rounded-2xl px-5 py-4 pr-14 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white/15 transition-all font-medium"
+                            required autocomplete="new-password">
+                        <button type="button" id="toggle-pw"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors">
+                            <i data-lucide="eye" class="w-5 h-5" id="pw-eye-icon"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium pl-1">비밀번호는 6자리 이상이어야 합니다.</p>
+                </div>
+
+                <!-- 제출 버튼 -->
+                <div class="pt-2">
+                    <button type="submit" id="submit-btn"
+                        class="submit-btn w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-base py-4 rounded-2xl shadow-lg shadow-blue-600/30 flex justify-center items-center space-x-2">
+                        <span id="btn-text">가입하기</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5" id="btn-icon"></i>
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- 구분선 -->
+            <div class="flex items-center my-6">
+                <div class="flex-1 h-px bg-white/10"></div>
+                <span class="px-4 text-xs font-bold text-slate-500">이미 계정이 있나요?</span>
+                <div class="flex-1 h-px bg-white/10"></div>
+            </div>
+
+            <!-- 로그인 링크 -->
+            <a href="index.html"
+                class="block w-full text-center bg-white/8 border border-white/15 text-slate-300 font-bold py-4 rounded-2xl hover:bg-white/15 transition-all">
+                로그인 하러 가기
+            </a>
+        </div>
+
+        <!-- 하단 안내 -->
+        <p class="text-center text-xs text-slate-600 font-medium mt-6">
+            가입 시 선생님의 운영 방침에 동의하는 것으로 간주됩니다.
+        </p>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div id="toast"
+        class="fixed bottom-8 right-8 bg-slate-900/95 backdrop-blur-md text-white px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-32 opacity-0 z-50 flex items-center space-x-3 border border-slate-700">
+        <div class="p-1.5 rounded-full" id="toast-icon-wrapper">
+            <i data-lucide="check" class="w-4 h-4" id="toast-icon"></i>
+        </div>
+        <span class="font-medium tracking-tight text-sm" id="toast-msg">메시지</span>
+    </div>
+
+    <script>
+        // ==========================================
+        // Firebase 초기화
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        let auth = null;
+
+        if (firebaseConfig.apiKey !== 'YOUR_API_KEY') {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+        }
+
+        // ==========================================
+        // 회원가입 처리
+        // ==========================================
+        async function handleSignup(event) {
+            event.preventDefault();
+
+            if (!auth) {
+                showToast('Firebase 설정값(firebaseConfig)을 먼저 입력해주세요!', 'error');
+                return;
+            }
+
+            const name     = document.getElementById('signup-name').value.trim();
+            const email    = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+
+            if (!name || !email || !password) {
+                showToast('모든 항목을 입력해주세요.', 'error');
+                return;
+            }
+
+            // 버튼 로딩 상태
+            setLoading(true);
+
+            try {
+                // Firebase 회원가입
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+
+                // 표시 이름(성명) 저장
+                await userCredential.user.updateProfile({ displayName: name });
+
+                showToast(`${name} 학생, 가입을 환영합니다! 🎉`);
+
+                // 2초 후 메인 페이지로 이동
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+
+            } catch (error) {
+                const errorMessages = {
+                    'auth/email-already-in-use': '이미 사용 중인 이메일입니다.',
+                    'auth/invalid-email':        '이메일 형식이 올바르지 않습니다.',
+                    'auth/weak-password':        '비밀번호는 6자리 이상이어야 합니다.',
+                    'auth/too-many-requests':    '잠시 후 다시 시도해주세요.',
+                };
+                showToast(errorMessages[error.code] || `에러: ${error.message}`, 'error');
+                setLoading(false);
+            }
+        }
+
+        // ==========================================
+        // UI 유틸리티
+        // ==========================================
+
+        // 버튼 로딩 상태 토글
+        function setLoading(isLoading) {
+            const btn  = document.getElementById('submit-btn');
+            const text = document.getElementById('btn-text');
+            const icon = document.getElementById('btn-icon');
+
+            if (isLoading) {
+                btn.disabled = true;
+                btn.classList.add('opacity-70', 'cursor-not-allowed');
+                text.textContent = '처리 중...';
+                icon.setAttribute('data-lucide', 'loader');
+                icon.classList.add('animate-spin');
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                text.textContent = '가입하기';
+                icon.setAttribute('data-lucide', 'arrow-right');
+                icon.classList.remove('animate-spin');
+            }
+            lucide.createIcons();
+        }
+
+        // 비밀번호 표시/숨김 토글
+        document.getElementById('toggle-pw').addEventListener('click', () => {
+            const pw   = document.getElementById('signup-password');
+            const icon = document.getElementById('pw-eye-icon');
+            const isHidden = pw.type === 'password';
+            pw.type = isHidden ? 'text' : 'password';
+            icon.setAttribute('data-lucide', isHidden ? 'eye-off' : 'eye');
+            lucide.createIcons();
+        });
+
+        // 토스트 알림
+        let toastTimeout;
+        function showToast(message, type = 'success') {
+            const toast   = document.getElementById('toast');
+            const wrapper = document.getElementById('toast-icon-wrapper');
+            const icon    = document.getElementById('toast-icon');
+            const msg     = document.getElementById('toast-msg');
+
+            msg.textContent = message;
+
+            if (type === 'error') {
+                wrapper.className = 'p-1.5 rounded-full bg-rose-500/20';
+                icon.setAttribute('data-lucide', 'alert-circle');
+                icon.className = 'w-4 h-4 text-rose-400';
+            } else {
+                wrapper.className = 'p-1.5 rounded-full bg-emerald-500/20';
+                icon.setAttribute('data-lucide', 'check');
+                icon.className = 'w-4 h-4 text-emerald-400';
+            }
+            lucide.createIcons();
+
+            clearTimeout(toastTimeout);
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-32', 'opacity-0');
+            }, 4000);
+        }
+
+        // 아이콘 초기화
+        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+    </script>
+
+</body>
+</html>
