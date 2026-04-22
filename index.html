@@ -303,23 +303,6 @@
         <!-- ==================== 1. 홈 섹션 ==================== -->
         <section id="home" class="fade-in block space-y-8">
 
-            <!-- 로그인 환영 배너 (로그인 시에만 표시) -->
-            <div id="welcome-banner" class="hidden items-center justify-between bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl px-6 py-4 shadow-lg shadow-blue-500/20">
-                <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                        <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <div>
-                        <p class="font-black text-base"><span id="welcome-name"></span> 학생, 반갑습니다! 👋</p>
-                        <p class="text-blue-100 text-sm font-medium">오늘도 멋진 하루 되세요. 수업 자료와 과제를 확인해보세요.</p>
-                    </div>
-                </div>
-                <button onclick="handleSignOut()" class="hidden sm:flex items-center space-x-1.5 bg-white/15 hover:bg-white/25 transition-colors px-4 py-2 rounded-xl text-sm font-bold">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
-                    <span>로그아웃</span>
-                </button>
-            </div>
-
             <!-- 화려한 Hero Banner -->
             <div class="relative bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/20 p-1">
                 <!-- Animated Background Blobs -->
@@ -736,8 +719,6 @@
             const mobileBtn       = document.getElementById('mobile-auth-btn');
             const mobileUserInfo  = document.getElementById('mobile-user-info');
             const mobileUserName  = document.getElementById('mobile-user-name');
-            const welcomeBanner   = document.getElementById('welcome-banner');
-            const welcomeName     = document.getElementById('welcome-name');
 
             if (currentUser) {
                 const name  = currentUser.displayName || currentUser.email.split('@')[0];
@@ -766,11 +747,6 @@
                 mobileUserInfo.classList.remove('hidden');
                 mobileUserName.textContent = name;
 
-                // 환영 배너
-                welcomeName.textContent = name;
-                welcomeBanner.classList.remove('hidden');
-                welcomeBanner.classList.add('flex');
-
             } else {
                 desktopBtn.classList.remove('hidden');
                 desktopUserInfo.classList.add('hidden');
@@ -779,9 +755,6 @@
 
                 mobileBtn.classList.remove('hidden');
                 mobileUserInfo.classList.add('hidden');
-
-                welcomeBanner.classList.add('hidden');
-                welcomeBanner.classList.remove('flex');
             }
             lucide.createIcons();
         }
