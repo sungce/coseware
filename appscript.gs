@@ -21,12 +21,13 @@ function doGet(e) {
       const lastRow = sheet.getLastRow();
       let members   = [];
       if (lastRow > 1) {
-        const rows = sheet.getRange(2, 1, lastRow - 1, 4).getValues();
-        members = rows.filter(r => r[2]).map(r => ({
-          date : r[0] ? String(r[0]) : '',
-          name : r[1] ? String(r[1]) : '',
-          email: r[2] ? String(r[2]) : '',
-          uid  : r[3] ? String(r[3]) : '',
+        const rows = sheet.getRange(2, 1, lastRow - 1, 5).getValues();
+        members = rows.filter(r => r[3]).map(r => ({
+          date      : r[0] ? String(r[0]) : '',
+          name      : r[1] ? String(r[1]) : '',
+          studentId : r[2] ? String(r[2]) : '',
+          email     : r[3] ? String(r[3]) : '',
+          uid       : r[4] ? String(r[4]) : '',
         }));
       }
       result = { members };
@@ -167,12 +168,15 @@ function doPost(e) {
     // 회원가입 저장
     let sheet = ss.getSheetByName(SHEET_MEMBERS);
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['가입일시', '성명', '이메일', 'Firebase UID']);
-      sheet.getRange(1, 1, 1, 4).setFontWeight('bold').setBackground('#4285f4').setFontColor('#ffffff');
+      sheet.appendRow(['가입일시', '성명', '학번', '이메일', 'Firebase UID']);
+      sheet.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#4285f4').setFontColor('#ffffff');
     }
     sheet.appendRow([
       new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
-      data.name || '', data.email || '', data.uid || '',
+      data.name      || '',
+      data.studentId || '',
+      data.email     || '',
+      data.uid       || '',
     ]);
     return jsonResponse({ result: 'success' });
 

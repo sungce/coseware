@@ -123,6 +123,17 @@
                     </div>
                 </div>
 
+                <!-- 학번 -->
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-200 flex items-center space-x-2">
+                        <i data-lucide="hash" class="w-4 h-4 text-blue-400"></i>
+                        <span>학번</span>
+                    </label>
+                    <input type="text" id="signup-studentid" placeholder="예: 30101"
+                        class="input-field w-full bg-white/90 border border-white/30 text-slate-900 placeholder-slate-400 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all font-medium"
+                        required>
+                </div>
+
                 <!-- 이메일 -->
                 <div class="space-y-2">
                     <label class="text-sm font-bold text-slate-200 flex items-center space-x-2">
@@ -223,14 +234,13 @@
         // ==========================================
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoOJxiiu_qxttNJyTMT0CbC5YlwVQTbyhUH8iCqWUF2cEeAGVYfYJBZ200gViRZg4q/exec';
 
-        async function sendToSheet(name, email, uid) {
+        async function sendToSheet(name, studentId, email, uid) {
             try {
-                // no-cors 모드에서는 Content-Type을 text/plain으로 해야 전송됨
                 await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ type: 'member', name, email, uid })
+                    body: JSON.stringify({ type: 'member', name, studentId, email, uid })
                 });
                 console.log('시트 전송 완료');
             } catch (e) {
@@ -249,11 +259,12 @@
                 return;
             }
 
-            const name     = document.getElementById('signup-name').value.trim();
-            const email    = document.getElementById('signup-email').value.trim();
-            const password = document.getElementById('signup-password').value;
+            const name      = document.getElementById('signup-name').value.trim();
+            const studentId = document.getElementById('signup-studentid').value.trim();
+            const email     = document.getElementById('signup-email').value.trim();
+            const password  = document.getElementById('signup-password').value;
 
-            if (!name || !email || !password) {
+            if (!name || !studentId || !email || !password) {
                 showToast('모든 항목을 입력해주세요.', 'error');
                 return;
             }
@@ -269,7 +280,7 @@
                 await userCredential.user.updateProfile({ displayName: name });
 
                 // 3. Google Sheets 저장
-                await sendToSheet(name, email, userCredential.user.uid);
+                await sendToSheet(name, studentId, email, userCredential.user.uid);
 
                 showToast(`${name} 학생, 가입을 환영합니다! 🎉`);
                 setTimeout(() => { window.location.href = 'index.html'; }, 2000);

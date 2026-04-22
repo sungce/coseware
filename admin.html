@@ -147,13 +147,14 @@
                             <tr class="bg-slate-50 border-b border-slate-100">
                                 <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">번호</th>
                                 <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">성명</th>
+                                <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">학번</th>
                                 <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">이메일</th>
                                 <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">가입일시</th>
                             </tr>
                         </thead>
                         <tbody id="member-table-body">
                             <tr>
-                                <td colspan="4" class="text-center py-12 text-slate-400 font-medium">
+                                <td colspan="5" class="text-center py-12 text-slate-400 font-medium">
                                     <div class="flex flex-col items-center space-y-2">
                                         <i data-lucide="loader" class="w-6 h-6 animate-spin text-blue-400"></i>
                                         <span>데이터를 불러오는 중...</span>
@@ -354,13 +355,14 @@
         function renderMembers(list) {
             const tbody = document.getElementById('member-table-body');
             if (!list.length) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-10 text-slate-400 font-medium">가입한 학생이 없습니다.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-400 font-medium">가입한 학생이 없습니다.</td></tr>`;
                 return;
             }
             tbody.innerHTML = list.map((m, i) => `
                 <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                     <td class="px-5 py-4 text-xs font-bold text-slate-400">${i + 1}</td>
                     <td class="px-5 py-4 font-bold text-slate-800">${m.name || '-'}</td>
+                    <td class="px-5 py-4 text-slate-500 font-medium text-sm">${m.studentId || '-'}</td>
                     <td class="px-5 py-4 text-slate-500 font-medium text-sm">${m.email || '-'}</td>
                     <td class="px-5 py-4 text-slate-400 font-medium text-xs">${m.date || '-'}</td>
                 </tr>
@@ -370,8 +372,9 @@
         function filterMembers() {
             const q = document.getElementById('member-search').value.toLowerCase();
             const filtered = allMembers.filter(m =>
-                (m.name  || '').toLowerCase().includes(q) ||
-                (m.email || '').toLowerCase().includes(q)
+                (m.name      || '').toLowerCase().includes(q) ||
+                (m.studentId || '').toLowerCase().includes(q) ||
+                (m.email     || '').toLowerCase().includes(q)
             );
             renderMembers(filtered);
         }
