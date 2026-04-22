@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가입 학생 목록 - 정보 클래스룸</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
+        .fade-in { animation: fadeIn 0.45s cubic-bezier(0.16,1,0.3,1) forwards; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        .card { background:#fff; border-radius:1.5rem; border:1px solid #f1f5f9; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen" style="background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:32px 32px;">
+
+    <!-- 접근 차단 오버레이 -->
+    <div id="access-denied" class="fixed inset-0 z-[200] bg-white hidden flex-col items-center justify-center">
+        <div class="w-16 h-16 bg-rose-100 text-rose-500 rounded-3xl flex items-center justify-center mb-6">
+            <i data-lucide="shield-off" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-2xl font-black text-slate-900 mb-2">접근 권한 없음</h2>
+        <p class="text-slate-500 font-medium mb-8">관리자만 접근할 수 있는 페이지입니다.</p>
+        <a href="index.html" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors">메인으로 돌아가기</a>
+    </div>
+
+    <!-- 네비게이션 -->
+    <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="admin.html" class="text-slate-400 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </a>
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-2.5 rounded-xl shadow-lg shadow-blue-500/30">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="font-black text-lg text-slate-900">가입 학생 목록</span>
+                            <span class="ml-2 text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">Admin</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="hidden sm:flex items-center space-x-2 bg-slate-100 px-4 py-2 rounded-xl">
+                        <i data-lucide="user-check" class="w-4 h-4 text-slate-500"></i>
+                        <span id="admin-name" class="text-sm font-bold text-slate-700"></span>
+                    </div>
+                    <button onclick="handleSignOut()"
+                        class="flex items-center space-x-1.5 text-slate-500 hover:text-rose-500 px-3 py-2 rounded-xl hover:bg-rose-50 text-sm font-bold transition-colors">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">로그아웃</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-6 pt-28 pb-24 fade-in">
+
+        <!-- 통계 카드 -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+            <div class="card p-6">
+                <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-3">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <p class="text-2xl font-black text-slate-900" id="stat-total">-</p>
+                <p class="text-sm font-medium text-slate-400 mt-0.5">전체 학생</p>
+            </div>
+            <div class="card p-6">
+                <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-3">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                </div>
+                <p class="text-2xl font-black text-slate-900" id="stat-today">-</p>
+                <p class="text-sm font-medium text-slate-400 mt-0.5">오늘 가입</p>
+            </div>
+            <div class="card p-6 col-span-2 sm:col-span-1">
+                <div class="w-10 h-10 bg-violet-50 text-violet-600 rounded-xl flex items-center justify-center mb-3">
+                    <i data-lucide="link" class="w-5 h-5"></i>
+                </div>
+                <a href="https://docs.google.com/spreadsheets/d/1EIA8zU82F9UXBOQz-6u92Su1zUFPsT_RFqS0Yuqpz2c/edit"
+                    target="_blank"
+                    class="text-sm font-bold text-violet-600 hover:underline flex items-center space-x-1 mt-1">
+                    <span>Google Sheets 열기</span>
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+                <p class="text-sm font-medium text-slate-400 mt-0.5">회원 DB</p>
+            </div>
+        </div>
+
+        <!-- 목록 카드 -->
+        <div class="card p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-black text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="list" class="w-5 h-5 text-blue-500"></i>
+                    <span>학생 목록</span>
+                </h2>
+                <button onclick="loadMembers()"
+                    class="flex items-center space-x-2 text-sm font-bold text-slate-500 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 px-3 py-2 rounded-xl border border-slate-100 hover:border-blue-100 transition-all">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <span>새로고침</span>
+                </button>
+            </div>
+
+            <!-- 검색 -->
+            <div class="relative mb-6">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <input type="text" id="member-search" placeholder="이름 또는 이메일 검색..."
+                    oninput="filterMembers()"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+            </div>
+
+            <!-- 테이블 -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-100">
+                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-12">번호</th>
+                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">성명</th>
+                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">학번</th>
+                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">이메일</th>
+                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">가입일시</th>
+                        </tr>
+                    </thead>
+                    <tbody id="member-table-body">
+                        <tr>
+                            <td colspan="5" class="text-center py-16 text-slate-400 font-medium">
+                                <div class="flex flex-col items-center space-y-2">
+                                    <i data-lucide="loader" class="w-6 h-6 animate-spin text-blue-400"></i>
+                                    <span>데이터를 불러오는 중...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-slate-400 font-medium mt-3" id="search-result-label"></p>
+        </div>
+    </main>
+
+    <!-- 토스트 -->
+    <div id="toast" class="fixed bottom-8 right-8 bg-slate-900/95 backdrop-blur-md text-white px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-32 opacity-0 z-50 flex items-center space-x-3 border border-slate-700">
+        <div class="p-1.5 rounded-full bg-emerald-500/20" id="toast-icon-wrapper">
+            <i data-lucide="check" class="w-4 h-4 text-emerald-400" id="toast-icon"></i>
+        </div>
+        <span class="font-medium text-sm" id="toast-msg"></span>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM",
+            authDomain: "book-c2d05.firebaseapp.com",
+            projectId: "book-c2d05",
+            storageBucket: "book-c2d05.firebasestorage.app",
+            messagingSenderId: "566939045493",
+            appId: "1:566939045493:web:da65c6ad61f528d446f23c"
+        };
+        const ADMIN_EMAILS    = ['sungce27@gmail.com'];
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYheQ0HV-xFjmceYzHPjAlF5JmvwRhULsCIH9mBOUZbWeP1Y0EBUhsAEpwh3hHml7M/exec';
+
+        const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(app);
+
+        auth.onAuthStateChanged((user) => {
+            if (!user || !ADMIN_EMAILS.includes(user.email)) {
+                document.getElementById('access-denied').classList.remove('hidden');
+                document.getElementById('access-denied').classList.add('flex');
+                lucide.createIcons();
+                return;
+            }
+            const name = user.displayName || user.email.split('@')[0];
+            document.getElementById('admin-name').textContent = name;
+            lucide.createIcons();
+            loadMembers();
+        });
+
+        async function handleSignOut() {
+            await auth.signOut();
+            window.location.href = 'index.html';
+        }
+
+        // ── 회원 목록 로드 (JSONP) ───────────────────────────
+        let allMembers = [];
+
+        function loadMembers() {
+            const tbody = document.getElementById('member-table-body');
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-16 text-slate-400">
+                <div class="flex flex-col items-center space-y-2">
+                    <i data-lucide="loader" class="w-6 h-6 animate-spin text-blue-400"></i>
+                    <span>불러오는 중...</span>
+                </div></td></tr>`;
+            lucide.createIcons();
+
+            const old = document.getElementById('jsonp-members');
+            if (old) old.remove();
+
+            const timer = setTimeout(() => {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-400 font-medium">데이터를 불러오지 못했습니다.</td></tr>`;
+            }, 8000);
+
+            window.__membersCallback = function(data) {
+                clearTimeout(timer);
+                const s = document.getElementById('jsonp-members');
+                if (s) s.remove();
+                allMembers = data.members || [];
+                updateStats();
+                renderMembers(allMembers);
+            };
+
+            const script = document.createElement('script');
+            script.id  = 'jsonp-members';
+            script.src = `${APPS_SCRIPT_URL}?action=getMembers&callback=__membersCallback`;
+            document.body.appendChild(script);
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = allMembers.length;
+            const today = new Date().toLocaleDateString('ko-KR');
+            const todayCount = allMembers.filter(m => {
+                return m.date && m.date.includes(today.replace(/\. /g,'.').slice(0,10));
+            }).length;
+            document.getElementById('stat-today').textContent = todayCount;
+        }
+
+        function renderMembers(list) {
+            const tbody = document.getElementById('member-table-body');
+            document.getElementById('search-result-label').textContent =
+                list.length !== allMembers.length ? `검색 결과 ${list.length}명` : '';
+
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-slate-400 font-medium">
+                    ${allMembers.length ? '검색 결과가 없습니다.' : '가입한 학생이 없습니다.'}</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map((m, i) => `
+                <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                    <td class="px-5 py-4 text-xs font-bold text-slate-400">${i + 1}</td>
+                    <td class="px-5 py-4 font-bold text-slate-800">${m.name || '-'}</td>
+                    <td class="px-5 py-4 text-slate-500 font-medium">${m.studentId || '-'}</td>
+                    <td class="px-5 py-4 text-slate-500 font-medium text-sm">${m.email || '-'}</td>
+                    <td class="px-5 py-4 text-slate-400 font-medium text-xs">${m.date || '-'}</td>
+                </tr>`).join('');
+        }
+
+        function filterMembers() {
+            const q = document.getElementById('member-search').value.toLowerCase();
+            const filtered = allMembers.filter(m =>
+                (m.name      || '').toLowerCase().includes(q) ||
+                (m.studentId || '').toLowerCase().includes(q) ||
+                (m.email     || '').toLowerCase().includes(q)
+            );
+            renderMembers(filtered);
+        }
+
+        // 토스트
+        let toastTimeout;
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = message;
+            clearTimeout(toastTimeout);
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            toastTimeout = setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 4000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+    </script>
+</body>
+</html>

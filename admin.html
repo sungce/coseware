@@ -434,90 +434,23 @@
             window.location.href = 'index.html';
         }
 
-        // ==========================================
-        // 회원 목록 로드 (JSONP 방식 - CORS 우회)
-        // ==========================================
-        let allMembers = [];
-
+        // ── 회원 수 로드 (링크 카드 숫자 표시용) ─────────────
         function loadMembers() {
-            const tbody = document.getElementById('member-table-body');
-            tbody.innerHTML = `
-                <tr><td colspan="4" class="text-center py-12 text-slate-400 font-medium">
-                    <div class="flex flex-col items-center space-y-2">
-                        <i data-lucide="loader" class="w-6 h-6 animate-spin text-blue-400"></i>
-                        <span>불러오는 중...</span>
-                    </div>
-                </td></tr>`;
-            lucide.createIcons();
-
-            // 기존 JSONP 스크립트 제거
-            const old = document.getElementById('jsonp-script');
+            const old = document.getElementById('jsonp-members-admin');
             if (old) old.remove();
-
-            // JSONP 콜백 함수 등록
-            window.__membersCallback = function(data) {
-                allMembers = data.members || [];
-                document.getElementById('stat-members').textContent = allMembers.length;
-                renderMembers(allMembers);
-                document.getElementById('jsonp-script').remove();
-            };
-
-            // 타임아웃 처리
-            const timer = setTimeout(() => {
-                tbody.innerHTML = `
-                    <tr><td colspan="4" class="text-center py-12">
-                        <div class="flex flex-col items-center space-y-3">
-                            <i data-lucide="wifi-off" class="w-6 h-6 text-rose-400"></i>
-                            <span class="text-slate-500 font-medium">데이터를 불러오지 못했습니다.</span>
-                            <span class="text-xs text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg">
-                                Apps Script를 <b>새 배포</b>로 다시 배포해주세요.
-                            </span>
-                        </div>
-                    </td></tr>`;
-                lucide.createIcons();
-            }, 8000);
-
-            window.__membersCallback = function(data) {
-                clearTimeout(timer);
-                allMembers = data.members || [];
-                document.getElementById('stat-members').textContent = allMembers.length;
-                renderMembers(allMembers);
-                const s = document.getElementById('jsonp-script');
+            window.__membersAdminCb = function(data) {
+                const s = document.getElementById('jsonp-members-admin');
                 if (s) s.remove();
+                const count = (data.members || []).length;
+                const el = document.getElementById('stat-members');
+                if (el) el.textContent = count;
+                const el2 = document.getElementById('stat-members-link');
+                if (el2) el2.textContent = count + '명';
             };
-
-            // JSONP 스크립트 태그 삽입
             const script = document.createElement('script');
-            script.id  = 'jsonp-script';
-            script.src = `${APPS_SCRIPT_URL}?action=getMembers&callback=__membersCallback`;
+            script.id  = 'jsonp-members-admin';
+            script.src = `${APPS_SCRIPT_URL}?action=getMembers&callback=__membersAdminCb`;
             document.body.appendChild(script);
-        }
-
-        function renderMembers(list) {
-            const tbody = document.getElementById('member-table-body');
-            if (!list.length) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-400 font-medium">가입한 학생이 없습니다.</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = list.map((m, i) => `
-                <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                    <td class="px-5 py-4 text-xs font-bold text-slate-400">${i + 1}</td>
-                    <td class="px-5 py-4 font-bold text-slate-800">${m.name || '-'}</td>
-                    <td class="px-5 py-4 text-slate-500 font-medium text-sm">${m.studentId || '-'}</td>
-                    <td class="px-5 py-4 text-slate-500 font-medium text-sm">${m.email || '-'}</td>
-                    <td class="px-5 py-4 text-slate-400 font-medium text-xs">${m.date || '-'}</td>
-                </tr>
-            `).join('');
-        }
-
-        function filterMembers() {
-            const q = document.getElementById('member-search').value.toLowerCase();
-            const filtered = allMembers.filter(m =>
-                (m.name      || '').toLowerCase().includes(q) ||
-                (m.studentId || '').toLowerCase().includes(q) ||
-                (m.email     || '').toLowerCase().includes(q)
-            );
-            renderMembers(filtered);
         }
 
         // ==========================================
