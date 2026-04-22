@@ -453,17 +453,27 @@
 
         <!-- ==================== 2. 공지사항 섹션 ==================== -->
         <section id="notices" class="fade-in hidden max-w-4xl mx-auto space-y-8">
-            <div class="text-center mb-12">
-                <div
-                    class="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-rose-50 text-rose-500 mb-6 shadow-sm">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-rose-50 text-rose-500 mb-6 shadow-sm">
                     <i data-lucide="bell-ring" class="w-8 h-8"></i>
                 </div>
                 <h2 class="text-4xl font-black text-slate-900 tracking-tight mb-4">공지사항</h2>
                 <p class="text-lg text-slate-500 font-medium">정보 수업과 관련된 중요 소식과 일정을 확인하세요.</p>
             </div>
 
-            <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden" id="notices-list">
-                <!-- JS Data Injected Here -->
+            <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+                <!-- 로딩 -->
+                <div id="notices-loading" class="py-16 flex flex-col items-center space-y-3 text-slate-400">
+                    <i data-lucide="loader" class="w-6 h-6 animate-spin text-rose-400"></i>
+                    <span class="font-medium text-sm">불러오는 중...</span>
+                </div>
+                <!-- 비어있음 -->
+                <div id="notices-empty" class="hidden py-16 flex flex-col items-center space-y-3 text-slate-400">
+                    <i data-lucide="inbox" class="w-10 h-10 text-slate-300"></i>
+                    <p class="font-bold text-slate-500">등록된 공지사항이 없습니다.</p>
+                </div>
+                <!-- 목록 -->
+                <div id="notices-list"></div>
             </div>
         </section>
 
@@ -827,10 +837,7 @@
             const sections = ['home', 'notices', 'classes', 'materials', 'assignments', 'gallery'];
             sections.forEach(id => {
                 const el = document.getElementById(id);
-                if (el) {
-                    el.classList.add('hidden');
-                    el.classList.remove('block');
-                }
+                if (el) { el.classList.add('hidden'); el.classList.remove('block'); }
             });
 
             const targetSection = document.getElementById(sectionId);
@@ -839,17 +846,71 @@
                 targetSection.classList.add('block');
             }
 
+            // 공지사항 섹션 진입 시 데이터 로드
+            if (sectionId === 'notices') loadNotices();
+
             mobileMenu.classList.add('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // ==================== Data Rendering ====================
-        const noticesData = [
-            { type: "important", title: "[필독] 1학기 정보 교과 수행평가 기준 안내", date: "2026.04.22", author: "정보선생님" },
-            { type: "normal", title: "학습자료실 '파이썬 기초' 슬라이드 업데이트", date: "2026.04.20", author: "정보선생님" },
-            { type: "normal", title: "정보실 컴퓨터 사용 수칙 및 자리 배치도", date: "2026.04.15", author: "정보선생님" },
-            { type: "normal", title: "2026학년도 교내 해커톤 대회 사전 안내", date: "2026.04.10", author: "정보선생님" }
-        ];
+
+        // 공지사항 - Google Sheets에서 JSONP로 로드
+        const NOTICE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxzeprhqtvL52lWMqLmBZ9pRHApPHN32fhR3PHB93Jzo90eTouWYpeI1Ci0d5EhbERM/exec';
+
+        function loadNotices() {
+            const old = document.getElementById('jsonp-notices');
+            if (old) old.remove();
+
+            const timer = setTimeout(() => {
+                document.getElementById('notices-loading').classList.add('hidden');
+                document.getElementById('notices-empty').classList.remove('hidden');
+                document.getElementById('notices-empty').classList.add('flex');
+            }, 8000);
+
+            window.__noticesCallback = function(data) {
+                clearTimeout(timer);
+                const s = document.getElementById('jsonp-notices');
+                if (s) s.remove();
+                renderNotices(data.notices || []);
+            };
+
+            const script = document.createElement('script');
+            script.id  = 'jsonp-notices';
+            script.src = `${NOTICE_SCRIPT_URL}?action=getNotices&callback=__noticesCallback`;
+            document.body.appendChild(script);
+        }
+
+        function renderNotices(notices) {
+            document.getElementById('notices-loading').classList.add('hidden');
+            const list = document.getElementById('notices-list');
+            const empty = document.getElementById('notices-empty');
+
+            if (!notices.length) {
+                empty.classList.remove('hidden');
+                empty.classList.add('flex');
+                return;
+            }
+
+            list.innerHTML = notices.map((n, i) => {
+                const isImportant = n.type === 'important';
+                const badge = isImportant
+                    ? `<span class="bg-rose-100 text-rose-600 px-3 py-1 rounded-full text-xs font-black tracking-wide mr-4">중요</span>`
+                    : `<span class="bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-xs font-bold tracking-wide mr-4">일반</span>`;
+                const border = i !== notices.length - 1 ? 'border-b border-slate-100' : '';
+                return `
+                    <div class="flex items-center justify-between p-6 hover:bg-slate-50 transition-colors cursor-pointer group ${border}">
+                        <div class="flex items-center">
+                            ${badge}
+                            <h4 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${n.title}</h4>
+                        </div>
+                        <div class="hidden sm:flex items-center space-x-6 text-sm font-medium text-slate-400">
+                            <span>${n.author || '정보선생님'}</span>
+                            <span>${n.date || ''}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
 
         const classesData = [
             { step: "Module 1", title: "웹 기초와 인터넷 세상", desc: "HTML과 CSS를 이용해 나만의 첫 웹페이지를 기획하고 제작합니다.", icon: "globe", color: "text-blue-500", bg: "bg-blue-50" },
@@ -873,31 +934,7 @@
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. 공지사항 렌더링
-            const noticesList = document.getElementById('notices-list');
-            noticesData.forEach((notice, index) => {
-                const isImportant = notice.type === "important";
-                const badge = isImportant
-                    ? `<span class="bg-rose-100 text-rose-600 px-3 py-1 rounded-full text-xs font-black tracking-wide mr-4">중요</span>`
-                    : `<span class="bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-xs font-bold tracking-wide mr-4">일반</span>`;
-
-                const borderClass = index !== noticesData.length - 1 ? 'border-b border-slate-100' : '';
-
-                noticesList.innerHTML += `
-                    <div class="flex items-center justify-between p-6 hover:bg-slate-50 transition-colors cursor-pointer group ${borderClass}">
-                        <div class="flex items-center">
-                            ${badge}
-                            <h4 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${notice.title}</h4>
-                        </div>
-                        <div class="hidden sm:flex items-center space-x-6 text-sm font-medium text-slate-400">
-                            <span>${notice.author}</span>
-                            <span>${notice.date}</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // 2. 교과수업(커리큘럼) 렌더링
+            // 1. 교과수업(커리큘럼) 렌더링
             const classesGrid = document.getElementById('classes-grid');
             classesData.forEach(cls => {
                 classesGrid.innerHTML += `

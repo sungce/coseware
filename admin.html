@@ -398,21 +398,42 @@
         loadSettings();
 
         // ==========================================
-        // 공지사항 추가
+        // 공지사항 추가 (Google Sheets 저장)
         // ==========================================
-        function addNotice() {
-            const title = document.getElementById('notice-title').value.trim();
-            const type  = document.getElementById('notice-type').value;
+        async function addNotice() {
+            const title      = document.getElementById('notice-title').value.trim();
+            const noticeType = document.getElementById('notice-type').value;
             if (!title) { showToast('제목을 입력해주세요.', 'error'); return; }
 
-            const notices = JSON.parse(localStorage.getItem('notices') || '[]');
-            const today   = new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit' }).replace(/\. /g,'.').replace('.','');
-            notices.unshift({ title, type, date: today, author: '정보선생님' });
-            localStorage.setItem('notices', JSON.stringify(notices));
+            const btn = document.querySelector('button[onclick="addNotice()"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>등록 중...</span>';
+            lucide.createIcons();
 
-            document.getElementById('notice-title').value = '';
-            document.getElementById('stat-notices').textContent = notices.length + 4;
-            showToast('공지사항이 등록되었습니다! 📢');
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({
+                        type      : 'notice',
+                        noticeType,
+                        title,
+                        author    : '정보선생님'
+                    })
+                });
+
+                document.getElementById('notice-title').value = '';
+                const cur = parseInt(document.getElementById('stat-notices').textContent) || 0;
+                document.getElementById('stat-notices').textContent = cur + 1;
+                showToast('공지사항이 등록되었습니다! 📢');
+            } catch(e) {
+                showToast('등록 중 오류가 발생했습니다.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="plus" class="w-4 h-4"></i><span>공지 등록</span>';
+                lucide.createIcons();
+            }
         }
 
         // ==========================================
