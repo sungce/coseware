@@ -167,6 +167,36 @@
                 </div>
             </div>
 
+            <!-- 학습자료 목록 (수정/삭제) -->
+            <div class="lg:col-span-2 card p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-black text-slate-900 flex items-center space-x-2">
+                        <i data-lucide="folder-open" class="w-5 h-5 text-emerald-500"></i>
+                        <span>등록된 학습자료</span>
+                    </h2>
+                    <button onclick="loadMaterialsList()"
+                        class="flex items-center space-x-2 text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors bg-slate-50 hover:bg-emerald-50 px-3 py-2 rounded-xl border border-slate-100 hover:border-emerald-100">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        <span>새로고침</span>
+                    </button>
+                </div>
+                <!-- 단원 필터 -->
+                <div class="flex flex-wrap gap-2 mb-5" id="unit-filter-btns">
+                    <button onclick="filterByUnit('all')" id="filter-all" class="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500 text-white transition-all">전체</button>
+                    <button onclick="filterByUnit('I')"   id="filter-I"   class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all">I. 컴퓨팅</button>
+                    <button onclick="filterByUnit('II')"  id="filter-II"  class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all">II. 데이터</button>
+                    <button onclick="filterByUnit('III')" id="filter-III" class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all">III. 알고리즘</button>
+                    <button onclick="filterByUnit('IV')"  id="filter-IV"  class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all">IV. 인공지능</button>
+                    <button onclick="filterByUnit('V')"   id="filter-V"   class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all">V. 디지털문화</button>
+                </div>
+                <div id="materials-list-admin">
+                    <div class="py-10 flex flex-col items-center space-y-2 text-slate-400">
+                        <i data-lucide="loader" class="w-6 h-6 animate-spin text-emerald-400"></i>
+                        <span class="font-medium text-sm">불러오는 중...</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- 우측 패널 -->
             <div class="space-y-6">
 
@@ -305,6 +335,53 @@
     </main>
 
     <!-- 토스트 -->
+    <!-- 수정 모달 -->
+    <div id="edit-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+        onclick="if(event.target===this) closeEditModal()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="pencil" class="w-5 h-5 text-blue-500"></i>
+                    <span>학습자료 수정</span>
+                </h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-8 py-6 space-y-4">
+                <input type="hidden" id="edit-doc-id">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">단원명</label>
+                    <select id="edit-unit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="I">I. 컴퓨팅 시스템</option>
+                        <option value="II">II. 데이터</option>
+                        <option value="III">III. 알고리즘과 프로그래밍</option>
+                        <option value="IV">IV. 인공지능</option>
+                        <option value="V">V. 디지털 문화</option>
+                    </select>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">제목</label>
+                    <input type="text" id="edit-title" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">내용</label>
+                    <textarea id="edit-content" rows="5" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"></textarea>
+                </div>
+                <p class="text-xs text-slate-400 font-medium flex items-center space-x-1">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                    <span>첨부파일 변경은 삭제 후 재등록해 주세요.</span>
+                </p>
+            </div>
+            <div class="px-8 pb-8 flex space-x-3">
+                <button onclick="closeEditModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-200 transition-colors">취소</button>
+                <button onclick="saveMaterialEdit()" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="save" class="w-4 h-4"></i><span>저장</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="fixed bottom-8 right-8 bg-slate-900/95 backdrop-blur-md text-white px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-32 opacity-0 z-50 flex items-center space-x-3 border border-slate-700">
         <div class="p-1.5 rounded-full" id="toast-icon-wrapper">
             <i data-lucide="check" class="w-4 h-4 text-emerald-400" id="toast-icon"></i>
@@ -349,6 +426,7 @@
             document.getElementById('admin-name').textContent = name;
             lucide.createIcons();
             loadMembers();
+            loadMaterialsList();
         });
 
         async function handleSignOut() {
@@ -440,6 +518,161 @@
                 (m.email     || '').toLowerCase().includes(q)
             );
             renderMembers(filtered);
+        }
+
+        // ==========================================
+        // 학습자료 목록 로드 + 수정/삭제 (Firestore)
+        // ==========================================
+        let allMaterialsDocs = [];
+        let currentUnitFilter = 'all';
+
+        async function loadMaterialsList() {
+            const container = document.getElementById('materials-list-admin');
+            container.innerHTML = `<div class="py-10 flex flex-col items-center space-y-2 text-slate-400">
+                <i data-lucide="loader" class="w-6 h-6 animate-spin text-emerald-400"></i>
+                <span class="font-medium text-sm">불러오는 중...</span></div>`;
+            lucide.createIcons();
+
+            try {
+                const snapshot = await db.collection('materials')
+                    .orderBy('createdAt', 'desc').get();
+
+                allMaterialsDocs = snapshot.docs.map(doc => {
+                    const d  = doc.data();
+                    const ts = d.createdAt;
+                    const date = ts ? ts.toDate().toLocaleDateString('ko-KR', {
+                        year:'numeric', month:'2-digit', day:'2-digit'
+                    }).replace(/\. /g,'.').replace(/\.$/,'') : '';
+                    return { id: doc.id, unit: d.unit, title: d.title,
+                             content: d.content || '', fileName: d.fileName || '',
+                             fileUrl: d.fileUrl || '', date };
+                });
+                renderMaterialsList();
+            } catch(e) {
+                container.innerHTML = `<div class="py-10 text-center text-slate-400 font-medium text-sm">불러오기 실패: ${e.message}</div>`;
+            }
+        }
+
+        const UNIT_LABEL = { 'I':'I','II':'II','III':'III','IV':'IV','V':'V' };
+        const UNIT_COLOR = {
+            'I':'bg-indigo-50 text-indigo-600','II':'bg-emerald-50 text-emerald-600',
+            'III':'bg-rose-50 text-rose-600','IV':'bg-blue-50 text-blue-600','V':'bg-amber-50 text-amber-600'
+        };
+
+        function renderMaterialsList() {
+            const container = document.getElementById('materials-list-admin');
+            const filtered  = currentUnitFilter === 'all'
+                ? allMaterialsDocs
+                : allMaterialsDocs.filter(m => m.unit === currentUnitFilter);
+
+            if (!filtered.length) {
+                container.innerHTML = `<div class="py-10 flex flex-col items-center space-y-2 text-slate-400">
+                    <i data-lucide="inbox" class="w-8 h-8 text-slate-300"></i>
+                    <p class="font-medium text-sm">등록된 자료가 없습니다.</p></div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = `<div class="space-y-2">
+                ${filtered.map(m => `
+                <div class="flex items-center justify-between p-4 bg-slate-50 hover:bg-white border border-slate-100 hover:border-slate-200 rounded-2xl transition-all group">
+                    <div class="flex items-center space-x-3 min-w-0">
+                        <span class="text-xs font-black px-2 py-1 rounded-lg shrink-0 ${UNIT_COLOR[m.unit] || 'bg-slate-100 text-slate-500'}">단원 ${m.unit}</span>
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold text-slate-800 truncate">${m.title}</p>
+                            <p class="text-xs text-slate-400 font-medium">${m.date}${m.fileName ? ' · 📎 '+m.fileName : ''}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 ml-3 shrink-0">
+                        <button onclick="openEditModal('${m.id}')"
+                            class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="수정">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="deleteMaterial('${m.id}', '${m.title.replace(/'/g,"\\'")}')"
+                            class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors" title="삭제">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>`).join('')}
+            </div>`;
+            lucide.createIcons();
+        }
+
+        function filterByUnit(unit) {
+            currentUnitFilter = unit;
+            // 버튼 스타일 업데이트
+            ['all','I','II','III','IV','V'].forEach(u => {
+                const btn = document.getElementById('filter-' + u);
+                if (!btn) return;
+                if (u === unit) {
+                    btn.className = 'text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500 text-white transition-all';
+                } else {
+                    btn.className = 'text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all';
+                }
+            });
+            renderMaterialsList();
+        }
+
+        // ── 수정 모달 ─────────────────────────────────────────
+        function openEditModal(docId) {
+            const m = allMaterialsDocs.find(d => d.id === docId);
+            if (!m) return;
+            document.getElementById('edit-doc-id').value    = m.id;
+            document.getElementById('edit-unit').value      = m.unit;
+            document.getElementById('edit-title').value     = m.title;
+            document.getElementById('edit-content').value   = m.content;
+            const modal = document.getElementById('edit-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('edit-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function saveMaterialEdit() {
+            const docId   = document.getElementById('edit-doc-id').value;
+            const unit    = document.getElementById('edit-unit').value;
+            const title   = document.getElementById('edit-title').value.trim();
+            const content = document.getElementById('edit-content').value.trim();
+            if (!title || !content) { showToast('제목과 내용을 입력해주세요.', 'error'); return; }
+
+            const btn = document.querySelector('button[onclick="saveMaterialEdit()"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>저장 중...</span>';
+            lucide.createIcons();
+
+            try {
+                await db.collection('materials').doc(docId).update({ unit, title, content });
+                // 로컬 목록도 업데이트
+                const idx = allMaterialsDocs.findIndex(d => d.id === docId);
+                if (idx !== -1) Object.assign(allMaterialsDocs[idx], { unit, title, content });
+                renderMaterialsList();
+                closeEditModal();
+                showToast('자료가 수정되었습니다! ✅');
+            } catch(e) {
+                showToast('수정 오류: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i><span>저장</span>';
+                lucide.createIcons();
+            }
+        }
+
+        // ── 삭제 ─────────────────────────────────────────────
+        async function deleteMaterial(docId, title) {
+            if (!confirm(`"${title}" 자료를 삭제할까요?\n(첨부파일은 별도로 유지됩니다)`)) return;
+            try {
+                await db.collection('materials').doc(docId).delete();
+                allMaterialsDocs = allMaterialsDocs.filter(d => d.id !== docId);
+                renderMaterialsList();
+                showToast('자료가 삭제되었습니다.', 'success');
+            } catch(e) {
+                showToast('삭제 오류: ' + e.message, 'error');
+            }
         }
 
         // ==========================================
