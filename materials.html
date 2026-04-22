@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학습자료실 - 정보 클래스룸</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
+        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+        /* 아코디언 슬라이드 */
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s cubic-bezier(0.16,1,0.3,1);
+        }
+        .accordion-body.open { max-height: 2000px; }
+
+        /* 화살표 회전 */
+        .chevron { transition: transform 0.35s ease; }
+        .chevron.open { transform: rotate(180deg); }
+
+        /* 단원별 색상 */
+        .unit-I     { border-left: 4px solid #6366f1; }
+        .unit-II    { border-left: 4px solid #22c55e; }
+        .unit-III   { border-left: 4px solid #ef4444; }
+        .unit-IV    { border-left: 4px solid #3b82f6; }
+        .unit-V     { border-left: 4px solid #f59e0b; }
+
+        .badge-I    { background:#eef2ff; color:#4f46e5; }
+        .badge-II   { background:#f0fdf4; color:#16a34a; }
+        .badge-III  { background:#fff1f2; color:#dc2626; }
+        .badge-IV   { background:#eff6ff; color:#2563eb; }
+        .badge-V    { background:#fffbeb; color:#d97706; }
+
+        .num-I      { color:#6366f1; }
+        .num-II     { color:#22c55e; }
+        .num-III    { color:#ef4444; }
+        .num-IV     { color:#3b82f6; }
+        .num-V      { color:#f59e0b; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen" style="background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:32px 32px;">
+
+    <!-- 네비게이션 -->
+    <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="flex justify-between items-center h-18 py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-slate-400 hover:text-slate-700 transition-colors p-2 rounded-lg hover:bg-slate-100">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </a>
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-2.5 rounded-xl shadow-lg shadow-emerald-500/30">
+                            <i data-lucide="folder-open" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="font-black text-lg text-slate-900">학습자료실</span>
+                            <span class="ml-2 text-xs bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">2022 개정</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="index.html"
+                    class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 transition-colors text-sm font-bold">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">메인으로</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-6 pt-28 pb-24 fade-in">
+
+        <!-- 헤더 -->
+        <div class="text-center mb-12">
+            <p class="text-sm font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-4 py-1.5 rounded-full inline-block mb-4">
+                2022 개정 교육과정 · 중학교 정보
+            </p>
+            <h1 class="text-4xl font-black text-slate-900 tracking-tight mb-4">학습 자료실</h1>
+            <p class="text-slate-500 font-medium text-lg">단원을 클릭하면 학습자료를 확인하고 다운로드할 수 있습니다.</p>
+        </div>
+
+        <!-- 단원 목록 -->
+        <div class="space-y-4" id="units-container">
+
+            <!-- ══ 단원 I ══ -->
+            <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-I">
+                <button onclick="toggleUnit('unit1')"
+                    class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-6">
+                        <span class="text-3xl font-black num-I font-serif">I</span>
+                        <div>
+                            <div class="flex items-center space-x-3 mb-1.5">
+                                <h2 class="text-xl font-black text-slate-900">컴퓨팅 시스템</h2>
+                                <span class="text-xs font-bold badge-I px-2.5 py-1 rounded-full">13차시 · 6소단원</span>
+                            </div>
+                            <p class="text-slate-500 text-sm font-medium">HW·SW 구성 원리와 운영 체제 이해, 마이크로비트로 센서 기반 피지컬 컴퓨팅 프로그래밍</p>
+                            <div class="flex flex-wrap gap-2 mt-2.5">
+                                <span class="text-xs font-bold badge-I px-2 py-0.5 rounded-md">피지컬컴퓨팅</span>
+                                <span class="text-xs font-bold badge-I px-2 py-0.5 rounded-md">마이크로비트</span>
+                                <span class="text-xs font-bold badge-I px-2 py-0.5 rounded-md">센서</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 ml-4 shrink-0">
+                        <span class="hidden sm:flex items-center space-x-1 text-xs text-emerald-600 font-bold">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>개발 완료</span>
+                        </span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit1"></i>
+                    </div>
+                </button>
+                <div class="accordion-body" id="unit1">
+                    <div class="px-8 pb-7 border-t border-slate-100">
+                        <div class="pt-5 grid grid-cols-1 sm:grid-cols-2 gap-3" id="materials-unit1">
+                            <!-- 자료 목록 -->
+                        </div>
+                        <p class="text-xs text-slate-400 font-medium mt-4 flex items-center space-x-1">
+                            <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                            <span>자료를 클릭하면 새 탭에서 열립니다.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ 단원 II ══ -->
+            <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-II">
+                <button onclick="toggleUnit('unit2')"
+                    class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-6">
+                        <span class="text-3xl font-black num-II font-serif">II</span>
+                        <div>
+                            <div class="flex items-center space-x-3 mb-1.5">
+                                <h2 class="text-xl font-black text-slate-900">데이터</h2>
+                                <span class="text-xs font-bold badge-II px-2.5 py-1 rounded-full">13차시 · 6소단원</span>
+                            </div>
+                            <p class="text-slate-500 text-sm font-medium">디지털 데이터 표현(문자·이미지·소리·동영상)과 데이터 수집·구조화·분석, 코답(CODAP) 활용</p>
+                            <div class="flex flex-wrap gap-2 mt-2.5">
+                                <span class="text-xs font-bold badge-II px-2 py-0.5 rounded-md">디지털표현</span>
+                                <span class="text-xs font-bold badge-II px-2 py-0.5 rounded-md">코답</span>
+                                <span class="text-xs font-bold badge-II px-2 py-0.5 rounded-md">데이터분석</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 ml-4 shrink-0">
+                        <span class="hidden sm:flex items-center space-x-1 text-xs text-emerald-600 font-bold">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>개발 완료</span>
+                        </span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit2"></i>
+                    </div>
+                </button>
+                <div class="accordion-body" id="unit2">
+                    <div class="px-8 pb-7 border-t border-slate-100">
+                        <div class="pt-5 grid grid-cols-1 sm:grid-cols-2 gap-3" id="materials-unit2"></div>
+                        <p class="text-xs text-slate-400 font-medium mt-4 flex items-center space-x-1">
+                            <i data-lucide="info" class="w-3.5 h-3.5"></i><span>자료를 클릭하면 새 탭에서 열립니다.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ 단원 III ══ -->
+            <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-III ring-2 ring-red-200">
+                <button onclick="toggleUnit('unit3')"
+                    class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-6">
+                        <span class="text-3xl font-black num-III font-serif">III</span>
+                        <div>
+                            <div class="flex items-center space-x-3 mb-1.5">
+                                <h2 class="text-xl font-black text-slate-900">알고리즘과 프로그래밍</h2>
+                                <span class="text-xs font-bold badge-III px-2.5 py-1 rounded-full">22차시 · 10소단원</span>
+                                <span class="text-xs font-bold bg-red-500 text-white px-2 py-0.5 rounded-full">최대 비중</span>
+                            </div>
+                            <p class="text-slate-500 text-sm font-medium">문제 추상화·알고리즘 설계·순서도 표현, 엔트리로 순차·선택·반복·리스트·함수 프로그래밍</p>
+                            <div class="flex flex-wrap gap-2 mt-2.5">
+                                <span class="text-xs font-bold badge-III px-2 py-0.5 rounded-md">● 엔트리</span>
+                                <span class="text-xs font-bold badge-III px-2 py-0.5 rounded-md">알고리즘</span>
+                                <span class="text-xs font-bold badge-III px-2 py-0.5 rounded-md">순서도</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 ml-4 shrink-0">
+                        <span class="hidden sm:flex items-center space-x-1 text-xs text-emerald-600 font-bold">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>개발 완료</span>
+                        </span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit3"></i>
+                    </div>
+                </button>
+                <div class="accordion-body" id="unit3">
+                    <div class="px-8 pb-7 border-t border-slate-100">
+                        <div class="pt-5 grid grid-cols-1 sm:grid-cols-2 gap-3" id="materials-unit3"></div>
+                        <p class="text-xs text-slate-400 font-medium mt-4 flex items-center space-x-1">
+                            <i data-lucide="info" class="w-3.5 h-3.5"></i><span>자료를 클릭하면 새 탭에서 열립니다.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ 단원 IV ══ -->
+            <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-IV">
+                <button onclick="toggleUnit('unit4')"
+                    class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-6">
+                        <span class="text-3xl font-black num-IV font-serif">IV</span>
+                        <div>
+                            <div class="flex items-center space-x-3 mb-1.5">
+                                <h2 class="text-xl font-black text-slate-900">인공지능</h2>
+                                <span class="text-xs font-bold badge-IV px-2.5 py-1 rounded-full">13차시 · 6소단원</span>
+                            </div>
+                            <p class="text-slate-500 text-sm font-medium">AI 개념·머신러닝 학습 원리, 이미지·소리·텍스트 분류 실습, 인공지능 윤리와 개인정보 보호</p>
+                            <div class="flex flex-wrap gap-2 mt-2.5">
+                                <span class="text-xs font-bold badge-IV px-2 py-0.5 rounded-md">머신러닝</span>
+                                <span class="text-xs font-bold badge-IV px-2 py-0.5 rounded-md">티처블머신</span>
+                                <span class="text-xs font-bold badge-IV px-2 py-0.5 rounded-md">윤리</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 ml-4 shrink-0">
+                        <span class="hidden sm:flex items-center space-x-1 text-xs text-emerald-600 font-bold">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>개발 완료</span>
+                        </span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit4"></i>
+                    </div>
+                </button>
+                <div class="accordion-body" id="unit4">
+                    <div class="px-8 pb-7 border-t border-slate-100">
+                        <div class="pt-5 grid grid-cols-1 sm:grid-cols-2 gap-3" id="materials-unit4"></div>
+                        <p class="text-xs text-slate-400 font-medium mt-4 flex items-center space-x-1">
+                            <i data-lucide="info" class="w-3.5 h-3.5"></i><span>자료를 클릭하면 새 탭에서 열립니다.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ 단원 V ══ -->
+            <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-V">
+                <button onclick="toggleUnit('unit5')"
+                    class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-6">
+                        <span class="text-3xl font-black num-V font-serif">V</span>
+                        <div>
+                            <div class="flex items-center space-x-3 mb-1.5">
+                                <h2 class="text-xl font-black text-slate-900">디지털 문화</h2>
+                                <span class="text-xs font-bold badge-V px-2.5 py-1 rounded-full">7차시 · 6소단원</span>
+                            </div>
+                            <p class="text-slate-500 text-sm font-medium">디지털 시민 의식·저작권·개인정보, 사이버 폭력 예방, 미디어 리터러시와 올바른 인터넷 윤리</p>
+                            <div class="flex flex-wrap gap-2 mt-2.5">
+                                <span class="text-xs font-bold badge-V px-2 py-0.5 rounded-md">윤리</span>
+                                <span class="text-xs font-bold badge-V px-2 py-0.5 rounded-md">저작권</span>
+                                <span class="text-xs font-bold badge-V px-2 py-0.5 rounded-md">미디어리터러시</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 ml-4 shrink-0">
+                        <span class="hidden sm:flex items-center space-x-1 text-xs text-emerald-600 font-bold">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>개발 완료</span>
+                        </span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit5"></i>
+                    </div>
+                </button>
+                <div class="accordion-body" id="unit5">
+                    <div class="px-8 pb-7 border-t border-slate-100">
+                        <div class="pt-5 grid grid-cols-1 sm:grid-cols-2 gap-3" id="materials-unit5"></div>
+                        <p class="text-xs text-slate-400 font-medium mt-4 flex items-center space-x-1">
+                            <i data-lucide="info" class="w-3.5 h-3.5"></i><span>자료를 클릭하면 새 탭에서 열립니다.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /units-container -->
+
+        <!-- 하단 안내 -->
+        <div class="mt-10 bg-blue-50 border border-blue-100 rounded-2xl px-6 py-5 flex items-start space-x-4">
+            <i data-lucide="megaphone" class="w-5 h-5 text-blue-500 mt-0.5 shrink-0"></i>
+            <div>
+                <p class="text-sm font-bold text-blue-800">자료 추가 안내</p>
+                <p class="text-sm text-blue-600 font-medium mt-0.5">새로운 학습자료는 선생님이 순차적으로 업로드할 예정입니다. 공지사항을 확인해 주세요.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="border-t border-slate-200/60 bg-white/60 backdrop-blur-sm">
+        <div class="max-w-5xl mx-auto px-6 py-6 text-center text-sm text-slate-400 font-medium">
+            © 2026 수완하나중학교 정보 교과. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // 단원별 학습자료 데이터
+        // ※ 자료를 추가하려면 각 단원의 배열에 항목을 추가하세요.
+        //   { title: '자료 제목', type: 'PDF|Slide|Code|Video|Link', url: '링크 주소', isNew: true/false }
+        // ==========================================
+        const materialsData = {
+            unit1: [
+                { title: '컴퓨팅 시스템 개요 슬라이드', type: 'Slide', url: '#', isNew: true },
+                { title: 'HW·SW 구성 원리 정리', type: 'PDF', url: '#', isNew: false },
+                { title: '마이크로비트 기초 실습', type: 'Code', url: '#', isNew: false },
+                { title: '센서 기반 프로그래밍 예제', type: 'Code', url: '#', isNew: false },
+            ],
+            unit2: [
+                { title: '디지털 데이터 표현 슬라이드', type: 'Slide', url: '#', isNew: true },
+                { title: '이진수와 문자 인코딩 정리', type: 'PDF', url: '#', isNew: false },
+                { title: 'CODAP 활용 데이터 분석 실습', type: 'Link', url: '#', isNew: true },
+                { title: '데이터 수집·구조화 워크시트', type: 'PDF', url: '#', isNew: false },
+            ],
+            unit3: [
+                { title: '알고리즘 설계 슬라이드', type: 'Slide', url: '#', isNew: true },
+                { title: '순서도 작성 실습 자료', type: 'PDF', url: '#', isNew: false },
+                { title: '엔트리 순차·선택 실습', type: 'Code', url: '#', isNew: false },
+                { title: '엔트리 반복·리스트 실습', type: 'Code', url: '#', isNew: false },
+                { title: '엔트리 함수 프로그래밍', type: 'Code', url: '#', isNew: true },
+                { title: '알고리즘 문제 풀이 모음', type: 'PDF', url: '#', isNew: false },
+            ],
+            unit4: [
+                { title: 'AI 개념 및 머신러닝 원리', type: 'Slide', url: '#', isNew: true },
+                { title: '티처블머신 이미지 분류 실습', type: 'Link', url: 'https://teachablemachine.withgoogle.com', isNew: false },
+                { title: '소리·텍스트 분류 실습 자료', type: 'PDF', url: '#', isNew: false },
+                { title: '인공지능 윤리 토론 자료', type: 'Slide', url: '#', isNew: false },
+            ],
+            unit5: [
+                { title: '디지털 시민 의식 슬라이드', type: 'Slide', url: '#', isNew: true },
+                { title: '저작권과 개인정보 보호', type: 'PDF', url: '#', isNew: false },
+                { title: '사이버 폭력 예방 교육 자료', type: 'Slide', url: '#', isNew: false },
+                { title: '미디어 리터러시 워크시트', type: 'PDF', url: '#', isNew: false },
+            ],
+        };
+
+        // 자료 타입별 아이콘·색상
+        const typeStyle = {
+            'PDF'  : { icon: 'file-text',   color: 'text-rose-500',   bg: 'bg-rose-50',   border: 'border-rose-100' },
+            'Slide': { icon: 'presentation', color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' },
+            'Code' : { icon: 'code-2',       color: 'text-violet-500', bg: 'bg-violet-50', border: 'border-violet-100' },
+            'Video': { icon: 'play-circle',  color: 'text-blue-500',   bg: 'bg-blue-50',   border: 'border-blue-100' },
+            'Link' : { icon: 'link',         color: 'text-teal-500',   bg: 'bg-teal-50',   border: 'border-teal-100' },
+        };
+
+        // 자료 카드 렌더링
+        function renderMaterials() {
+            Object.entries(materialsData).forEach(([unitId, items]) => {
+                const container = document.getElementById('materials-' + unitId);
+                if (!container) return;
+                container.innerHTML = items.map(item => {
+                    const s = typeStyle[item.type] || typeStyle['Link'];
+                    const newBadge = item.isNew
+                        ? `<span class="text-[10px] font-black bg-blue-500 text-white px-1.5 py-0.5 rounded-full ml-1">NEW</span>`
+                        : '';
+                    return `
+                    <a href="${item.url}" target="_blank"
+                        class="group flex items-center space-x-4 bg-slate-50 hover:bg-white border border-slate-100 hover:border-slate-200 hover:shadow-md rounded-2xl px-5 py-4 transition-all duration-200">
+                        <div class="w-10 h-10 ${s.bg} border ${s.border} rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                            <i data-lucide="${s.icon}" class="w-5 h-5 ${s.color}"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors truncate">
+                                ${item.title}${newBadge}
+                            </p>
+                            <p class="text-xs font-medium text-slate-400 mt-0.5">${item.type}</p>
+                        </div>
+                        <i data-lucide="external-link" class="w-4 h-4 text-slate-300 group-hover:text-blue-400 transition-colors shrink-0"></i>
+                    </a>`;
+                }).join('');
+            });
+            lucide.createIcons();
+        }
+
+        // 아코디언 열기/닫기
+        function toggleUnit(unitId) {
+            const body    = document.getElementById(unitId);
+            const chevron = document.getElementById('chevron-' + unitId);
+            const isOpen  = body.classList.contains('open');
+
+            // 모두 닫기 (하나만 열기 원하면 활성화, 여러 개 동시 열기 원하면 주석 처리)
+            // document.querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+            // document.querySelectorAll('.chevron').forEach(c => c.classList.remove('open'));
+
+            if (isOpen) {
+                body.classList.remove('open');
+                chevron.classList.remove('open');
+            } else {
+                body.classList.add('open');
+                chevron.classList.add('open');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMaterials();
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
