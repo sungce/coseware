@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 대시보드 - 정보 클래스룸</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Pretendard', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
+        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+        .card { background:#fff; border-radius:1.5rem; border:1px solid #f1f5f9; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+        .status-done    { background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; }
+        .status-pending { background:#fefce8; color:#ca8a04; border:1px solid #fef08a; }
+        .status-none    { background:#f8fafc; color:#94a3b8; border:1px solid #e2e8f0; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen" style="background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:32px 32px;">
+
+    <!-- 로그인 필요 오버레이 -->
+    <div id="need-login" class="fixed inset-0 z-[200] bg-white hidden flex-col items-center justify-center">
+        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-3xl flex items-center justify-center mb-6">
+            <i data-lucide="lock" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-2xl font-black text-slate-900 mb-2">로그인이 필요합니다</h2>
+        <p class="text-slate-500 font-medium mb-8">대시보드는 로그인 후 이용할 수 있습니다.</p>
+        <a href="index.html" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">로그인 하러 가기</a>
+    </div>
+
+    <!-- 네비게이션 -->
+    <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="flex justify-between items-center h-18 py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-slate-400 hover:text-slate-700 transition-colors p-2 rounded-lg hover:bg-slate-100">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </a>
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-2.5 rounded-xl shadow-lg shadow-blue-500/30">
+                            <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-black text-lg text-slate-900">나의 대시보드</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="hidden sm:flex items-center space-x-2 bg-slate-100 px-4 py-2 rounded-xl">
+                        <i data-lucide="user" class="w-4 h-4 text-slate-500"></i>
+                        <span id="nav-user-name" class="text-sm font-bold text-slate-700"></span>
+                    </div>
+                    <button onclick="handleSignOut()"
+                        class="flex items-center space-x-1.5 text-slate-500 hover:text-rose-500 px-3 py-2 rounded-xl hover:bg-rose-50 text-sm font-bold transition-colors">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">로그아웃</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 pt-28 pb-24 fade-in">
+
+        <!-- 학생 프로필 카드 -->
+        <div class="card p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div class="flex items-center space-x-5">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <i data-lucide="user" class="w-8 h-8 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900" id="profile-name">-</h1>
+                    <p class="text-slate-400 font-medium text-sm" id="profile-email">-</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4 text-center">
+                <div class="bg-slate-50 rounded-2xl px-6 py-4 border border-slate-100">
+                    <p class="text-2xl font-black text-blue-600" id="stat-submitted">-</p>
+                    <p class="text-xs font-bold text-slate-400 mt-1">제출 완료</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl px-6 py-4 border border-slate-100">
+                    <p class="text-2xl font-black text-amber-500" id="stat-pending">-</p>
+                    <p class="text-xs font-bold text-slate-400 mt-1">미제출</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl px-6 py-4 border border-slate-100">
+                    <p class="text-2xl font-black text-emerald-500" id="stat-rate">-</p>
+                    <p class="text-xs font-bold text-slate-400 mt-1">제출률</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- 과제 현황 카드 -->
+            <div class="lg:col-span-1 space-y-4">
+                <h2 class="text-lg font-black text-slate-900 px-1 flex items-center space-x-2">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-500"></i>
+                    <span>과제 현황</span>
+                </h2>
+                <div id="assignment-cards" class="space-y-3">
+                    <!-- JS로 렌더링 -->
+                </div>
+            </div>
+
+            <!-- 제출 내역 테이블 -->
+            <div class="lg:col-span-2">
+                <div class="flex items-center justify-between mb-4 px-1">
+                    <h2 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                        <i data-lucide="history" class="w-5 h-5 text-indigo-500"></i>
+                        <span>제출 내역</span>
+                    </h2>
+                    <button onclick="loadDashboard()"
+                        class="flex items-center space-x-1.5 text-sm font-bold text-slate-500 hover:text-blue-600 bg-white border border-slate-200 hover:border-blue-200 px-3 py-2 rounded-xl transition-all">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        <span>새로고침</span>
+                    </button>
+                </div>
+
+                <div class="card overflow-hidden">
+                    <div id="submissions-loading" class="py-16 flex flex-col items-center space-y-3 text-slate-400">
+                        <i data-lucide="loader" class="w-7 h-7 animate-spin text-blue-400"></i>
+                        <span class="font-medium">불러오는 중...</span>
+                    </div>
+
+                    <div id="submissions-empty" class="hidden py-16 flex flex-col items-center space-y-3 text-slate-400">
+                        <i data-lucide="inbox" class="w-10 h-10 text-slate-300"></i>
+                        <p class="font-bold text-slate-500">아직 제출한 과제가 없습니다.</p>
+                        <a href="index.html" onclick="showAssignments()"
+                            class="text-sm text-blue-500 font-bold hover:underline">과제 제출하러 가기 →</a>
+                    </div>
+
+                    <table id="submissions-table" class="w-full text-sm hidden">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100">
+                                <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-wider">과제명</th>
+                                <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-wider">학번</th>
+                                <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-wider">제출링크</th>
+                                <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-wider">제출일시</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissions-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // Firebase 초기화
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM",
+            authDomain: "book-c2d05.firebaseapp.com",
+            databaseURL: "https://book-c2d05-default-rtdb.firebaseio.com",
+            projectId: "book-c2d05",
+            storageBucket: "book-c2d05.firebasestorage.app",
+            messagingSenderId: "566939045493",
+            appId: "1:566939045493:web:da65c6ad61f528d446f23c"
+        };
+
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyH5tdiw2PNnKnHMngMcqmn2panQmwmoMqWaIa7F3aaGk1Ip9ffOm1CGqDNUd9xPqU/exec';
+
+        // 수행평가 목록 (index.html과 동일하게 유지)
+        const ASSIGNMENTS = [
+            '[1차] 나만의 웹 프로필',
+            '[2차] 파이썬 알고리즘',
+        ];
+
+        const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(app);
+        let currentUser = null;
+
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                document.getElementById('need-login').classList.remove('hidden');
+                document.getElementById('need-login').classList.add('flex');
+                lucide.createIcons();
+                return;
+            }
+            currentUser = user;
+            const name = user.displayName || user.email.split('@')[0];
+            document.getElementById('nav-user-name').textContent  = name;
+            document.getElementById('profile-name').textContent   = name;
+            document.getElementById('profile-email').textContent  = user.email;
+            lucide.createIcons();
+            loadDashboard();
+        });
+
+        async function handleSignOut() {
+            await auth.signOut();
+            window.location.href = 'index.html';
+        }
+
+        // ==========================================
+        // 대시보드 데이터 로드 (JSONP)
+        // ==========================================
+        function loadDashboard() {
+            document.getElementById('submissions-loading').classList.remove('hidden');
+            document.getElementById('submissions-empty').classList.add('hidden');
+            document.getElementById('submissions-table').classList.add('hidden');
+
+            const old = document.getElementById('jsonp-dash');
+            if (old) old.remove();
+
+            const timer = setTimeout(() => {
+                showError();
+            }, 8000);
+
+            window.__dashCallback = function(data) {
+                clearTimeout(timer);
+                const s = document.getElementById('jsonp-dash');
+                if (s) s.remove();
+                renderDashboard(data.submissions || []);
+            };
+
+            const script   = document.createElement('script');
+            script.id      = 'jsonp-dash';
+            const email    = encodeURIComponent(currentUser.email);
+            script.src     = `${APPS_SCRIPT_URL}?action=getSubmissions&email=${email}&callback=__dashCallback`;
+            document.body.appendChild(script);
+        }
+
+        function showError() {
+            document.getElementById('submissions-loading').classList.add('hidden');
+            document.getElementById('submissions-empty').classList.remove('hidden');
+            document.getElementById('submissions-empty').classList.add('flex');
+        }
+
+        // ==========================================
+        // 렌더링
+        // ==========================================
+        function renderDashboard(submissions) {
+            document.getElementById('submissions-loading').classList.add('hidden');
+
+            // 제출된 과제명 Set
+            const submitted = new Set(submissions.map(s => s.assignment));
+
+            // 통계
+            const doneCount    = submitted.size;
+            const pendingCount = ASSIGNMENTS.length - doneCount;
+            const rate         = ASSIGNMENTS.length > 0
+                ? Math.round((doneCount / ASSIGNMENTS.length) * 100) + '%'
+                : '0%';
+
+            document.getElementById('stat-submitted').textContent = doneCount;
+            document.getElementById('stat-pending').textContent   = pendingCount;
+            document.getElementById('stat-rate').textContent      = rate;
+
+            // 과제 현황 카드
+            const cards = document.getElementById('assignment-cards');
+            cards.innerHTML = ASSIGNMENTS.map(title => {
+                const done = submitted.has(title);
+                const sub  = submissions.find(s => s.assignment === title);
+                return `
+                <div class="card p-5 flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center ${done ? 'bg-emerald-50' : 'bg-amber-50'}">
+                            <i data-lucide="${done ? 'check-circle' : 'clock'}" class="w-5 h-5 ${done ? 'text-emerald-500' : 'text-amber-500'}"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800 text-sm">${title}</p>
+                            <p class="text-xs text-slate-400 mt-0.5">${done ? sub.date.substring(0,10) + ' 제출' : '미제출'}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1.5 rounded-full ${done ? 'status-done' : 'status-pending'}">
+                        ${done ? '완료' : '미제출'}
+                    </span>
+                </div>`;
+            }).join('');
+
+            // 제출 내역 테이블
+            if (!submissions.length) {
+                document.getElementById('submissions-empty').classList.remove('hidden');
+                document.getElementById('submissions-empty').classList.add('flex');
+            } else {
+                document.getElementById('submissions-table').classList.remove('hidden');
+                document.getElementById('submissions-tbody').innerHTML = submissions
+                    .slice().reverse()
+                    .map(s => `
+                        <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                            <td class="px-5 py-4 font-bold text-slate-800">${s.assignment || '-'}</td>
+                            <td class="px-5 py-4 text-slate-500 font-medium">${s.studentId || '-'}</td>
+                            <td class="px-5 py-4">
+                                ${s.link && s.link.startsWith('http')
+                                    ? `<a href="${s.link}" target="_blank" class="text-blue-500 font-bold hover:underline flex items-center space-x-1"><i data-lucide="external-link" class="w-3.5 h-3.5"></i><span>링크 열기</span></a>`
+                                    : `<span class="text-slate-400 text-xs font-medium">${s.link ? s.link.substring(0,30)+'...' : '-'}</span>`
+                                }
+                            </td>
+                            <td class="px-5 py-4 text-slate-400 text-xs font-medium">${s.date ? s.date.substring(0,16) : '-'}</td>
+                        </tr>
+                    `).join('');
+            }
+            lucide.createIcons();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+    </script>
+</body>
+</html>
