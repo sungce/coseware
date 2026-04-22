@@ -12,33 +12,15 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <style>
         body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
-        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-        .accordion-body { max-height:0; overflow:hidden; transition:max-height 0.45s cubic-bezier(0.16,1,0.3,1); }
-        .accordion-body.open { max-height:3000px; }
-        .chevron { transition:transform 0.35s ease; }
-        .chevron.open { transform:rotate(180deg); }
-        .unit-I   { border-left:4px solid #6366f1; }
-        .unit-II  { border-left:4px solid #22c55e; }
-        .unit-III { border-left:4px solid #ef4444; }
-        .unit-IV  { border-left:4px solid #3b82f6; }
-        .unit-V   { border-left:4px solid #f59e0b; }
-        .badge-I  { background:#eef2ff; color:#4f46e5; }
-        .badge-II { background:#f0fdf4; color:#16a34a; }
-        .badge-III{ background:#fff1f2; color:#dc2626; }
-        .badge-IV { background:#eff6ff; color:#2563eb; }
-        .badge-V  { background:#fffbeb; color:#d97706; }
-        .num-I  { color:#6366f1; }
-        .num-II { color:#22c55e; }
-        .num-III{ color:#ef4444; }
-        .num-IV { color:#3b82f6; }
-        .num-V  { color:#f59e0b; }
+        .fade-in { animation: fadeIn 0.45s cubic-bezier(0.16,1,0.3,1) forwards; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen" style="background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:32px 32px;">
 
+    <!-- 네비게이션 -->
     <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
-        <div class="max-w-5xl mx-auto px-6">
+        <div class="max-w-4xl mx-auto px-6">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-4">
                     <a href="index.html" class="text-slate-400 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors">
@@ -62,125 +44,41 @@
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto px-6 pt-28 pb-24 fade-in">
-        <div class="text-center mb-12">
-            <p class="text-sm font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-4 py-1.5 rounded-full inline-block mb-4">
-                2022 개정 교육과정 · 중학교 정보
-            </p>
-            <h1 class="text-4xl font-black text-slate-900 tracking-tight mb-4">학습 자료실</h1>
-            <p class="text-slate-500 font-medium text-lg">단원을 클릭하면 학습자료를 확인하고 다운로드할 수 있습니다.</p>
+    <main class="max-w-4xl mx-auto px-6 pt-28 pb-24 fade-in">
+
+        <!-- 헤더 -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight mb-1">학습 자료실</h1>
+            <p class="text-slate-500 font-medium">2022 개정 교육과정 · 중학교 정보</p>
         </div>
 
-        <div class="space-y-4" id="units-container">
-
-            <!-- 단원 I -->
-            <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-I">
-                <button onclick="toggleUnit('unit1')" class="w-full px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
-                    <div class="flex items-center space-x-5">
-                        <span class="text-2xl font-black num-I font-serif w-10 shrink-0">I</span>
-                        <h2 class="text-lg font-black text-slate-900">컴퓨팅 시스템</h2>
-                    </div>
-                    <div class="flex items-center space-x-3 ml-4 shrink-0">
-                        <span id="count-unit1" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full hidden">0개</span>
-                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit1"></i>
-                    </div>
-                </button>
-                <div class="accordion-body" id="unit1">
-                    <div class="px-8 pb-7 border-t border-slate-100">
-                        <div class="pt-5" id="mat-unit1"><div class="py-8 text-center text-slate-400 font-medium flex flex-col items-center space-y-2"><i data-lucide="loader" class="w-5 h-5 animate-spin text-emerald-400"></i><span>불러오는 중...</span></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 단원 II -->
-            <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-II">
-                <button onclick="toggleUnit('unit2')" class="w-full px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
-                    <div class="flex items-center space-x-5">
-                        <span class="text-2xl font-black num-II font-serif w-10 shrink-0">II</span>
-                        <h2 class="text-lg font-black text-slate-900">데이터</h2>
-                    </div>
-                    <div class="flex items-center space-x-3 ml-4 shrink-0">
-                        <span id="count-unit2" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full hidden">0개</span>
-                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit2"></i>
-                    </div>
-                </button>
-                <div class="accordion-body" id="unit2">
-                    <div class="px-8 pb-7 border-t border-slate-100">
-                        <div class="pt-5" id="mat-unit2"><div class="py-8 text-center text-slate-400 font-medium flex flex-col items-center space-y-2"><i data-lucide="loader" class="w-5 h-5 animate-spin text-emerald-400"></i><span>불러오는 중...</span></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 단원 III -->
-            <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-III ring-2 ring-red-200">
-                <button onclick="toggleUnit('unit3')" class="w-full px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
-                    <div class="flex items-center space-x-5">
-                        <span class="text-2xl font-black num-III font-serif w-10 shrink-0">III</span>
-                        <h2 class="text-lg font-black text-slate-900">알고리즘과 프로그래밍</h2>
-                    </div>
-                    <div class="flex items-center space-x-3 ml-4 shrink-0">
-                        <span id="count-unit3" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full hidden">0개</span>
-                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit3"></i>
-                    </div>
-                </button>
-                <div class="accordion-body" id="unit3">
-                    <div class="px-8 pb-7 border-t border-slate-100">
-                        <div class="pt-5" id="mat-unit3"><div class="py-8 text-center text-slate-400 font-medium flex flex-col items-center space-y-2"><i data-lucide="loader" class="w-5 h-5 animate-spin text-emerald-400"></i><span>불러오는 중...</span></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 단원 IV -->
-            <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-IV">
-                <button onclick="toggleUnit('unit4')" class="w-full px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
-                    <div class="flex items-center space-x-5">
-                        <span class="text-2xl font-black num-IV font-serif w-10 shrink-0">IV</span>
-                        <h2 class="text-lg font-black text-slate-900">인공지능</h2>
-                    </div>
-                    <div class="flex items-center space-x-3 ml-4 shrink-0">
-                        <span id="count-unit4" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full hidden">0개</span>
-                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit4"></i>
-                    </div>
-                </button>
-                <div class="accordion-body" id="unit4">
-                    <div class="px-8 pb-7 border-t border-slate-100">
-                        <div class="pt-5" id="mat-unit4"><div class="py-8 text-center text-slate-400 font-medium flex flex-col items-center space-y-2"><i data-lucide="loader" class="w-5 h-5 animate-spin text-emerald-400"></i><span>불러오는 중...</span></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 단원 V -->
-            <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-V">
-                <button onclick="toggleUnit('unit5')" class="w-full px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
-                    <div class="flex items-center space-x-5">
-                        <span class="text-2xl font-black num-V font-serif w-10 shrink-0">V</span>
-                        <h2 class="text-lg font-black text-slate-900">디지털 문화</h2>
-                    </div>
-                    <div class="flex items-center space-x-3 ml-4 shrink-0">
-                        <span id="count-unit5" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full hidden">0개</span>
-                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit5"></i>
-                    </div>
-                </button>
-                <div class="accordion-body" id="unit5">
-                    <div class="px-8 pb-7 border-t border-slate-100">
-                        <div class="pt-5" id="mat-unit5"><div class="py-8 text-center text-slate-400 font-medium flex flex-col items-center space-y-2"><i data-lucide="loader" class="w-5 h-5 animate-spin text-emerald-400"></i><span>불러오는 중...</span></div></div>
-                    </div>
-                </div>
-            </div>
-
+        <!-- 단원 필터 버튼 -->
+        <div class="flex flex-wrap gap-2 mb-6" id="filter-btns">
+            <button onclick="filterUnit('all')" id="btn-all"
+                class="px-4 py-2 rounded-full text-sm font-bold bg-emerald-500 text-white transition-all">전체</button>
+            <button onclick="filterUnit('I')"   id="btn-I"
+                class="px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all">I. 컴퓨팅</button>
+            <button onclick="filterUnit('II')"  id="btn-II"
+                class="px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all">II. 데이터</button>
+            <button onclick="filterUnit('III')" id="btn-III"
+                class="px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all">III. 알고리즘</button>
+            <button onclick="filterUnit('IV')"  id="btn-IV"
+                class="px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all">IV. 인공지능</button>
+            <button onclick="filterUnit('V')"   id="btn-V"
+                class="px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all">V. 디지털문화</button>
         </div>
 
-        <div class="mt-10 bg-blue-50 border border-blue-100 rounded-2xl px-6 py-5 flex items-start space-x-4">
-            <i data-lucide="megaphone" class="w-5 h-5 text-blue-500 mt-0.5 shrink-0"></i>
-            <p class="text-sm text-blue-700 font-medium">새로운 학습자료는 선생님이 순차적으로 업로드할 예정입니다. 공지사항을 확인해 주세요.</p>
+        <!-- 총 개수 -->
+        <p class="text-sm text-slate-400 font-medium mb-4" id="count-label">불러오는 중...</p>
+
+        <!-- 자료 목록 -->
+        <div id="materials-list" class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="py-16 flex flex-col items-center space-y-3 text-slate-400">
+                <i data-lucide="loader" class="w-7 h-7 animate-spin text-emerald-400"></i>
+                <span class="font-medium">자료를 불러오는 중...</span>
+            </div>
         </div>
     </main>
-
-    <footer class="border-t border-slate-200/60 bg-white/60 backdrop-blur-sm">
-        <div class="max-w-5xl mx-auto px-6 py-6 text-center text-sm text-slate-400 font-medium">
-            © 2026 수완하나중학교 정보 교과. All rights reserved.
-        </div>
-    </footer>
 
     <!-- 자료 내용 모달 -->
     <div id="mat-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
@@ -198,18 +96,23 @@
             </div>
             <div class="overflow-y-auto px-8 py-6">
                 <div id="modal-content" class="text-slate-700 font-medium leading-relaxed text-sm whitespace-pre-wrap mb-6"></div>
-                <!-- 파일 다운로드 버튼 (파일 있을 때만 표시) -->
                 <a id="modal-file-btn" href="#" target="_blank"
                     class="hidden items-center justify-center space-x-2 w-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold py-3.5 rounded-2xl hover:bg-emerald-100 transition-colors">
                     <i data-lucide="download" class="w-5 h-5"></i>
-                    <span id="modal-file-name">파일 다운로드</span>
+                    <span id="modal-file-name">첨부파일 다운로드</span>
                 </a>
             </div>
         </div>
     </div>
 
+    <!-- 푸터 -->
+    <footer class="border-t border-slate-200/60 bg-white/60 backdrop-blur-sm">
+        <div class="max-w-4xl mx-auto px-6 py-6 text-center text-sm text-slate-400 font-medium">
+            © 2026 수완하나중학교 정보 교과. All rights reserved.
+        </div>
+    </footer>
+
     <script>
-        // ── Firebase 초기화 ───────────────────────────────────
         const firebaseConfig = {
             apiKey: "AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM",
             authDomain: "book-c2d05.firebaseapp.com",
@@ -221,138 +124,135 @@
         const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
         const db  = firebase.firestore(app);
 
-        const UNIT_MAP = { 'I':'unit1', 'II':'unit2', 'III':'unit3', 'IV':'unit4', 'V':'unit5' };
         const UNIT_NAMES = {
             'I':'I. 컴퓨팅 시스템', 'II':'II. 데이터',
             'III':'III. 알고리즘과 프로그래밍', 'IV':'IV. 인공지능', 'V':'V. 디지털 문화'
         };
+        const UNIT_BADGE = {
+            'I'  : 'bg-indigo-50 text-indigo-600 border-indigo-100',
+            'II' : 'bg-emerald-50 text-emerald-600 border-emerald-100',
+            'III': 'bg-rose-50 text-rose-600 border-rose-100',
+            'IV' : 'bg-blue-50 text-blue-600 border-blue-100',
+            'V'  : 'bg-amber-50 text-amber-600 border-amber-100',
+        };
 
-        let loaded = false;
+        let allMaterials = [];
+        let currentUnit  = 'all';
 
-        // ── Firestore에서 자료 불러오기 ──────────────────────
+        // ── Firestore 로드 ──────────────────────────────────
         async function loadMaterials() {
-            if (loaded) return;
-            loaded = true;
-
             try {
                 const snapshot = await db.collection('materials')
-                    .orderBy('createdAt', 'desc')
-                    .get();
+                    .orderBy('createdAt', 'desc').get();
 
-                const allMaterials = snapshot.docs.map(doc => {
-                    const d = doc.data();
+                allMaterials = snapshot.docs.map(doc => {
+                    const d  = doc.data();
                     const ts = d.createdAt;
                     const date = ts ? ts.toDate().toLocaleDateString('ko-KR', {
                         year:'numeric', month:'2-digit', day:'2-digit'
                     }).replace(/\. /g,'.').replace(/\.$/,'') : '';
-                    return { id: doc.id, unit: d.unit, title: d.title,
-                             content: d.content, fileName: d.fileName || '',
+                    return { id: doc.id, unit: d.unit || '', title: d.title || '',
+                             content: d.content || '', fileName: d.fileName || '',
                              fileUrl: d.fileUrl || '', date };
                 });
-
-                Object.entries(UNIT_MAP).forEach(([roman, uid]) => {
-                    const items = allMaterials.filter(m => m.unit === roman);
-                    // 자료 개수 배지 표시
-                    const countEl = document.getElementById('count-' + uid);
-                    if (countEl) {
-                        countEl.textContent = items.length + '개';
-                        if (items.length > 0) {
-                            countEl.classList.remove('hidden');
-                            countEl.classList.add('text-emerald-600', 'bg-emerald-50');
-                            countEl.classList.remove('text-slate-400', 'bg-slate-100');
-                        } else {
-                            countEl.classList.remove('hidden');
-                        }
-                    }
-                    renderUnitMaterials(uid, items);
-                });
+                renderList();
             } catch(e) {
-                console.error(e);
-                Object.values(UNIT_MAP).forEach(uid => renderUnitMaterials(uid, []));
+                document.getElementById('materials-list').innerHTML =
+                    `<div class="py-16 text-center text-slate-400 font-medium">불러오기 실패: ${e.message}</div>`;
+                document.getElementById('count-label').textContent = '';
             }
         }
 
-        function renderUnitMaterials(uid, items) {
-            const container = document.getElementById('mat-' + uid);
-            if (!container) return;
-            if (!items.length) {
-                container.innerHTML = `
-                    <div class="py-10 flex flex-col items-center space-y-2 text-slate-400">
-                        <i data-lucide="inbox" class="w-8 h-8 text-slate-300"></i>
-                        <p class="font-medium text-sm">등록된 자료가 없습니다.</p>
+        // ── 렌더링 ──────────────────────────────────────────
+        function renderList() {
+            const filtered = currentUnit === 'all'
+                ? allMaterials
+                : allMaterials.filter(m => m.unit === currentUnit);
+
+            const total = allMaterials.length;
+            document.getElementById('count-label').textContent =
+                `전체 ${total}개${currentUnit !== 'all' ? ' · 필터 ' + filtered.length + '개' : ''}`;
+
+            const list = document.getElementById('materials-list');
+            if (!filtered.length) {
+                list.innerHTML = `
+                    <div class="py-16 flex flex-col items-center space-y-3 text-slate-400">
+                        <i data-lucide="inbox" class="w-10 h-10 text-slate-300"></i>
+                        <p class="font-bold text-slate-500">등록된 자료가 없습니다.</p>
                     </div>`;
                 lucide.createIcons();
                 return;
             }
-            const rows = items.map(item => {
-                const safeItem = JSON.stringify(item).replace(/'/g, "\\'");
-                return `<button onclick='openModal(${JSON.stringify(item).replace(/\\/g,"\\\\").replace(/'/g,"\\'")})'
-                    class="w-full flex items-center justify-between px-2 py-4 hover:bg-slate-50 rounded-2xl transition-colors text-left group">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-8 h-8 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                            <i data-lucide="file-text" class="w-4 h-4 text-emerald-600"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">${item.title}</p>
-                            <p class="text-xs text-slate-400 font-medium mt-0.5">${item.date}</p>
+
+            list.innerHTML = filtered.map((item, idx) => {
+                const badge  = UNIT_BADGE[item.unit] || 'bg-slate-50 text-slate-500 border-slate-100';
+                const border = idx < filtered.length - 1 ? 'border-b border-slate-100' : '';
+                const fileIcon = item.fileName
+                    ? `<span class="flex items-center space-x-1 text-slate-400">
+                           <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                           <span>${item.fileName}</span>
+                       </span>` : '';
+                return `
+                <button onclick='openModal(${JSON.stringify(item).replace(/\\/g,'\\\\').replace(/'/g,"\\'")})'
+                    class="w-full flex items-center px-6 py-4 hover:bg-slate-50 transition-colors text-left group ${border}">
+                    <span class="text-xs font-black px-2.5 py-1 rounded-lg border shrink-0 mr-5 ${badge}">단원 ${item.unit}</span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">${item.title}</p>
+                        <div class="flex flex-wrap items-center gap-3 mt-0.5 text-xs text-slate-400 font-medium">
+                            <span>${item.date}</span>
+                            ${fileIcon}
                         </div>
                     </div>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors shrink-0 ml-4"></i>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors shrink-0 ml-3"></i>
                 </button>`;
-            });
-            container.innerHTML = `<div class="divide-y divide-slate-100">${rows.join('')}</div>
-                <p class="text-xs text-slate-400 font-medium mt-3 flex items-center space-x-1 px-2">
-                    <i data-lucide="info" class="w-3.5 h-3.5"></i><span>자료를 클릭하면 내용을 확인할 수 있습니다.</span>
-                </p>`;
+            }).join('');
             lucide.createIcons();
         }
 
+        // ── 필터 ────────────────────────────────────────────
+        function filterUnit(unit) {
+            currentUnit = unit;
+            const units = ['all','I','II','III','IV','V'];
+            units.forEach(u => {
+                const btn = document.getElementById('btn-' + u);
+                if (!btn) return;
+                if (u === unit) {
+                    btn.className = 'px-4 py-2 rounded-full text-sm font-bold bg-emerald-500 text-white transition-all';
+                } else {
+                    btn.className = 'px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-all';
+                }
+            });
+            renderList();
+        }
+
+        // ── 모달 ────────────────────────────────────────────
         function openModal(item) {
             document.getElementById('modal-unit-label').textContent = UNIT_NAMES[item.unit] || ('단원 ' + item.unit);
-            document.getElementById('modal-title').textContent   = item.title;
-            document.getElementById('modal-date').textContent    = item.date + ' 등록';
-            document.getElementById('modal-content').textContent = item.content;
-
-            // 파일 다운로드 버튼
-            const fileBtn  = document.getElementById('modal-file-btn');
-            const fileName = document.getElementById('modal-file-name');
+            document.getElementById('modal-title').textContent      = item.title;
+            document.getElementById('modal-date').textContent       = item.date + ' 등록';
+            document.getElementById('modal-content').textContent    = item.content;
+            const fileBtn = document.getElementById('modal-file-btn');
             if (item.fileUrl) {
                 fileBtn.href = item.fileUrl;
-                fileName.textContent = item.fileName || '첨부파일 다운로드';
-                fileBtn.classList.remove('hidden');
-                fileBtn.classList.add('flex');
+                document.getElementById('modal-file-name').textContent = item.fileName || '첨부파일 다운로드';
+                fileBtn.classList.remove('hidden'); fileBtn.classList.add('flex');
             } else {
-                fileBtn.classList.add('hidden');
-                fileBtn.classList.remove('flex');
+                fileBtn.classList.add('hidden'); fileBtn.classList.remove('flex');
             }
-
             const modal = document.getElementById('mat-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
             lucide.createIcons();
         }
 
         function closeModal() {
             const modal = document.getElementById('mat-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            modal.classList.add('hidden'); modal.classList.remove('flex');
         }
 
-        function toggleUnit(unitId) {
-            const body    = document.getElementById(unitId);
-            const chevron = document.getElementById('chevron-' + unitId);
-            const isOpen  = body.classList.contains('open');
-            if (isOpen) {
-                body.classList.remove('open');
-                chevron.classList.remove('open');
-            } else {
-                body.classList.add('open');
-                chevron.classList.add('open');
-                if (!loaded) loadMaterials();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            loadMaterials();
+        });
     </script>
 </body>
 </html>
