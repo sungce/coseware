@@ -124,6 +124,7 @@
                             <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">학번</th>
                             <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">이메일</th>
                             <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">가입일시</th>
+                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-24">관리</th>
                         </tr>
                     </thead>
                     <tbody id="member-table-body">
@@ -141,6 +142,51 @@
             <p class="text-xs text-slate-400 font-medium mt-3" id="search-result-label"></p>
         </div>
     </main>
+
+    <!-- 수정 모달 -->
+    <div id="edit-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+        onclick="if(event.target===this) closeEditModal()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="pencil" class="w-5 h-5 text-blue-500"></i>
+                    <span>학생 정보 수정</span>
+                </h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-8 py-6 space-y-4">
+                <input type="hidden" id="edit-row-index">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">성명</label>
+                    <input type="text" id="edit-name"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">학번</label>
+                    <input type="text" id="edit-studentid" placeholder="예: 30101"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">이메일</label>
+                    <input type="email" id="edit-email"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                </div>
+                <p class="text-xs text-slate-400 font-medium flex items-center space-x-1">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                    <span>Google Sheets의 해당 행이 직접 업데이트됩니다.</span>
+                </p>
+            </div>
+            <div class="px-8 pb-8 flex space-x-3">
+                <button onclick="closeEditModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-200 transition-colors">취소</button>
+                <button onclick="saveMemberEdit()" id="save-edit-btn"
+                    class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="save" class="w-4 h-4"></i><span>저장</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- 토스트 -->
     <div id="toast" class="fixed bottom-8 right-8 bg-slate-900/95 backdrop-blur-md text-white px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-32 opacity-0 z-50 flex items-center space-x-3 border border-slate-700">
@@ -234,7 +280,7 @@
                 list.length !== allMembers.length ? `검색 결과 ${list.length}명` : '';
 
             if (!list.length) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-slate-400 font-medium">
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-slate-400 font-medium">
                     ${allMembers.length ? '검색 결과가 없습니다.' : '가입한 학생이 없습니다.'}</td></tr>`;
                 return;
             }
@@ -245,7 +291,93 @@
                     <td class="px-5 py-4 text-slate-500 font-medium">${m.studentId || '-'}</td>
                     <td class="px-5 py-4 text-slate-500 font-medium text-sm">${m.email || '-'}</td>
                     <td class="px-5 py-4 text-slate-400 font-medium text-xs">${m.date || '-'}</td>
+                    <td class="px-5 py-4">
+                        <div class="flex items-center space-x-1">
+                            <button onclick="openEditModal(${allMembers.indexOf(m)})"
+                                class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="수정">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="deleteMember(${allMembers.indexOf(m)}, '${(m.name||'').replace(/'/g,"\\'")}', '${(m.email||'').replace(/'/g,"\\'")}')"
+                                class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors" title="삭제">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
                 </tr>`).join('');
+            lucide.createIcons();
+        }
+
+        // ── 수정 모달 ────────────────────────────────────────
+        function openEditModal(idx) {
+            const m = allMembers[idx];
+            if (!m) return;
+            document.getElementById('edit-row-index').value   = idx;
+            document.getElementById('edit-name').value        = m.name      || '';
+            document.getElementById('edit-studentid').value   = m.studentId || '';
+            document.getElementById('edit-email').value       = m.email     || '';
+            const modal = document.getElementById('edit-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            document.getElementById('edit-modal').classList.remove('flex');
+        }
+
+        async function saveMemberEdit() {
+            const idx       = parseInt(document.getElementById('edit-row-index').value);
+            const name      = document.getElementById('edit-name').value.trim();
+            const studentId = document.getElementById('edit-studentid').value.trim();
+            const email     = document.getElementById('edit-email').value.trim();
+            if (!name || !email) { showToast('성명과 이메일을 입력해주세요.', 'error'); return; }
+
+            const btn = document.getElementById('save-edit-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>저장 중...</span>';
+            lucide.createIcons();
+
+            try {
+                const m = allMembers[idx];
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({
+                        type: 'updateMember',
+                        uid: m.uid, name, studentId, email
+                    })
+                });
+                // 로컬 데이터 즉시 반영
+                allMembers[idx] = { ...m, name, studentId, email };
+                renderMembers(allMembers);
+                closeEditModal();
+                showToast('학생 정보가 수정되었습니다! ✅');
+            } catch(e) {
+                showToast('수정 오류: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i><span>저장</span>';
+                lucide.createIcons();
+            }
+        }
+
+        // ── 삭제 ─────────────────────────────────────────────
+        async function deleteMember(idx, name, email) {
+            if (!confirm(`"${name}" (${email}) 학생을 삭제할까요?\n\n※ Google Sheets에서도 삭제됩니다.`)) return;
+            const m = allMembers[idx];
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ type: 'deleteMember', uid: m.uid, email: m.email })
+                });
+                allMembers.splice(idx, 1);
+                updateStats();
+                renderMembers(allMembers);
+                showToast(`${name} 학생이 삭제되었습니다.`);
+            } catch(e) {
+                showToast('삭제 오류: ' + e.message, 'error');
+            }
         }
 
         function filterMembers() {

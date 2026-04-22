@@ -213,6 +213,40 @@ function doPost(e) {
       return jsonResponse({ result: 'success' });
     }
 
+    // 회원 정보 수정
+    if (type === 'updateMember') {
+      const sheet   = ss.getSheetByName(SHEET_MEMBERS);
+      const lastRow = sheet.getLastRow();
+      if (lastRow > 1) {
+        const rows = sheet.getRange(2, 1, lastRow - 1, 5).getValues();
+        for (let i = 0; i < rows.length; i++) {
+          if (String(rows[i][3]) === String(data.email) || String(rows[i][4]) === String(data.uid)) {
+            sheet.getRange(i + 2, 2).setValue(data.name      || '');
+            sheet.getRange(i + 2, 3).setValue(data.studentId || '');
+            sheet.getRange(i + 2, 4).setValue(data.email     || '');
+            break;
+          }
+        }
+      }
+      return jsonResponse({ result: 'success' });
+    }
+
+    // 회원 삭제
+    if (type === 'deleteMember') {
+      const sheet   = ss.getSheetByName(SHEET_MEMBERS);
+      const lastRow = sheet.getLastRow();
+      if (lastRow > 1) {
+        const rows = sheet.getRange(2, 1, lastRow - 1, 5).getValues();
+        for (let i = rows.length - 1; i >= 0; i--) {
+          if (String(rows[i][3]) === String(data.email) || String(rows[i][4]) === String(data.uid)) {
+            sheet.deleteRow(i + 2);
+            break;
+          }
+        }
+      }
+      return jsonResponse({ result: 'success' });
+    }
+
     // 회원가입 저장
     let sheet = ss.getSheetByName(SHEET_MEMBERS);
     // 헤더가 없거나 5열 미만이면 헤더 재설정
