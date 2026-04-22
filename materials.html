@@ -72,26 +72,16 @@
         </div>
 
         <div class="space-y-4" id="units-container">
+
             <!-- 단원 I -->
             <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-I">
-                <button onclick="toggleUnit('unit1')" class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
-                    <div class="flex items-center space-x-6">
-                        <span class="text-3xl font-black num-I font-serif">I</span>
-                        <div>
-                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
-                                <h2 class="text-xl font-black text-slate-900">컴퓨팅 시스템</h2>
-                                <span class="text-xs font-bold badge-I px-2.5 py-1 rounded-full">13차시 · 6소단원</span>
-                            </div>
-                            <p class="text-slate-500 text-sm font-medium">HW·SW 구성 원리와 운영 체제 이해, 마이크로비트로 센서 기반 피지컬 컴퓨팅 프로그래밍</p>
-                            <div class="flex flex-wrap gap-2 mt-2">
-                                <span class="text-xs font-bold badge-I px-2 py-0.5 rounded-md">피지컬컴퓨팅</span>
-                                <span class="text-xs font-bold badge-I px-2 py-0.5 rounded-md">마이크로비트</span>
-                                <span class="text-xs font-bold badge-I px-2 py-0.5 rounded-md">센서</span>
-                            </div>
-                        </div>
+                <button onclick="toggleUnit('unit1')" class="w-full px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-5">
+                        <span class="text-2xl font-black num-I font-serif w-10 shrink-0">I</span>
+                        <h2 class="text-lg font-black text-slate-900">컴퓨팅 시스템</h2>
                     </div>
-                    <div class="flex items-center space-x-2 ml-4 shrink-0">
-                        <span class="hidden sm:flex items-center space-x-1 text-xs text-emerald-600 font-bold"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>개발완료</span></span>
+                    <div class="flex items-center space-x-3 ml-4 shrink-0">
+                        <span id="count-unit1" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full hidden">0개</span>
                         <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit1"></i>
                     </div>
                 </button>
@@ -104,24 +94,13 @@
 
             <!-- 단원 II -->
             <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-II">
-                <button onclick="toggleUnit('unit2')" class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
-                    <div class="flex items-center space-x-6">
-                        <span class="text-3xl font-black num-II font-serif">II</span>
-                        <div>
-                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
-                                <h2 class="text-xl font-black text-slate-900">데이터</h2>
-                                <span class="text-xs font-bold badge-II px-2.5 py-1 rounded-full">13차시 · 6소단원</span>
-                            </div>
-                            <p class="text-slate-500 text-sm font-medium">디지털 데이터 표현(문자·이미지·소리·동영상)과 데이터 수집·구조화·분석, 코답(CODAP) 활용</p>
-                            <div class="flex flex-wrap gap-2 mt-2">
-                                <span class="text-xs font-bold badge-II px-2 py-0.5 rounded-md">디지털표현</span>
-                                <span class="text-xs font-bold badge-II px-2 py-0.5 rounded-md">코답</span>
-                                <span class="text-xs font-bold badge-II px-2 py-0.5 rounded-md">데이터분석</span>
-                            </div>
-                        </div>
+                <button onclick="toggleUnit('unit2')" class="w-full px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-5">
+                        <span class="text-2xl font-black num-II font-serif w-10 shrink-0">II</span>
+                        <h2 class="text-lg font-black text-slate-900">데이터</h2>
                     </div>
-                    <div class="flex items-center space-x-2 ml-4 shrink-0">
-                        <span class="hidden sm:flex items-center space-x-1 text-xs text-emerald-600 font-bold"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>개발완료</span></span>
+                    <div class="flex items-center space-x-3 ml-4 shrink-0">
+                        <span id="count-unit2" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full hidden">0개</span>
                         <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit2"></i>
                     </div>
                 </button>
@@ -134,25 +113,13 @@
 
             <!-- 단원 III -->
             <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-III ring-2 ring-red-200">
-                <button onclick="toggleUnit('unit3')" class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
-                    <div class="flex items-center space-x-6">
-                        <span class="text-3xl font-black num-III font-serif">III</span>
-                        <div>
-                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
-                                <h2 class="text-xl font-black text-slate-900">알고리즘과 프로그래밍</h2>
-                                <span class="text-xs font-bold badge-III px-2.5 py-1 rounded-full">22차시 · 10소단원</span>
-                                <span class="text-xs font-bold bg-red-500 text-white px-2 py-0.5 rounded-full">최대 비중</span>
-                            </div>
-                            <p class="text-slate-500 text-sm font-medium">문제 추상화·알고리즘 설계·순서도 표현, 엔트리로 순차·선택·반복·리스트·함수 프로그래밍</p>
-                            <div class="flex flex-wrap gap-2 mt-2">
-                                <span class="text-xs font-bold badge-III px-2 py-0.5 rounded-md">엔트리</span>
-                                <span class="text-xs font-bold badge-III px-2 py-0.5 rounded-md">알고리즘</span>
-                                <span class="text-xs font-bold badge-III px-2 py-0.5 rounded-md">순서도</span>
-                            </div>
-                        </div>
+                <button onclick="toggleUnit('unit3')" class="w-full px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-5">
+                        <span class="text-2xl font-black num-III font-serif w-10 shrink-0">III</span>
+                        <h2 class="text-lg font-black text-slate-900">알고리즘과 프로그래밍</h2>
                     </div>
-                    <div class="flex items-center space-x-2 ml-4 shrink-0">
-                        <span class="hidden sm:flex items-center space-x-1 text-xs text-emerald-600 font-bold"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>개발완료</span></span>
+                    <div class="flex items-center space-x-3 ml-4 shrink-0">
+                        <span id="count-unit3" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full hidden">0개</span>
                         <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit3"></i>
                     </div>
                 </button>
@@ -165,24 +132,13 @@
 
             <!-- 단원 IV -->
             <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-IV">
-                <button onclick="toggleUnit('unit4')" class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
-                    <div class="flex items-center space-x-6">
-                        <span class="text-3xl font-black num-IV font-serif">IV</span>
-                        <div>
-                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
-                                <h2 class="text-xl font-black text-slate-900">인공지능</h2>
-                                <span class="text-xs font-bold badge-IV px-2.5 py-1 rounded-full">13차시 · 6소단원</span>
-                            </div>
-                            <p class="text-slate-500 text-sm font-medium">AI 개념·머신러닝 학습 원리, 이미지·소리·텍스트 분류 실습, 인공지능 윤리와 개인정보 보호</p>
-                            <div class="flex flex-wrap gap-2 mt-2">
-                                <span class="text-xs font-bold badge-IV px-2 py-0.5 rounded-md">머신러닝</span>
-                                <span class="text-xs font-bold badge-IV px-2 py-0.5 rounded-md">티처블머신</span>
-                                <span class="text-xs font-bold badge-IV px-2 py-0.5 rounded-md">윤리</span>
-                            </div>
-                        </div>
+                <button onclick="toggleUnit('unit4')" class="w-full px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-5">
+                        <span class="text-2xl font-black num-IV font-serif w-10 shrink-0">IV</span>
+                        <h2 class="text-lg font-black text-slate-900">인공지능</h2>
                     </div>
-                    <div class="flex items-center space-x-2 ml-4 shrink-0">
-                        <span class="hidden sm:flex items-center space-x-1 text-xs text-emerald-600 font-bold"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>개발완료</span></span>
+                    <div class="flex items-center space-x-3 ml-4 shrink-0">
+                        <span id="count-unit4" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full hidden">0개</span>
                         <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit4"></i>
                     </div>
                 </button>
@@ -195,24 +151,13 @@
 
             <!-- 단원 V -->
             <div class="bg-white rounded-[1.5rem] shadow-sm overflow-hidden unit-V">
-                <button onclick="toggleUnit('unit5')" class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
-                    <div class="flex items-center space-x-6">
-                        <span class="text-3xl font-black num-V font-serif">V</span>
-                        <div>
-                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
-                                <h2 class="text-xl font-black text-slate-900">디지털 문화</h2>
-                                <span class="text-xs font-bold badge-V px-2.5 py-1 rounded-full">7차시 · 6소단원</span>
-                            </div>
-                            <p class="text-slate-500 text-sm font-medium">디지털 시민 의식·저작권·개인정보, 사이버 폭력 예방, 미디어 리터러시와 올바른 인터넷 윤리</p>
-                            <div class="flex flex-wrap gap-2 mt-2">
-                                <span class="text-xs font-bold badge-V px-2 py-0.5 rounded-md">윤리</span>
-                                <span class="text-xs font-bold badge-V px-2 py-0.5 rounded-md">저작권</span>
-                                <span class="text-xs font-bold badge-V px-2 py-0.5 rounded-md">미디어리터러시</span>
-                            </div>
-                        </div>
+                <button onclick="toggleUnit('unit5')" class="w-full px-8 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-5">
+                        <span class="text-2xl font-black num-V font-serif w-10 shrink-0">V</span>
+                        <h2 class="text-lg font-black text-slate-900">디지털 문화</h2>
                     </div>
-                    <div class="flex items-center space-x-2 ml-4 shrink-0">
-                        <span class="hidden sm:flex items-center space-x-1 text-xs text-emerald-600 font-bold"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>개발완료</span></span>
+                    <div class="flex items-center space-x-3 ml-4 shrink-0">
+                        <span id="count-unit5" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full hidden">0개</span>
                         <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron" id="chevron-unit5"></i>
                     </div>
                 </button>
@@ -222,6 +167,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <div class="mt-10 bg-blue-50 border border-blue-100 rounded-2xl px-6 py-5 flex items-start space-x-4">
@@ -306,6 +252,18 @@
 
                 Object.entries(UNIT_MAP).forEach(([roman, uid]) => {
                     const items = allMaterials.filter(m => m.unit === roman);
+                    // 자료 개수 배지 표시
+                    const countEl = document.getElementById('count-' + uid);
+                    if (countEl) {
+                        countEl.textContent = items.length + '개';
+                        if (items.length > 0) {
+                            countEl.classList.remove('hidden');
+                            countEl.classList.add('text-emerald-600', 'bg-emerald-50');
+                            countEl.classList.remove('text-slate-400', 'bg-slate-100');
+                        } else {
+                            countEl.classList.remove('hidden');
+                        }
+                    }
                     renderUnitMaterials(uid, items);
                 });
             } catch(e) {
