@@ -235,7 +235,7 @@
                     </h2>
                     <div class="space-y-4">
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">대단원</label>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">단원명</label>
                             <select id="mat-unit"
                                 class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
                                 <option value="I">I. 컴퓨팅 시스템</option>
@@ -246,25 +246,14 @@
                             </select>
                         </div>
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">자료 제목</label>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">제목</label>
                             <input type="text" id="mat-title" placeholder="자료 제목 입력"
                                 class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
                         </div>
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">유형</label>
-                            <select id="mat-type"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
-                                <option value="Slide">Slide (슬라이드)</option>
-                                <option value="PDF">PDF</option>
-                                <option value="Code">Code (코드/실습)</option>
-                                <option value="Video">Video (영상)</option>
-                                <option value="Link">Link (외부 링크)</option>
-                            </select>
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">URL 링크</label>
-                            <input type="url" id="mat-url" placeholder="https://..."
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">내용</label>
+                            <textarea id="mat-content" rows="5" placeholder="학습자료 내용을 입력하세요. (설명, 링크, 코드 등 자유롭게 작성)"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all resize-none"></textarea>
                         </div>
                         <button onclick="addMaterial()"
                             class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold py-3 rounded-xl hover:shadow-lg hover:shadow-emerald-500/20 transition-all flex items-center justify-center space-x-2">
@@ -316,7 +305,7 @@
         };
 
         const ADMIN_EMAILS    = ['sungce27@gmail.com'];
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyIl2oDcPZol3dztwUVNL1uwtHM1GSXY-l6Q6okcJlsOWlnQ6Lvt6M7KqPMflPmAX5h/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwImkAPT_r8YOLT34BZwqO2AeXPCf6nc60Y07QrOHLO9_5WVLP7Z1ln7koy-V-fvFUs/exec';
 
         const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(app);
@@ -453,9 +442,8 @@
         async function addMaterial() {
             const unit    = document.getElementById('mat-unit').value;
             const title   = document.getElementById('mat-title').value.trim();
-            const matType = document.getElementById('mat-type').value;
-            const url     = document.getElementById('mat-url').value.trim();
-            if (!title || !url) { showToast('제목과 URL을 입력해주세요.', 'error'); return; }
+            const content = document.getElementById('mat-content').value.trim();
+            if (!title || !content) { showToast('제목과 내용을 입력해주세요.', 'error'); return; }
 
             const btn = document.querySelector('button[onclick="addMaterial()"]');
             btn.disabled = true;
@@ -467,10 +455,10 @@
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ type: 'material', unit, title, matType, url })
+                    body: JSON.stringify({ type: 'material', unit, title, content })
                 });
-                document.getElementById('mat-title').value = '';
-                document.getElementById('mat-url').value   = '';
+                document.getElementById('mat-title').value   = '';
+                document.getElementById('mat-content').value = '';
                 showToast(`[단원 ${unit}] ${title} 자료가 등록되었습니다! 📚`);
             } catch(e) {
                 showToast('등록 중 오류가 발생했습니다.', 'error');

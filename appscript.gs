@@ -63,14 +63,13 @@ function doGet(e) {
       const sheet = ss.getSheetByName(SHEET_MATERIALS);
       let materials = [];
       if (sheet && sheet.getLastRow() > 1) {
-        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
+        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues();
         materials = rows.filter(r => r[2]).map(r => ({
-          id   : r[0] ? String(r[0]) : '',
-          unit : r[1] ? String(r[1]) : '',   // I / II / III / IV / V
-          title: r[2] ? String(r[2]) : '',
-          type : r[3] ? String(r[3]) : '',   // PDF/Slide/Code/Video/Link
-          url  : r[4] ? String(r[4]) : '',
-          date : r[5] ? String(r[5]) : '',
+          id     : r[0] ? String(r[0]) : '',
+          unit   : r[1] ? String(r[1]) : '',
+          title  : r[2] ? String(r[2]) : '',
+          content: r[3] ? String(r[3]) : '',
+          date   : r[4] ? String(r[4]) : '',
         }));
       }
       result = { materials };
@@ -145,14 +144,14 @@ function doPost(e) {
       let sheet = ss.getSheetByName(SHEET_MATERIALS);
       if (!sheet) {
         sheet = ss.insertSheet(SHEET_MATERIALS);
-        sheet.appendRow(['ID', '단원', '제목', '유형', 'URL', '등록일']);
-        sheet.getRange(1, 1, 1, 6).setFontWeight('bold').setBackground('#0f9d58').setFontColor('#ffffff');
+        sheet.appendRow(['ID', '단원', '제목', '내용', '등록일']);
+        sheet.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#0f9d58').setFontColor('#ffffff');
       }
       const id   = String(sheet.getLastRow());
       const date = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul',
         year: 'numeric', month: '2-digit', day: '2-digit'
       }).replace(/\. /g, '.').replace(/\.$/, '');
-      sheet.appendRow([id, data.unit || '', data.title || '', data.matType || '', data.url || '', date]);
+      sheet.appendRow([id, data.unit || '', data.title || '', data.content || '', date]);
       return jsonResponse({ result: 'success' });
     }
 

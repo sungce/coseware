@@ -234,16 +234,33 @@
         </div>
     </footer>
 
+    <!-- 자료 내용 모달 -->
+    <div id="mat-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+        onclick="if(event.target===this) closeModal()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                <div>
+                    <p class="text-xs font-bold text-emerald-600 mb-1" id="modal-unit-label"></p>
+                    <h3 class="text-xl font-black text-slate-900" id="modal-title"></h3>
+                    <p class="text-xs text-slate-400 font-medium mt-1" id="modal-date"></p>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="overflow-y-auto px-8 py-6">
+                <div id="modal-content" class="text-slate-700 font-medium leading-relaxed text-sm whitespace-pre-wrap"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyIl2oDcPZol3dztwUVNL1uwtHM1GSXY-l6Q6okcJlsOWlnQ6Lvt6M7KqPMflPmAX5h/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwImkAPT_r8YOLT34BZwqO2AeXPCf6nc60Y07QrOHLO9_5WVLP7Z1ln7koy-V-fvFUs/exec';
 
         const UNIT_MAP = { 'I':'unit1', 'II':'unit2', 'III':'unit3', 'IV':'unit4', 'V':'unit5' };
-        const TYPE_STYLE = {
-            'PDF'  : { icon:'file-text',   color:'text-rose-500',   bg:'bg-rose-50',   border:'border-rose-100' },
-            'Slide': { icon:'presentation',color:'text-orange-500', bg:'bg-orange-50', border:'border-orange-100' },
-            'Code' : { icon:'code-2',      color:'text-violet-500', bg:'bg-violet-50', border:'border-violet-100' },
-            'Video': { icon:'play-circle', color:'text-blue-500',   bg:'bg-blue-50',   border:'border-blue-100' },
-            'Link' : { icon:'link',        color:'text-teal-500',   bg:'bg-teal-50',   border:'border-teal-100' },
+        const UNIT_NAMES = {
+            'I':'I. 컴퓨팅 시스템', 'II':'II. 데이터',
+            'III':'III. 알고리즘과 프로그래밍', 'IV':'IV. 인공지능', 'V':'V. 디지털 문화'
         };
 
         let allMaterials = [];
@@ -288,28 +305,44 @@
                 lucide.createIcons();
                 return;
             }
-            container.innerHTML = `
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    ${items.map(item => {
-                        const s = TYPE_STYLE[item.type] || TYPE_STYLE['Link'];
-                        return `
-                        <a href="${item.url || '#'}" target="_blank"
-                            class="group flex items-center space-x-4 bg-slate-50 hover:bg-white border border-slate-100 hover:border-slate-200 hover:shadow-md rounded-2xl px-5 py-4 transition-all duration-200">
-                            <div class="w-10 h-10 ${s.bg} border ${s.border} rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                                <i data-lucide="${s.icon}" class="w-5 h-5 ${s.color}"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors truncate">${item.title}</p>
-                                <p class="text-xs font-medium text-slate-400 mt-0.5">${item.type} · ${item.date}</p>
-                            </div>
-                            <i data-lucide="external-link" class="w-4 h-4 text-slate-300 group-hover:text-blue-400 transition-colors shrink-0"></i>
-                        </a>`;
-                    }).join('')}
-                </div>
-                <p class="text-xs text-slate-400 font-medium mt-4 flex items-center space-x-1">
-                    <i data-lucide="info" class="w-3.5 h-3.5"></i><span>자료를 클릭하면 새 탭에서 열립니다.</span>
+            const rows = items.map(item => {
+                const safeItem = JSON.stringify(item).replace(/'/g, "\\'");
+                return `<button onclick='openModal(${JSON.stringify(item).replace(/\\/g,"\\\\").replace(/'/g,"\\'")})'
+                    class="w-full flex items-center justify-between px-2 py-4 hover:bg-slate-50 rounded-2xl transition-colors text-left group">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                            <i data-lucide="file-text" class="w-4 h-4 text-emerald-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">${item.title}</p>
+                            <p class="text-xs text-slate-400 font-medium mt-0.5">${item.date}</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors shrink-0 ml-4"></i>
+                </button>`;
+            });
+            container.innerHTML = `<div class="divide-y divide-slate-100">${rows.join('')}</div>
+                <p class="text-xs text-slate-400 font-medium mt-3 flex items-center space-x-1 px-2">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i><span>자료를 클릭하면 내용을 확인할 수 있습니다.</span>
                 </p>`;
             lucide.createIcons();
+        }
+
+        function openModal(item) {
+            document.getElementById('modal-unit-label').textContent = UNIT_NAMES[item.unit] || ('단원 ' + item.unit);
+            document.getElementById('modal-title').textContent   = item.title;
+            document.getElementById('modal-date').textContent    = item.date + ' 등록';
+            document.getElementById('modal-content').textContent = item.content;
+            const modal = document.getElementById('mat-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('mat-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
         function toggleUnit(unitId) {
