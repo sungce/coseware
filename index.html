@@ -365,7 +365,8 @@
                             </button>
                             <button onclick="showSection('gallery')"
                                 class="px-8 py-4 bg-white/10 text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 flex items-center backdrop-blur-md">
-                                선배들 작품 구경
+                                <i data-lucide="sparkles" class="w-5 h-5 mr-2"></i>
+                                My Project Gallery
                             </button>
                         </div>
                     </div>
@@ -663,12 +664,16 @@
         <!-- ==================== 6. 갤러리 섹션 ==================== -->
         <section id="gallery" class="fade-in hidden">
             <div class="text-center mb-12">
-                <div
-                    class="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-amber-50 text-amber-500 mb-6 shadow-sm">
-                    <i data-lucide="palette" class="w-8 h-8"></i>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-amber-50 text-amber-500 mb-6 shadow-sm">
+                    <i data-lucide="sparkles" class="w-8 h-8"></i>
                 </div>
-                <h2 class="text-4xl font-black text-slate-900 tracking-tight mb-4">프로젝트 갤러리</h2>
-                <p class="text-lg text-slate-500 font-medium">우리들의 빛나는 상상력이 현실이 된 공간입니다.</p>
+                <h2 class="text-4xl font-black text-slate-900 tracking-tight mb-4">My Project Gallery</h2>
+                <p class="text-lg text-slate-500 font-medium">학생들의 창의적인 아이디어가 현실이 된 공간입니다.</p>
+                <a href="gallery.html"
+                    class="inline-flex items-center space-x-2 mt-6 bg-amber-500 text-white font-bold px-6 py-3 rounded-2xl hover:bg-amber-600 transition-colors shadow-lg shadow-amber-500/30">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                    <span>갤러리 전체 보기</span>
+                </a>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="gallery-grid">
                 <!-- JS Data injected here -->
