@@ -213,6 +213,26 @@
         }
 
         // ==========================================
+        // Google Sheets 연동 설정
+        // ==========================================
+        // ✅ Apps Script 배포 후 아래 URL을 교체해주세요
+        const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
+
+        async function sendToSheet(name, email, uid) {
+            if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL') return;
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, uid })
+                });
+            } catch (e) {
+                console.warn('시트 전송 실패:', e);
+            }
+        }
+
+        // ==========================================
         // 회원가입 처리
         // ==========================================
         async function handleSignup(event) {
@@ -241,6 +261,9 @@
 
                 // 표시 이름(성명) 저장
                 await userCredential.user.updateProfile({ displayName: name });
+
+                // Google Sheets에 회원 정보 전송
+                await sendToSheet(name, email, userCredential.user.uid);
 
                 showToast(`${name} 학생, 가입을 환영합니다! 🎉`);
 
