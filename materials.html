@@ -249,7 +249,13 @@
                 </button>
             </div>
             <div class="overflow-y-auto px-8 py-6">
-                <div id="modal-content" class="text-slate-700 font-medium leading-relaxed text-sm whitespace-pre-wrap"></div>
+                <div id="modal-content" class="text-slate-700 font-medium leading-relaxed text-sm whitespace-pre-wrap mb-6"></div>
+                <!-- 파일 다운로드 버튼 (파일 있을 때만 표시) -->
+                <a id="modal-file-btn" href="#" target="_blank"
+                    class="hidden items-center justify-center space-x-2 w-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold py-3.5 rounded-2xl hover:bg-emerald-100 transition-colors">
+                    <i data-lucide="download" class="w-5 h-5"></i>
+                    <span id="modal-file-name">파일 다운로드</span>
+                </a>
             </div>
         </div>
     </div>
@@ -333,6 +339,20 @@
             document.getElementById('modal-title').textContent   = item.title;
             document.getElementById('modal-date').textContent    = item.date + ' 등록';
             document.getElementById('modal-content').textContent = item.content;
+
+            // 파일 다운로드 버튼
+            const fileBtn  = document.getElementById('modal-file-btn');
+            const fileName = document.getElementById('modal-file-name');
+            if (item.fileUrl) {
+                fileBtn.href = item.fileUrl;
+                fileName.textContent = item.fileName || '첨부파일 다운로드';
+                fileBtn.classList.remove('hidden');
+                fileBtn.classList.add('flex');
+            } else {
+                fileBtn.classList.add('hidden');
+                fileBtn.classList.remove('flex');
+            }
+
             const modal = document.getElementById('mat-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');

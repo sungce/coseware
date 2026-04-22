@@ -63,13 +63,15 @@ function doGet(e) {
       const sheet = ss.getSheetByName(SHEET_MATERIALS);
       let materials = [];
       if (sheet && sheet.getLastRow() > 1) {
-        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues();
+        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 7).getValues();
         materials = rows.filter(r => r[2]).map(r => ({
-          id     : r[0] ? String(r[0]) : '',
-          unit   : r[1] ? String(r[1]) : '',
-          title  : r[2] ? String(r[2]) : '',
-          content: r[3] ? String(r[3]) : '',
-          date   : r[4] ? String(r[4]) : '',
+          id      : r[0] ? String(r[0]) : '',
+          unit    : r[1] ? String(r[1]) : '',
+          title   : r[2] ? String(r[2]) : '',
+          content : r[3] ? String(r[3]) : '',
+          fileName: r[4] ? String(r[4]) : '',
+          fileUrl : r[5] ? String(r[5]) : '',
+          date    : r[6] ? String(r[6]) : '',
         }));
       }
       result = { materials };
@@ -144,14 +146,14 @@ function doPost(e) {
       let sheet = ss.getSheetByName(SHEET_MATERIALS);
       if (!sheet) {
         sheet = ss.insertSheet(SHEET_MATERIALS);
-        sheet.appendRow(['ID', '단원', '제목', '내용', '등록일']);
-        sheet.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#0f9d58').setFontColor('#ffffff');
+        sheet.appendRow(['ID', '단원', '제목', '내용', '파일명', '파일URL', '등록일']);
+        sheet.getRange(1, 1, 1, 7).setFontWeight('bold').setBackground('#0f9d58').setFontColor('#ffffff');
       }
       const id   = String(sheet.getLastRow());
       const date = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul',
         year: 'numeric', month: '2-digit', day: '2-digit'
       }).replace(/\. /g, '.').replace(/\.$/, '');
-      sheet.appendRow([id, data.unit || '', data.title || '', data.content || '', date]);
+      sheet.appendRow([id, data.unit || '', data.title || '', data.content || '', data.fileName || '', data.fileUrl || '', date]);
       return jsonResponse({ result: 'success' });
     }
 
