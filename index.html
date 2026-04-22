@@ -426,7 +426,7 @@
 
                 <!-- 학습자료실 -->
                 <div class="md:col-span-1 lg:col-span-1 group glass-card rounded-[2rem] p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-                    onclick="showSection('materials')"
+                    onclick="showSection('materials')">
                     <div
                         class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <i data-lucide="folder-search" class="w-6 h-6"></i>
@@ -716,7 +716,7 @@
         let currentUser = null;
 
         // Firebase 초기화
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         auth = firebase.auth();
         const db = firebase.firestore();
 
@@ -1013,7 +1013,7 @@
             const activeNav = document.getElementById('nav-' + sectionId);
             if (activeNav) activeNav.classList.add('active');
 
-            if (sectionId === 'notices')   loadNotices();
+            if (sectionId === 'notices')   { noticesLoaded = false; loadNotices(); }
             if (sectionId === 'materials') loadInlineMaterials();
 
             mobileMenu.classList.add('hidden');
@@ -1024,19 +1024,25 @@
 
         // 공지사항 - Google Sheets에서 JSONP로 로드
         const NOTICE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYheQ0HV-xFjmceYzHPjAlF5JmvwRhULsCIH9mBOUZbWeP1Y0EBUhsAEpwh3hHml7M/exec';
+        let noticesLoaded = false;
 
         function loadNotices() {
+            // 이미 로드된 경우 재로드 안 함
+            if (noticesLoaded) return;
+
             const old = document.getElementById('jsonp-notices');
             if (old) old.remove();
 
             const timer = setTimeout(() => {
                 document.getElementById('notices-loading').classList.add('hidden');
-                document.getElementById('notices-empty').classList.remove('hidden');
-                document.getElementById('notices-empty').classList.add('flex');
+                const empty = document.getElementById('notices-empty');
+                empty.classList.remove('hidden');
+                empty.classList.add('flex');
             }, 8000);
 
             window.__noticesCallback = function(data) {
                 clearTimeout(timer);
+                noticesLoaded = true;
                 const s = document.getElementById('jsonp-notices');
                 if (s) s.remove();
                 renderNotices(data.notices || []);
@@ -1044,21 +1050,23 @@
 
             const script = document.createElement('script');
             script.id  = 'jsonp-notices';
-            script.src = `${NOTICE_SCRIPT_URL}?action=getNotices&callback=__noticesCallback`;
+            script.src = `${NOTICE_SCRIPT_URL}?action=getNotices&callback=__noticesCallback&t=${Date.now()}`;
             document.body.appendChild(script);
         }
 
         function renderNotices(notices) {
             document.getElementById('notices-loading').classList.add('hidden');
-            const list = document.getElementById('notices-list');
+            const list  = document.getElementById('notices-list');
             const empty = document.getElementById('notices-empty');
 
             if (!notices.length) {
                 empty.classList.remove('hidden');
                 empty.classList.add('flex');
+                lucide.createIcons();
                 return;
             }
 
+            empty.classList.add('hidden');
             list.innerHTML = notices.map((n, i) => {
                 const isImportant = n.type === 'important';
                 const badge = isImportant
@@ -1077,6 +1085,7 @@
                         </div>
                     </div>`;
             }).join('');
+            lucide.createIcons();
         }
 
         const classesData = [
