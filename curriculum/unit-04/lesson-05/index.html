@@ -1,1 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IV-5. 텍스트 데이터를 이용한 영화 평가 시스템 — 정보 교과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#F5F4F0;color:#1C1C1C;font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+:root{--u:#378ADD;--udk:#1A5A9A;--ult:#E4F0FA;--umd:#BACED8;--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--green:#2A720E;--gbg:#E8F3DC;--amber:#7A4E0A;--abg:#FAF0DC;--red:#8C1E0E;--rbg:#FAEBE6;--blue:#0A4E8C;--bbg:#E4F0FA;--rLG:14px;--rSM:8px;--SW:240px;--TH:52px}
+.sb{width:var(--SW);background:var(--sf);border-right:1px solid var(--br);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.sb-top{padding:16px 14px 12px;border-bottom:1px solid var(--br)}.uchip{display:inline-flex;align-items:center;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.sb-top h2{font-size:12px;font-weight:700;line-height:1.4}.smeta{font-size:10px;color:var(--lt);margin-top:3px}
+.sb-nav{padding:4px 0;flex:1}.nlbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);padding:7px 13px 3px}
+.na{display:flex;align-items:center;gap:8px;padding:7px 13px;font-size:11px;color:var(--mt);text-decoration:none;border-left:2.5px solid transparent;transition:background .12s}
+.na:hover{background:var(--bg);color:var(--tx)}.na.on{color:var(--u);font-weight:600;background:var(--ult);border-left-color:var(--u)}.na.done .nn{background:var(--gbg);color:var(--green)}
+.nn{width:18px;height:18px;border-radius:50%;background:var(--br);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--mt)}.na.on .nn{background:var(--u);color:#fff}
+.nbadge{margin-left:auto;font-size:9px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:1px 5px;border-radius:10px;white-space:nowrap}
+.sb-foot{padding:10px 13px;border-top:1px solid var(--br)}.ba{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt);text-decoration:none;padding:5px 9px;border-radius:var(--rSM);border:1px solid var(--br);background:var(--sf);transition:all .12s}.ba:hover{background:var(--bg)}
+.main{margin-left:var(--SW);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:var(--TH);padding:0 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mt);flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}.bcsep{color:var(--br)}.bccur{color:var(--tx);font-weight:500}.tbr{display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s;white-space:nowrap}.btn:hover{background:var(--bg)}.bsm{padding:5px 9px;font-size:11px}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}.bok{background:var(--green);color:#fff;border-color:var(--green)}
+.page{padding:20px 22px;flex:1}.g2{display:grid;grid-template-columns:1fr minmax(0,248px);gap:16px;align-items:start}.cm{min-width:0}.ca{position:sticky;top:calc(var(--TH)+12px)}
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}.card:hover{box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.ch{display:flex;align-items:center;gap:9px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--br);transition:background .12s;user-select:none}.ch:hover{background:var(--bg)}
+.sn{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}.ch h3{font-size:13px;font-weight:600;flex:1}
+.st{font-size:10px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:2px 7px;border-radius:20px;white-space:nowrap}.carr{font-size:11px;color:var(--lt);transition:transform .2s}.card.collapsed .carr{transform:rotate(-90deg)}.cb{padding:18px}.card.collapsed .cb{display:none}
+.ach{background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:10px 13px;margin-bottom:14px}.ach-c{font-family:monospace;font-size:11px;font-weight:700;color:var(--u);margin-bottom:3px}.ach-t{font-size:13px;line-height:1.6}
+.glist{list-style:none}.glist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid var(--br);line-height:1.6}.glist li:last-child{border-bottom:none}.gck{width:17px;height:17px;border-radius:50%;background:var(--gbg);color:var(--green);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.ctag{font-size:11px;padding:3px 10px;background:var(--bg);border:1px solid var(--br);border-radius:20px;cursor:pointer;color:var(--mt);transition:all .12s}.ctag:hover{background:var(--ult);border-color:var(--umd);color:var(--u)}
+.ibox{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6;margin-top:10px}.prev{background:var(--bg);border:1px solid var(--br);color:var(--mt)}.warn{background:#FFFBEC;border:1px solid #EDD070;color:#6A5000}.info{background:var(--bbg);border:1px solid #BACED8;color:var(--blue)}.ok{background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}
+.divl{height:1px;background:var(--br);margin:13px 0}
+.crow{display:grid;grid-template-columns:1fr minmax(0,148px);gap:13px;align-items:start;margin-bottom:13px}
+.ct h4{font-size:13px;font-weight:700;margin-bottom:7px}.ct p{font-size:13px;color:var(--mt);line-height:1.75}.ct ul{padding-left:1rem;margin-top:5px}.ct ul li{font-size:13px;color:var(--mt);margin-bottom:3px;line-height:1.6}
+.cvis{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);display:flex;align-items:center;justify-content:center;padding:8px}
+.qwrap{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-top:13px}.qq{font-size:14px;font-weight:500;margin-bottom:11px;line-height:1.55}.qopts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);cursor:pointer;font-size:13px;line-height:1.5;transition:all .12s}.opt:hover{border-color:var(--u);background:var(--ult)}.opt.correct{border-color:#4A9020;background:var(--gbg);color:#1A5000;pointer-events:none}.opt.wrong{border-color:#B03020;background:var(--rbg);color:#6A1000;pointer-events:none}.opt.locked{pointer-events:none;opacity:.55}
+.onum{width:21px;height:21px;border-radius:50%;background:var(--br);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.opt.correct .onum{background:#4A9020;color:#fff}.opt.wrong .onum{background:#B03020;color:#fff}
+.qfb{display:none;margin-top:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6}.qfb.ok{display:block;background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}.qfb.err{display:block;background:var(--rbg);border:1px solid #F0B8A0;color:var(--red)}
+.rub{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}.rub th{background:var(--bg);padding:7px 8px;font-weight:600;border-bottom:1.5px solid var(--br);text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--mt)}.rub td{padding:8px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.5}.rub tr:last-child td{border-bottom:none}
+.lv4{color:#1A6000!important;font-weight:500}.lv3{color:#2A6830!important}.lv2{color:#7A4E00!important}.lv1{color:#8A2000!important}
+.task{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--u)}.task h4{font-size:13px;font-weight:700;color:var(--u);margin-bottom:7px}.task p{font-size:13px;color:var(--mt);line-height:1.75}.srow{display:flex;align-items:flex-start;gap:7px;padding:5px 0;border-top:1px solid var(--br);margin-top:6px;font-size:12px;color:var(--mt)}.stepn{width:18px;height:18px;border-radius:50%;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.sclist{display:flex;flex-direction:column;gap:4px}.scitem{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg);border-radius:var(--rSM);font-size:12px;border:1px solid var(--br)}.scitem label{flex:1;line-height:1.5}.scitem select{font-size:11px;padding:3px 6px;border:1px solid var(--br);border-radius:5px;background:var(--sf);font-family:inherit;color:var(--tx);cursor:pointer;flex-shrink:0}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.scard{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px 12px;font-size:12px;line-height:1.65;color:var(--mt)}.scard strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--lt);margin-bottom:4px}
+.ap{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:13px;margin-bottom:10px}.ap h5{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lt);margin-bottom:8px}
+.slist{display:flex;flex-direction:column;gap:3px}.si{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rSM);font-size:11px;color:var(--mt);cursor:pointer;transition:background .12s}.si:hover{background:var(--bg)}.si.sa{background:var(--ult);color:var(--u);font-weight:500}
+.dot{width:19px;height:19px;border-radius:50%;background:var(--br);color:var(--lt);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.dot.sa{background:var(--u);color:#fff}.dot.sd{background:var(--gbg);color:var(--green)}
+.td-num{font-size:28px;font-weight:300;text-align:center;display:block;font-variant-numeric:tabular-nums}.td-lbl{font-size:10px;color:var(--lt);text-align:center;margin-top:3px;margin-bottom:9px}
+.trow{display:flex;gap:5px}.trow .btn{flex:1;justify-content:center;font-size:10px}
+.termlist{display:flex;flex-direction:column}.tterm{display:flex;align-items:baseline;gap:5px;padding:4px 0;font-size:11px;border-bottom:1px solid var(--br)}.tterm:last-child{border-bottom:none}.tw{font-weight:600;color:var(--u);white-space:nowrap}.tdef{color:var(--mt)}
+.pbtrack{height:5px;background:var(--umd);border-radius:3px;overflow:hidden}.pbfill{height:100%;background:var(--u);border-radius:3px}
+.ai-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;color:#fff;background:var(--u)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1C1C1C;color:#fff;padding:9px 18px;border-radius:10px;font-size:12px;font-family:inherit;z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+/* ══ 반응형 레이아웃 ══ */
+*,*::before,*::after{box-sizing:border-box}
+img,canvas,video{max-width:100%;height:auto;display:block}
+table{width:100%;border-collapse:collapse}
+.act-table,.peer-check,.rub{table-layout:fixed;word-break:break-word}
+.act-table td,.act-table th,
+.rub td,.rub th,
+.peer-check td,.peer-check th{min-width:44px;word-break:break-word;overflow-wrap:break-word}
+.act-step>div:not(.act-num){min-width:0;flex:1;overflow-wrap:break-word;word-break:break-word}
+.act-body,.cb{overflow-x:hidden}
+.act-input{width:100%;box-sizing:border-box}
+.mb-workspace,.mb-row,.mb-indent,.mb-indent2{flex-wrap:wrap}
+.sim-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
+/* 1100px 이하 */
+@media(max-width:1100px){
+  .g2{grid-template-columns:1fr 220px}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 220px;min-width:180px}
+  .crow{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr 1fr}
+}
+
+/* 900px 이하 */
+@media(max-width:900px){
+  .g2{grid-template-columns:1fr 200px}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 180px;min-width:160px}
+  .page{padding:16px 14px}
+  .cb,.act-body{padding:13px}
+  .sgrid{grid-template-columns:1fr 1fr}
+  .crow{grid-template-columns:1fr}
+}
+
+/* 640px 이하 */
+@media(max-width:640px){
+  .page{padding:11px 10px}
+  .cb,.act-body{padding:10px}
+  .sgrid{grid-template-columns:1fr}
+  .act-step{flex-direction:column;gap:5px}
+  .act-num{margin-bottom:0}
+  .ch h3{font-size:12px}
+  .btn{font-size:11px;padding:5px 8px}
+  .act-table td,.act-table th{padding:5px 6px;font-size:11px}
+  .rub td,.rub th{padding:5px 6px;font-size:11px}
+  .peer-check td,.peer-check th{padding:5px 6px;font-size:10px}
+  .scard{font-size:11px}
+  .opt{font-size:12px;padding:8px 10px}
+  .mb,.mb-hole{font-size:10px;padding:4px 7px}
+}
+
+/* 480px 이하 */
+@media(max-width:480px){
+  :root{--SW:0px}
+  .sb{display:none}
+  .main{margin-left:0}
+  .topbar{padding:0 10px}
+  .page{padding:8px 9px}
+  .cb,.act-body{padding:9px}
+  .tbr .btn:last-child{display:none}
+  .sgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-top"><div class="uchip">◈ Unit IV</div><h2>인공지능</h2><div class="smeta">중단원2: 인공지능과 문제 해결 · p.192~198</div></div>
+  <nav class="sb-nav"><div class="nlbl">소단원 목록</div><a class="na done" href="../lesson-01/index.html"><div class="nn">✓</div>인공지능의 개념과 특성</a>
+<a class="na done" href="../lesson-02/index.html"><div class="nn">✓</div>데이터와 학습</a>
+<a class="na done" href="../lesson-03/index.html"><div class="nn">✓</div>팔 이미지를 이용한 운동 도우미</a>
+<a class="na done" href="../lesson-04/index.html"><div class="nn">✓</div>소리 데이터를 이용한 웃음 계수 시스템</a>
+<a class="na on" href="../lesson-05/index.html"><div class="nn">5</div>텍스트 데이터를 이용한 영화 평가 시스템<span class="nbadge">3차시</span></a>
+<a class="na " href="../lesson-06/index.html"><div class="nn">6</div>인공지능의 윤리적 문제 해결</a>
+</nav>
+  <div class="sb-foot"><a class="ba" href="https://sungce.github.io/lesson/">← 정보 교과 학습 플랫폼</a></div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div class="bc"><a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a><span class="bcsep">›</span><a href="../../index.html">IV. 인공지능</a><span class="bcsep">›</span><span class="bccur">5. 텍스트 데이터를 이용한 영화 평가 시스템</span></div>
+    <div class="tbr">
+      <button class="btn bsm" onclick="markDone('05')">✓ 완료 표시</button>
+      <a class="btn bsm bp" href="../lesson-06/index.html">다음 소단원 →</a>
+    </div>
+  </header>
+  <div class="page"><div class="g2"><div class="cm">
+
+  <div class="card" id="sec-goal">
+    <div class="ch" onclick="toggleSec('sec-goal')"><div class="sn" style="background:var(--ult);color:var(--u)">01</div><h3>학습목표</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+    <div class="cb">
+      <div class="ach"><div class="ach-c">[9정04-05] 인공지능과 문제 해결</div><div class="ach-t">텍스트 데이터를 분류하는 AI 모델을 생성하고 영화 평가 시스템을 엔트리로 구현할 수 있다. (pp.192~198)</div></div>
+      <ul class="glist">
+        <li><div class="gck">✓</div>텍스트 분류 모델의 원리를 설명할 수 있다.</li>
+        <li><div class="gck">✓</div>긍정·부정 텍스트 데이터를 수집하여 분류 모델을 생성할 수 있다.</li>
+        <li><div class="gck">✓</div>텍스트 분류 모델을 활용한 영화 평가 시스템을 엔트리로 구현할 수 있다.</li>
+      </ul>
+      <div class="divl"></div>
+      <div class="ctags">
+        <span class="ctag" onclick="goTo('sec-concept')">텍스트 분류</span>
+        <span class="ctag" onclick="goTo('sec-concept')">감성 분석</span>
+        <span class="ctag" onclick="goTo('sec-concept')">긍정·부정</span>
+        <span class="ctag" onclick="goTo('sec-concept')">스팸 필터링</span>
+      </div>
+      <div class="ibox prev">📌 <b>이전 차시:</b> 소리 분류로 웃음 계수 시스템을 만들었습니다. 이번에는 <em>텍스트 데이터</em>를 학습시켜 영화 감상평의 긍정·부정을 분류해봅니다.</div>
+    </div>
+  </div>
+
+  <div class="card" id="sec-concept">
+    <div class="ch" onclick="toggleSec('sec-concept')"><div class="sn" style="background:var(--gbg);color:var(--green)">02</div><h3>개념설명</h3><span class="st">⏱ 20분</span><span class="carr">▾</span></div>
+    <div class="cb">
+      <div class="crow">
+        <div class="ct">
+          <h4>텍스트 분류 모델</h4>
+          <p>텍스트 데이터를 학습하는 과정에서 <strong>패턴을 분석</strong>하여 특정 텍스트가 어떤 범주에 해당하는지 분류합니다.</p>
+          <ul>
+            <li><b>스팸 메일 구분:</b> 일반/스팸 분류</li>
+            <li><b>SNS 모니터링:</b> 부적절 글 감지</li>
+            <li><b>뉴스 범주:</b> 경제·문화·연예·스포츠</li>
+            <li><b>영화 감상평:</b> 긍정/부정 분류</li>
+          </ul>
+        </div>
+        <div class="cvis">
+          <svg viewBox="0 0 130 110" width="130">
+            <rect x="10" y="4" width="110" height="20" rx="4" fill="var(--bbg)" stroke="var(--blue)" stroke-width="1.2"/>
+            <text x="65" y="17" font-size="8.5" fill="var(--blue)" text-anchor="middle" font-family="sans-serif" font-weight="bold">"정말 재미있어요!" (새 텍스트)</text>
+            <path d="M65 24 L65 36" stroke="#aaa" stroke-width="1" marker-end="url(#txa)"/>
+            <rect x="28" y="36" width="74" height="20" rx="4" fill="var(--abg)" stroke="var(--amber)" stroke-width="1.2"/>
+            <text x="65" y="49" font-size="9" fill="var(--amber)" text-anchor="middle" font-family="sans-serif" font-weight="bold">텍스트 분류 모델</text>
+            <path d="M50 56 L30 72" stroke="#aaa" stroke-width="1" marker-end="url(#txa)"/>
+            <path d="M80 56 L100 72" stroke="#aaa" stroke-width="1" marker-end="url(#txa)"/>
+            <rect x="4" y="72" width="52" height="18" rx="4" fill="var(--gbg)" stroke="var(--green)" stroke-width="1.2"/>
+            <text x="30" y="84" font-size="9" fill="var(--green)" text-anchor="middle" font-family="sans-serif" font-weight="bold">😊 긍정 92.5%</text>
+            <rect x="74" y="72" width="52" height="18" rx="4" fill="var(--rbg)" stroke="var(--red)" stroke-width="1.2"/>
+            <text x="100" y="84" font-size="9" fill="var(--red)" text-anchor="middle" font-family="sans-serif" font-weight="bold">😞 부정 7.5%</text>
+            <defs><marker id="txa" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#aaa"/></marker></defs>
+          </svg>
+        </div>
+      </div>
+      <div class="divl"></div>
+      <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">영화 평가 시스템 문제 해결 과정</h4>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;font-size:12px;color:var(--mt);line-height:2;margin-bottom:10px">
+        <b style="color:var(--u)">문제 정의:</b> 영화 감상평의 전반적 반응을 긍정·부정으로 자동 분류<br>
+        <b style="color:var(--amber)">데이터 수집:</b> 긍정 표현("재미있다","훌륭해") + 부정 표현("별로","실망") 수집<br>
+        <b style="color:var(--blue)">모델 학습:</b> 티처블 머신 텍스트 분류 모델 생성·평가<br>
+        <b style="color:var(--green)">엔트리 적용:</b> 감상평 입력 → 긍정/부정 분류 결과 출력
+      </div>
+      <div class="ibox info">📖 <b>교과서 연계:</b> pp.192~198 / 텍스트 분류 + 영화 평가 시스템</div>
+    </div>
+  </div>
+
+  <div class="card" id="sec-interact">
+    <div class="ch" onclick="toggleSec('sec-interact')"><div class="sn" style="background:var(--rbg);color:var(--red)">03</div><h3>인터랙션 — 감성 분석 체험 + 영화 평가 시뮬레이터</h3><span class="st">⏱ 20분</span><span class="carr">▾</span></div>
+    <div class="cb">
+      <div class="ibox ok" style="margin-top:0;margin-bottom:14px">💡 영화 감상평을 입력하면 긍정/부정 감성 분석 결과를 확인해보세요!</div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">▸ 간이 감성 분석 체험 (키워드 기반)</div>
+        <textarea id="review-input" placeholder="영화 감상평을 입력하세요...&#10;예: 정말 감동적이고 재미있었어요!" style="width:100%;height:80px;padding:10px;border:1.5px solid var(--br);border-radius:var(--rSM);font-size:13px;font-family:inherit;resize:vertical;background:var(--sf);outline:none;margin-bottom:10px" onfocus="this.style.borderColor='var(--u)'" onblur="this.style.borderColor='var(--br)'"></textarea>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button class="btn bsm bp" onclick="analyzeReview()">🔍 감성 분석</button>
+          <button class="btn bsm" onclick="document.getElementById('review-input').value='';document.getElementById('review-result').style.display='none'">↺ 초기화</button>
+        </div>
+        <div id="review-result" style="display:none;padding:12px;border-radius:var(--rSM)"></div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">▸ 예시 감상평 분류 연습 (긍정/부정 선택)</div>
+        <div id="review-classify" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"></div>
+        <button class="btn bsm bp" onclick="checkReviews()">✓ 분류 확인</button>
+        <div id="review-check" style="display:none;margin-top:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px"></div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;margin-bottom:12px">
+        <a href="https://teachablemachine.withgoogle.com" target="_blank" class="btn bsm" style="background:var(--u);color:#fff;border-color:var(--u);margin-right:8px">🤖 티처블 머신 ↗</a>
+        <a href="https://playentry.org" target="_blank" class="btn bsm" style="background:#22C55E;color:#fff;border-color:#16A34A">🟢 엔트리 ↗</a>
+      </div>
+      <div class="qwrap"><div class="qq">텍스트 분류 모델의 활용 사례로 옳지 않은 것은?</div><div class="qopts"><div class="opt" onclick="checkQ(this,false,'스팸 메일 구분은 텍스트(이메일 내용) 분류의 대표적 사례입니다.')"><span class="onum">①</span>이메일의 일반/스팸 자동 구분</div><div class="opt" onclick="checkQ(this,false,'영화 댓글 긍정·부정 분류는 감성 분석(텍스트 분류)입니다.')"><span class="onum">②</span>영화 댓글의 긍정·부정 감성 분석</div><div class="opt" onclick="checkQ(this,true,'얼굴 인식은 이미지 분류 모델입니다. 텍스트 분류 모델과 관계없습니다.')"><span class="onum">③</span>카메라로 사람의 얼굴 인식하기</div><div class="opt" onclick="checkQ(this,false,'SNS 부적절 글 감지는 텍스트 분류 모델의 활용입니다.')"><span class="onum">④</span>SNS에서 부적절한 글 자동 감지</div></div><div class="qfb"></div></div>
+    </div>
+  </div>
+
+  <div class="card" id="sec-assess">
+    <div class="ch" onclick="toggleSec('sec-assess')"><div class="sn" style="background:var(--bbg);color:var(--blue)">04</div><h3>수행평가</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+    <div class="cb">
+      <div class="task"><h4>📋 텍스트 분류 AI + 엔트리 영화 평가 시스템</h4>
+        <p>긍정·부정 텍스트 분류 모델을 만들고 엔트리에서 영화 평가 시스템을 구현하시오.</p>
+        <div class="srow"><div class="stepn">①</div><span>긍정·부정 텍스트 데이터 각 15개 이상 수집·레이블링</span></div>
+        <div class="srow"><div class="stepn">②</div><span>티처블 머신으로 텍스트 분류 모델 학습·평가</span></div>
+        <div class="srow"><div class="stepn">③</div><span>엔트리에서 감상평 입력 → 분류 결과 출력</span></div>
+      </div>
+      <table class="rub"><thead><tr><th>평가 요소</th><th class="lv4">매우 잘함(4)</th><th class="lv3">잘함(3)</th><th class="lv2">보통(2)</th><th class="lv1">노력 필요(1)</th></tr></thead><tbody><tr><td><b>모델 성능</b></td><td class="lv4">긍·부정 분류 정확도 75%↑</td><td class="lv3">60%↑</td><td class="lv2">모델 생성만</td><td class="lv1">없음</td></tr><tr><td><b>시스템 완성도</b></td><td class="lv4">입력→분류→출력 정상</td><td class="lv3">부분 작동</td><td class="lv2">연결만</td><td class="lv1">없음</td></tr></tbody></table>
+      <div class="sclist"><div class="scitem"><label>텍스트 분류 모델의 원리를 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>긍정·부정 텍스트 데이터를 수집하고 모델을 생성할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>텍스트 분류 모델을 엔트리에 적용할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div></div>
+      <button class="btn bsm bok" style="margin-top:10px" onclick="saveSC('l405sc')">💾 저장</button>
+    </div>
+  </div>
+
+  <div class="card" id="sec-review">
+    <div class="ch" onclick="toggleSec('sec-review')"><div class="sn" style="background:var(--gbg);color:var(--green)">05</div><h3>확인하기</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+    <div class="cb">
+      <div class="sgrid">
+        <div class="scard"><strong>텍스트 분류</strong>텍스트 패턴 학습 → 범주 예측. 감성분석·스팸필터 등.</div>
+        <div class="scard"><strong>긍정·부정</strong>감상평 데이터 학습 → 새 텍스트의 감성 예측.</div>
+        <div class="scard"><strong>영화 평가</strong>텍스트 분류 모델 + 입력 + 출력 = 평가 시스템.</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;margin-bottom:12px"><b>✏️ 단답형:</b> 영화 감상평의 긍정·부정을 분류하는 것처럼 텍스트의 감성을 분석하는 AI 기술을 <span style="display:inline-block;width:70px;border-bottom:1.5px solid var(--tx)">&nbsp;</span> 분석이라고 한다.<textarea style="display:block;width:100%;margin-top:9px;padding:9px;border:1px solid var(--br);border-radius:var(--rSM);font-size:13px;font-family:inherit;resize:vertical;min-height:48px;background:var(--sf)" placeholder="정답을 입력하세요..."></textarea></div>
+      <div class="ibox ok">📖 <div><strong>다음 차시 예고:</strong> 마지막 소단원에서는 <strong>AI 개발 시 윤리적 문제</strong>(개인정보·저작권·데이터 편향)와 해결 방안을 탐구합니다! (pp.199~203)</div></div>
+    </div>
+  </div>
+
+  </div>
+  <div class="ca">
+    <div class="ap"><h5>학습 진행</h5><div class="slist">
+      <div class="si" onclick="goTo('sec-goal')"><div class="dot sd">1</div>학습목표</div>
+      <div class="si" onclick="goTo('sec-concept')"><div class="dot">2</div>개념설명</div>
+      <div class="si" onclick="goTo('sec-interact')"><div class="dot sa">★</div>인터랙션</div>
+      <div class="si" onclick="goTo('sec-assess')"><div class="dot">4</div>수행평가</div>
+      <div class="si" onclick="goTo('sec-review')"><div class="dot">5</div>확인하기</div>
+    </div></div>
+    </div>
+    <div class="ap"><h5>핵심 용어</h5><div class="termlist"><div class="tterm"><span class="tw">텍스트 분류</span><span class="tdef">텍스트→범주 예측</span></div><div class="tterm"><span class="tw">감성 분석</span><span class="tdef">긍정·부정 판별</span></div><div class="tterm"><span class="tw">스팸 필터</span><span class="tdef">일반·스팸 분류</span></div><div class="tterm"><span class="tw">SNS 모니터링</span><span class="tdef">부적절 글 감지</span></div><div class="tterm"><span class="tw">영화 평가</span><span class="tdef">감상평 분류 시스템</span></div></div></div>
+    <div class="ap" style="background:var(--ult);border-color:var(--umd)"><h5 style="color:var(--u)">단원 진도</h5>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><div class="pbtrack" style="flex:1"><div class="pbfill" style="width:87%"></div></div><span style="font-size:11px;font-weight:600;color:var(--u)">5/6</span></div>
+    </div>
+    <div class="ap" style="background:#F0FDF4;border-color:#BBF7D0">
+      <h5 style="color:#166534">🤖 AI 실습 도구</h5>
+      <a href="https://playentry.org" target="_blank" class="btn bsm" style="width:100%;justify-content:center;background:#22C55E;color:#fff;border-color:#16A34A;margin-bottom:5px">엔트리 열기 ↗</a>
+      <a href="https://teachablemachine.withgoogle.com" target="_blank" class="btn bsm" style="width:100%;justify-content:center;font-size:10px;color:var(--u);border-color:var(--umd);background:var(--ult)">티처블 머신 ↗</a>
+    </div>
+  </div>
+  </div></div>
+</main>
+<div id="toast"></div>
+<script>
+
+  // ── Google Sheets 저장 ──────────────────────────────────
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+
+  function getUserName() {
+    return localStorage.getItem('user_name') || '익명';
+  }
+
+  function postToSheets(payload) {
+    if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) return;
+    fetch(GS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},2400);}
+function toggleSec(id){var e=document.getElementById(id);if(e)e.classList.toggle('collapsed');}
+function goTo(id){var e=document.getElementById(id);if(!e)return;window.scrollTo({top:e.getBoundingClientRect().top+window.pageYOffset-64,behavior:'smooth'});}
+var tR,tRun=false,tIv=null;
+function loadSC(key){try{var d=JSON.parse(localStorage.getItem(key)||'{}');document.querySelectorAll('.scitem select').forEach(function(s,i){if(d['q'+i])s.value=d['q'+i];});}catch(e){}}
+function markDone(n){
+  try{
+    var d=JSON.parse(localStorage.getItem('u04done')||'[]');
+    if(!d.includes(n))d.push(n);
+    localStorage.setItem('u04done',JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'done',
+      userName: getUserName(),
+      unit: 'IV',
+      lessonNum: n,
+      lessonName: '인공지능'
+    });
+  }catch(e){}
+  toast('✅ 소단원 '+n+' 완료 표시!');
+}
+
+
+var posKW=['좋아','재미있','훌륭','감동','최고','대박','추천','완벽','흥미','즐거','행복','웃음','따뜻','멋져','놀라'];
+var negKW=['별로','실망','지루','재미없','나빠','최악','후회','지겨','형편없','아쉬','무서','슬프','끔찍','낭비','시간아깝'];
+function analyzeReview(){
+  var txt=document.getElementById('review-input').value;
+  var res=document.getElementById('review-result');
+  if(!txt.trim()){toast('감상평을 입력해주세요!');return;}
+  var posScore=posKW.filter(function(k){return txt.includes(k);}).length;
+  var negScore=negKW.filter(function(k){return txt.includes(k);}).length;
+  var total=posScore+negScore||1;
+  var posPct=Math.round(posScore/total*100);
+  var negPct=100-posPct;
+  var isPos=posScore>=negScore;
+  res.style.display='block';
+  res.style.cssText='display:block;background:'+(isPos?'var(--gbg)':'var(--rbg)')+';border:1px solid '+(isPos?'#BFDFAA':'#F0B8A0')+';border-radius:8px;padding:12px;font-size:12px';
+  res.innerHTML='<b style="color:'+(isPos?'var(--green)':'var(--red)');
+  res.innerHTML+='">'+(isPos?'😊 긍정적인 감상평':'😞 부정적인 감상평')+'</b><br>';
+  res.innerHTML+='<div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:11px;min-width:40px;color:var(--green)">긍정</span><div style="flex:1;height:12px;background:var(--br);border-radius:6px;overflow:hidden"><div style="height:100%;background:var(--green);width:'+posPct+'%;transition:width .5s"></div></div><span style="font-size:11px;font-weight:700;color:var(--green)">'+posPct+'%</span></div>';
+  res.innerHTML+='<div style="display:flex;align-items:center;gap:8px;margin-top:5px"><span style="font-size:11px;min-width:40px;color:var(--red)">부정</span><div style="flex:1;height:12px;background:var(--br);border-radius:6px;overflow:hidden"><div style="height:100%;background:var(--red);width:'+negPct+'%;transition:width .5s"></div></div><span style="font-size:11px;font-weight:700;color:var(--red)">'+negPct+'%</span></div>';
+}
+var revItems=[
+  {txt:'"내용도 없고 너무 지루했어요."',ans:'부정'},
+  {txt:'"배우들 연기가 훌륭하고 감동적이었어요!"',ans:'긍정'},
+  {txt:'"기대했는데 완전 실망. 돈이 아까워요."',ans:'부정'},
+  {txt:'"아이와 함께 보기 좋은 따뜻한 영화예요."',ans:'긍정'},
+];
+var revAns={};
+function buildReviews(){
+  var div=document.getElementById('review-classify');if(!div)return;
+  div.innerHTML=revItems.map(function(r,i){
+    return '<div style="background:var(--sf);border:1px solid var(--br);border-radius:var(--rSM);padding:11px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="flex:1;font-size:12px;color:var(--mt)">'+r.txt+'</div><div style="display:flex;gap:6px"><button class="btn bsm" id="rv-'+i+'-긍정" onclick="pickRev('+i+','긍정')">😊 긍정</button><button class="btn bsm" id="rv-'+i+'-부정" onclick="pickRev('+i+','부정')" style="color:var(--red);border-color:var(--red)">😞 부정</button></div></div>';
+  }).join('');
+}
+function pickRev(i,v){
+  revAns[i]=v;
+  ['긍정','부정'].forEach(function(lv){
+    var b=document.getElementById('rv-'+i+'-'+lv);
+    if(!b)return;
+    var isPos=lv==='긍정';
+    b.style.background=lv===v?(isPos?'var(--green)':'var(--red)'):'var(--sf)';
+    b.style.color=lv===v?'#fff':(isPos?'var(--tx)':'var(--red)');
+    b.style.borderColor=lv===v?(isPos?'var(--green)':'var(--red)'):(isPos?'var(--br)':'var(--red)');
+  });
+}
+function checkReviews(){
+  var ok=0;revItems.forEach(function(r,i){if(revAns[i]===r.ans)ok++;});
+  var c=document.getElementById('review-check');c.style.display='block';
+  if(ok===4){c.style.cssText='display:block;background:var(--gbg);border:1px solid #BFDFAA;border-radius:8px;padding:10px 13px;color:#1A5000;font-size:12px';c.innerHTML='🎉 완벽! 부정적 키워드(지루·실망·아깝)와 긍정적 키워드(훌륭·따뜻)를 잘 구별했습니다!';}
+  else{c.style.cssText='display:block;background:var(--abg);border:1px solid #EDD070;border-radius:8px;padding:10px 13px;color:#6A5000;font-size:12px';c.innerHTML=ok+'/4 정답. 감정 키워드(지루·실망=부정, 훌륭·따뜻=긍정)에 집중해보세요.';}
+}
+document.addEventListener('DOMContentLoaded',function(){buildReviews();});
+
+document.addEventListener('DOMContentLoaded',function(){loadSC('l405sc');});
+</script>
+</body></html>
