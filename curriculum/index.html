@@ -1033,16 +1033,6 @@
 
 <!-- ─── SIDEBAR ─── -->
 <aside class="sidebar" id="sidebar">
-  <!-- 프로필 영역 -->
-  <div class="profile-area" id="profile-area">
-    <div class="profile-avatar" id="profile-avatar" style="cursor:pointer" onclick="openLogin(true)">?</div>
-    <div class="profile-info">
-      <div class="profile-name" id="profile-name">로그인 필요</div>
-      <div class="profile-sub"  id="profile-sub">클릭하여 이름 설정</div>
-    </div>
-    <button class="profile-edit" onclick="openLogin(true)" title="이름 변경" style="font-size:13px">✏️</button>
-  </div>
-
   <!-- 학습 기록 버튼 -->
   <button class="record-nav-btn" onclick="showView('records');setActive(null);updateRecordView()">
     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -2150,6 +2140,18 @@
     el = document.getElementById('hero-name');
     if (el) el.textContent = name;
   }
+
+  // ── 부모 페이지(index.html)에서 로그인 사용자명 수신 ──
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'SET_USER_NAME' && e.data.name) {
+      var name = e.data.name;
+      localStorage.setItem('user_name', name);
+      var heroEl = document.getElementById('hero-name');
+      if (heroEl) heroEl.textContent = name;
+      var profileEl = document.getElementById('profile-name');
+      if (profileEl) profileEl.textContent = name + '님';
+    }
+  });
 
 
   function doLogin() {

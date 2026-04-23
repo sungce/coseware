@@ -497,7 +497,7 @@
                 class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white"
                 style="min-height: 80vh; height: auto;"
                 frameborder="0"
-                onload="this.style.height = this.contentWindow.document.body.scrollHeight + 'px'">
+                onload="sendUserNameToFrame()">
             </iframe>
         </section>
 
@@ -982,6 +982,17 @@
         mobileMenuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
+
+        function sendUserNameToFrame() {
+            const frame = document.getElementById('curriculum-frame');
+            if (!frame) return;
+            const name = auth && auth.currentUser
+                ? (auth.currentUser.displayName || auth.currentUser.email.split('@')[0])
+                : (localStorage.getItem('userName') || '');
+            if (name) {
+                frame.contentWindow.postMessage({ type: 'SET_USER_NAME', name }, '*');
+            }
+        }
 
         // SPA Navigation
         function showSection(sectionId) {
