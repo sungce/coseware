@@ -1,1 +1,614 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>II-2. 다양한 데이터의 디지털 표현 — 정보 교과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#F5F4F0;color:#1C1C1C;font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+:root{--u:#1B9E72;--udk:#0F6B4C;--ult:#E2F5EE;--umd:#A8DFC8;--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--green:#2A720E;--gbg:#E8F3DC;--amber:#7A4E0A;--abg:#FAF0DC;--red:#8C1E0E;--rbg:#FAEBE6;--blue:#0A4E8C;--bbg:#E4F0FA;--rLG:14px;--rSM:8px;--SW:240px;--TH:52px}
+.sb{width:var(--SW);background:var(--sf);border-right:1px solid var(--br);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.sb-top{padding:16px 14px 12px;border-bottom:1px solid var(--br)}.uchip{display:inline-flex;align-items:center;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.sb-top h2{font-size:12px;font-weight:700;line-height:1.4}.smeta{font-size:10px;color:var(--lt);margin-top:3px}
+.sb-nav{padding:4px 0;flex:1}.nlbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);padding:7px 13px 3px}
+.na{display:flex;align-items:center;gap:8px;padding:7px 13px;font-size:11px;color:var(--mt);text-decoration:none;border-left:2.5px solid transparent;transition:background .12s}
+.na:hover{background:var(--bg);color:var(--tx)}.na.on{color:var(--u);font-weight:600;background:var(--ult);border-left-color:var(--u)}.na.done .nn{background:var(--gbg);color:var(--green)}
+.nn{width:18px;height:18px;border-radius:50%;background:var(--br);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--mt)}.na.on .nn{background:var(--u);color:#fff}
+.nbadge{margin-left:auto;font-size:9px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:1px 5px;border-radius:10px;white-space:nowrap}
+.sb-foot{padding:10px 13px;border-top:1px solid var(--br)}.ba{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt);text-decoration:none;padding:5px 9px;border-radius:var(--rSM);border:1px solid var(--br);background:var(--sf);transition:all .12s}.ba:hover{background:var(--bg)}
+.main{margin-left:var(--SW);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:var(--TH);padding:0 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mt);flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}.bcsep{color:var(--br)}.tbr{display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s;white-space:nowrap}.btn:hover{background:var(--bg)}.bsm{padding:5px 9px;font-size:11px}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}.bok{background:var(--green);color:#fff;border-color:var(--green)}
+.page{padding:20px 22px;flex:1}.g2{display:grid;grid-template-columns:1fr minmax(0,248px);gap:16px;align-items:start}.cm{min-width:0}.ca{position:sticky;top:calc(var(--TH)+12px)}
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
+.ch{display:flex;align-items:center;gap:9px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--br);transition:background .12s;user-select:none}.ch:hover{background:var(--bg)}
+.sn{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}.ch h3{font-size:13px;font-weight:600;flex:1}
+.st{font-size:10px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:2px 7px;border-radius:20px;white-space:nowrap}.carr{font-size:11px;color:var(--lt);transition:transform .2s}.card.collapsed .carr{transform:rotate(-90deg)}.cb{padding:18px}.card.collapsed .cb{display:none}
+.ach{background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:10px 13px;margin-bottom:14px}.ach-c{font-family:monospace;font-size:11px;font-weight:700;color:var(--u);margin-bottom:3px}.ach-t{font-size:13px;line-height:1.6}
+.glist{list-style:none}.glist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid var(--br);line-height:1.6}.glist li:last-child{border-bottom:none}.gck{width:17px;height:17px;border-radius:50%;background:var(--gbg);color:var(--green);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.ctag{font-size:11px;padding:3px 10px;background:var(--bg);border:1px solid var(--br);border-radius:20px;cursor:pointer;color:var(--mt);transition:all .12s}.ctag:hover{background:var(--ult);border-color:var(--umd);color:var(--u)}
+.ibox{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6;margin-top:10px}.prev{background:var(--bg);border:1px solid var(--br);color:var(--mt)}.warn{background:#FFFBEC;border:1px solid #EDD070;color:#6A5000}.info{background:var(--bbg);border:1px solid #BACED8;color:var(--blue)}.ok{background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}
+.divl{height:1px;background:var(--br);margin:13px 0}
+.crow{display:grid;grid-template-columns:1fr minmax(0,148px);gap:13px;align-items:start;margin-bottom:13px}
+.ct h4{font-size:13px;font-weight:700;margin-bottom:7px}.ct p{font-size:13px;color:var(--mt);line-height:1.75}.ct ul{padding-left:1rem;margin-top:5px}.ct ul li{font-size:13px;color:var(--mt);margin-bottom:3px;line-height:1.6}
+.cvis{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);display:flex;align-items:center;justify-content:center;padding:8px}
+/* ── 수행활동 카드 ── */
+.activity{background:linear-gradient(135deg,var(--ult),#EDFFF6);border:2px solid var(--umd);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
+.act-head{display:flex;align-items:center;gap:9px;padding:12px 16px;border-bottom:1.5px solid var(--umd);background:var(--ult);cursor:pointer;user-select:none}.act-head:hover{background:#D0EEE3}
+.act-badge{background:var(--u);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}.act-head h3{font-size:13px;font-weight:700;color:var(--udk);flex:1}.act-body{padding:18px}
+.act-step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--br);border-radius:var(--rSM);margin-bottom:8px;min-height:160px;}
+.act-num{width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;flex:none;margin-top:1px}
+.act-step h4{font-size:12px;font-weight:700;margin-bottom:4px}.act-step p{font-size:12px;color:var(--mt);line-height:1.65}
+.act-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.act-table th{background:var(--u);color:#fff;padding:7px 10px;font-weight:600;font-size:11px;text-align:left}
+.act-table td{padding:8px 10px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.55}
+.act-table tr:last-child td{border-bottom:none}
+.act-input{width:100%;padding:8px 10px;border:1.5px solid var(--br);border-radius:var(--rSM);font-size:12px;font-family:inherit;background:var(--sf);outline:none;resize:vertical;min-height:88px;margin-top:4px}
+.act-input:focus{border-color:var(--u)}
+/* ── quiz ── */
+.qwrap{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-top:13px}.qq{font-size:14px;font-weight:500;margin-bottom:11px;line-height:1.55}.qopts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);cursor:pointer;font-size:13px;line-height:1.5;transition:all .12s}.opt:hover{border-color:var(--u);background:var(--ult)}.opt.correct{border-color:#4A9020;background:var(--gbg);color:#1A5000;pointer-events:none}.opt.wrong{border-color:#B03020;background:var(--rbg);color:#6A1000;pointer-events:none}.opt.locked{pointer-events:none;opacity:.55}
+.onum{width:21px;height:21px;border-radius:50%;background:var(--br);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.opt.correct .onum{background:#4A9020;color:#fff}.opt.wrong .onum{background:#B03020;color:#fff}
+.qfb{display:none;margin-top:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6}.qfb.ok{display:block;background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}.qfb.err{display:block;background:var(--rbg);border:1px solid #F0B8A0;color:var(--red)}
+/* ── assess ── */
+.rub{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}.rub th{background:var(--bg);padding:7px 8px;font-weight:600;border-bottom:1.5px solid var(--br);text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--mt)}.rub td{padding:8px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.5}.rub tr:last-child td{border-bottom:none}
+.lv4{color:#1A6000!important;font-weight:500}.lv3{color:#2A6830!important}.lv2{color:#7A4E00!important}.lv1{color:#8A2000!important}
+.peer-check{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}.peer-check th{background:var(--ult);padding:6px 9px;font-weight:600;border-bottom:1.5px solid var(--umd);text-align:center;color:var(--u);font-size:10px}.peer-check td{padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt);text-align:center}.peer-check td:first-child{text-align:left;font-size:11px}.peer-check input[type=radio]{accent-color:var(--u)}
+/* ── sidebar widgets ── */
+.ap{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:13px;margin-bottom:10px}.ap h5{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lt);margin-bottom:8px}
+.slist{display:flex;flex-direction:column;gap:3px}.si{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rSM);font-size:11px;color:var(--mt);cursor:pointer;transition:background .12s}.si:hover{background:var(--bg)}
+.dot{width:19px;height:19px;border-radius:50%;background:var(--br);color:var(--lt);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.dot.sa{background:var(--u);color:#fff}.dot.sd{background:var(--gbg);color:var(--green)}
+.sclist{display:flex;flex-direction:column;gap:4px}.scitem{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg);border-radius:var(--rSM);font-size:12px;border:1px solid var(--br)}.scitem label{flex:1;line-height:1.5}.scitem select{font-size:11px;padding:3px 6px;border:1px solid var(--br);border-radius:5px;background:var(--sf);font-family:inherit;color:var(--tx);cursor:pointer;flex-shrink:0}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.scard{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px 12px;font-size:12px;line-height:1.65;color:var(--mt)}.scard strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--lt);margin-bottom:4px}.termlist{display:flex;flex-direction:column}.tterm{display:flex;align-items:baseline;gap:5px;padding:4px 0;font-size:11px;border-bottom:1px solid var(--br)}.tterm:last-child{border-bottom:none}.tw{font-weight:600;color:var(--u);white-space:nowrap}.tdef{color:var(--mt)}
+.pbtrack{height:5px;background:var(--umd);border-radius:3px;overflow:hidden}.pbfill{height:100%;background:var(--u);border-radius:3px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1C1C1C;color:#fff;padding:9px 18px;border-radius:10px;font-size:12px;font-family:inherit;z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+/* ══ 반응형 레이아웃 ══ */
+*,*::before,*::after{box-sizing:border-box}
+img,canvas,video{max-width:100%;height:auto;display:block}
+table{width:100%;border-collapse:collapse}
+.act-table,.peer-check,.rub{table-layout:fixed;word-break:break-word}
+.act-table td,.act-table th,
+.rub td,.rub th,
+.peer-check td,.peer-check th{min-width:44px;word-break:break-word;overflow-wrap:break-word}
+.act-step>div:not(.act-num){min-width:0;flex:1;overflow-wrap:break-word;word-break:break-word}
+.act-body,.cb{overflow-x:hidden}
+.act-input{width:100%;box-sizing:border-box}
+.mb-workspace,.mb-row,.mb-indent,.mb-indent2{flex-wrap:wrap}
+.sim-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 1100px 이하 */
+@media(max-width:1100px){
+  .g2{grid-template-columns:1fr}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 220px;min-width:180px}
+  .crow{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr 1fr}
+}
+
+/* 900px 이하 */
+@media(max-width:900px){
+  .ca{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .ca .ap{flex:1 1 180px;min-width:160px}
+  .page{padding:16px 14px}
+  .cb,.act-body{padding:13px}
+  .sgrid{grid-template-columns:1fr 1fr}
+  .crow{grid-template-columns:1fr}
+}
+
+/* 640px 이하 */
+@media(max-width:640px){
+  .page{padding:11px 10px}
+  .cb,.act-body{padding:10px}
+  .sgrid{grid-template-columns:1fr}
+  .act-step{flex-direction:column;gap:5px}
+  .act-num{margin-bottom:0}
+  .ch h3{font-size:12px}
+  .btn{font-size:11px;padding:5px 8px}
+  .act-table td,.act-table th{padding:5px 6px;font-size:11px}
+  .rub td,.rub th{padding:5px 6px;font-size:11px}
+  .peer-check td,.peer-check th{padding:5px 6px;font-size:10px}
+  .scard{font-size:11px}
+  .opt{font-size:12px;padding:8px 10px}
+  .mb,.mb-hole{font-size:10px;padding:4px 7px}
+}
+
+/* 480px 이하 */
+@media(max-width:480px){
+  :root{--SW:0px}
+  .sb{display:none}
+  .main{margin-left:0}
+  .topbar{padding:0 10px}
+  .page{padding:8px 9px}
+  .cb,.act-body{padding:9px}
+  .tbr .btn:last-child{display:none}
+  .sgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-top"><div class="uchip">◈ Unit II</div><h2>데이터</h2><div class="smeta">중단원1: 데이터의 표현 · p.48~54</div></div>
+  <nav class="sb-nav"><div class="nlbl">소단원 목록</div><a class="na done" href="../lesson-01/index.html"><div class="nn">✓</div>디지털 형태의 데이터</a>
+<a class="na on" href="../lesson-02/index.html"><div class="nn">2</div>다양한 데이터의 디지털 표현<span class="nbadge">3차시</span></a>
+<a class="na " href="../lesson-03/index.html"><div class="nn">3</div>데이터의 수집과 관리</a>
+<a class="na " href="../lesson-04/index.html"><div class="nn">4</div>데이터의 구조화와 분석</a>
+<a class="na " href="../lesson-05/index.html"><div class="nn">5</div>인기 공유 동영상 데이터 분석</a>
+<a class="na " href="../lesson-06/index.html"><div class="nn">6</div>급식 잔반 데이터 분석</a>
+</nav>
+  <div class="sb-foot"><a class="ba" href="https://sungce.github.io/lesson/">← 정보 교과 학습 플랫폼</a></div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div class="bc"><a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a><span class="bcsep">›</span><a href="../../index.html">II. 데이터</a><span class="bcsep">›</span><span style="color:var(--tx);font-weight:500">2. 다양한 데이터의 디지털 표현</span></div>
+    <div class="tbr">
+      <button class="btn bsm" onclick="toast('✅ 완료 표시!');postToSheets({type:'done',userName:getUserName(),unit:'II',lessonNum:'2',lessonName:'데이터 2단원'})">✓ 완료 표시</button>
+      <a class="btn bsm bp" href="../lesson-03/index.html">다음 소단원 →</a>
+    </div>
+  </header>
+  <div class="page"><div class="g2"><div class="cm">
+
+<div class="card" id="sec-goal">
+  <div class="ch" onclick="toggleSec('sec-goal')"><div class="sn" style="background:var(--ult);color:var(--u)">01</div><h3>학습목표</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="ach"><div class="ach-c">[9정02-02] 데이터의 표현</div><div class="ach-t">실생활 데이터(문자·이미지·소리·동영상)를 디지털로 표현하는 방법을 설명하고, 각 방식에 따라 변환할 수 있다. (pp.48~54)</div></div>
+    <ul class="glist">
+      <li><div class="gck">✓</div>문자 코드(아스키·유니코드)를 이용한 문자의 디지털 표현을 설명할 수 있다.</li>
+      <li><div class="gck">✓</div>비트맵·벡터 방식의 이미지 디지털 표현을 설명하고 픽셀과 해상도를 이해할 수 있다.</li>
+      <li><div class="gck">✓</div>소리의 표본화·양자화·부호화 3단계 변환 과정을 설명할 수 있다.</li>
+      <li><div class="gck">✓</div>동영상의 프레임·FPS 개념을 설명할 수 있다.</li>
+    </ul>
+    <div class="divl"></div>
+    <div class="ctags">
+      <span class="ctag" onclick="goTo('sec-concept')">이진수</span>
+      <span class="ctag" onclick="goTo('sec-concept')">아스키코드</span>
+      <span class="ctag" onclick="goTo('sec-concept')">픽셀·해상도</span>
+      <span class="ctag" onclick="goTo('sec-concept')">표본화·양자화·부호화</span>
+      <span class="ctag" onclick="goTo('sec-concept')">FPS</span>
+    </div>
+    <div class="ibox prev">📌 <b>이전 차시:</b> 디지털 데이터의 저장·가공·전송 특징을 배웠습니다. 이제 문자·이미지·소리·동영상이 실제로 어떻게 이진수로 표현되는지 탐구합니다.</div>
+  </div>
+</div>
+
+<div class="card" id="sec-concept">
+  <div class="ch" onclick="toggleSec('sec-concept')"><div class="sn" style="background:var(--gbg);color:var(--green)">02</div><h3>개념설명</h3><span class="st">⏱ 25분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">① 문자의 디지털 표현 — 문자 코드</h4>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;margin-bottom:12px;font-size:12px;color:var(--mt);line-height:1.9">
+      컴퓨터는 0과 1의 이진수를 조합한 <b>문자 코드</b>로 문자를 표현합니다.<br>
+      • <b>아스키(ASCII) 코드:</b> 영문자·숫자·기호 표현 (A=1000001, B=1000010 ...)<br>
+      • <b>유니코드(Unicode):</b> 다양한 언어 표현 (가=AC00, 나=B098 ...)
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px">
+      <div style="background:#1e1e2e;border-radius:var(--rSM);padding:12px">
+        <div style="font-size:10px;color:#aaa;margin-bottom:7px">아스키 코드 일부</div>
+        <div style="font-family:monospace;font-size:12px;color:#a0c0ff;line-height:2">A = 1000001<br>B = 1000010<br>C = 1000011<br>Z = 1011010</div>
+      </div>
+      <div style="background:#1e1e2e;border-radius:var(--rSM);padding:12px">
+        <div style="font-size:10px;color:#aaa;margin-bottom:7px">입력 → 이진수 변환 → 화면</div>
+        <div style="font-family:monospace;font-size:12px;color:#FF6B35;line-height:2">'A' 입력<br>→ 1000001<br>→ 화면에 'A' 출력</div>
+      </div>
+    </div>
+    <div class="divl"></div>
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">② 이미지의 디지털 표현</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px">
+      <div style="background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:5px">🟩 비트맵(Bitmap) 방식</div>
+        <div style="font-size:12px;color:var(--mt);line-height:1.75">픽셀 단위로 이미지 표현. 색상 코드로 픽셀 정보 저장. <b>해상도</b>가 높을수록 실제와 유사. 확대 시 깨짐. 파일: BMP·JPG·PNG</div>
+        <div style="font-size:11px;color:var(--lt);margin-top:5px">흑백: 0(검은색)·1(흰색)</div>
+      </div>
+      <div style="background:var(--gbg);border:1px solid #BFDFAA;border-radius:var(--rSM);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:5px">📐 벡터(Vector) 방식</div>
+        <div style="font-size:12px;color:var(--mt);line-height:1.75">수식으로 점·선을 계산하여 이미지 표현. 확대해도 깨지지 않음. 로고·아이콘에 적합. 파일: SVG</div>
+        <div style="font-size:11px;color:var(--lt);margin-top:5px">예) 원(150,150,240) + 파란색</div>
+      </div>
+    </div>
+    <div class="divl"></div>
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">③ 소리의 디지털 표현 — 3단계 변환</h4>
+    <div style="display:flex;gap:0;margin-bottom:12px">
+      <div style="flex:1;text-align:center;padding:10px 6px;background:var(--bbg);border:1.5px solid #BACED8;border-radius:6px 0 0 6px">
+        <div style="font-size:16px;margin-bottom:4px">🌊</div>
+        <div style="font-size:11px;font-weight:700;color:var(--blue)">① 표본화</div>
+        <div style="font-size:10px;color:var(--mt);margin-top:3px">아날로그 파형을 일정 간격으로 나눔</div>
+      </div>
+      <div style="width:20px;display:flex;align-items:center;justify-content:center;background:var(--br);font-size:10px">→</div>
+      <div style="flex:1;text-align:center;padding:10px 6px;background:var(--abg);border:1.5px solid #EDD070;border-top:1.5px solid #EDD070;border-bottom:1.5px solid #EDD070">
+        <div style="font-size:16px;margin-bottom:4px">📏</div>
+        <div style="font-size:11px;font-weight:700;color:var(--amber)">② 양자화</div>
+        <div style="font-size:10px;color:var(--mt);margin-top:3px">소리 크기를 가까운 정숫값으로 표현</div>
+      </div>
+      <div style="width:20px;display:flex;align-items:center;justify-content:center;background:var(--br);font-size:10px">→</div>
+      <div style="flex:1;text-align:center;padding:10px 6px;background:var(--ult);border:1.5px solid var(--umd);border-radius:0 6px 6px 0">
+        <div style="font-size:16px;margin-bottom:4px">0️⃣1️⃣</div>
+        <div style="font-size:11px;font-weight:700;color:var(--u)">③ 부호화</div>
+        <div style="font-size:10px;color:var(--mt);margin-top:3px">정숫값을 이진수로 변환</div>
+      </div>
+    </div>
+    <div class="ibox info" style="margin-bottom:10px">💡 예) 정숫값 1→001, 2→010, 3→011, 4→100, 5→101</div>
+    <div class="divl"></div>
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">④ 동영상의 디지털 표현 — 프레임·FPS</h4>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;font-size:12px;color:var(--mt);line-height:1.9">
+      • <b>프레임(Frame):</b> 정지된 이미지 하나<br>
+      • <b>FPS(Frames Per Second):</b> 1초에 보이는 프레임 수 → 동영상 품질 결정<br>
+      • FPS가 높을수록 → 움직임이 자연스러움 (단, 용량 증가)<br>
+      • <b>잔상 효과:</b> 연속 이미지를 빠르게 넘기면 움직이는 것처럼 보임<br>
+      • 파일 형식: AVI(용량 큼) / MP4(저용량 고화질) / MOV(애플)
+    </div>
+    <div class="ibox info">📖 <b>교과서 연계:</b> pp.48~54</div>
+  </div>
+</div>
+
+<!-- ★ 수행 활동 ★ -->
+<div class="activity" id="sec-activity">
+  <div class="act-head" onclick="toggleSec('act-body-02')">
+    <span class="act-badge">★ 수행 활동</span>
+    <h3>문자·이미지·소리 디지털 변환 체험</h3>
+    <span style="font-size:10px;color:var(--udk);margin-left:auto">개별·모둠 활동 | pp.49~54</span>
+    <span class="carr" style="color:var(--udk)">▾</span>
+  </div>
+  <div id="act-body-02" class="act-body">
+    <div class="ibox ok" style="margin-top:0;margin-bottom:14px">💡 교과서 3개 해보기를 하나의 수행 활동으로 통합하여 체험합니다.</div>
+    <!-- 활동1: 문자 코드 변환 -->
+    <div style="background:var(--sf);border:2px solid var(--umd);border-radius:var(--rSM);padding:14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:8px">📋 활동 1 — 아스키 코드로 영문 이름 이진수 변환 (pp.49)</div>
+      <div style="font-size:12px;color:var(--mt);margin-bottom:10px">아스키 코드 표를 참고하여 자신의 영문 이름 약자를 이진수로 변환하고 친구와 공유해보세요.</div>
+      <div style="background:#1e1e2e;border-radius:var(--rSM);padding:12px;margin-bottom:10px">
+        <div style="font-size:10px;color:#aaa;margin-bottom:6px">아스키 코드 변환기 (대문자)</div>
+        <div style="display:flex;gap:7px;margin-bottom:9px">
+          <input id="ascii-in" type="text" maxlength="10" placeholder="영문 이름 약자 (예: KJH)" style="flex:1;padding:8px;border:1.5px solid #444;border-radius:var(--rSM);background:#2a2a3e;color:#a0c0ff;font-size:13px;font-family:monospace;outline:none" oninput="convertAscii()">
+          <button class="btn bsm" onclick="convertAscii()" style="background:#FF6B35;color:#fff;border-color:#C04010">변환</button>
+        </div>
+        <div id="ascii-out" style="font-family:monospace;font-size:12px;color:#4AE994;line-height:2;min-height:32px">결과가 여기에 표시됩니다</div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--mt);margin-bottom:6px">나의 영문 이름 약자와 이진수 변환 결과 기록</div>
+      <input class="act-input" style="min-height:44px;resize:none" placeholder="예) KJH → K: 1001011 / J: 1001010 / H: 1001000">
+    </div>
+    <!-- 활동2: 이미지 픽셀 변환 -->
+    <div style="background:var(--sf);border:2px solid var(--umd);border-radius:var(--rSM);padding:14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:8px">📋 활동 2 — 디지털 이미지 변환 과정 체험 (pp.50)</div>
+      <div style="font-size:12px;color:var(--mt);margin-bottom:10px">8×8 격자에 이미지를 그리고, 색칠한 칸=1, 빈 칸=0으로 이진수로 변환해봅니다.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div>
+          <div style="font-size:10px;color:var(--mt);margin-bottom:5px;font-weight:600">픽셀 격자 (클릭하여 켜기/끄기)</div>
+          <canvas id="pixel-grid" width="160" height="160" style="max-width:100%;display:block;cursor:pointer;border:2px solid var(--u);border-radius:4px;image-rendering:pixelated"></canvas>
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button class="btn bsm bp" onclick="clearPixels()">↺ 초기화</button>
+            <button class="btn bsm" onclick="toBinary()">이진수 변환 →</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--mt);margin-bottom:5px;font-weight:600">이진수 표현 (행별 8비트)</div>
+          <div id="binary-out" style="font-family:monospace;font-size:11px;color:var(--u);background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:10px;min-height:140px;line-height:2;word-break:break-all">격자를 클릭하여 이미지를 그려보세요</div>
+        </div>
+      </div>
+      <textarea class="act-input" placeholder="이미지를 이진수로 변환하는 원리를 설명해보세요 (픽셀, 색상 코드, 해상도와의 관계 포함)"></textarea>
+    </div>
+    <!-- 활동3: 소리 변환 -->
+    <div style="background:var(--sf);border:2px solid var(--umd);border-radius:var(--rSM);padding:14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:8px">📋 활동 3 — 소리의 디지털 변환 과정 처리 (pp.53)</div>
+      <div style="font-size:12px;color:var(--mt);margin-bottom:10px">아래 소리 파형 데이터를 표본화→양자화→부호화 3단계로 변환하고 빈칸을 채워보세요.</div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:8px">주어진 아날로그 소리 파형의 높이 값: 4.2, 2.7, 2.3, 0.8, 0.9, 2.9, 3.9, 0.7</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div style="background:var(--bbg);border:1px solid #BACED8;border-radius:var(--rSM);padding:10px">
+            <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:5px">① 표본화</div>
+            <div style="font-size:11px;color:var(--mt)">파형을 1초 간격으로 나눔 → 8개 값</div>
+            <input class="act-input" style="min-height:44px;resize:none;margin-top:5px" placeholder="표본화 간격:">
+          </div>
+          <div style="background:var(--abg);border:1px solid #EDD070;border-radius:var(--rSM);padding:10px">
+            <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:5px">② 양자화</div>
+            <div style="font-size:11px;color:var(--mt)">가까운 정숫값으로 변환</div>
+            <input class="act-input" style="min-height:44px;resize:none;margin-top:5px" placeholder="예) 4.2→4, 2.7→3...">
+          </div>
+          <div style="background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:10px">
+            <div style="font-size:11px;font-weight:700;color:var(--u);margin-bottom:5px">③ 부호화</div>
+            <div style="font-size:11px;color:var(--mt)">이진수 변환표 이용</div>
+            <input class="act-input" style="min-height:44px;resize:none;margin-top:5px" placeholder="예) 4→100, 3→011...">
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:6px">이진수 변환표</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span style="font-family:monospace;font-size:11px;padding:3px 7px;background:var(--sf);border:1px solid var(--br);border-radius:3px">1=001</span>
+          <span style="font-family:monospace;font-size:11px;padding:3px 7px;background:var(--sf);border:1px solid var(--br);border-radius:3px">2=010</span>
+          <span style="font-family:monospace;font-size:11px;padding:3px 7px;background:var(--sf);border:1px solid var(--br);border-radius:3px">3=011</span>
+          <span style="font-family:monospace;font-size:11px;padding:3px 7px;background:var(--sf);border:1px solid var(--br);border-radius:3px">4=100</span>
+          <span style="font-family:monospace;font-size:11px;padding:3px 7px;background:var(--sf);border:1px solid var(--br);border-radius:3px">5=101</span>
+        </div>
+      </div>
+    </div>
+    <!-- 활동4: FPS 비교 -->
+    <div style="background:var(--sf);border:2px solid var(--umd);border-radius:var(--rSM);padding:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:8px">📋 활동 4 — FPS에 따른 동영상 변화 분석 (pp.54)</div>
+      <div style="background:#1e1e2e;border-radius:var(--rSM);padding:14px;text-align:center;margin-bottom:10px">
+        <div style="font-size:10px;color:#aaa;margin-bottom:8px">FPS 시뮬레이터 — 숫자가 높을수록 부드럽게 움직입니다</div>
+        <div style="display:flex;justify-content:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <button onclick="setFPS(15)" class="btn bsm" style="background:#333;color:#aaa;border-color:#555">15 FPS</button>
+          <button onclick="setFPS(30)" class="btn bsm" style="background:#333;color:#aaa;border-color:#555">30 FPS</button>
+          <button onclick="setFPS(60)" class="btn bsm" style="background:#333;color:#aaa;border-color:#555">60 FPS</button>
+        </div>
+        <canvas id="fps-cv" width="240" height="80" style="max-width:100%;display:block;margin:0 auto;background:#111;border-radius:6px"></canvas>
+        <div id="fps-info" style="font-size:11px;color:#aaa;margin-top:7px">FPS 버튼을 클릭하세요</div>
+      </div>
+      <div style="overflow-x:auto"><table class="act-table">
+        <thead><tr><th>FPS</th><th>움직임 자연스러움</th><th>파일 용량</th><th>주로 사용하는 상황</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600;color:var(--u)">15 FPS</td><td><input class="act-input" style="min-height:44px;resize:none"></td><td><input class="act-input" style="min-height:44px;resize:none"></td><td><input class="act-input" style="min-height:44px;resize:none"></td></tr>
+          <tr><td style="font-weight:600;color:var(--u)">30 FPS</td><td><input class="act-input" style="min-height:44px;resize:none"></td><td><input class="act-input" style="min-height:44px;resize:none"></td><td><input class="act-input" style="min-height:44px;resize:none"></td></tr>
+          <tr><td style="font-weight:600;color:var(--u)">60 FPS</td><td><input class="act-input" style="min-height:44px;resize:none"></td><td><input class="act-input" style="min-height:44px;resize:none"></td><td><input class="act-input" style="min-height:44px;resize:none"></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn bsm bp" onclick="saveActivity('l202_act')">💾 활동 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ★ 추가 수업 자료 ★ -->
+<div class="card" id="sec-materials">
+  <div class="ch" onclick="toggleSec('sec-materials')">
+    <div class="sn" style="background:#FFF3CD;color:#7A4E0A">📂</div>
+    <h3>추가 수업 자료 — 컴퓨터의 자료 표현</h3>
+    <span class="st">인터랙티브 체험 자료</span>
+    <span class="carr">▾</span>
+  </div>
+  <div class="cb">
+
+    <!-- 자료 소개 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <div style="background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:13px">
+        <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:8px">📄 자료 소개</div>
+        <div style="font-size:12px;color:var(--mt);line-height:1.85">
+          <b>컴퓨터의 자료 표현</b> 인터랙티브 학습 자료입니다.<br>
+          5가지 데이터 유형을 직접 체험하며 디지털 표현 원리를 탐구할 수 있습니다.
+        </div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px">
+        <div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">🎯 포함 내용</div>
+        <div style="font-size:12px;color:var(--mt);line-height:1.85">
+          🔤 <b>문자</b> — ASCII·유니코드, 이진수 변환기<br>
+          🔢 <b>수치</b> — 10진수↔2진수 변환기, 퀴즈<br>
+          🔊 <b>소리</b> — ADC 파형 시각화 체험<br>
+          🖼️ <b>이미지</b> — RGB 믹서, 8×8 픽셀 아트<br>
+          🎬 <b>영상</b> — 프레임 연속 재생 체험
+        </div>
+      </div>
+    </div>
+
+    <!-- 체험 미리보기 배지 -->
+    <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px">
+      <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:var(--ult);border:1px solid var(--umd);border-radius:20px;font-size:11px;font-weight:700;color:var(--u)">🧪 문자→이진수 변환기</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:var(--bbg);border:1px solid #BACED8;border-radius:20px;font-size:11px;font-weight:700;color:var(--blue)">🔢 10진수↔2진수 변환기</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:var(--abg);border:1px solid #EDD070;border-radius:20px;font-size:11px;font-weight:700;color:var(--amber)">🎵 소리 파형 시각화</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:var(--gbg);border:1px solid #BFDFAA;border-radius:20px;font-size:11px;font-weight:700;color:var(--green)">🎨 RGB 색상 믹서</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:var(--rbg);border:1px solid #F0B8A0;border-radius:20px;font-size:11px;font-weight:700;color:var(--red)">🖱 픽셀 아트(8×8)</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#F5F0FF;border:1px solid #C8C4F0;border-radius:20px;font-size:11px;font-weight:700;color:#4E48A8">🎞 프레임 재생 체험</span>
+    </div>
+
+    <!-- 실행 버튼 -->
+    <a href="data_representation_lesson.html" target="_blank" rel="noopener"
+       style="display:flex;align-items:center;justify-content:center;gap:12px;padding:18px 24px;background:linear-gradient(135deg,var(--u),var(--udk));border-radius:var(--rLG);text-decoration:none;color:#fff;font-weight:700;font-size:14px;transition:opacity .15s;box-shadow:0 4px 16px rgba(27,158,114,.32);margin-bottom:11px"
+       onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="2" y="2" width="18" height="18" rx="4" fill="white" fill-opacity="0.22"/>
+        <polygon points="9,7 9,15 16,11" fill="white"/>
+      </svg>
+      🖥️ &nbsp;컴퓨터의 자료 표현 — 인터랙티브 자료 열기 &nbsp;↗
+    </a>
+
+    <!-- 활용 안내 -->
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px">
+      <div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">📌 수업 활용 방법</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;gap:9px;font-size:12px;color:var(--mt)">
+          <span style="width:20px;height:20px;border-radius:50%;background:var(--u);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</span>
+          <span>위 버튼을 클릭하여 새 탭에서 인터랙티브 자료를 엽니다.</span>
+        </div>
+        <div style="display:flex;gap:9px;font-size:12px;color:var(--mt)">
+          <span style="width:20px;height:20px;border-radius:50%;background:var(--u);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</span>
+          <span>문자·수치·소리·이미지·영상 탭을 순서대로 탐구하며 각 체험 활동을 수행합니다.</span>
+        </div>
+        <div style="display:flex;gap:9px;font-size:12px;color:var(--mt)">
+          <span style="width:20px;height:20px;border-radius:50%;background:var(--u);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</span>
+          <span>체험 결과를 아래 수행 활동의 각 기록란에 메모해둡니다.</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="card" id="sec-assess">
+  <div class="ch" onclick="toggleSec('sec-assess')"><div class="sn" style="background:var(--bbg);color:var(--blue)">04</div><h3>수행평가</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;margin-bottom:12px;border-left:3px solid var(--u)">
+      <h4 style="font-size:13px;font-weight:700;color:var(--u);margin-bottom:7px">📋 데이터 유형별 디지털 변환 방법 설명</h4>
+      <p style="font-size:13px;color:var(--mt)">문자·이미지·소리·동영상 중 2가지를 선택하여 디지털 변환 방법을 구체적으로 설명하고, 각 방법의 특징(장단점)을 비교하시오.</p>
+    </div>
+    <table class="rub"><thead><tr><th>평가 요소</th><th class="lv4">매우 잘함(4)</th><th class="lv3">잘함(3)</th><th class="lv2">보통(2)</th><th class="lv1">노력 필요(1)</th></tr></thead><tbody><tr><td><b>변환 방법 이해</b></td><td class="lv4">2가지 정확 설명</td><td class="lv3">1가지 정확</td><td class="lv2">개념만 나열</td><td class="lv1">없음</td></tr><tr><td><b>특징 비교</b></td><td class="lv4">구체적·정확</td><td class="lv3">대체로 정확</td><td class="lv2">단순 나열</td><td class="lv1">없음</td></tr></tbody></table>
+    <div class="sclist"><div class="scitem"><label>문자 코드를 이용한 문자 표현 방법을 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>비트맵·벡터 방식의 이미지 표현을 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>소리의 3단계 변환과 동영상 FPS를 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div></div>
+    <button class="btn bsm bok" style="margin-top:10px" onclick="saveSC('l202sc')">💾 저장</button>
+  </div>
+</div>
+
+<div class="card" id="sec-review">
+  <div class="ch" onclick="toggleSec('sec-review')"><div class="sn" style="background:var(--gbg);color:var(--green)">05</div><h3>확인하기</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="sgrid">
+      <div class="scard"><strong>문자 코드</strong>아스키(영문·숫자)·유니코드(다국어). 이진수 조합.</div>
+      <div class="scard"><strong>이미지</strong>비트맵(픽셀·해상도)·벡터(수식). 확대 시 비트맵은 깨짐.</div>
+      <div class="scard"><strong>소리 3단계</strong>표본화(간격 나눔)→양자화(정수화)→부호화(이진수)</div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;margin-bottom:12px"><b>✏️ 단답형:</b> 동영상에서 1초에 보이는 프레임의 수를 <span style="display:inline-block;width:60px;border-bottom:1.5px solid var(--tx)">&nbsp;</span>(이)라 하며, 이 값이 높을수록 움직임이 자연스럽다.<textarea style="display:block;width:100%;margin-top:9px;padding:9px;border:1px solid var(--br);border-radius:var(--rSM);font-size:13px;font-family:inherit;resize:vertical;min-height:48px;background:var(--sf)" placeholder="정답을 입력하세요..."></textarea></div>
+    <div class="ibox ok">📖 <div><strong>다음 차시 예고:</strong> 다음 소단원부터는 데이터 <strong>수집·관리·구조화·분석</strong>을 배웁니다! (pp.57~63)</div></div>
+  </div>
+</div>
+
+  </div>
+  <div class="ca">
+    <div class="ap"><h5>학습 진행</h5><div class="slist">
+      <div class="si" onclick="goTo('sec-goal')"><div class="dot sd">1</div>학습목표</div>
+      <div class="si" onclick="goTo('sec-concept')"><div class="dot">2</div>개념설명</div>
+      <div class="si" onclick="goTo('sec-activity')"><div class="dot sa">★</div>수행 활동</div>
+      <div class="si" onclick="goTo('sec-materials')"><div class="dot" style="background:#FFF3CD;color:#7A4E0A">📂</div>추가 수업 자료</div>
+      <div class="si" onclick="goTo('sec-assess')"><div class="dot">4</div>수행평가</div>
+      <div class="si" onclick="goTo('sec-review')"><div class="dot">5</div>확인하기</div>
+    </div></div>
+    <div class="ap" style="background:var(--ult);border-color:var(--umd)"><h5 style="color:var(--u)">단원 진도</h5>
+      <div style="display:flex;align-items:center;gap:7px"><div class="pbtrack" style="flex:1"><div class="pbfill" style="width:38%"></div></div><span style="font-size:11px;font-weight:600;color:var(--u)">2/6</span></div>
+    </div>
+    <div class="ap"><h5>핵심 용어</h5><div class="termlist"><div class="tterm"><span class="tw">이진수</span><span class="tdef">0과 1로 이루어진 수</span></div><div class="tterm"><span class="tw">아스키</span><span class="tdef">영문·숫자 문자 코드</span></div><div class="tterm"><span class="tw">유니코드</span><span class="tdef">다국어 문자 코드</span></div><div class="tterm"><span class="tw">픽셀</span><span class="tdef">이미지 최소 단위</span></div><div class="tterm"><span class="tw">해상도</span><span class="tdef">픽셀 수, 높을수록 정교</span></div><div class="tterm"><span class="tw">표본화</span><span class="tdef">파형을 간격으로 나눔</span></div><div class="tterm"><span class="tw">양자화</span><span class="tdef">정숫값으로 근사</span></div><div class="tterm"><span class="tw">부호화</span><span class="tdef">이진수로 변환</span></div><div class="tterm"><span class="tw">FPS</span><span class="tdef">초당 프레임 수</span></div></div></div>
+    <div class="ap" style="background:#F0FDF4;border-color:#BBF7D0">
+      <h5 style="color:#166534">🔗 데이터 도구</h5>
+      <a href="https://codap.concord.org" target="_blank" class="btn bsm" style="width:100%;justify-content:center;background:var(--u);color:#fff;border-color:var(--udk);margin-bottom:5px">코답(CODAP) 열기 ↗</a>
+      <a href="https://kosis.kr" target="_blank" class="btn bsm" style="width:100%;justify-content:center;font-size:10px;color:var(--mt)">국가통계포털 ↗</a>
+    </div>
+  </div>
+  </div></div>
+</main>
+<div id="toast"></div>
+<script>
+
+  // ── Google Sheets 저장 ──────────────────────────────────
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+
+  function getUserName() {
+    return localStorage.getItem('user_name') || '익명';
+  }
+
+  function postToSheets(payload) {
+    if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) return;
+    fetch(GS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},2400);}
+function toggleSec(id){var e=document.getElementById(id);if(e)e.classList.toggle('collapsed');}
+function goTo(id){var e=document.getElementById(id);if(!e)return;window.scrollTo({top:e.getBoundingClientRect().top+window.pageYOffset-64,behavior:'smooth'});}
+function checkQ(el,ok,msg){el.closest('.qopts').querySelectorAll('.opt').forEach(function(o){o.classList.add('locked');});el.classList.add(ok?'correct':'wrong');var fb=el.closest('.qwrap').querySelector('.qfb');if(fb){fb.className='qfb '+(ok?'ok':'err');fb.innerHTML=(ok?'✓ 정답: ':'✗ 힌트: ')+msg;}}
+function saveSC(key){
+  var d={};
+  document.querySelectorAll('.scitem select').forEach(function(s,i){d['q'+i]=s.value;});
+  try{
+    localStorage.setItem(key,JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'sc',
+      userName: getUserName(),
+      lessonKey: 'l22',
+      lessonName: 'l22',
+      answers: d
+    });
+    toast('자기평가가 저장되었습니다 ✓');
+  }catch(e){}
+}
+function loadSC(key){try{var d=JSON.parse(localStorage.getItem(key)||'{}');document.querySelectorAll('.scitem select').forEach(function(s,i){if(d['q'+i])s.value=d['q'+i];});}catch(e){}}
+function saveActivity(key){
+  var d={};
+  document.querySelectorAll('.act-input').forEach(function(el,i){d['a'+i]=el.value;});
+  document.querySelectorAll('.peer-check input[type=radio]:checked').forEach(function(el){d['r_'+el.name]=el.value;});
+  try{
+    localStorage.setItem(key,JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'act',
+      userName: getUserName(),
+      lessonKey: 'l22',
+      lessonName: 'l22',
+      answers: d
+    });
+    toast('✅ 수행 활동이 저장되었습니다!');
+  }catch(e){}
+}
+function loadActivity(key){
+  try{
+    var d=JSON.parse(localStorage.getItem(key)||'{}');
+    document.querySelectorAll('.act-input').forEach(function(el,i){if(d['a'+i])el.value=d['a'+i];});
+    Object.keys(d).filter(function(k){return k.startsWith('r_');}).forEach(function(k){
+      var el=document.querySelector('input[type=radio][name="'+k.slice(2)+'"][value="'+d[k]+'"]');
+      if(el)el.checked=true;
+    });
+  }catch(e){}
+}
+
+
+// ASCII 변환기
+var asciiTable = {A:65,B:66,C:67,D:68,E:69,F:70,G:71,H:72,I:73,J:74,K:75,L:76,M:77,N:78,O:79,P:80,Q:81,R:82,S:83,T:84,U:85,V:86,W:87,X:88,Y:89,Z:90};
+function decToBin(n,len){var b=n.toString(2);while(b.length<len)b='0'+b;return b;}
+function convertAscii(){
+  var v=(document.getElementById('ascii-in').value||'').toUpperCase();
+  var out=document.getElementById('ascii-out');
+  if(!out)return;
+  if(!v){out.textContent='결과가 여기에 표시됩니다';return;}
+  var res=v.split('').map(function(c){return asciiTable[c]?c+' = '+decToBin(asciiTable[c],7):'['+c+'=알 수 없음]';}).join('   ');
+  out.innerHTML=res;
+}
+
+// 픽셀 격자
+var pixels=Array(64).fill(0);
+var cv2=null,ctx2=null;
+function initPixelGrid(){
+  cv2=document.getElementById('pixel-grid');if(!cv2)return;
+  ctx2=cv2.getContext('2d');
+  cv2.addEventListener('click',function(e){
+    var r=cv2.getBoundingClientRect();
+    var x=Math.floor((e.clientX-r.left)/20);
+    var y=Math.floor((e.clientY-r.top)/20);
+    if(x>=0&&x<8&&y>=0&&y<8){pixels[y*8+x]=1-pixels[y*8+x];drawGrid();}
+  });
+  drawGrid();
+}
+function drawGrid(){
+  if(!ctx2)return;
+  ctx2.fillStyle='#1e1e2e';ctx2.fillRect(0,0,160,160);
+  for(var y=0;y<8;y++)for(var x=0;x<8;x++){
+    ctx2.fillStyle=pixels[y*8+x]?'#FF6B35':'#333';
+    ctx2.fillRect(x*20+1,y*20+1,18,18);
+    ctx2.strokeStyle='#555';ctx2.lineWidth=0.5;ctx2.strokeRect(x*20,y*20,20,20);
+  }
+}
+function clearPixels(){pixels=Array(64).fill(0);drawGrid();document.getElementById('binary-out').textContent='격자를 클릭하여 이미지를 그려보세요';}
+function toBinary(){
+  var out=document.getElementById('binary-out');if(!out)return;
+  var lines=[];
+  for(var y=0;y<8;y++){var row='';for(var x=0;x<8;x++)row+=pixels[y*8+x];lines.push('행'+(y+1)+': '+row);}
+  out.innerHTML=lines.join('<br>');
+}
+
+// FPS 시뮬레이터
+var fpsAnim=null,fpsX=0,fpsCur=30;
+function setFPS(n){
+  fpsCur=n;clearInterval(fpsAnim);
+  var cv=document.getElementById('fps-cv');if(!cv)return;
+  var ctx=cv.getContext('2d');
+  var info=document.getElementById('fps-info');
+  var speed={15:3,30:6,60:12}[n]||5;
+  var smoothness={15:'약간 끊김',30:'자연스러움',60:'매우 부드러움'}[n]||'';
+  if(info)info.textContent=n+' FPS — '+smoothness+' (1초에 '+n+'장 이미지)';
+  fpsAnim=setInterval(function(){
+    ctx.fillStyle='#111';ctx.fillRect(0,0,240,80);
+    ctx.fillStyle='#1B9E72';
+    ctx.beginPath();ctx.arc(fpsX,40,14,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#FF6B35';
+    ctx.font='bold 11px sans-serif';ctx.textAlign='center';
+    ctx.fillText(n+' FPS',fpsX,44);
+    fpsX=(fpsX+speed)%240;
+  },Math.round(1000/n));
+}
+
+document.addEventListener('DOMContentLoaded',function(){initPixelGrid();});
+
+document.addEventListener('DOMContentLoaded',function(){loadSC('l202sc');loadActivity('l202sc_act');});
+</script>
+</body></html>
