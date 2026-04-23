@@ -1,1 +1,411 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>II-5. 인기 공유 동영상 데이터 분석 — 정보 교과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#F5F4F0;color:#1C1C1C;font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+:root{--u:#1B9E72;--udk:#0F6B4C;--ult:#E2F5EE;--umd:#A8DFC8;--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--green:#2A720E;--gbg:#E8F3DC;--amber:#7A4E0A;--abg:#FAF0DC;--red:#8C1E0E;--rbg:#FAEBE6;--blue:#0A4E8C;--bbg:#E4F0FA;--rLG:14px;--rSM:8px;--SW:240px;--TH:52px}
+.sb{width:var(--SW);background:var(--sf);border-right:1px solid var(--br);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.sb-top{padding:16px 14px 12px;border-bottom:1px solid var(--br)}.uchip{display:inline-flex;align-items:center;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.sb-top h2{font-size:12px;font-weight:700;line-height:1.4}.smeta{font-size:10px;color:var(--lt);margin-top:3px}
+.sb-nav{padding:4px 0;flex:1}.nlbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);padding:7px 13px 3px}
+.na{display:flex;align-items:center;gap:8px;padding:7px 13px;font-size:11px;color:var(--mt);text-decoration:none;border-left:2.5px solid transparent;transition:background .12s}
+.na:hover{background:var(--bg);color:var(--tx)}.na.on{color:var(--u);font-weight:600;background:var(--ult);border-left-color:var(--u)}.na.done .nn{background:var(--gbg);color:var(--green)}
+.nn{width:18px;height:18px;border-radius:50%;background:var(--br);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--mt)}.na.on .nn{background:var(--u);color:#fff}
+.nbadge{margin-left:auto;font-size:9px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:1px 5px;border-radius:10px;white-space:nowrap}
+.sb-foot{padding:10px 13px;border-top:1px solid var(--br)}.ba{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt);text-decoration:none;padding:5px 9px;border-radius:var(--rSM);border:1px solid var(--br);background:var(--sf);transition:all .12s}.ba:hover{background:var(--bg)}
+.main{margin-left:var(--SW);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:var(--TH);padding:0 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mt);flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}.bcsep{color:var(--br)}.tbr{display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s;white-space:nowrap}.btn:hover{background:var(--bg)}.bsm{padding:5px 9px;font-size:11px}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}.bok{background:var(--green);color:#fff;border-color:var(--green)}
+.page{padding:20px 22px;flex:1}.g2{display:grid;grid-template-columns:1fr minmax(0,248px);gap:16px;align-items:start}.cm{min-width:0}.ca{position:sticky;top:calc(var(--TH)+12px)}
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
+.ch{display:flex;align-items:center;gap:9px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--br);transition:background .12s;user-select:none}.ch:hover{background:var(--bg)}
+.sn{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}.ch h3{font-size:13px;font-weight:600;flex:1}
+.st{font-size:10px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:2px 7px;border-radius:20px;white-space:nowrap}.carr{font-size:11px;color:var(--lt);transition:transform .2s}.card.collapsed .carr{transform:rotate(-90deg)}.cb{padding:18px}.card.collapsed .cb{display:none}
+.ach{background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:10px 13px;margin-bottom:14px}.ach-c{font-family:monospace;font-size:11px;font-weight:700;color:var(--u);margin-bottom:3px}.ach-t{font-size:13px;line-height:1.6}
+.glist{list-style:none}.glist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid var(--br);line-height:1.6}.glist li:last-child{border-bottom:none}.gck{width:17px;height:17px;border-radius:50%;background:var(--gbg);color:var(--green);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.ctag{font-size:11px;padding:3px 10px;background:var(--bg);border:1px solid var(--br);border-radius:20px;cursor:pointer;color:var(--mt);transition:all .12s}.ctag:hover{background:var(--ult);border-color:var(--umd);color:var(--u)}
+.ibox{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6;margin-top:10px}.prev{background:var(--bg);border:1px solid var(--br);color:var(--mt)}.warn{background:#FFFBEC;border:1px solid #EDD070;color:#6A5000}.info{background:var(--bbg);border:1px solid #BACED8;color:var(--blue)}.ok{background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}
+.divl{height:1px;background:var(--br);margin:13px 0}
+.crow{display:grid;grid-template-columns:1fr minmax(0,148px);gap:13px;align-items:start;margin-bottom:13px}
+.ct h4{font-size:13px;font-weight:700;margin-bottom:7px}.ct p{font-size:13px;color:var(--mt);line-height:1.75}.ct ul{padding-left:1rem;margin-top:5px}.ct ul li{font-size:13px;color:var(--mt);margin-bottom:3px;line-height:1.6}
+.cvis{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);display:flex;align-items:center;justify-content:center;padding:8px}
+/* ── 수행활동 카드 ── */
+.activity{background:linear-gradient(135deg,var(--ult),#EDFFF6);border:2px solid var(--umd);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
+.act-head{display:flex;align-items:center;gap:9px;padding:12px 16px;border-bottom:1.5px solid var(--umd);background:var(--ult);cursor:pointer;user-select:none}.act-head:hover{background:#D0EEE3}
+.act-badge{background:var(--u);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}.act-head h3{font-size:13px;font-weight:700;color:var(--udk);flex:1}.act-body{padding:18px}
+.act-step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--br);border-radius:var(--rSM);margin-bottom:8px;min-height:160px;}
+.act-num{width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;flex:none;margin-top:1px}
+.act-step h4{font-size:12px;font-weight:700;margin-bottom:4px}.act-step p{font-size:12px;color:var(--mt);line-height:1.65}
+.act-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.act-table th{background:var(--u);color:#fff;padding:7px 10px;font-weight:600;font-size:11px;text-align:left}
+.act-table td{padding:8px 10px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.55}
+.act-table tr:last-child td{border-bottom:none}
+.act-input{width:100%;padding:8px 10px;border:1.5px solid var(--br);border-radius:var(--rSM);font-size:12px;font-family:inherit;background:var(--sf);outline:none;resize:vertical;min-height:88px;margin-top:4px}
+.act-input:focus{border-color:var(--u)}
+/* ── quiz ── */
+.qwrap{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-top:13px}.qq{font-size:14px;font-weight:500;margin-bottom:11px;line-height:1.55}.qopts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);cursor:pointer;font-size:13px;line-height:1.5;transition:all .12s}.opt:hover{border-color:var(--u);background:var(--ult)}.opt.correct{border-color:#4A9020;background:var(--gbg);color:#1A5000;pointer-events:none}.opt.wrong{border-color:#B03020;background:var(--rbg);color:#6A1000;pointer-events:none}.opt.locked{pointer-events:none;opacity:.55}
+.onum{width:21px;height:21px;border-radius:50%;background:var(--br);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.opt.correct .onum{background:#4A9020;color:#fff}.opt.wrong .onum{background:#B03020;color:#fff}
+.qfb{display:none;margin-top:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6}.qfb.ok{display:block;background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}.qfb.err{display:block;background:var(--rbg);border:1px solid #F0B8A0;color:var(--red)}
+/* ── assess ── */
+.rub{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}.rub th{background:var(--bg);padding:7px 8px;font-weight:600;border-bottom:1.5px solid var(--br);text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--mt)}.rub td{padding:8px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.5}.rub tr:last-child td{border-bottom:none}
+.lv4{color:#1A6000!important;font-weight:500}.lv3{color:#2A6830!important}.lv2{color:#7A4E00!important}.lv1{color:#8A2000!important}
+.peer-check{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}.peer-check th{background:var(--ult);padding:6px 9px;font-weight:600;border-bottom:1.5px solid var(--umd);text-align:center;color:var(--u);font-size:10px}.peer-check td{padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt);text-align:center}.peer-check td:first-child{text-align:left;font-size:11px}.peer-check input[type=radio]{accent-color:var(--u)}
+/* ── sidebar widgets ── */
+.ap{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:13px;margin-bottom:10px}.ap h5{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lt);margin-bottom:8px}
+.slist{display:flex;flex-direction:column;gap:3px}.si{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rSM);font-size:11px;color:var(--mt);cursor:pointer;transition:background .12s}.si:hover{background:var(--bg)}
+.dot{width:19px;height:19px;border-radius:50%;background:var(--br);color:var(--lt);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.dot.sa{background:var(--u);color:#fff}.dot.sd{background:var(--gbg);color:var(--green)}
+.sclist{display:flex;flex-direction:column;gap:4px}.scitem{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg);border-radius:var(--rSM);font-size:12px;border:1px solid var(--br)}.scitem label{flex:1;line-height:1.5}.scitem select{font-size:11px;padding:3px 6px;border:1px solid var(--br);border-radius:5px;background:var(--sf);font-family:inherit;color:var(--tx);cursor:pointer;flex-shrink:0}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.scard{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px 12px;font-size:12px;line-height:1.65;color:var(--mt)}.scard strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--lt);margin-bottom:4px}.termlist{display:flex;flex-direction:column}.tterm{display:flex;align-items:baseline;gap:5px;padding:4px 0;font-size:11px;border-bottom:1px solid var(--br)}.tterm:last-child{border-bottom:none}.tw{font-weight:600;color:var(--u);white-space:nowrap}.tdef{color:var(--mt)}
+.pbtrack{height:5px;background:var(--umd);border-radius:3px;overflow:hidden}.pbfill{height:100%;background:var(--u);border-radius:3px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1C1C1C;color:#fff;padding:9px 18px;border-radius:10px;font-size:12px;font-family:inherit;z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+/* ══ 반응형 레이아웃 ══ */
+*,*::before,*::after{box-sizing:border-box}
+img,canvas,video{max-width:100%;height:auto;display:block}
+table{width:100%;border-collapse:collapse}
+.act-table,.peer-check,.rub{table-layout:fixed;word-break:break-word}
+.act-table td,.act-table th,
+.rub td,.rub th,
+.peer-check td,.peer-check th{min-width:44px;word-break:break-word;overflow-wrap:break-word}
+.act-step>div:not(.act-num){min-width:0;flex:1;overflow-wrap:break-word;word-break:break-word}
+.act-body,.cb{overflow-x:hidden}
+.act-input{width:100%;box-sizing:border-box}
+.mb-workspace,.mb-row,.mb-indent,.mb-indent2{flex-wrap:wrap}
+.sim-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
+/* 1100px 이하 */
+@media(max-width:1100px){
+  .g2{grid-template-columns:1fr}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 220px;min-width:180px}
+  .crow{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr 1fr}
+}
+
+/* 900px 이하 */
+@media(max-width:900px){
+  .ca{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .ca .ap{flex:1 1 180px;min-width:160px}
+  .page{padding:16px 14px}
+  .cb,.act-body{padding:13px}
+  .sgrid{grid-template-columns:1fr 1fr}
+  .crow{grid-template-columns:1fr}
+}
+
+/* 640px 이하 */
+@media(max-width:640px){
+  .page{padding:11px 10px}
+  .cb,.act-body{padding:10px}
+  .sgrid{grid-template-columns:1fr}
+  .act-step{flex-direction:column;gap:5px}
+  .act-num{margin-bottom:0}
+  .ch h3{font-size:12px}
+  .btn{font-size:11px;padding:5px 8px}
+  .act-table td,.act-table th{padding:5px 6px;font-size:11px}
+  .rub td,.rub th{padding:5px 6px;font-size:11px}
+  .peer-check td,.peer-check th{padding:5px 6px;font-size:10px}
+  .scard{font-size:11px}
+  .opt{font-size:12px;padding:8px 10px}
+  .mb,.mb-hole{font-size:10px;padding:4px 7px}
+}
+
+/* 480px 이하 */
+@media(max-width:480px){
+  :root{--SW:0px}
+  .sb{display:none}
+  .main{margin-left:0}
+  .topbar{padding:0 10px}
+  .page{padding:8px 9px}
+  .cb,.act-body{padding:9px}
+  .tbr .btn:last-child{display:none}
+  .sgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-top"><div class="uchip">◈ Unit II</div><h2>데이터</h2><div class="smeta">중단원2: 데이터 분석 · p.72~76</div></div>
+  <nav class="sb-nav"><div class="nlbl">소단원 목록</div><a class="na done" href="../lesson-01/index.html"><div class="nn">✓</div>디지털 형태의 데이터</a>
+<a class="na done" href="../lesson-02/index.html"><div class="nn">✓</div>다양한 데이터의 디지털 표현</a>
+<a class="na done" href="../lesson-03/index.html"><div class="nn">✓</div>데이터의 수집과 관리</a>
+<a class="na done" href="../lesson-04/index.html"><div class="nn">✓</div>데이터의 구조화와 분석</a>
+<a class="na on" href="../lesson-05/index.html"><div class="nn">5</div>인기 공유 동영상 데이터 분석<span class="nbadge">2차시</span></a>
+<a class="na " href="../lesson-06/index.html"><div class="nn">6</div>급식 잔반 데이터 분석</a>
+</nav>
+  <div class="sb-foot"><a class="ba" href="https://sungce.github.io/lesson/">← 정보 교과 학습 플랫폼</a></div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div class="bc"><a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a><span class="bcsep">›</span><a href="../../index.html">II. 데이터</a><span class="bcsep">›</span><span style="color:var(--tx);font-weight:500">5. 인기 공유 동영상 데이터 분석</span></div>
+    <div class="tbr">
+      <button class="btn bsm" onclick="toast('✅ 완료 표시!');postToSheets({type:'done',userName:getUserName(),unit:'II',lessonNum:'5',lessonName:'데이터 5단원'})">✓ 완료 표시</button>
+      <a class="btn bsm bp" href="../lesson-06/index.html">다음 소단원 →</a>
+    </div>
+  </header>
+  <div class="page"><div class="g2"><div class="cm">
+
+<div class="card" id="sec-goal">
+  <div class="ch" onclick="toggleSec('sec-goal')"><div class="sn" style="background:var(--ult);color:var(--u)">01</div><h3>학습목표</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="ach"><div class="ach-c">[9정02-05] 데이터 분석 — 생활·문화 분야</div><div class="ach-t">문제 해결에 적합한 데이터를 수집하고 분석하여 다양한 학문 분야의 문제를 융합적으로 해결하고, 데이터에 기반하여 자신의 주장을 논리적으로 설명할 수 있다. (pp.72~76)</div></div>
+    <ul class="glist">
+      <li><div class="gck">✓</div>데이터 기반 문제 해결 5단계 과정을 설명할 수 있다.</li>
+      <li><div class="gck">✓</div>캐글에서 인기 공유 동영상 데이터를 수집하고 코답으로 구조화할 수 있다.</li>
+      <li><div class="gck">✓</div>그래프로 데이터를 시각화하고 관계를 분석하여 의미를 해석할 수 있다.</li>
+    </ul>
+    <div class="divl"></div>
+    <div class="ctags">
+      <span class="ctag" onclick="goTo('sec-concept')">데이터 기반 문제 해결</span>
+      <span class="ctag" onclick="goTo('sec-concept')">캐글</span>
+      <span class="ctag" onclick="goTo('sec-concept')">categoryID</span>
+      <span class="ctag" onclick="goTo('sec-concept')">꺾은선그래프</span>
+    </div>
+    <div class="ibox prev">📌 <b>이전 차시:</b> 데이터 구조화 방법과 상관관계를 배웠습니다. 이번에는 실제 인기 공유 동영상 데이터를 분석하여 문제를 해결합니다.</div>
+  </div>
+</div>
+
+<div class="card" id="sec-concept">
+  <div class="ch" onclick="toggleSec('sec-concept')"><div class="sn" style="background:var(--gbg);color:var(--green)">02</div><h3>개념설명</h3><span class="st">⏱ 20분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">데이터 기반 문제 해결 5단계</h4>
+    <div style="display:flex;flex-direction:column;gap:0;margin-bottom:13px">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--bbg);border:1px solid #BACED8;border-radius:6px 6px 0 0">
+        <span style="width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</span>
+        <div><b style="font-size:12px;color:var(--blue)">문제 정의:</b> <span style="font-size:12px;color:var(--mt)">해결해야 할 문제를 명확하게 정의</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--abg);border-left:1px solid #EDD070;border-right:1px solid #EDD070;border-bottom:1px solid #EDD070">
+        <span style="width:22px;height:22px;border-radius:50%;background:var(--amber);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</span>
+        <div><b style="font-size:12px;color:var(--amber)">데이터 수집 및 구조화:</b> <span style="font-size:12px;color:var(--mt)">적합한 데이터 수집 → 목적에 맞게 구분·정리</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--ult);border-left:1px solid var(--umd);border-right:1px solid var(--umd);border-bottom:1px solid var(--umd)">
+        <span style="width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</span>
+        <div><b style="font-size:12px;color:var(--u)">데이터 살펴보기:</b> <span style="font-size:12px;color:var(--mt)">주요 속성 파악, 이름 바꾸기, 불필요 삭제</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--gbg);border-left:1px solid #BFDFAA;border-right:1px solid #BFDFAA;border-bottom:1px solid #BFDFAA">
+        <span style="width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</span>
+        <div><b style="font-size:12px;color:var(--green)">그래프로 표현:</b> <span style="font-size:12px;color:var(--mt)">꺾은선·막대·산점도 그래프로 시각화</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--rbg);border:1px solid #F0B8A0;border-top:none;border-radius:0 0 6px 6px">
+        <span style="width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">5</span>
+        <div><b style="font-size:12px;color:var(--red)">데이터 의미 해석:</b> <span style="font-size:12px;color:var(--mt)">관계 파악 → 의미 해석 → 주장 근거</span></div>
+      </div>
+    </div>
+    <div class="ibox info">📖 <b>교과서 연계:</b> pp.72~76 / 캐글: https://kaggle.com / 'Popular shared video data for educational purpose'</div>
+  </div>
+</div>
+
+<!-- ★ 수행 활동 ★ -->
+<div class="activity" id="sec-activity">
+  <div class="act-head" onclick="toggleSec('act-body-05')">
+    <span class="act-badge">★ 수행 활동</span>
+    <h3>인기 공유 동영상 데이터 그래프 표현·의미 해석</h3>
+    <span style="font-size:10px;color:var(--udk);margin-left:auto">개별 활동 | pp.76</span>
+    <span class="carr" style="color:var(--udk)">▾</span>
+  </div>
+  <div id="act-body-05" class="act-body">
+    <div class="ibox ok" style="margin-top:0;margin-bottom:14px">💡 교과서 데이터 분석 5단계를 따라 인기 공유 동영상 데이터를 분석합니다. (교과서 p.76 해보기)</div>
+    <div class="act-step">
+      <div class="act-num">1</div>
+      <div><h4>문제 정의 및 데이터 수집</h4>
+        <p>영상을 만들려는 친구에게 도움을 주기 위해 어떤 카테고리의 영상이 인기인지 분석합니다.</p>
+        <a href="https://www.kaggle.com" target="_blank" class="btn bsm bp" style="margin-bottom:8px;display:inline-flex">캐글(Kaggle)에서 데이터 수집 ↗</a>
+        <textarea class="act-input" placeholder="캐글에서 'Popular shared video data for educational purpose'를 검색하여 데이터를 다운로드합니다.&#10;수집한 데이터의 속성 개수, 데이터 개수를 기록하세요..."></textarea>
+      </div>
+    </div>
+    <div class="act-step">
+      <div class="act-num">2</div>
+      <div><h4>코답으로 데이터 살펴보기</h4>
+        <a href="https://codap.concord.org" target="_blank" class="btn bsm" style="background:var(--u);color:#fff;border-color:var(--udk);margin-bottom:8px;display:inline-flex">코답(CODAP) 열기 ↗</a>
+        <div style="background:#1e1e2e;border-radius:var(--rSM);padding:12px;margin-bottom:10px">
+          <div style="font-size:10px;color:#aaa;margin-bottom:6px">categoryID 숫자 의미</div>
+          <div style="font-family:monospace;font-size:11px;color:#a0c0ff;line-height:1.9">1=영화/애니메이션 &nbsp;2=자동차/교통 &nbsp;10=음악<br>15=애완동물/동물 &nbsp;17=스포츠 &nbsp;22=오락<br>23=영화/TV &nbsp;24=게임 &nbsp;25=뉴스/정치<br>26=방법/스타일 &nbsp;28=과학/기술</div>
+        </div>
+        <textarea class="act-input" placeholder="코답에서 속성 이름을 한글로 바꾸고 데이터를 살펴본 결과를 기록하세요:&#10;- 영상 수가 가장 많은 카테고리: &#10;- 평균 조회수가 가장 높은 카테고리: &#10;- 좋아요와 조회수의 상관관계:"></textarea>
+      </div>
+    </div>
+    <div class="act-step">
+      <div class="act-num">3</div>
+      <div><h4>인터랙티브 데이터 분석 체험</h4>
+        <div style="background:#1e1e2e;border-radius:var(--rSM);padding:14px;margin-bottom:10px">
+          <div style="font-size:10px;color:#aaa;margin-bottom:8px">가상 카테고리별 조회수 분석 차트 (교육용 시뮬레이터)</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+            <button onclick="showCategory('음악')" class="btn bsm" style="background:#333;color:#aaa;border-color:#555">음악</button>
+            <button onclick="showCategory('게임')" class="btn bsm" style="background:#333;color:#aaa;border-color:#555">게임</button>
+            <button onclick="showCategory('오락')" class="btn bsm" style="background:#333;color:#aaa;border-color:#555">오락</button>
+            <button onclick="showCategory('스포츠')" class="btn bsm" style="background:#333;color:#aaa;border-color:#555">스포츠</button>
+            <button onclick="showCategory('과학/기술')" class="btn bsm" style="background:#333;color:#aaa;border-color:#555">과학/기술</button>
+          </div>
+          <canvas id="cat-cv" width="300" height="140" style="max-width:100%;display:block;background:#111;border-radius:6px;margin-bottom:7px"></canvas>
+          <div id="cat-info" style="font-size:11px;color:#aaa">카테고리를 클릭하여 분석 결과를 확인하세요</div>
+        </div>
+      </div>
+    </div>
+    <div class="act-step">
+      <div class="act-num">4</div>
+      <div><h4>데이터 의미 해석 및 주장</h4>
+        <textarea class="act-input" placeholder="분석 결과를 바탕으로 영상 제작 친구에게 조언하는 내용을 작성하세요:&#10;1. 조회수가 높은 카테고리와 그 이유:&#10;2. 좋아요/싫어요 비율이 좋은 카테고리:&#10;3. 어떤 종류의 영상을 만들 것을 추천하는지와 근거:"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn bsm bp" onclick="saveActivity('l205_act')">💾 활동 저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" id="sec-assess">
+  <div class="ch" onclick="toggleSec('sec-assess')"><div class="sn" style="background:var(--bbg);color:var(--blue)">04</div><h3>수행평가</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;margin-bottom:12px;border-left:3px solid var(--u)">
+      <h4 style="font-size:13px;font-weight:700;color:var(--u);margin-bottom:7px">📋 데이터 분석 보고서</h4>
+      <p style="font-size:13px;color:var(--mt)">인기 공유 동영상 데이터를 5단계로 분석하고, 영상 제작자에게 도움이 될 조언을 데이터 근거와 함께 논리적으로 서술하시오.</p>
+    </div>
+    <table class="rub"><thead><tr><th>평가 요소</th><th class="lv4">매우 잘함(4)</th><th class="lv3">잘함(3)</th><th class="lv2">보통(2)</th><th class="lv1">노력 필요(1)</th></tr></thead><tbody><tr><td><b>5단계 수행</b></td><td class="lv4">5단계 모두 완료</td><td class="lv3">3~4단계</td><td class="lv2">1~2단계</td><td class="lv1">없음</td></tr><tr><td><b>의미 해석</b></td><td class="lv4">데이터 근거+논리적 서술</td><td class="lv3">근거 있음</td><td class="lv2">단순 해석</td><td class="lv1">없음</td></tr></tbody></table>
+    <div class="sclist"><div class="scitem"><label>데이터 기반 문제 해결 5단계를 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>캐글에서 데이터를 수집하고 코답으로 구조화할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>그래프로 데이터를 시각화하고 의미를 해석할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div></div>
+    <button class="btn bsm bok" style="margin-top:10px" onclick="saveSC('l205sc')">💾 저장</button>
+  </div>
+</div>
+
+<div class="card" id="sec-review">
+  <div class="ch" onclick="toggleSec('sec-review')"><div class="sn" style="background:var(--gbg);color:var(--green)">05</div><h3>확인하기</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="sgrid">
+      <div class="scard"><strong>5단계 과정</strong>문제정의→수집·구조화→살펴보기→그래프→의미해석</div>
+      <div class="scard"><strong>캐글(Kaggle)</strong>다양한 데이터셋을 제공하는 전문 데이터 사이트.</div>
+      <div class="scard"><strong>꺾은선그래프</strong>시간 흐름에 따른 변화 추이 파악에 적합.</div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;margin-bottom:12px"><b>✏️ 단답형:</b> 데이터를 분석하여 합리적 의사 결정을 위해 수집한 데이터의 의미를 해석하며 유용한 정보를 찾아내는 과정을 <span style="display:inline-block;width:60px;border-bottom:1.5px solid var(--tx)">&nbsp;</span>(이)라고 한다.<textarea style="display:block;width:100%;margin-top:9px;padding:9px;border:1px solid var(--br);border-radius:var(--rSM);font-size:13px;font-family:inherit;resize:vertical;min-height:48px;background:var(--sf)" placeholder="정답을 입력하세요..."></textarea></div>
+    <div class="ibox ok">📖 <div><strong>다음 차시 예고:</strong> 마지막 소단원에서는 <strong>급식 잔반 데이터</strong>를 분석하여 환경 문제를 융합적으로 해결합니다! (pp.77~82)</div></div>
+  </div>
+</div>
+
+  </div>
+  <div class="ca">
+    <div class="ap"><h5>학습 진행</h5><div class="slist">
+      <div class="si" onclick="goTo('sec-goal')"><div class="dot sd">1</div>학습목표</div>
+      <div class="si" onclick="goTo('sec-concept')"><div class="dot">2</div>개념설명</div>
+      <div class="si" onclick="goTo('sec-activity')"><div class="dot sa">★</div>수행 활동</div>
+      <div class="si" onclick="goTo('sec-assess')"><div class="dot">4</div>수행평가</div>
+      <div class="si" onclick="goTo('sec-review')"><div class="dot">5</div>확인하기</div>
+    </div></div>
+    <div class="ap" style="background:var(--ult);border-color:var(--umd)"><h5 style="color:var(--u)">단원 진도</h5>
+      <div style="display:flex;align-items:center;gap:7px"><div class="pbtrack" style="flex:1"><div class="pbfill" style="width:85%"></div></div><span style="font-size:11px;font-weight:600;color:var(--u)">5/6</span></div>
+    </div>
+    <div class="ap"><h5>핵심 용어</h5><div class="termlist"><div class="tterm"><span class="tw">문제 정의</span><span class="tdef">해결 문제 명확화</span></div><div class="tterm"><span class="tw">데이터 수집</span><span class="tdef">캐글·공공데이터</span></div><div class="tterm"><span class="tw">코답 분석</span><span class="tdef">속성 파악·정리</span></div><div class="tterm"><span class="tw">그래프 표현</span><span class="tdef">시각화로 관계 파악</span></div><div class="tterm"><span class="tw">의미 해석</span><span class="tdef">데이터 근거 주장</span></div><div class="tterm"><span class="tw">꺾은선그래프</span><span class="tdef">시간 변화 추이</span></div></div></div>
+    <div class="ap" style="background:#F0FDF4;border-color:#BBF7D0">
+      <h5 style="color:#166534">🔗 데이터 도구</h5>
+      <a href="https://codap.concord.org" target="_blank" class="btn bsm" style="width:100%;justify-content:center;background:var(--u);color:#fff;border-color:var(--udk);margin-bottom:5px">코답(CODAP) 열기 ↗</a>
+      <a href="https://kosis.kr" target="_blank" class="btn bsm" style="width:100%;justify-content:center;font-size:10px;color:var(--mt)">국가통계포털 ↗</a>
+    </div>
+  </div>
+  </div></div>
+</main>
+<div id="toast"></div>
+<script>
+
+  // ── Google Sheets 저장 ──────────────────────────────────
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+
+  function getUserName() {
+    return localStorage.getItem('user_name') || '익명';
+  }
+
+  function postToSheets(payload) {
+    if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) return;
+    fetch(GS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},2400);}
+function toggleSec(id){var e=document.getElementById(id);if(e)e.classList.toggle('collapsed');}
+function goTo(id){var e=document.getElementById(id);if(!e)return;window.scrollTo({top:e.getBoundingClientRect().top+window.pageYOffset-64,behavior:'smooth'});}
+function checkQ(el,ok,msg){el.closest('.qopts').querySelectorAll('.opt').forEach(function(o){o.classList.add('locked');});el.classList.add(ok?'correct':'wrong');var fb=el.closest('.qwrap').querySelector('.qfb');if(fb){fb.className='qfb '+(ok?'ok':'err');fb.innerHTML=(ok?'✓ 정답: ':'✗ 힌트: ')+msg;}}
+function saveSC(key){
+  var d={};
+  document.querySelectorAll('.scitem select').forEach(function(s,i){d['q'+i]=s.value;});
+  try{
+    localStorage.setItem(key,JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'sc',
+      userName: getUserName(),
+      lessonKey: 'l25',
+      lessonName: 'l25',
+      answers: d
+    });
+    toast('자기평가가 저장되었습니다 ✓');
+  }catch(e){}
+}
+function loadSC(key){try{var d=JSON.parse(localStorage.getItem(key)||'{}');document.querySelectorAll('.scitem select').forEach(function(s,i){if(d['q'+i])s.value=d['q'+i];});}catch(e){}}
+function saveActivity(key){
+  var d={};
+  document.querySelectorAll('.act-input').forEach(function(el,i){d['a'+i]=el.value;});
+  document.querySelectorAll('.peer-check input[type=radio]:checked').forEach(function(el){d['r_'+el.name]=el.value;});
+  try{
+    localStorage.setItem(key,JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'act',
+      userName: getUserName(),
+      lessonKey: 'l25',
+      lessonName: 'l25',
+      answers: d
+    });
+    toast('✅ 수행 활동이 저장되었습니다!');
+  }catch(e){}
+}
+function loadActivity(key){
+  try{
+    var d=JSON.parse(localStorage.getItem(key)||'{}');
+    document.querySelectorAll('.act-input').forEach(function(el,i){if(d['a'+i])el.value=d['a'+i];});
+    Object.keys(d).filter(function(k){return k.startsWith('r_');}).forEach(function(k){
+      var el=document.querySelector('input[type=radio][name="'+k.slice(2)+'"][value="'+d[k]+'"]');
+      if(el)el.checked=true;
+    });
+  }catch(e){}
+}
+
+
+var catData = {
+  '음악':{views:1520,likes:95,dislikes:5,color:'#27AE60'},
+  '게임':{views:980,likes:88,dislikes:12,color:'#E74C3C'},
+  '오락':{views:1200,likes:91,dislikes:9,color:'#F39C12'},
+  '스포츠':{views:870,likes:82,dislikes:18,color:'#3498DB'},
+  '과학/기술':{views:650,likes:93,dislikes:7,color:'#9B59B6'},
+};
+function showCategory(name){
+  var d=catData[name];if(!d)return;
+  var cv=document.getElementById('cat-cv');if(!cv)return;
+  var ctx=cv.getContext('2d');
+  ctx.fillStyle='#111';ctx.fillRect(0,0,300,140);
+  var bars=[
+    {label:'조회수(만)',val:d.views/20,color:d.color,max:80},
+    {label:'좋아요율%',val:d.likes,color:'#27AE60',max:100},
+    {label:'싫어요율%',val:d.dislikes,color:'#E74C3C',max:20},
+  ];
+  bars.forEach(function(b,i){
+    var bw=60,bh=Math.min(b.val/b.max*90,90);
+    var bx=30+i*80,by=110-bh;
+    ctx.fillStyle=b.color;ctx.fillRect(bx,by,bw,bh);
+    ctx.fillStyle='#aaa';ctx.font='9px sans-serif';ctx.textAlign='center';
+    ctx.fillText(b.label,bx+30,130);ctx.fillStyle='#fff';
+    ctx.fillText(b.val+(b.label.includes('%')?'%':''),bx+30,by-4);
+  });
+  var info=document.getElementById('cat-info');
+  if(info)info.textContent='['+name+'] 조회수: '+d.views+'만 / 좋아요율: '+d.likes+'% / 싫어요율: '+d.dislikes+'%';
+}
+
+document.addEventListener('DOMContentLoaded',function(){loadSC('l205sc');loadActivity('l205sc_act');});
+</script>
+</body></html>
