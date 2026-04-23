@@ -1,1 +1,2508 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정보 교과 웹 학습 플랫폼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F6F2;
+    --surface: #FFFFFF;
+    --border: #E8E5DC;
+    --text: #1A1A1A;
+    --text-muted: #6B6860;
+    --text-light: #9B9890;
 
+    --unit-1: #7B74D9;
+    --unit-1-light: #EEEDFE;
+    --unit-2: #1B9E72;
+    --unit-2-light: #E1F5EE;
+    --unit-3: #D85A30;
+    --unit-3-light: #FAECE7;
+    --unit-4: #3080D9;
+    --unit-4-light: #E6F1FB;
+    --unit-5: #5A9622;
+    --unit-5-light: #EAF3DE;
+
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.10);
+
+    --sidebar-w: 240px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+    transition: transform .3s ease;
+  }
+
+  .sidebar-logo {
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-logo .logo-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 4px;
+  }
+  .sidebar-logo h1 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .sidebar-logo .sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .sidebar-nav {
+    padding: 12px 0;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    padding: 8px 20px 4px;
+    margin-top: 4px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-muted);
+    border-radius: 0;
+    transition: all .15s;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+  .nav-item:hover { background: var(--bg); color: var(--text); }
+  .nav-item.active {
+    color: var(--text);
+    font-weight: 600;
+    background: var(--bg);
+  }
+  .nav-item .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .nav-item .nav-badge {
+    margin-left: auto;
+    font-size: 10px;
+    background: var(--bg);
+    color: var(--text-muted);
+    padding: 1px 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .sidebar-footer {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--unit-3), var(--unit-1));
+    border-radius: 4px;
+    transition: width .8s ease;
+  }
+
+  /* ─── MAIN ─── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+  }
+  .topbar-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    flex: 1;
+  }
+  .topbar-breadcrumb .sep { color: var(--border); }
+  .topbar-breadcrumb .current { color: var(--text); font-weight: 500; }
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-weight: 500;
+    transition: all .15s;
+    text-decoration: none;
+  }
+  .btn:hover { background: var(--bg); border-color: #ccc; }
+  .btn-primary {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+  .btn-primary:hover { opacity: .85; }
+
+  /* ─── VIEWS ─── */
+  .view { display: none; padding: 28px; animation: fadeIn .25s ease; }
+  .view.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* ─── DASHBOARD ─── */
+  .dash-hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .dash-hero-text h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .dash-hero-text p { font-size: 14px; color: var(--text-muted); }
+  .dash-stats {
+    display: flex;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .stat-card {
+    text-align: center;
+    padding: 14px 18px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    min-width: 80px;
+  }
+  .stat-num { font-size: 22px; font-weight: 700; }
+  .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .section-header h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em; }
+
+  .units-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 1200px) {
+    .units-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .units-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .unit-overview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .unit-overview-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.08);
+    border-color: var(--border);
+  }
+  .unit-overview-card p {
+    flex: 1;
+  }
+  .unit-overview-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .unit-overview-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: transparent;
+  }
+  .unit-roman {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .unit-overview-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .unit-overview-card .unit-meta-small { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+  .unit-tag-row { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .unit-progress-mini {
+    margin-top: 12px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .unit-progress-mini-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+
+  .lessons-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .lessons-list-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lesson-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .lesson-row:last-child { border-bottom: none; }
+  .lesson-row:hover { background: var(--bg); }
+  .lesson-icon {
+    width: 34px; height: 34px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .lesson-info { flex: 1; }
+  .lesson-info h5 { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .lesson-info p { font-size: 11px; color: var(--text-muted); }
+  .lesson-status {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .status-done { background: #EAF3DE; color: #3B6D11; }
+  .status-current { background: #FAEEDA; color: #854F0B; }
+  .status-locked { background: var(--bg); color: var(--text-light); }
+  .lesson-time { font-size: 11px; color: var(--text-light); flex-shrink: 0; width: 40px; text-align: right; }
+
+  /* ─── LESSON VIEW ─── */
+  .lesson-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 20px;
+    align-items: start;
+  }
+  .lesson-content { min-width: 0; }
+  .lesson-sidebar-panel { position: sticky; top: 76px; }
+
+  /* Section Cards */
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .section-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .section-card-header:hover { background: var(--bg); }
+  .section-num-badge {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-card-header h4 { font-size: 14px; font-weight: 600; flex: 1; }
+  .section-card-header .time-tag {
+    font-size: 11px;
+    color: var(--text-light);
+    background: var(--bg);
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+  .section-card-body { padding: 20px; }
+  .section-card.collapsed .section-card-body { display: none; }
+
+  /* Achievement standard */
+  .achievement-box {
+    background: var(--unit-1-light);
+    border: 1px solid rgba(123,116,217,.2);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 14px;
+  }
+  .achievement-code {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--unit-1);
+    margin-bottom: 4px;
+    font-family: monospace;
+  }
+  .achievement-text { font-size: 13px; color: var(--text); }
+
+  .goal-list { list-style: none; }
+  .goal-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .goal-list li:last-child { border-bottom: none; }
+  .goal-list li::before {
+    content: '✓';
+    font-size: 11px;
+    color: var(--unit-5);
+    background: var(--unit-5-light);
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .concept-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .concept-tag {
+    font-size: 11px;
+    padding: 4px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all .15s;
+    color: var(--text-muted);
+  }
+  .concept-tag:hover { border-color: var(--unit-1); color: var(--unit-1); }
+
+  /* Concept explanation */
+  .concept-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .concept-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .concept-text p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  .concept-visual {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+    font-size: 12px;
+    color: var(--text-light);
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+  }
+  .concept-visual svg { opacity: .4; }
+
+  .caution-box {
+    background: #FFFBF0;
+    border: 1px solid #F0D080;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #7A5A00;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-top: 12px;
+  }
+
+  /* Interaction */
+  .interaction-type-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .type-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .type-badge.selected {
+    border-color: currentColor;
+  }
+
+  .quiz-container {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 18px;
+  }
+  .quiz-q {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    transition: all .15s;
+  }
+  .quiz-option:hover { border-color: var(--unit-1); background: var(--unit-1-light); }
+  .quiz-option.correct { border-color: var(--unit-5); background: var(--unit-5-light); color: #2A5A08; }
+  .quiz-option.wrong { border-color: var(--unit-3); background: var(--unit-3-light); color: #7A2A0A; }
+  .quiz-option .opt-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--border);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .quiz-feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: var(--unit-5-light); color: #2A5A08; border: 1px solid rgba(90,150,34,.2); }
+  .quiz-feedback.wrong { background: var(--unit-3-light); color: #7A2A0A; border: 1px solid rgba(216,90,48,.2); }
+
+  /* Code block */
+  .code-container {
+    background: #1E1E2E;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .code-toolbar {
+    display: flex;
+    align-items: center;
+    padding: 8px 14px;
+    background: #2A2A3E;
+    gap: 8px;
+  }
+  .code-lang { font-size: 11px; color: #888; flex: 1; font-family: monospace; }
+  .code-btn {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: rgba(255,255,255,.1);
+    color: #ccc;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .15s;
+  }
+  .code-btn:hover { background: rgba(255,255,255,.2); }
+  .code-btn.run-btn { background: rgba(29,158,114,.3); color: #7ED9B8; }
+  .code-btn.run-btn:hover { background: rgba(29,158,114,.5); }
+  pre {
+    padding: 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #CDD6F4;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .kw { color: #CBA6F7; }
+  .fn { color: #89B4FA; }
+  .str { color: #A6E3A1; }
+  .cm { color: #6C7086; font-style: italic; }
+  .num { color: #FAB387; }
+  .code-output {
+    padding: 10px 14px;
+    background: #181825;
+    font-family: monospace;
+    font-size: 12px;
+    color: #A6E3A1;
+    border-top: 1px solid #333;
+    display: none;
+  }
+  .code-output.show { display: block; }
+
+  /* Performance section */
+  .task-spec {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .task-spec h5 { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--unit-4); }
+  .task-spec p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+
+  .rubric-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+  .rubric-table th {
+    background: var(--bg);
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1.5px solid var(--border);
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .rubric-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .rubric-table tr:last-child td { border-bottom: none; }
+  .level-4 { color: #2A5A08; font-weight: 600; }
+  .level-3 { color: #4A6A28; }
+  .level-2 { color: #854F0B; }
+  .level-1 { color: #993C1D; }
+
+  .self-check { display: flex; flex-direction: column; gap: 6px; }
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+  }
+  .check-row label { flex: 1; cursor: pointer; }
+  .check-row select {
+    font-size: 11px;
+    padding: 3px 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    font-family: inherit;
+    color: var(--text);
+  }
+
+  /* Review section */
+  .summary-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .summary-card {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .summary-card strong { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-light); margin-bottom: 6px; }
+
+  /* Sidebar panel */
+  .panel-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .panel-card h5 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--text-light);
+    margin-bottom: 10px;
+  }
+  .progress-steps { display: flex; flex-direction: column; gap: 6px; }
+  .step-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background .15s;
+    color: var(--text-muted);
+  }
+  .step-row:hover { background: var(--bg); }
+  .step-row.done { color: var(--text); }
+  .step-row.active { background: var(--bg); color: var(--text); font-weight: 500; }
+  .step-circle {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--border);
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-light);
+  }
+  .step-circle.done { background: var(--unit-5-light); color: var(--unit-5); }
+  .step-circle.active { background: var(--unit-3-light); color: var(--unit-3); }
+
+  .timer-display {
+    text-align: center;
+    padding: 10px 0;
+  }
+  .timer-num { font-size: 28px; font-weight: 300; color: var(--text); letter-spacing: .05em; }
+  .timer-label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+  .timer-btns { display: flex; gap: 6px; margin-top: 10px; }
+  .timer-btns .btn { flex: 1; justify-content: center; font-size: 12px; padding: 6px; }
+
+  /* Divider */
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+  /* Unit filter for dashboard */
+  .unit-filter {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-weight: 600;
+    transition: all .15s;
+  }
+  .filter-btn:hover { border-color: var(--text-light); color: var(--text); background: var(--bg); }
+  .filter-btn:hover { border-color: #aaa; color: var(--text); }
+  .filter-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .units-grid { grid-template-columns: repeat(3, 1fr); }
+    .lesson-layout { grid-template-columns: 1fr; }
+    .lesson-sidebar-panel { position: static; }
+    .concept-block { grid-template-columns: 1fr; }
+    .summary-cards { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    :root { --sidebar-w: 0px; }
+    .sidebar { transform: translateX(-240px); }
+    .sidebar.open { transform: none; --sidebar-w: 240px; }
+    .units-grid { grid-template-columns: 1fr 1fr; }
+    .dash-hero { flex-direction: column; }
+    .dash-stats { width: 100%; }
+    .main { margin-left: 0; }
+  }
+
+  /* ─── Unit I 서브메뉴 ─── */
+  .nav-sub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 20px 7px 32px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all .15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nav-sub:hover { background: var(--bg); color: var(--text); border-left-color: var(--unit-1); }
+  .sub-num {
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    background: var(--unit-1-light);
+    color: var(--unit-1);
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .nav-disabled { cursor: default; opacity: .5; pointer-events: none; }
+  .active-unit { color: var(--unit-1) !important; font-weight: 600 !important;
+    background: var(--unit-1-light) !important; border-left: 2px solid var(--unit-1) !important; }
+
+  /* ─── Unit I 소단원 카드 ─── */
+  .u1-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    text-decoration: none;
+    color: inherit;
+    transition: all .18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .u1-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--unit-1);
+    opacity: 0;
+    transition: opacity .18s;
+  }
+  .u1-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(108,101,204,.15);
+    border-color: var(--unit-1-light);
+  }
+  .u1-card:hover::before { opacity: 1; }
+  .u1-num {
+    font-size: 11px; font-weight: 700;
+    color: var(--unit-1); letter-spacing: .06em;
+    font-family: 'Courier New', monospace;
+  }
+  .u1-icon { font-size: 26px; margin: 2px 0; }
+  .u1-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
+  .u1-desc { font-size: 12px; color: var(--text-muted); line-height: 1.55; flex: 1; }
+  .u1-meta { display: flex; gap: 5px; margin-top: 4px; }
+  .u1-tag {
+    font-size: 10px; padding: 2px 8px;
+    border-radius: 20px; font-weight: 500;
+    background: var(--bg); color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .u1-done { background: #EAF3DE; color: #3B6D11; border-color: #BFDFAA; }
+  .u1-arrow {
+    font-size: 11px; font-weight: 600;
+    color: var(--unit-1); margin-top: 6px;
+    opacity: 0; transition: opacity .15s;
+  }
+  .u1-card:hover .u1-arrow { opacity: 1; }
+
+  @media (max-width: 1100px) {
+    #view-unit1 .u1-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 720px) {
+    #view-unit1 > div:last-child { grid-template-columns: 1fr; }
+  }
+
+
+  /* ─── nav-sub2 (3단계: lesson-06 활동) ─── */
+  .nav-sub2 {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 20px 6px 46px;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all .12s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nav-sub2:hover {
+    background: var(--bg);
+    color: var(--text);
+    border-left-color: var(--unit-1);
+  }
+  .sub2-num {
+    width: 20px; height: 16px;
+    background: var(--unit-1-light);
+    color: var(--unit-1);
+    border-radius: 4px;
+    font-size: 9px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Courier New', monospace;
+  }
+  .nav-sub-toggle { cursor: pointer; }
+
+
+/* ── 로그인 모달 ── */
+.login-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center}
+.login-overlay.show{display:flex!important}
+.login-modal{background:#fff;border-radius:20px;padding:40px 36px 32px;width:100%;max-width:360px;box-shadow:0 24px 64px rgba(0,0,0,.2);text-align:center;animation:modal-in .28s cubic-bezier(.25,.46,.45,.94)}
+@keyframes modal-in{from{opacity:0;transform:scale(.92) translateY(14px)}to{opacity:1;transform:none}}
+.lm-logo{margin-bottom:16px;display:flex;justify-content:center}
+.login-modal h2{font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:4px}
+.login-modal p{font-size:12px;color:#9ca3af;margin-bottom:24px}
+#google-btn-wrap{display:flex;justify-content:center;margin-bottom:4px;min-height:44px}
+.lm-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#d1d5db;font-size:12px}
+.lm-divider::before,.lm-divider::after{content:'';flex:1;height:1px;background:#e5e7eb}
+.login-modal input{width:100%;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;margin-bottom:10px;box-sizing:border-box}
+.login-modal input:focus{border-color:#4285F4}
+.login-modal .lm-btn{width:100%;padding:12px;background:#4285F4;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.login-modal .lm-btn:hover{background:#1a73e8}
+.lm-skip{font-size:11px;color:#9ca3af;margin-top:14px;cursor:pointer;transition:color .15s}
+.lm-skip:hover{color:#6b7280}
+
+/* ── 프로필 영역 (사이드바) ── */
+.profile-area{padding:14px 16px;background:#f0fdf4;border-radius:12px;margin:12px 14px 0;display:flex;align-items:center;gap:10px}
+.profile-avatar{width:36px;height:36px;border-radius:50%;background:var(--unit-2);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.profile-info{flex:1;min-width:0}
+.profile-name{font-size:13px;font-weight:700;color:#1a2e1f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profile-sub{font-size:10px;color:#4caf88}
+.profile-edit{width:24px;height:24px;border-radius:6px;border:1px solid #a8dfc8;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:background .15s}
+.profile-edit:hover{background:#e2f5ee}
+
+/* ── 학습 기록 버튼 (사이드바) ── */
+.record-nav-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;margin:6px 14px 0;background:#fff;border:1px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;color:#374151;transition:all .15s}
+.record-nav-btn:hover{border-color:var(--unit-2);color:var(--unit-2);background:#f0fdf4}
+.record-nav-btn .rn-count{margin-left:auto;background:#e8f5e9;color:var(--unit-2);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+
+/* ── 학습 기록 뷰 ── */
+#view-records{padding:28px 32px}
+.records-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.records-header h2{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.rec-goto-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#f0fdf4;border:1px solid #a8dfc8;border-radius:10px;font-size:12px;font-weight:600;color:var(--unit-2);text-decoration:none;cursor:pointer;transition:all .15s}
+.rec-goto-btn:hover{background:var(--unit-2);color:#fff}
+.records-sub{font-size:13px;color:#6b7280;margin-bottom:24px}
+
+.rec-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
+.rec-stat-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;text-align:center}
+.rec-stat-n{font-size:26px;font-weight:700;margin-bottom:4px}
+.rec-stat-l{font-size:11px;color:#9ca3af}
+
+.rec-empty{background:#fff;border:1.5px dashed #d1d5db;border-radius:14px;padding:52px 20px;text-align:center}
+.rec-empty-icon{font-size:40px;margin-bottom:12px;opacity:.4}
+.rec-empty h3{font-size:15px;font-weight:600;color:#6b7280;margin-bottom:6px}
+.rec-empty p{font-size:12px;color:#9ca3af;margin-bottom:20px}
+.rec-goto-course{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--unit-2);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none}
+
+.rec-list{display:flex;flex-direction:column;gap:10px}
+.rec-item{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px}
+.rec-item-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.rec-item-info{flex:1;min-width:0}
+.rec-item-title{font-size:13px;font-weight:600;color:#1f2937;margin-bottom:3px}
+.rec-item-meta{font-size:11px;color:#9ca3af}
+.rec-item-right{text-align:right;flex-shrink:0}
+.rec-item-date{font-size:10px;color:#d1d5db;margin-bottom:4px}
+.rec-item-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+.rec-badge-done{background:#e8f5e9;color:#2e7d32}
+.rec-badge-sc{background:#e3f2fd;color:#1565c0}
+
+
+  /* ── 사이드바 토글 애니메이션 ── */
+  .nav-arrow {
+    margin-left: auto;
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 4px;
+    font-size: 9px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: transform .22s cubic-bezier(.25,.46,.45,.94), background .15s;
+    transform: rotate(-90deg);
+    flex-shrink: 0;
+  }
+  .nav-arrow:hover { background: var(--bg); color: var(--text); }
+  .nav-arrow.nav-arrow-open { transform: rotate(0deg); }
+
+  .nav-subnav{overflow:hidden;max-height:0;opacity:0;transition:max-height .3s ease,opacity .25s ease}
+  
+
+  .hidden{display:none!important}to{opacity:1;transform:none}}
+</style>
+  
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-label">2022 개정 교육과정</div>
+    <h1>정보 교과<br>웹 학습 플랫폼</h1>
+    <div class="sub">중학교 1학년 · 총 68차시</div>
+  </div>
+
+  <!-- 프로필 영역 -->
+  <div class="profile-area" id="profile-area">
+    <div class="profile-avatar" id="profile-avatar" style="cursor:pointer" onclick="openLogin(true)">?</div>
+    <div class="profile-info">
+      <div class="profile-name" id="profile-name">로그인 필요</div>
+      <div class="profile-sub"  id="profile-sub">클릭하여 이름 설정</div>
+    </div>
+    <button class="profile-edit" onclick="openLogin(true)" title="이름 변경" style="font-size:13px">✏️</button>
+  </div>
+
+  <!-- 학습 기록 버튼 -->
+  <button class="record-nav-btn" onclick="showView('records');setActive(null);updateRecordView()">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+    </svg>
+    나의 학습 기록
+    <span class="rn-count" id="record-count">0</span>
+  </button>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">홈</div>
+    <a class="nav-item active" href="./" onclick="showView('dashboard'); setActive(this); return false;">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      대시보드
+    </a>
+
+    <div class="nav-section-label" style="margin-top:8px">단원</div>
+
+    <a class="nav-item nav-unit1" id="nav-unit1-head" href="unit-01/index.html"
+       onclick="filterLessons(null,'I'); setActive(this); return false;">
+      <div class="nav-dot" style="background:var(--unit-1)"></div>
+      I. 컴퓨팅 시스템
+      <span class="nav-badge">13</span>
+    </a>
+
+    <a class="nav-item" id="nav-unit2-head" href="unit-02/index.html"
+       onclick="filterLessons(null,'II'); setActive(this); return false;">
+      <div class="nav-dot" style="background:var(--unit-2)"></div>
+      II. 데이터
+      <span class="nav-badge">13</span>
+    </a>
+
+    <a class="nav-item" id="nav-unit3-head" href="unit-03/index.html"
+       onclick="filterLessons(null,'III'); setActive(this); return false;">
+      <div class="nav-dot" style="background:var(--unit-3)"></div>
+      III. 알고리즘·프로그래밍
+      <span class="nav-badge">22</span>
+    </a>
+
+    <a class="nav-item" id="nav-unit4-head" href="unit-04/index.html"
+       onclick="filterLessons(null,'IV'); setActive(this); return false;">
+      <div class="nav-dot" style="background:var(--unit-4)"></div>
+      IV. 인공지능
+      <span class="nav-badge">13</span>
+    </a>
+
+    <a class="nav-item" href="unit-05/index.html"
+       onclick="filterLessons(null,'V'); setActive(this); return false;">
+      <div class="nav-dot" style="background:var(--unit-5)"></div>
+      V. 디지털 문화
+      <span class="nav-badge">7</span>
+    </a>
+
+    <div class="nav-section-label" style="margin-top:8px">수행평가</div>
+    <a class="nav-item" href="performance/index.html" style="color:#9B59B6">
+      <div class="nav-dot" style="background:#9B59B6"></div>
+      과정 중심의 수행활동
+      <span class="nav-badge" style="background:#F5EEF8;color:#9B59B6">28</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="progress-label">
+      <span>전체 진도</span>
+      <span>47 / 68 차시</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" style="width:17%"></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ─── MAIN ─── -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-breadcrumb">
+      <span id="breadcrumb-home">홈</span>
+      <span class="sep" id="breadcrumb-sep" style="display:none">›</span>
+      <span class="current" id="breadcrumb-current"></span>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn" onclick="alert('학습 기록 저장됨!')">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        저장
+      </button>
+      <button class="btn btn-primary" onclick="showView('unit1'); setActive(document.getElementById('nav-unit1-head'))">
+        이어서 학습 →
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── DASHBOARD VIEW ─── -->
+  <section class="view active" id="view-dashboard">
+    <div class="dash-hero">
+      <div class="dash-hero-text">
+        <h2>안녕하세요, <span id="hero-name">학습자</span>님!<br>오늘도 함께 배워볼까요?</h2>
+        <p>2022 개정 교육과정 기반 · 5개 대단원 · 34개 소단원 · 68차시</p>
+      </div>
+      <div class="dash-stats">
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--unit-3)">12</div>
+          <div class="stat-label">완료 차시</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--unit-4)">56</div>
+          <div class="stat-label">남은 차시</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--unit-5)">85</div>
+          <div class="stat-label">평균 점수</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h3>대단원 개요</h3>
+    </div>
+    <div class="units-grid">
+
+      <!-- I. 컴퓨팅 시스템 -->
+      <a class="unit-overview-card" href="unit-01/index.html" onclick="filterLessons(null,'I'); return false;" style="text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-1)"></div>
+        <div class="unit-roman" style="color:var(--unit-1)">I</div>
+        <h4>컴퓨팅 시스템</h4>
+        <div class="unit-meta-small">13차시 · 6소단원</div>
+        <p style="font-size:11px;color:var(--text-muted);line-height:1.6;margin:6px 0 8px;">HW·SW 구성 원리와 운영 체제 이해, 마이크로비트로 센서 기반 피지컬 컴퓨팅 프로그래밍</p>
+        <div class="unit-tag-row">
+          <span class="chip" style="background:var(--unit-1-light);color:var(--unit-1)">피지컬 컴퓨팅</span>
+          <span class="chip" style="background:var(--bg);color:var(--text-muted)">마이크로비트</span>
+          <span class="chip" style="background:var(--bg);color:var(--text-muted)">센서</span>
+        </div>
+        <div class="unit-progress-mini" style="margin-top:10px;">
+          <div class="unit-progress-mini-fill" style="width:100%;background:var(--unit-1)"></div>
+        </div>
+        <div style="font-size:10px;color:var(--unit-1);margin-top:4px;font-weight:600;">✓ 개발 완료</div>
+      </a>
+
+      <!-- II. 데이터 -->
+      <a class="unit-overview-card" href="unit-02/index.html" onclick="filterLessons(null,'II'); return false;" style="text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-2)"></div>
+        <div class="unit-roman" style="color:var(--unit-2)">II</div>
+        <h4>데이터</h4>
+        <div class="unit-meta-small">13차시 · 6소단원</div>
+        <p style="font-size:11px;color:var(--text-muted);line-height:1.6;margin:6px 0 8px;">디지털 데이터 표현(문자·이미지·소리·동영상)과 데이터 수집·구조화·분석, 코답(CODAP) 활용</p>
+        <div class="unit-tag-row">
+          <span class="chip" style="background:var(--unit-2-light);color:var(--unit-2)">디지털 표현</span>
+          <span class="chip" style="background:var(--bg);color:var(--text-muted)">코답</span>
+          <span class="chip" style="background:var(--bg);color:var(--text-muted)">데이터 분석</span>
+        </div>
+        <div class="unit-progress-mini" style="margin-top:10px;">
+          <div class="unit-progress-mini-fill" style="width:100%;background:var(--unit-2)"></div>
+        </div>
+        <div style="font-size:10px;color:var(--unit-2);margin-top:4px;font-weight:600;">✓ 개발 완료</div>
+      </a>
+
+      <!-- III. 알고리즘과 프로그래밍 -->
+      <a class="unit-overview-card" href="unit-03/index.html" onclick="filterLessons(null,'III'); return false;" style="border-color:#F0997B;text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-3)"></div>
+        <div class="unit-roman" style="color:var(--unit-3)">III</div>
+        <h4>알고리즘과 프로그래밍</h4>
+        <div class="unit-meta-small">22차시 · 10소단원 · <b style="color:var(--unit-3)">최대 비중</b></div>
+        <p style="font-size:11px;color:var(--text-muted);line-height:1.6;margin:6px 0 8px;">문제 추상화·알고리즘 설계·순서도 표현, 엔트리로 순차·선택·반복·리스트·함수 프로그래밍</p>
+        <div class="unit-tag-row">
+          <span class="chip" style="background:var(--unit-3-light);color:var(--unit-3)">🟢 엔트리</span>
+          <span class="chip" style="background:var(--bg);color:var(--text-muted)">알고리즘</span>
+          <span class="chip" style="background:var(--bg);color:var(--text-muted)">순서도</span>
+        </div>
+        <div class="unit-progress-mini" style="margin-top:10px;">
+          <div class="unit-progress-mini-fill" style="width:100%;background:var(--unit-3)"></div>
+        </div>
+        <div style="font-size:10px;color:var(--unit-3);margin-top:4px;font-weight:600;">✓ 개발 완료</div>
+      </a>
+
+      <!-- IV. 인공지능 -->
+      <a class="unit-overview-card" href="unit-04/index.html" onclick="filterLessons(null,'IV'); return false;" style="text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-4)"></div>
+        <div class="unit-roman" style="color:var(--unit-4)">IV</div>
+        <h4>인공지능</h4>
+        <div class="unit-meta-small">13차시 · 6소단원</div>
+        <p style="font-size:11px;color:var(--text-muted);line-height:1.6;margin:6px 0 8px;">AI 개념·머신러닝 학습 원리, 이미지·소리·텍스트 분류 실습, 인공지능 윤리와 개인정보 보호</p>
+        <div class="unit-tag-row">
+          <span class="chip" style="background:var(--unit-4-light);color:var(--unit-4)">머신러닝</span>
+          <span class="chip" style="background:var(--bg);color:var(--text-muted)">티처블머신</span>
+          <span class="chip" style="background:var(--bg);color:var(--text-muted)">윤리</span>
+        </div>
+        <div class="unit-progress-mini" style="margin-top:10px;">
+          <div class="unit-progress-mini-fill" style="width:100%;background:var(--unit-4)"></div>
+        </div>
+        <div style="font-size:10px;color:var(--unit-4);margin-top:4px;font-weight:600;">✓ 개발 완료</div>
+      </a>
+
+      <!-- V. 디지털 문화 -->
+      <a href="unit-05/index.html" onclick="filterLessons(null,'V'); return false;" class="unit-overview-card" style="text-decoration:none;color:inherit;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-5)"></div>
+        <div class="unit-roman" style="color:var(--unit-5)">V</div>
+        <h4>디지털 문화</h4>
+        <div class="unit-meta-small">7차시 · 6소단원</div>
+        <p style="font-size:11px;color:var(--text-muted);line-height:1.6;margin:6px 0 8px;">디지털 시민 의식·저작권·개인정보, 사이버 폭력 예방, 미디어 리터러시와 올바른 인터넷 윤리</p>
+        <div class="unit-tag-row">
+          <span class="chip" style="background:var(--unit-5-light);color:var(--unit-5)">윤리</span>
+          <span class="chip" style="background:var(--bg);color:var(--text-muted)">저작권</span>
+          <span class="chip" style="background:var(--bg);color:var(--text-muted)">미디어 리터러시</span>
+        </div>
+        <div class="unit-progress-mini" style="margin-top:10px;">
+          <div class="unit-progress-mini-fill" style="width:100%;background:var(--unit-5)"></div>
+        </div>
+        <div style="font-size:10px;color:var(--unit-5);margin-top:4px;font-weight:600;">✓ 개발 완료</div>
+      </a>
+
+    </div>
+
+    
+    <!-- 수행활동 바로가기 배너 -->
+    <div style="margin:8px 0 20px;background:linear-gradient(135deg,#F5EEF8,#EDE0F5);border:1.5px solid #CE93D8;border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:16px">
+      <div style="width:44px;height:44px;border-radius:12px;background:#9B59B6;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📋</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:#4A235A;margin-bottom:3px">과정 중심의 수행활동</div>
+        <div style="font-size:12px;color:#7D3C98;line-height:1.5">4개 단원 28개 소단원의 루브릭 평가 · 자기평가 체크리스트</div>
+      </div>
+      <a href="performance/index.html" style="display:inline-flex;align-items:center;gap:5px;padding:9px 16px;background:#9B59B6;color:#fff;border-radius:9px;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0;transition:opacity .15s">
+        전체 목록 보기 →
+      </a>
+    </div>
+<!-- Lesson list -->
+    <div class="section-header">
+      <h3>소단원 목록</h3>
+      <div class="unit-filter">
+        <button class="filter-btn active" onclick="filterLessons(this,'all')">전체</button>
+        <button class="filter-btn" onclick="filterLessons(this,'I')" style="color:var(--unit-1)">I</button>
+        <button class="filter-btn" onclick="filterLessons(this,'II')" style="color:var(--unit-2)">II</button>
+        <button class="filter-btn" onclick="filterLessons(this,'III')" style="color:var(--unit-3)">III</button>
+        <button class="filter-btn" onclick="filterLessons(this,'IV')" style="color:var(--unit-4)">IV</button>
+        <button class="filter-btn" onclick="filterLessons(this,'V')" style="color:var(--unit-5)">V</button>
+      </div>
+    </div>
+
+    <div class="lessons-list">
+      <div class="lessons-list-header">
+        <span>📚</span> 학습 목록
+      </div>
+
+            <a class="lesson-row" data-unit="I" href="unit-01/lesson-01/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-1-light);color:var(--unit-1)">💻</div>
+        <div class="lesson-info"><h5>I-1. 컴퓨팅 시스템의 구성과 동작 원리</h5><p>HW 5종·SW·운영 체제, 앱 동작 원리 분석 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">1차시</span>
+      </a>
+      <a class="lesson-row" data-unit="I" href="unit-01/lesson-02/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-1-light);color:var(--unit-1)">🤖</div>
+        <div class="lesson-info"><h5>I-2. 피지컬 컴퓨팅 시스템의 이해</h5><p>마이크로비트 구성 요소, 필요성·가치 판단 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">2차시</span>
+      </a>
+      <a class="lesson-row" data-unit="I" href="unit-01/lesson-03/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-1-light);color:var(--unit-1)">🏃</div>
+        <div class="lesson-info"><h5>I-3. 운동 횟수 표시 장치 만들기</h5><p>가속도 센서·변수, 센서 탐구·기울임·주사위 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">2차시</span>
+      </a>
+      <a class="lesson-row" data-unit="I" href="unit-01/lesson-04/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-1-light);color:var(--unit-1)">🌡️</div>
+        <div class="lesson-info"><h5>I-4. 수면 온도 알림이 장치 만들기</h5><p>온도·빛 감지 센서, 스마트 가로등·선풍기 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">2차시</span>
+      </a>
+      <a class="lesson-row" data-unit="I" href="unit-01/lesson-05/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-1-light);color:var(--unit-1)">🎵</div>
+        <div class="lesson-info"><h5>I-5. 소리에 반응하는 애니메이션 장치</h5><p>소리 센서·스피커, 학교 종·박수 대결 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="I" href="unit-01/lesson-06/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-1-light);color:var(--unit-1)">📡</div>
+        <div class="lesson-info"><h5>I-6. 이심전심 게임 장치 만들기</h5><p>라디오 통신, 가위바위보·찬반 투표 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="II" href="unit-02/lesson-01/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-2-light);color:var(--unit-2)">💾</div>
+        <div class="lesson-info"><h5>II-1. 디지털 형태의 데이터</h5><p>데이터 유형·아날로그 vs 디지털·저장·가공·전송 특징, 디지털 가치 탐색 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">2차시</span>
+      </a>
+      <a class="lesson-row" data-unit="II" href="unit-02/lesson-02/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-2-light);color:var(--unit-2)">🔢</div>
+        <div class="lesson-info"><h5>II-2. 다양한 데이터의 디지털 표현</h5><p>아스키·픽셀·표본화·양자화·FPS, 문자·이미지·소리 변환 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="II" href="unit-02/lesson-03/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-2-light);color:var(--unit-2)">📥</div>
+        <div class="lesson-info"><h5>II-3. 데이터의 수집과 관리</h5><p>직접·간접 수집, 범주형·수치형, 코답 관리 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">2차시</span>
+      </a>
+      <a class="lesson-row" data-unit="II" href="unit-02/lesson-04/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-2-light);color:var(--unit-2)">🌳</div>
+        <div class="lesson-info"><h5>II-4. 데이터의 구조화와 분석</h5><p>표·계층형·그래프형 다이어그램, 산점도, 경제 분야 분석 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">2차시</span>
+      </a>
+      <a class="lesson-row" data-unit="II" href="unit-02/lesson-05/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-2-light);color:var(--unit-2)">🎬</div>
+        <div class="lesson-info"><h5>II-5. 인기 공유 동영상 데이터 분석</h5><p>데이터 기반 5단계, 캐글 수집, 그래프 표현·의미 해석 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">2차시</span>
+      </a>
+      <a class="lesson-row" data-unit="II" href="unit-02/lesson-06/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-2-light);color:var(--unit-2)">🍽️</div>
+        <div class="lesson-info"><h5>II-6. 급식 잔반 데이터 분석</h5><p>잔반율 계산·막대그래프·감소 방안 데이터 기반 주장 수행활동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">2차시</span>
+      </a>
+<a class="lesson-row" data-unit="III" href="unit-03/lesson-01/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">🗺️</div>
+        <div class="lesson-info"><h5>III-1. 문제의 상태와 구조화</h5><p>초기·현재·목표 상태 정의, 강 건너기 시뮬레이터</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">1차시</span>
+      </a>
+      <a class="lesson-row" data-unit="III" href="unit-03/lesson-02/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">🔍</div>
+        <div class="lesson-info"><h5>III-2. 문제의 추상화</h5><p>문제 분해·핵심 요소 추출, 자판기 추상화 게임</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">1차시</span>
+      </a>
+      <a class="lesson-row" data-unit="III" href="unit-03/lesson-03/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">📐</div>
+        <div class="lesson-info"><h5>III-3. 알고리즘의 이해와 표현</h5><p>자연어·순서도 표현, 순서도 블록 조립</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">1차시</span>
+      </a>
+      <a class="lesson-row" data-unit="III" href="unit-03/lesson-04/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">⚖️</div>
+        <div class="lesson-info"><h5>III-4. 알고리즘의 분석과 설계</h5><p>4가지 전략(분할·시행착오·되추적·최선)</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">1차시</span>
+      </a>
+      <a class="lesson-row" data-unit="III" href="unit-03/lesson-05/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">🟢</div>
+        <div class="lesson-info"><h5>III-5. 프로그래밍 시작하기</h5><p>엔트리 사칙 연산 계산기, 6단계 프로그래밍 과정</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="III" href="unit-03/lesson-06/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">🔀</div>
+        <div class="lesson-info"><h5>III-6. 논리 연산 프로그래밍</h5><p>AND·OR·NOT, 놀이공원 입장료 계산기</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="III" href="unit-03/lesson-07/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">🔁</div>
+        <div class="lesson-info"><h5>III-7. 중첩 제어 구조 프로그래밍</h5><p>반복 속 반복, Canvas 패턴 생성기</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="III" href="unit-03/lesson-08/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">📋</div>
+        <div class="lesson-info"><h5>III-8. 리스트와 프로그래밍</h5><p>리스트 추가·삭제·인덱스, OX 퀴즈 체험</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="III" href="unit-03/lesson-09/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">🔧</div>
+        <div class="lesson-info"><h5>III-9. 함수와 디버깅</h5><p>함수 정의·호출·재사용, 버그 찾기 게임</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="III" href="unit-03/lesson-10/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">🌐</div>
+        <div class="lesson-info"><h5>III-10. 실생활과 학문 분야 문제 해결</h5><p>번역기·전자 투표 시뮬레이터, 통합 프로젝트</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="IV" href="unit-04/lesson-01/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-4-light);color:var(--unit-4)">🤖</div>
+        <div class="lesson-info"><h5>IV-1. 인공지능의 개념과 특성</h5><p>4가지 특성·AI vs 일반SW 분류</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">1차시</span>
+      </a>
+      <a class="lesson-row" data-unit="IV" href="unit-04/lesson-02/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-4-light);color:var(--unit-4)">📊</div>
+        <div class="lesson-info"><h5>IV-2. 데이터와 학습</h5><p>데이터 역할·레이블링·훈련/테스트 분류</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">2차시</span>
+      </a>
+      <a class="lesson-row" data-unit="IV" href="unit-04/lesson-03/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-4-light);color:var(--unit-4)">💪</div>
+        <div class="lesson-info"><h5>IV-3. 팔 이미지를 이용한 운동 도우미</h5><p>이미지 분류·티처블머신·엔트리 연동</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="IV" href="unit-04/lesson-04/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-4-light);color:var(--unit-4)">😄</div>
+        <div class="lesson-info"><h5>IV-4. 소리 데이터를 이용한 웃음 계수 시스템</h5><p>소리 분류·웃음 카운터 프로그램</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="IV" href="unit-04/lesson-05/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-4-light);color:var(--unit-4)">📝</div>
+        <div class="lesson-info"><h5>IV-5. 텍스트 데이터를 이용한 영화 평가 시스템</h5><p>텍스트 분류·감성 분석</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">3차시</span>
+      </a>
+      <a class="lesson-row" data-unit="IV" href="unit-04/lesson-06/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-4-light);color:var(--unit-4)">⚖️</div>
+        <div class="lesson-info"><h5>IV-6. 인공지능의 윤리적 문제 해결</h5><p>개인정보·편향·비식별화·윤리 토론</p></div>
+        <span class="lesson-status status-done">완료</span>
+        <span class="lesson-time">1차시</span>
+      </a>
+      <a class="lesson-row" data-unit="V" href="unit-05/lesson-01/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-5-light);color:var(--unit-5)">🌐</div>
+        <div class="lesson-info"><h5>V. 디지털 문화</h5><p>저작권, 사이버 윤리 토론</p></div>
+        <span class="lesson-status status-done" style="background:#f3e8fa;color:#7B3FA0">개발 완료</span>
+        <span class="lesson-time">7차시</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ─── UNIT I VIEW ─── -->
+  <section class="view" id="view-unit1">
+    <!-- 단원 헤더 -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="font-family:'DM Serif Display',serif;font-size:36px;color:var(--unit-1);line-height:1">I</span>
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:3px">Unit I</div>
+            <h2 style="font-size:20px;font-weight:700;color:var(--text)">컴퓨팅 시스템</h2>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.6">하드웨어와 소프트웨어의 구성 원리부터 네트워크, 피지컬 컴퓨팅까지<br>컴퓨터가 어떻게 동작하는지 단계별로 탐구합니다.</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-shrink:0">
+        <div style="text-align:center;padding:12px 16px;background:var(--unit-1-light);border-radius:var(--radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--unit-1)">6</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">소단원</div>
+        </div>
+        <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--text)">13</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">차시</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 소단원 카드 그리드 -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+
+      <a href="unit-01/lesson-01/index.html" class="u1-card">
+        <div class="u1-num">01</div>
+        <div class="u1-icon">💻</div>
+        <div class="u1-title">컴퓨터의 구성과 역할</div>
+        <div class="u1-desc">하드웨어·소프트웨어 개념, 드래그&드롭 분류 활동</div>
+        <div class="u1-meta">
+          <span class="u1-tag">2차시</span>
+          <span class="u1-tag u1-done">완료</span>
+        </div>
+        <div class="u1-arrow">학습하기 →</div>
+      </a>
+
+      <a href="unit-01/lesson-02/index.html" class="u1-card">
+        <div class="u1-num">02</div>
+        <div class="u1-icon">🖱️</div>
+        <div class="u1-title">입력 장치와 출력 장치</div>
+        <div class="u1-desc">입출력 장치 탐색기, 복합 장치의 이해</div>
+        <div class="u1-meta">
+          <span class="u1-tag">2차시</span>
+          <span class="u1-tag u1-done">완료</span>
+        </div>
+        <div class="u1-arrow">학습하기 →</div>
+      </a>
+
+      <a href="unit-01/lesson-03/index.html" class="u1-card">
+        <div class="u1-num">03</div>
+        <div class="u1-icon">🔲</div>
+        <div class="u1-title">CPU와 메모리</div>
+        <div class="u1-desc">명령어 처리 사이클, 메모리 계층 시뮬레이터</div>
+        <div class="u1-meta">
+          <span class="u1-tag">2차시</span>
+          <span class="u1-tag u1-done">완료</span>
+        </div>
+        <div class="u1-arrow">학습하기 →</div>
+      </a>
+
+      <a href="unit-01/lesson-04/index.html" class="u1-card">
+        <div class="u1-num">04</div>
+        <div class="u1-icon">⚙️</div>
+        <div class="u1-title">운영체제의 역할</div>
+        <div class="u1-desc">OS 기능 매칭, GUI·CLI 인터페이스 비교</div>
+        <div class="u1-meta">
+          <span class="u1-tag">2차시</span>
+          <span class="u1-tag u1-done">완료</span>
+        </div>
+        <div class="u1-arrow">학습하기 →</div>
+      </a>
+
+      <a href="unit-01/lesson-05/index.html" class="u1-card">
+        <div class="u1-num">05</div>
+        <div class="u1-icon">🌐</div>
+        <div class="u1-title">네트워크와 인터넷</div>
+        <div class="u1-desc">IP 주소·도메인, 패킷 전송 Canvas 시뮬레이터</div>
+        <div class="u1-meta">
+          <span class="u1-tag">2차시</span>
+          <span class="u1-tag u1-done">완료</span>
+        </div>
+        <div class="u1-arrow">학습하기 →</div>
+      </a>
+
+      <a href="unit-01/lesson-06/index.html" class="u1-card">
+        <div class="u1-num">06</div>
+        <div class="u1-icon">📡</div>
+        <div class="u1-title">피지컬 컴퓨팅</div>
+        <div class="u1-desc">센서 탐색기, 마이크로비트 시뮬레이터 + 활동 프로젝트 4종</div>
+        <div class="u1-meta">
+          <span class="u1-tag">3차시</span>
+          <span class="u1-tag" style="background:#E4F0FA;color:#0A4E8C;border-color:#BEDAF5">활동 4종</span>
+          <span class="u1-tag u1-done">완료</span>
+        </div>
+        <div class="u1-arrow">학습하기 →</div>
+      </a>
+
+    </div>
+  </section>
+
+
+  <!-- ─── UNIT II VIEW ─── -->
+  <section class="view" id="view-unit2">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="font-family:'DM Serif Display',serif;font-size:36px;color:var(--unit-2);line-height:1">II</span>
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:3px">Unit II</div>
+            <h2 style="font-size:20px;font-weight:700;color:var(--text)">데이터</h2>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.6">아날로그·디지털, 이진수·픽셀·아스키코드 표현부터<br>데이터 수집·분석·시각화, 빅데이터와 개인정보 보호까지 탐구합니다.</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-shrink:0">
+        <div style="text-align:center;padding:12px 16px;background:var(--unit-2-light);border-radius:var(--radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--unit-2)">6</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">소단원</div>
+        </div>
+        <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--text)">13</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">차시</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <a href="unit-02/lesson-01/index.html" class="u1-card" style="--unit-c:var(--unit-2)">
+        <div class="u1-num" style="color:var(--unit-2)">01</div><div class="u1-icon">📊</div>
+        <div class="u1-title">데이터와 정보</div>
+        <div class="u1-desc">아날로그·디지털 차이, 데이터vs정보 분류 활동</div>
+        <div class="u1-meta"><span class="u1-tag">2차시</span><span class="u1-tag" style="background:var(--unit-2-light);color:var(--unit-2);border-color:#A8D8C8">9정02-01</span></div>
+        <div class="u1-arrow" style="color:var(--unit-2)">학습하기 →</div>
+      </a>
+      <a href="unit-02/lesson-02/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-2)">02</div><div class="u1-icon">🔢</div>
+        <div class="u1-title">이진수와 디지털 표현</div>
+        <div class="u1-desc">비트·바이트, 실시간 10진수↔2진수 변환기</div>
+        <div class="u1-meta"><span class="u1-tag">2차시</span><span class="u1-tag" style="background:var(--unit-2-light);color:var(--unit-2);border-color:#A8D8C8">9정02-02</span></div>
+        <div class="u1-arrow" style="color:var(--unit-2)">학습하기 →</div>
+      </a>
+      <a href="unit-02/lesson-03/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-2)">03</div><div class="u1-icon">🖼️</div>
+        <div class="u1-title">문자와 이미지 표현</div>
+        <div class="u1-desc">아스키 탐색기, 5×5 픽셀 아트 메이커, RGB</div>
+        <div class="u1-meta"><span class="u1-tag">2차시</span><span class="u1-tag" style="background:var(--unit-2-light);color:var(--unit-2);border-color:#A8D8C8">9정02-03</span></div>
+        <div class="u1-arrow" style="color:var(--unit-2)">학습하기 →</div>
+      </a>
+      <a href="unit-02/lesson-04/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-2)">04</div><div class="u1-icon">📥</div>
+        <div class="u1-title">데이터 수집과 분류</div>
+        <div class="u1-desc">정형·비정형·반정형 분류, 공공데이터 탐색</div>
+        <div class="u1-meta"><span class="u1-tag">2차시</span><span class="u1-tag" style="background:var(--unit-2-light);color:var(--unit-2);border-color:#A8D8C8">9정02-04</span></div>
+        <div class="u1-arrow" style="color:var(--unit-2)">학습하기 →</div>
+      </a>
+      <a href="unit-02/lesson-05/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-2)">05</div><div class="u1-icon">📈</div>
+        <div class="u1-title">데이터 분석과 시각화</div>
+        <div class="u1-desc">기술통계 계산, Canvas 실시간 막대그래프</div>
+        <div class="u1-meta"><span class="u1-tag">3차시</span><span class="u1-tag" style="background:var(--unit-2-light);color:var(--unit-2);border-color:#A8D8C8">9정02-05</span></div>
+        <div class="u1-arrow" style="color:var(--unit-2)">학습하기 →</div>
+      </a>
+      <a href="unit-02/lesson-06/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-2)">06</div><div class="u1-icon">🌐</div>
+        <div class="u1-title">데이터 활용과 빅데이터</div>
+        <div class="u1-desc">빅데이터 3V, 활용 사례, 개인정보 보호·윤리</div>
+        <div class="u1-meta"><span class="u1-tag">2차시</span><span class="u1-tag" style="background:var(--unit-2-light);color:var(--unit-2);border-color:#A8D8C8">9정02-06</span></div>
+        <div class="u1-arrow" style="color:var(--unit-2)">학습하기 →</div>
+      </a>
+    </div>
+  </section>
+
+
+  <!-- ─── RECORDS VIEW ─── -->
+  <section class="view" id="view-records">
+    <div class="records-header">
+      <h2>
+        <svg width="22" height="22" fill="none" stroke="var(--unit-2)" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        나의 학습 기록
+      </h2>
+      <a class="rec-goto-btn" onclick="showView('dashboard');setActive(document.querySelector('.nav-item'))">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        과제함 가기
+      </a>
+    </div>
+    <p class="records-sub" id="records-sub-text">제출한 수행평가 및 과제 내역이 브라우저에 안전하게 보관됩니다.</p>
+
+    <!-- 통계 -->
+    <div class="rec-stats">
+      <div class="rec-stat-card">
+        <div class="rec-stat-n" id="rec-stat-act" style="color:var(--unit-2)">0</div>
+        <div class="rec-stat-l">저장한 활동</div>
+      </div>
+      <div class="rec-stat-card">
+        <div class="rec-stat-n" id="rec-stat-sc" style="color:var(--unit-4)">0</div>
+        <div class="rec-stat-l">완료한 자기평가</div>
+      </div>
+      <div class="rec-stat-card">
+        <div class="rec-stat-n" id="rec-stat-lesson" style="color:var(--unit-3)">0</div>
+        <div class="rec-stat-l">완료 표시 소단원</div>
+      </div>
+    </div>
+
+    <!-- 기록 목록 -->
+    <div id="rec-list-wrap"></div>
+  </section>
+
+
+  <!-- ─── UNIT III VIEW ─── -->
+  <section class="view" id="view-unit3">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="font-family:'DM Serif Display',serif;font-size:36px;color:var(--unit-3);line-height:1">III</span>
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:3px">Unit III</div>
+            <h2 style="font-size:20px;font-weight:700;color:var(--text)">알고리즘과 프로그래밍</h2>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.6">문제 추상화·알고리즘 설계·순서도 표현,<br>엔트리로 순차·선택·반복·리스트·함수 프로그래밍</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-shrink:0">
+        <div style="text-align:center;padding:12px 16px;background:var(--unit-3-light);border-radius:var(--radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--unit-3)">10</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">소단원</div>
+        </div>
+        <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--text)">22</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">차시</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <a href="unit-03/lesson-01/index.html" class="u1-card" style="--unit-c:var(--unit-3)">
+        <div class="u1-num" style="color:var(--unit-3)">01</div><div class="u1-icon">🗺️</div>
+        <div class="u1-title">문제의 상태와 구조화</div>
+        <div class="u1-desc">초기·현재·목표 상태 정의, 강 건너기 시뮬레이터</div>
+        <div class="u1-meta"><span class="u1-tag">1차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-3)">학습하기 →</div>
+      </a>
+      <a href="unit-03/lesson-02/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-3)">02</div><div class="u1-icon">🔍</div>
+        <div class="u1-title">문제의 추상화</div>
+        <div class="u1-desc">문제 분해·핵심 요소 추출, 자판기 추상화 게임</div>
+        <div class="u1-meta"><span class="u1-tag">1차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-3)">학습하기 →</div>
+      </a>
+      <a href="unit-03/lesson-03/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-3)">03</div><div class="u1-icon">📐</div>
+        <div class="u1-title">알고리즘의 이해와 표현</div>
+        <div class="u1-desc">자연어·순서도 표현, 순서도 블록 조립</div>
+        <div class="u1-meta"><span class="u1-tag">1차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-3)">학습하기 →</div>
+      </a>
+      <a href="unit-03/lesson-04/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-3)">04</div><div class="u1-icon">⚖️</div>
+        <div class="u1-title">알고리즘의 분석과 설계</div>
+        <div class="u1-desc">분할·시행착오·되추적·최선 전략 4가지</div>
+        <div class="u1-meta"><span class="u1-tag">1차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-3)">학습하기 →</div>
+      </a>
+      <a href="unit-03/lesson-05/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-3)">05</div><div class="u1-icon">🟢</div>
+        <div class="u1-title">프로그래밍 시작하기</div>
+        <div class="u1-desc">엔트리 사칙 연산 계산기, 6단계 프로그래밍 과정</div>
+        <div class="u1-meta"><span class="u1-tag">3차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-3)">학습하기 →</div>
+      </a>
+      <a href="unit-03/lesson-06/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-3)">06</div><div class="u1-icon">🔀</div>
+        <div class="u1-title">논리 연산 프로그래밍</div>
+        <div class="u1-desc">AND·OR·NOT, 놀이공원 입장료 계산기</div>
+        <div class="u1-meta"><span class="u1-tag">3차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-3)">학습하기 →</div>
+      </a>
+      <a href="unit-03/lesson-07/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-3)">07</div><div class="u1-icon">🔁</div>
+        <div class="u1-title">중첩 제어 구조 프로그래밍</div>
+        <div class="u1-desc">반복 속 반복, Canvas 패턴 생성기</div>
+        <div class="u1-meta"><span class="u1-tag">3차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-3)">학습하기 →</div>
+      </a>
+      <a href="unit-03/lesson-08/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-3)">08</div><div class="u1-icon">📋</div>
+        <div class="u1-title">리스트와 프로그래밍</div>
+        <div class="u1-desc">리스트 추가·삭제·인덱스, OX 퀴즈 체험</div>
+        <div class="u1-meta"><span class="u1-tag">3차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-3)">학습하기 →</div>
+      </a>
+      <a href="unit-03/lesson-09/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-3)">09</div><div class="u1-icon">🔧</div>
+        <div class="u1-title">함수와 디버깅</div>
+        <div class="u1-desc">함수 정의·호출·재사용, 버그 찾기 게임</div>
+        <div class="u1-meta"><span class="u1-tag">3차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-3)">학습하기 →</div>
+      </a>
+      <a href="unit-03/lesson-10/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-3)">10</div><div class="u1-icon">🌐</div>
+        <div class="u1-title">실생활과 학문 분야 문제 해결</div>
+        <div class="u1-desc">번역기·전자 투표 시뮬레이터, 통합 프로젝트</div>
+        <div class="u1-meta"><span class="u1-tag">3차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-3)">학습하기 →</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── UNIT IV VIEW ─── -->
+  <section class="view" id="view-unit4">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="font-family:'DM Serif Display',serif;font-size:36px;color:var(--unit-4);line-height:1">IV</span>
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:3px">Unit IV</div>
+            <h2 style="font-size:20px;font-weight:700;color:var(--text)">인공지능</h2>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.6">AI 개념·머신러닝 학습 원리,<br>이미지·소리·텍스트 분류 실습, 인공지능 윤리</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-shrink:0">
+        <div style="text-align:center;padding:12px 16px;background:var(--unit-4-light);border-radius:var(--radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--unit-4)">6</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">소단원</div>
+        </div>
+        <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--text)">13</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">차시</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <a href="unit-04/lesson-01/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-4)">01</div><div class="u1-icon">🤖</div>
+        <div class="u1-title">인공지능의 개념과 특성</div>
+        <div class="u1-desc">4가지 특성·AI vs 일반SW 분류</div>
+        <div class="u1-meta"><span class="u1-tag">1차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-4)">학습하기 →</div>
+      </a>
+      <a href="unit-04/lesson-02/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-4)">02</div><div class="u1-icon">📊</div>
+        <div class="u1-title">데이터와 학습</div>
+        <div class="u1-desc">데이터 역할·레이블링·훈련/테스트 분류</div>
+        <div class="u1-meta"><span class="u1-tag">2차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-4)">학습하기 →</div>
+      </a>
+      <a href="unit-04/lesson-03/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-4)">03</div><div class="u1-icon">💪</div>
+        <div class="u1-title">팔 이미지를 이용한 운동 도우미</div>
+        <div class="u1-desc">이미지 분류·티처블머신·엔트리 연동</div>
+        <div class="u1-meta"><span class="u1-tag">3차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-4)">학습하기 →</div>
+      </a>
+      <a href="unit-04/lesson-04/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-4)">04</div><div class="u1-icon">😄</div>
+        <div class="u1-title">소리 데이터를 이용한 웃음 계수 시스템</div>
+        <div class="u1-desc">소리 분류·웃음 카운터 프로그램</div>
+        <div class="u1-meta"><span class="u1-tag">3차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-4)">학습하기 →</div>
+      </a>
+      <a href="unit-04/lesson-05/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-4)">05</div><div class="u1-icon">📝</div>
+        <div class="u1-title">텍스트 데이터를 이용한 영화 평가 시스템</div>
+        <div class="u1-desc">텍스트 분류·감성 분석</div>
+        <div class="u1-meta"><span class="u1-tag">3차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-4)">학습하기 →</div>
+      </a>
+      <a href="unit-04/lesson-06/index.html" class="u1-card">
+        <div class="u1-num" style="color:var(--unit-4)">06</div><div class="u1-icon">⚖️</div>
+        <div class="u1-title">인공지능의 윤리적 문제 해결</div>
+        <div class="u1-desc">개인정보·편향·비식별화·윤리 토론</div>
+        <div class="u1-meta"><span class="u1-tag">1차시</span><span class="u1-tag u1-done">완료</span></div>
+        <div class="u1-arrow" style="color:var(--unit-4)">학습하기 →</div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+
+  // ── Google Sheets 연동 ─────────────────────────────────────────
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+
+  function postToSheets(payload) {
+    if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) return;
+    fetch(GS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+  function fetchRecordsFromSheets(userName, callback) {
+    if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) { callback(null); return; }
+    fetch(GS_URL + '?userName=' + encodeURIComponent(userName))
+      .then(function(r){ return r.json(); })
+      .then(function(d){ callback(d); })
+      .catch(function(){ callback(null); });
+  }
+
+
+  // ── 단원 소단원 토글 ──
+  function toggleUnit(n) {
+    var sub   = document.getElementById('unit' + n + '-subnav');
+    var arrow = document.getElementById('unit' + n + '-arrow');
+    if (!sub) return;
+    var isOpen = sub.getAttribute('data-open') === '1';
+    if (isOpen) {
+      sub.style.maxHeight = '0px';
+      sub.style.opacity   = '0';
+      sub.setAttribute('data-open', '0');
+      if (arrow) arrow.style.transform = 'rotate(-90deg)';
+    } else {
+      sub.style.maxHeight = '2000px';
+      sub.style.opacity   = '1';
+      sub.setAttribute('data-open', '1');
+      if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  // 하위 호환용 래퍼
+  function toggleUnitNav()  { toggleUnit(1); }
+  function toggleUnitNav2() { toggleUnit(2); }
+  function toggleUnitNav3() { toggleUnit(3); }
+  function toggleUnitNav4() { toggleUnit(4); }
+
+  // View navigation
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    var el = document.getElementById('view-' + id);
+    if (el) el.classList.add('active');
+  }
+
+
+
+  function toggleL06Sub(e) {
+    var sub = document.getElementById('l06-subnav');
+    var arrow = document.getElementById('l06-arrow');
+    if (!sub) return;
+    // href 이동은 허용, toggle만
+    var open = sub.style.display !== 'none';
+    sub.style.display = open ? 'none' : 'block';
+    if (arrow) arrow.textContent = open ? '▸' : '▾';
+  }
+
+  // Unit I 서브메뉴 토글
+
+  function setActive(el) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function setBreadcrumb(text) {
+    document.getElementById('breadcrumb-sep').style.display = 'inline';
+    document.getElementById('breadcrumb-current').textContent = text;
+  }
+
+  // Section toggle
+  function toggleSection(id) {
+    document.getElementById(id).classList.toggle('collapsed');
+  }
+
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Lesson filter
+  function filterLessons(btn, unit) {
+    // 1) 대시보드 뷰로 전환
+    showView('dashboard');
+
+    // 2) 필터 버튼 active 처리
+    document.querySelectorAll('.filter-btn').forEach(function(b) {
+      b.classList.remove('active');
+    });
+    if (btn && btn.classList && btn.classList.contains('filter-btn')) {
+      btn.classList.add('active');
+    } else {
+      document.querySelectorAll('.filter-btn').forEach(function(b) {
+        var label = b.textContent.trim();
+        if ((unit === 'all' && label === '전체') || label === unit) {
+          b.classList.add('active');
+        }
+      });
+    }
+
+    // 3) lesson-row 표시/숨김
+    var visibleCount = 0;
+    document.querySelectorAll('.lesson-row').forEach(function(row) {
+      var show = (unit === 'all' || row.dataset.unit === unit);
+      row.style.display = show ? 'flex' : 'none';
+      if (show) visibleCount++;
+    });
+
+    // 4) lessons-list 헤더 업데이트
+    var header = document.querySelector('.lessons-list-header');
+    if (header) {
+      header.innerHTML = '<span>📚</span> ' + (unit === 'all' ? '학습 목록 전체' : unit + '단원 소단원') + ' (' + visibleCount + '개)';
+    }
+
+    // 5) 소단원 목록으로 스크롤
+    var el = document.querySelector('.lessons-list');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Quiz
+  function checkAnswer(el, isCorrect) {
+    document.querySelectorAll('.quiz-option').forEach(o => {
+      o.onclick = null;
+      o.style.cursor = 'default';
+    });
+    const fb = document.getElementById('quiz-feedback');
+    if (isCorrect) {
+      el.classList.add('correct');
+      fb.className = 'quiz-feedback show correct';
+      fb.textContent = '✓ 정답입니다! "무한성"은 알고리즘의 특성이 아닙니다. 알고리즘은 반드시 유한한 단계 후 종료되어야 합니다.';
+    } else {
+      el.classList.add('wrong');
+      fb.className = 'quiz-feedback show wrong';
+      fb.textContent = '✗ 오답입니다. 힌트: 알고리즘이 영원히 실행된다면 컴퓨터는 어떻게 될까요? 다시 생각해보세요!';
+    }
+  }
+
+  // Interaction switch
+  function switchInteraction(btn, type) {
+    document.querySelectorAll('.type-badge').forEach(b => {
+      b.classList.remove('selected');
+      b.style.background = 'var(--bg)';
+      b.style.color = 'var(--text-muted)';
+    });
+    btn.classList.add('selected');
+    btn.style.background = 'var(--unit-1-light)';
+    btn.style.color = 'var(--unit-1)';
+    document.getElementById('interact-quiz').style.display = type === 'quiz' ? 'block' : 'none';
+    document.getElementById('interact-code').style.display = type === 'code' ? 'block' : 'none';
+  }
+
+  // Code actions
+  function runCode() {
+    document.getElementById('code-output').classList.add('show');
+  }
+  function copyCode() {
+    navigator.clipboard?.writeText(`def find_max(numbers):\n    max_val = numbers[0]\n    for num in numbers:\n        if num > max_val:\n            max_val = num\n    return max_val\n\ndata = [3, 7, 1, 9, 4]\nprint("최댓값:", find_max(data))`);
+    alert('코드가 복사되었습니다!');
+  }
+
+  // Timer
+  let timerInterval = null;
+  let remaining = 45 * 60;
+  let running = false;
+
+  function updateTimerDisplay() {
+    const m = Math.floor(remaining / 60).toString().padStart(2, '0');
+    const s = (remaining % 60).toString().padStart(2, '0');
+    document.getElementById('timer-display').textContent = m + ':' + s;
+  }
+
+  function startTimer() {
+    if (running) {
+      clearInterval(timerInterval);
+      running = false;
+      document.getElementById('timer-start-btn').textContent = '▶ 시작';
+    } else {
+      running = true;
+      document.getElementById('timer-start-btn').textContent = '⏸ 일시정지';
+      timerInterval = setInterval(() => {
+        if (remaining > 0) {
+          remaining--;
+          updateTimerDisplay();
+        } else {
+          clearInterval(timerInterval);
+          running = false;
+          document.getElementById('timer-start-btn').textContent = '▶ 시작';
+          alert('수업 시간이 종료되었습니다!');
+        }
+      }, 1000);
+    }
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    running = false;
+    remaining = 45 * 60;
+    updateTimerDisplay();
+    document.getElementById('timer-start-btn').textContent = '▶ 시작';
+  }
+
+  // Google 로그인 콜백
+
+  // ══════════════════════════════════════════
+  //  로그인 + 학습 기록 시스템
+  // ══════════════════════════════════════════
+
+  var LESSONS = [
+    {key:'l101',unit:'I',  icon:'💻', title:'I-1. 컴퓨팅 시스템의 구성과 동작 원리'},
+    {key:'l102',unit:'I',  icon:'🤖', title:'I-2. 피지컬 컴퓨팅 시스템의 이해'},
+    {key:'l103',unit:'I',  icon:'🏃', title:'I-3. 운동 횟수 표시 장치 만들기'},
+    {key:'l104',unit:'I',  icon:'🌡️', title:'I-4. 수면 온도 알림이 장치 만들기'},
+    {key:'l105',unit:'I',  icon:'🎵', title:'I-5. 소리에 반응하는 애니메이션 장치'},
+    {key:'l106',unit:'I',  icon:'📡', title:'I-6. 이심전심 게임 장치 만들기'},
+    {key:'l201',unit:'II', icon:'💾', title:'II-1. 디지털 형태의 데이터'},
+    {key:'l202',unit:'II', icon:'🔢', title:'II-2. 다양한 데이터의 디지털 표현'},
+    {key:'l203',unit:'II', icon:'📥', title:'II-3. 데이터의 수집과 관리'},
+    {key:'l204',unit:'II', icon:'🌳', title:'II-4. 데이터의 구조화와 분석'},
+    {key:'l205',unit:'II', icon:'🎬', title:'II-5. 인기 공유 동영상 데이터 분석'},
+    {key:'l206',unit:'II', icon:'🍽️', title:'II-6. 급식 잔반 데이터 분석'},
+    {key:'l301',unit:'III',icon:'🗺️', title:'III-1. 문제의 상태와 구조화'},
+    {key:'l302',unit:'III',icon:'🔍', title:'III-2. 문제의 추상화'},
+    {key:'l303',unit:'III',icon:'📐', title:'III-3. 알고리즘의 이해와 표현'},
+    {key:'l304',unit:'III',icon:'⚖️', title:'III-4. 알고리즘의 분석과 설계'},
+    {key:'l305',unit:'III',icon:'🟢', title:'III-5. 프로그래밍 시작하기'},
+    {key:'l306',unit:'III',icon:'🔀', title:'III-6. 논리 연산 프로그래밍'},
+    {key:'l307',unit:'III',icon:'🔁', title:'III-7. 중첩 제어 구조 프로그래밍'},
+    {key:'l308',unit:'III',icon:'📋', title:'III-8. 리스트와 프로그래밍'},
+    {key:'l309',unit:'III',icon:'🔧', title:'III-9. 함수와 디버깅'},
+    {key:'l310',unit:'III',icon:'🌐', title:'III-10. 실생활과 학문 분야 문제 해결'},
+    {key:'l401',unit:'IV', icon:'🤖', title:'IV-1. 인공지능의 개념과 특성'},
+    {key:'l402',unit:'IV', icon:'📊', title:'IV-2. 데이터와 학습'},
+    {key:'l403',unit:'IV', icon:'💪', title:'IV-3. 팔 이미지를 이용한 운동 도우미'},
+    {key:'l404',unit:'IV', icon:'😄', title:'IV-4. 소리 데이터를 이용한 웃음 계수 시스템'},
+    {key:'l405',unit:'IV', icon:'📝', title:'IV-5. 텍스트 데이터를 이용한 영화 평가 시스템'},
+    {key:'l406',unit:'IV', icon:'⚖️', title:'IV-6. 인공지능의 윤리적 문제 해결'},
+    {key:'l501',unit:'V',  icon:'🌐', title:'V-1. 디지털 사회와 정보 윤리'},
+    {key:'l502',unit:'V',  icon:'🔐', title:'V-2. 개인 정보 보호와 사이버 보안'},
+    {key:'l503',unit:'V',  icon:'©️', title:'V-3. 저작권과 디지털 창작물'},
+    {key:'l504',unit:'V',  icon:'🛡️', title:'V-4. 사이버 폭력 예방과 대처'},
+    {key:'l505',unit:'V',  icon:'📰', title:'V-5. 미디어 리터러시와 정보 신뢰성'},
+    {key:'l506',unit:'V',  icon:'🤖', title:'V-6. AI와 디지털 문화의 미래'},
+  ];
+
+  var UNIT_BG  = {I:'var(--unit-1-light)',II:'#e8f5e9',III:'var(--unit-3-light)',IV:'var(--unit-4-light)',V:'var(--unit-5-light)'};
+  var UNIT_COL = {I:'var(--unit-1)',II:'var(--unit-2)',III:'var(--unit-3)',IV:'var(--unit-4)',V:'var(--unit-5)'};
+  var UNIT_NAME = {I:'컴퓨팅 시스템',II:'데이터',III:'알고리즘·프로그래밍',IV:'인공지능',V:'디지털 문화'};
+
+  // ── 프로필 초기화 ──────────────────────────
+  function initProfile() {
+    var isGoogle = localStorage.getItem('user_google') === '1';
+    var hasName  = localStorage.getItem('user_name');
+    if (hasName && hasName.trim()) {
+      var picture = isGoogle ? (localStorage.getItem('user_picture') || '') : '';
+      applyProfile(hasName, picture);
+      closeLoginModal();
+    } else {
+      showLoginModal();
+    }
+    updateRecordCount();
+  }
+
+  // ── Google 로그인 전용 ─────────────────────────────────────
+  function handleGoogleLogin(response) {
+    try {
+      // JWT payload 디코딩
+      var b64 = response.credential.split('.')[1]
+                  .replace(/-/g,'+').replace(/_/g,'/');
+      var pad = b64.length % 4;
+      if (pad) b64 += '===='.slice(pad);
+      var payload = JSON.parse(atob(b64));
+      var name    = payload.name || payload.given_name || '학습자';
+      var picture = payload.picture || '';
+      var email   = payload.email || '';
+
+      // 저장
+      localStorage.setItem('user_name',    name);
+      localStorage.setItem('user_picture', picture);
+      localStorage.setItem('user_email',   email);
+      localStorage.setItem('user_google',  '1');  // Google 인증 플래그
+
+      applyProfile(name, picture);
+      closeLoginModal();
+      updateRecordCount();
+    } catch(e) {
+      console.error('Google 로그인 오류:', e);
+      alert('로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+  }
+
+  function applyProfile(name, picture) {
+    var safeChar = (name || '학').charAt(0);
+    var el;
+    el = document.getElementById('profile-avatar');
+    if (el) {
+      if (picture) {
+        el.style.backgroundImage = 'url(' + picture + ')';
+        el.style.backgroundSize  = 'cover';
+        el.style.backgroundPosition = 'center';
+        el.textContent = '';
+      } else {
+        el.textContent = safeChar;
+      }
+    }
+    el = document.getElementById('profile-name');
+    if (el) el.textContent = name + '님';
+    el = document.getElementById('profile-sub');
+    if (el) el.textContent = (GS_URL && GS_URL !== 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev') ? '☁️ Sheets 연동 중...' : '로컬 저장 중';
+    el = document.getElementById('hero-name');
+    if (el) el.textContent = name;
+  }
+
+
+  function doLogin() {
+    var inp  = document.getElementById('login-input');
+    var name = (inp ? inp.value : '').trim();
+    if (!name) {
+      if (inp) { inp.focus(); inp.style.borderColor = '#EF4444'; }
+      return;
+    }
+    localStorage.setItem('user_name',   name);
+    localStorage.setItem('user_google', '0');
+    applyProfile(name, '');
+    closeLoginModal();
+    updateRecordCount();
+  }
+  function closeLoginModal() {
+    var ov = document.getElementById('login-overlay');
+    if (!ov) return;
+    ov.classList.remove('show');
+    ov.style.display   = 'none';
+    ov.style.zIndex    = '-1';
+    ov.style.pointerEvents = 'none';
+  }
+
+  function showLoginModal() {
+    var ov = document.getElementById('login-overlay');
+    if (!ov) return;
+    ov.style.display       = 'flex';
+    ov.style.zIndex        = '9999';
+    ov.style.pointerEvents = 'auto';
+    ov.classList.add('show');
+    // Client ID 미설정 확인
+    var el = document.getElementById('g_id_onload');
+    var cid = el ? el.getAttribute('data-client_id') : '';
+    var notice = document.getElementById('client-id-notice');
+    if (notice) notice.style.display = (!cid || cid === 'YOUR_GOOGLE_CLIENT_ID') ? 'block' : 'none';
+  }
+
+  function initProfile() {
+    var isGoogle = localStorage.getItem('user_google') === '1';
+    var name     = localStorage.getItem('user_name');
+    if (isGoogle && name) {
+      // Google 로그인 완료 상태
+      var picture = localStorage.getItem('user_picture') || '';
+      applyProfile(name, picture);
+      closeLoginModal();
+    } else {
+      // 기존 정보 초기화 후 로그인 강제
+      localStorage.removeItem('user_name');
+      localStorage.removeItem('user_picture');
+      localStorage.removeItem('user_email');
+      localStorage.removeItem('user_google');
+      showLoginModal();
+    }
+    updateRecordCount();
+  }
+
+  function updateRecordCount() {
+    var data  = collectRecords();
+    var total = data.list.length + data.done.length;
+    var el    = document.getElementById('record-count');
+    if (el) el.textContent = total;
+
+    // Google Sheets 동기화 표시
+    var sub = document.getElementById('profile-sub');
+    var name = localStorage.getItem('user_name');
+    if (sub && name) {
+      if (GS_URL && GS_URL !== 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev') {
+        sub.textContent = '☁️ Sheets 연동 중...';
+        fetchRecordsFromSheets(name, function(sheetData) {
+          if (sheetData) {
+            var sheetTotal = (sheetData.acts ? sheetData.acts.length : 0)
+                           + (sheetData.scs  ? sheetData.scs.length  : 0)
+                           + (sheetData.done ? sheetData.done.length : 0);
+            // Sheets 기록 수로 카운트 업데이트
+            var cnt = document.getElementById('record-count');
+            if (cnt) cnt.textContent = Math.max(total, sheetTotal);
+            if (sub) sub.textContent = '☁️ Sheets 연동됨 · ' + name;
+          } else {
+            if (sub) sub.textContent = '로컬 저장 · ' + name;
+          }
+        });
+      } else {
+        sub.textContent = '로컬 저장 · ' + name;
+      }
+    }
+  }
+
+  function updateRecordView() {
+    var data = collectRecords();
+    var list = data.list, done = data.done;
+
+    // 통계
+    var actN  = list.filter(function(r){ return r.type==='act'; }).length;
+    var scN   = list.filter(function(r){ return r.type==='sc'; }).length;
+    var el;
+    el = document.getElementById('rec-stat-act');    if (el) el.textContent = actN;
+    el = document.getElementById('rec-stat-sc');     if (el) el.textContent = scN;
+    el = document.getElementById('rec-stat-lesson'); if (el) el.textContent = done.length;
+
+    var wrap = document.getElementById('rec-list-wrap');
+    if (!wrap) return;
+
+    var total = list.length + done.length;
+
+    if (total === 0) {
+      wrap.innerHTML =
+        '<div class="rec-empty">' +
+          '<div class="rec-empty-icon">📭</div>' +
+          '<h3>아직 제출한 과제가 없습니다.</h3>' +
+          '<p>각 소단원에서 수행 활동을 저장하거나<br>자기평가를 완료하면 여기에 기록됩니다.</p>' +
+          '<button class="rec-goto-course" onclick="showView('dashboard');setActive(document.querySelector('.nav-item'))">학습 코스로 가기</button>' +
+        '</div>';
+      updateRecordCount();
+      return;
+    }
+
+    var rows = '';
+
+    // 완료 표시 행
+    var uLabel = {'01':'I','02':'II','03':'III','04':'IV'};
+    var uIcon  = {'01':'💻','02':'💾','03':'🟢','04':'🤖'};
+    done.forEach(function(d) {
+      var ul  = uLabel[d.u] || '';
+      var bg  = UNIT_BG[ul]  || '#f5f5f5';
+      var col = UNIT_COL[ul] || '#333';
+      rows +=
+        '<div class="rec-item">' +
+          '<div class="rec-item-icon" style="background:' + bg + '">' + (uIcon[d.u]||'📌') + '</div>' +
+          '<div class="rec-item-info">' +
+            '<div class="rec-item-title">' + ul + '단원 소단원 ' + d.num + ' 완료 표시</div>' +
+            '<div class="rec-item-meta" style="color:' + col + '">' + (UNIT_NAME[ul]||'') + '</div>' +
+          '</div>' +
+          '<div class="rec-item-right"><span class="rec-item-badge rec-badge-done">완료</span></div>' +
+        '</div>';
+    });
+
+    // 수행활동·자기평가 행
+    list.forEach(function(r) {
+      var bg  = UNIT_BG[r.L.unit]  || '#f5f5f5';
+      var col = UNIT_COL[r.L.unit] || '#333';
+      var badge = r.type === 'act'
+        ? '<span class="rec-item-badge rec-badge-done">활동 저장</span>'
+        : '<span class="rec-item-badge rec-badge-sc">자기평가</span>';
+      rows +=
+        '<div class="rec-item">' +
+          '<div class="rec-item-icon" style="background:' + bg + '">' + r.L.icon + '</div>' +
+          '<div class="rec-item-info">' +
+            '<div class="rec-item-title">' + r.L.title + '</div>' +
+            '<div class="rec-item-meta" style="color:' + col + '">' + (r.type==='act'?'수행 활동 저장':'자기평가 완료') + '</div>' +
+          '</div>' +
+          '<div class="rec-item-right">' + badge + '</div>' +
+        '</div>';
+    });
+
+    wrap.innerHTML = '<div class="rec-list">' + rows + '</div>';
+    updateRecordCount();
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // subnav 초기 상태 설정
+    [1,2,3,4].forEach(function(n) {
+      var sub   = document.getElementById('unit' + n + '-subnav');
+      var arrow = document.getElementById('unit' + n + '-arrow');
+      if (!sub) return;
+      var isOpen = sub.getAttribute('data-open') === '1';
+      sub.style.maxHeight = isOpen ? '2000px' : '0px';
+      sub.style.opacity   = isOpen ? '1' : '0';
+      if (arrow) arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(-90deg)';
+    });
+    initProfile();
+  });
+
+</script>
+
+<!-- 로그인 모달 -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-modal">
+    <div class="lm-logo">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <rect width="52" height="52" rx="13" fill="#4285F4"/>
+        <text x="50%" y="54%" font-size="25" font-weight="900" fill="white"
+              text-anchor="middle" dominant-baseline="middle" font-family="serif">情</text>
+      </svg>
+    </div>
+    <h2 class="lm-title">정보 교과 학습 플랫폼</h2>
+    <p class="lm-sub">2022 개정 교육과정 · 중학교 1학년</p>
+
+    <!-- Google 로그인 (Client ID 설정 시 활성화) -->
+    <div id="gsi-btn-wrap" style="display:flex;justify-content:center;margin-bottom:4px;min-height:44px;align-items:center">
+      <div id="g_id_onload"
+           data-client_id="YOUR_GOOGLE_CLIENT_ID"
+           data-callback="handleGoogleLogin"
+           data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+           data-type="standard"
+           data-size="large"
+           data-theme="outline"
+           data-text="signin_with"
+           data-shape="rectangular"
+           data-locale="ko"
+           data-width="280">
+      </div>
+    </div>
+
+    <!-- Client ID 미설정 안내 -->
+    <div id="client-id-notice" style="display:none;background:#FEF3C7;border:1px solid #F59E0B;border-radius:10px;padding:12px 14px;font-size:11px;color:#78350F;line-height:1.75;text-align:left;margin-bottom:12px">
+      ⚙️ <strong>Google Client ID 미설정</strong><br>
+      Google Cloud Console에서 OAuth 클라이언트 ID 발급 후<br>
+      <code style="background:#fff;padding:1px 5px;border-radius:3px;font-size:10px">data-client_id</code> 값을 교체하면 구글 로그인이 활성화됩니다.<br>
+      승인 출처: <code style="background:#fff;padding:1px 5px;border-radius:3px;font-size:10px">https://sungce.github.io</code>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin:10px 0 14px;color:#d1d5db;font-size:12px">
+      <span style="flex:1;height:1px;background:#e5e7eb;display:block"></span>
+      <span style="white-space:nowrap;font-size:11px">이름으로 시작하기</span>
+      <span style="flex:1;height:1px;background:#e5e7eb;display:block"></span>
+    </div>
+
+    <input type="text" id="login-input"
+           placeholder="이름 또는 닉네임 입력 (예: 홍길동)" maxlength="20"
+           style="width:100%;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;font-family:inherit;outline:none;margin-bottom:10px;box-sizing:border-box;transition:border-color .15s"
+           onfocus="this.style.borderColor='#4285F4'"
+           onblur="this.style.borderColor='#e5e7eb'"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()"
+            style="width:100%;padding:12px;background:#4285F4;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s"
+            onmouseover="this.style.background='#3367D6'"
+            onmouseout="this.style.background='#4285F4'">
+      학습 시작하기 →
+    </button>
+  </div>
+</div>
+
+
+
+
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+// Firebase 설정
+const firebaseConfig = {
+  apiKey: "AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM",
+  authDomain: "book-c2d05.firebaseapp.com",
+  databaseURL: "https://book-c2d05-default-rtdb.firebaseio.com",
+  projectId: "book-c2d05",
+  storageBucket: "book-c2d05.firebasestorage.app",
+  messagingSenderId: "566939045493",
+  appId: "1:566939045493:web:24329deff2690a5146f23c"
+};
+
+const app      = initializeApp(firebaseConfig);
+const auth     = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// 로그인 상태 감지
+onAuthStateChanged(auth, (user) => {
+  const loginSection = document.getElementById('login-section');
+  const userSection  = document.getElementById('user-section');
+  if (!loginSection || !userSection) return;
+
+  if (user) {
+    // 로그인됨 — 유저 정보 표시
+    loginSection.classList.add('hidden');
+    userSection.classList.remove('hidden');
+    var photo = document.getElementById('user-photo');
+    if (photo) photo.src = user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.displayName || '학습자') + '&background=4285F4&color=fff';
+    var dispName = document.getElementById('user-display-name');
+    if (dispName) dispName.innerText = user.displayName || '학습자';
+    var emailEl = document.getElementById('user-email-addr');
+    if (emailEl) emailEl.innerText = user.email || '';
+
+    // 기존 localStorage 연동 — applyProfile 호출
+    var name = user.displayName || user.email || '학습자';
+    localStorage.setItem('user_name', name);
+    if (user.photoURL) localStorage.setItem('user_picture', user.photoURL);
+
+    if (typeof applyProfile === 'function') applyProfile(name);
+
+    // 로그인 모달 닫기
+    var ov = document.getElementById('login-overlay');
+    if (ov) { ov.classList.remove('show'); ov.style.display = 'none'; }
+
+    if (typeof updateRecordCount === 'function') updateRecordCount();
+  } else {
+    // 로그아웃됨
+    loginSection.classList.remove('hidden');
+    userSection.classList.add('hidden');
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('user_picture');
+    if (typeof applyProfile === 'function') applyProfile('');
+  }
+});
+
+// Google 로그인 버튼
+var btnLogin = document.getElementById('btn-google-login');
+if (btnLogin) {
+  btnLogin.onclick = async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error("로그인 에러:", error);
+      if (error.code !== 'auth/popup-closed-by-user') {
+        alert("로그인에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      }
+    }
+  };
+}
+
+// 로그아웃 버튼
+var btnLogout = document.getElementById('btn-logout');
+if (btnLogout) {
+  btnLogout.onclick = () => {
+    signOut(auth).then(() => {
+      localStorage.removeItem('user_name');
+      localStorage.removeItem('user_picture');
+      if (typeof initProfile === 'function') initProfile();
+    });
+  };
+}
+
+// 사이드바 프로필 편집 버튼도 로그인 모달 오픈
+window.fbSignOut = () => signOut(auth);
+</script>
+
+</body>
+</html>
