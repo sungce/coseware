@@ -1,1 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IV-2. 데이터와 학습 — 정보 교과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#F5F4F0;color:#1C1C1C;font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+:root{--u:#378ADD;--udk:#1A5A9A;--ult:#E4F0FA;--umd:#BACED8;--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--green:#2A720E;--gbg:#E8F3DC;--amber:#7A4E0A;--abg:#FAF0DC;--red:#8C1E0E;--rbg:#FAEBE6;--blue:#0A4E8C;--bbg:#E4F0FA;--rLG:14px;--rSM:8px;--SW:240px;--TH:52px}
+.sb{width:var(--SW);background:var(--sf);border-right:1px solid var(--br);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.sb-top{padding:16px 14px 12px;border-bottom:1px solid var(--br)}.uchip{display:inline-flex;align-items:center;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.sb-top h2{font-size:12px;font-weight:700;line-height:1.4}.smeta{font-size:10px;color:var(--lt);margin-top:3px}
+.sb-nav{padding:4px 0;flex:1}.nlbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);padding:7px 13px 3px}
+.na{display:flex;align-items:center;gap:8px;padding:7px 13px;font-size:11px;color:var(--mt);text-decoration:none;border-left:2.5px solid transparent;transition:background .12s}
+.na:hover{background:var(--bg);color:var(--tx)}.na.on{color:var(--u);font-weight:600;background:var(--ult);border-left-color:var(--u)}.na.done .nn{background:var(--gbg);color:var(--green)}
+.nn{width:18px;height:18px;border-radius:50%;background:var(--br);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--mt)}.na.on .nn{background:var(--u);color:#fff}
+.nbadge{margin-left:auto;font-size:9px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:1px 5px;border-radius:10px;white-space:nowrap}
+.sb-foot{padding:10px 13px;border-top:1px solid var(--br)}.ba{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt);text-decoration:none;padding:5px 9px;border-radius:var(--rSM);border:1px solid var(--br);background:var(--sf);transition:all .12s}.ba:hover{background:var(--bg)}
+.main{margin-left:var(--SW);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:var(--TH);padding:0 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mt);flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}.bcsep{color:var(--br)}.bccur{color:var(--tx);font-weight:500}.tbr{display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s;white-space:nowrap}.btn:hover{background:var(--bg)}.bsm{padding:5px 9px;font-size:11px}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}.bok{background:var(--green);color:#fff;border-color:var(--green)}
+.page{padding:20px 22px;flex:1}.g2{display:grid;grid-template-columns:1fr minmax(0,248px);gap:16px;align-items:start}.cm{min-width:0}.ca{position:sticky;top:calc(var(--TH)+12px)}
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}.card:hover{box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.ch{display:flex;align-items:center;gap:9px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--br);transition:background .12s;user-select:none}.ch:hover{background:var(--bg)}
+.sn{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}.ch h3{font-size:13px;font-weight:600;flex:1}
+.st{font-size:10px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:2px 7px;border-radius:20px;white-space:nowrap}.carr{font-size:11px;color:var(--lt);transition:transform .2s}.card.collapsed .carr{transform:rotate(-90deg)}.cb{padding:18px}.card.collapsed .cb{display:none}
+.ach{background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:10px 13px;margin-bottom:14px}.ach-c{font-family:monospace;font-size:11px;font-weight:700;color:var(--u);margin-bottom:3px}.ach-t{font-size:13px;line-height:1.6}
+.glist{list-style:none}.glist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid var(--br);line-height:1.6}.glist li:last-child{border-bottom:none}.gck{width:17px;height:17px;border-radius:50%;background:var(--gbg);color:var(--green);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.ctag{font-size:11px;padding:3px 10px;background:var(--bg);border:1px solid var(--br);border-radius:20px;cursor:pointer;color:var(--mt);transition:all .12s}.ctag:hover{background:var(--ult);border-color:var(--umd);color:var(--u)}
+.ibox{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6;margin-top:10px}.prev{background:var(--bg);border:1px solid var(--br);color:var(--mt)}.warn{background:#FFFBEC;border:1px solid #EDD070;color:#6A5000}.info{background:var(--bbg);border:1px solid #BACED8;color:var(--blue)}.ok{background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}
+.divl{height:1px;background:var(--br);margin:13px 0}
+.crow{display:grid;grid-template-columns:1fr minmax(0,148px);gap:13px;align-items:start;margin-bottom:13px}
+.ct h4{font-size:13px;font-weight:700;margin-bottom:7px}.ct p{font-size:13px;color:var(--mt);line-height:1.75}.ct ul{padding-left:1rem;margin-top:5px}.ct ul li{font-size:13px;color:var(--mt);margin-bottom:3px;line-height:1.6}
+.cvis{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);display:flex;align-items:center;justify-content:center;padding:8px}
+.qwrap{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-top:13px}.qq{font-size:14px;font-weight:500;margin-bottom:11px;line-height:1.55}.qopts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);cursor:pointer;font-size:13px;line-height:1.5;transition:all .12s}.opt:hover{border-color:var(--u);background:var(--ult)}.opt.correct{border-color:#4A9020;background:var(--gbg);color:#1A5000;pointer-events:none}.opt.wrong{border-color:#B03020;background:var(--rbg);color:#6A1000;pointer-events:none}.opt.locked{pointer-events:none;opacity:.55}
+.onum{width:21px;height:21px;border-radius:50%;background:var(--br);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.opt.correct .onum{background:#4A9020;color:#fff}.opt.wrong .onum{background:#B03020;color:#fff}
+.qfb{display:none;margin-top:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6}.qfb.ok{display:block;background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}.qfb.err{display:block;background:var(--rbg);border:1px solid #F0B8A0;color:var(--red)}
+.rub{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}.rub th{background:var(--bg);padding:7px 8px;font-weight:600;border-bottom:1.5px solid var(--br);text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--mt)}.rub td{padding:8px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.5}.rub tr:last-child td{border-bottom:none}
+.lv4{color:#1A6000!important;font-weight:500}.lv3{color:#2A6830!important}.lv2{color:#7A4E00!important}.lv1{color:#8A2000!important}
+.task{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--u)}.task h4{font-size:13px;font-weight:700;color:var(--u);margin-bottom:7px}.task p{font-size:13px;color:var(--mt);line-height:1.75}.srow{display:flex;align-items:flex-start;gap:7px;padding:5px 0;border-top:1px solid var(--br);margin-top:6px;font-size:12px;color:var(--mt)}.stepn{width:18px;height:18px;border-radius:50%;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.sclist{display:flex;flex-direction:column;gap:4px}.scitem{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg);border-radius:var(--rSM);font-size:12px;border:1px solid var(--br)}.scitem label{flex:1;line-height:1.5}.scitem select{font-size:11px;padding:3px 6px;border:1px solid var(--br);border-radius:5px;background:var(--sf);font-family:inherit;color:var(--tx);cursor:pointer;flex-shrink:0}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.scard{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px 12px;font-size:12px;line-height:1.65;color:var(--mt)}.scard strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--lt);margin-bottom:4px}
+.ap{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:13px;margin-bottom:10px}.ap h5{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lt);margin-bottom:8px}
+.slist{display:flex;flex-direction:column;gap:3px}.si{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rSM);font-size:11px;color:var(--mt);cursor:pointer;transition:background .12s}.si:hover{background:var(--bg)}.si.sa{background:var(--ult);color:var(--u);font-weight:500}
+.dot{width:19px;height:19px;border-radius:50%;background:var(--br);color:var(--lt);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.dot.sa{background:var(--u);color:#fff}.dot.sd{background:var(--gbg);color:var(--green)}
+.td-num{font-size:28px;font-weight:300;text-align:center;display:block;font-variant-numeric:tabular-nums}.td-lbl{font-size:10px;color:var(--lt);text-align:center;margin-top:3px;margin-bottom:9px}
+.trow{display:flex;gap:5px}.trow .btn{flex:1;justify-content:center;font-size:10px}
+.termlist{display:flex;flex-direction:column}.tterm{display:flex;align-items:baseline;gap:5px;padding:4px 0;font-size:11px;border-bottom:1px solid var(--br)}.tterm:last-child{border-bottom:none}.tw{font-weight:600;color:var(--u);white-space:nowrap}.tdef{color:var(--mt)}
+.pbtrack{height:5px;background:var(--umd);border-radius:3px;overflow:hidden}.pbfill{height:100%;background:var(--u);border-radius:3px}
+.ai-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;color:#fff;background:var(--u)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1C1C1C;color:#fff;padding:9px 18px;border-radius:10px;font-size:12px;font-family:inherit;z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+/* ══ 반응형 레이아웃 ══ */
+*,*::before,*::after{box-sizing:border-box}
+img,canvas,video{max-width:100%;height:auto;display:block}
+table{width:100%;border-collapse:collapse}
+.act-table,.peer-check,.rub{table-layout:fixed;word-break:break-word}
+.act-table td,.act-table th,
+.rub td,.rub th,
+.peer-check td,.peer-check th{min-width:44px;word-break:break-word;overflow-wrap:break-word}
+.act-step>div:not(.act-num){min-width:0;flex:1;overflow-wrap:break-word;word-break:break-word}
+.act-body,.cb{overflow-x:hidden}
+.act-input{width:100%;box-sizing:border-box}
+.mb-workspace,.mb-row,.mb-indent,.mb-indent2{flex-wrap:wrap}
+.sim-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
+/* 1100px 이하 */
+@media(max-width:1100px){
+  .g2{grid-template-columns:1fr 220px}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 220px;min-width:180px}
+  .crow{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr 1fr}
+}
+
+/* 900px 이하 */
+@media(max-width:900px){
+  .g2{grid-template-columns:1fr 200px}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 180px;min-width:160px}
+  .page{padding:16px 14px}
+  .cb,.act-body{padding:13px}
+  .sgrid{grid-template-columns:1fr 1fr}
+  .crow{grid-template-columns:1fr}
+}
+
+/* 640px 이하 */
+@media(max-width:640px){
+  .page{padding:11px 10px}
+  .cb,.act-body{padding:10px}
+  .sgrid{grid-template-columns:1fr}
+  .act-step{flex-direction:column;gap:5px}
+  .act-num{margin-bottom:0}
+  .ch h3{font-size:12px}
+  .btn{font-size:11px;padding:5px 8px}
+  .act-table td,.act-table th{padding:5px 6px;font-size:11px}
+  .rub td,.rub th{padding:5px 6px;font-size:11px}
+  .peer-check td,.peer-check th{padding:5px 6px;font-size:10px}
+  .scard{font-size:11px}
+  .opt{font-size:12px;padding:8px 10px}
+  .mb,.mb-hole{font-size:10px;padding:4px 7px}
+}
+
+/* 480px 이하 */
+@media(max-width:480px){
+  :root{--SW:0px}
+  .sb{display:none}
+  .main{margin-left:0}
+  .topbar{padding:0 10px}
+  .page{padding:8px 9px}
+  .cb,.act-body{padding:9px}
+  .tbr .btn:last-child{display:none}
+  .sgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-top"><div class="uchip">◈ Unit IV</div><h2>인공지능</h2><div class="smeta">중단원1: 인공지능과 학습 · p.170~176</div></div>
+  <nav class="sb-nav"><div class="nlbl">소단원 목록</div><a class="na done" href="../lesson-01/index.html"><div class="nn">✓</div>인공지능의 개념과 특성</a>
+<a class="na on" href="../lesson-02/index.html"><div class="nn">2</div>데이터와 학습<span class="nbadge">2차시</span></a>
+<a class="na " href="../lesson-03/index.html"><div class="nn">3</div>팔 이미지를 이용한 운동 도우미</a>
+<a class="na " href="../lesson-04/index.html"><div class="nn">4</div>소리 데이터를 이용한 웃음 계수 시스템</a>
+<a class="na " href="../lesson-05/index.html"><div class="nn">5</div>텍스트 데이터를 이용한 영화 평가 시스템</a>
+<a class="na " href="../lesson-06/index.html"><div class="nn">6</div>인공지능의 윤리적 문제 해결</a>
+</nav>
+  <div class="sb-foot"><a class="ba" href="https://sungce.github.io/lesson/">← 정보 교과 학습 플랫폼</a></div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div class="bc"><a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a><span class="bcsep">›</span><a href="../../index.html">IV. 인공지능</a><span class="bcsep">›</span><span class="bccur">2. 데이터와 학습</span></div>
+    <div class="tbr">
+      <button class="btn bsm" onclick="markDone('02')">✓ 완료 표시</button>
+      <a class="btn bsm bp" href="../lesson-03/index.html">다음 소단원 →</a>
+    </div>
+  </header>
+  <div class="page"><div class="g2"><div class="cm">
+
+  <div class="card" id="sec-goal">
+    <div class="ch" onclick="toggleSec('sec-goal')"><div class="sn" style="background:var(--ult);color:var(--u)">01</div><h3>학습목표</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+    <div class="cb">
+      <div class="ach"><div class="ach-c">[9정04-02] 인공지능과 학습</div><div class="ach-t">학습에 필요한 데이터를 수집하여 분류하고, AI 학습에서 데이터의 중요성을 설명할 수 있다. (pp.170~176)</div></div>
+      <ul class="glist">
+        <li><div class="gck">✓</div>AI에서 데이터의 역할과 중요성을 설명할 수 있다.</li>
+        <li><div class="gck">✓</div>학습 데이터 수집 방법(직접 수집·웹 수집)을 설명할 수 있다.</li>
+        <li><div class="gck">✓</div>훈련 데이터와 테스트 데이터로 분류할 수 있다.</li>
+        <li><div class="gck">✓</div>레이블링의 의미를 설명할 수 있다.</li>
+      </ul>
+      <div class="divl"></div>
+      <div class="ctags">
+        <span class="ctag" onclick="goTo('sec-concept')">학습 데이터</span>
+        <span class="ctag" onclick="goTo('sec-concept')">훈련 데이터</span>
+        <span class="ctag" onclick="goTo('sec-concept')">테스트 데이터</span>
+        <span class="ctag" onclick="goTo('sec-concept')">레이블링</span>
+      </div>
+      <div class="ibox prev">📌 <b>이전 차시:</b> AI의 개념과 4가지 특성을 배웠습니다. 이번에는 AI가 학습하는 데 필요한 <em>데이터</em>의 역할과 수집·분류 방법을 탐구합니다.</div>
+    </div>
+  </div>
+
+  <div class="card" id="sec-concept">
+    <div class="ch" onclick="toggleSec('sec-concept')"><div class="sn" style="background:var(--gbg);color:var(--green)">02</div><h3>개념설명</h3><span class="st">⏱ 15분</span><span class="carr">▾</span></div>
+    <div class="cb">
+      <div class="crow">
+        <div class="ct">
+          <h4>AI에서 데이터의 역할</h4>
+          <p>인간이 지식과 경험으로 대상을 인식하듯, AI는 <strong>데이터 학습</strong>을 통해 대상을 인식·예측합니다. 더 많은 데이터로 반복 학습할수록 AI 성능이 개선됩니다.</p>
+          <ul>
+            <li><b>이미지 데이터:</b> 사물 인식 (로봇 청소기)</li>
+            <li><b>소리 데이터:</b> 음성 인식 (AI 스피커)</li>
+            <li><b>텍스트 데이터:</b> 의미 파악 (온라인 쇼핑)</li>
+            <li><b>움직임 데이터:</b> 자세 교정 (AI 카메라)</li>
+          </ul>
+        </div>
+        <div class="cvis">
+          <svg viewBox="0 0 130 110" width="130">
+            <rect x="10" y="4" width="110" height="22" rx="5" fill="var(--bbg)" stroke="var(--blue)" stroke-width="1.2"/>
+            <text x="65" y="18" font-size="9" fill="var(--blue)" text-anchor="middle" font-family="sans-serif" font-weight="bold">데이터 수집</text>
+            <path d="M65 26 L65 38" stroke="#aaa" stroke-width="1" marker-end="url(#d2a)"/>
+            <rect x="10" y="38" width="110" height="22" rx="5" fill="var(--abg)" stroke="var(--amber)" stroke-width="1.2"/>
+            <text x="65" y="52" font-size="9" fill="var(--amber)" text-anchor="middle" font-family="sans-serif" font-weight="bold">레이블링 + 분류</text>
+            <path d="M65 60 L65 72" stroke="#aaa" stroke-width="1" marker-end="url(#d2a)"/>
+            <rect x="10" y="72" width="50" height="22" rx="5" fill="var(--ult)" stroke="var(--u)" stroke-width="1.2"/>
+            <text x="35" y="86" font-size="8.5" fill="var(--u)" text-anchor="middle" font-family="sans-serif" font-weight="bold">훈련 데이터</text>
+            <rect x="70" y="72" width="50" height="22" rx="5" fill="var(--gbg)" stroke="var(--green)" stroke-width="1.2"/>
+            <text x="95" y="86" font-size="8.5" fill="var(--green)" text-anchor="middle" font-family="sans-serif" font-weight="bold">테스트 데이터</text>
+            <defs><marker id="d2a" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#aaa"/></marker></defs>
+          </svg>
+        </div>
+      </div>
+      <div class="divl"></div>
+      <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">데이터 수집 방법</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px">
+        <div style="background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:12px">
+          <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:5px">📷 직접 수집</div>
+          <div style="font-size:12px;color:var(--mt)">카메라로 이미지, 마이크로 소리를 직접 촬영·녹음하여 수집</div>
+        </div>
+        <div style="background:var(--gbg);border:1px solid #BFDFAA;border-radius:var(--rSM);padding:12px">
+          <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:5px">🌐 웹·DB 수집</div>
+          <div style="font-size:12px;color:var(--mt)">검색 엔진이나 데이터 전문 웹사이트에서 미리 생성된 데이터 수집</div>
+        </div>
+      </div>
+      <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">레이블링과 데이터 분류</h4>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;font-size:12px;color:var(--mt);line-height:1.9">
+        <b>레이블(Label):</b> 데이터에 부여하는 정답 태그 (예: 고양이 이미지 → '고양이')<br>
+        <b>레이블링:</b> 데이터에 레이블을 부여하는 과정<br>
+        <b>훈련 데이터:</b> AI 모델 학습에 사용 (~80%)<br>
+        <b>테스트 데이터:</b> 학습 결과 평가에 사용 (~20%)<br>
+        <span style="color:var(--u)"><b>예시:</b> 스팸 메일 — '일반 메일' / '스팸 메일' 레이블 → 학습</span>
+      </div>
+      <div class="ibox warn">⚠️ <b>오개념:</b> 데이터 양이 많다고 항상 좋은 것이 아닙니다. 레이블링이 잘못된 데이터는 오히려 AI 성능을 낮춥니다.</div>
+      <div class="ibox info">📖 <b>교과서 연계:</b> pp.170~176</div>
+    </div>
+  </div>
+
+  <div class="card" id="sec-interact">
+    <div class="ch" onclick="toggleSec('sec-interact')"><div class="sn" style="background:var(--rbg);color:var(--red)">03</div><h3>인터랙션 — 레이블링 + 데이터 분류 시뮬레이터</h3><span class="st">⏱ 20분</span><span class="carr">▾</span></div>
+    <div class="cb">
+      <div class="ibox ok" style="margin-top:0;margin-bottom:14px">💡 이메일 데이터에 레이블을 붙이고 훈련·테스트 데이터로 분류해보세요!</div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">▸ 스팸 메일 분류 레이블링 체험</div>
+        <div id="label-items" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
+        <div style="display:flex;gap:7px">
+          <button class="btn bsm bp" onclick="checkLabeling()">✓ 레이블링 확인</button>
+          <button class="btn bsm" onclick="resetLabeling()">↺ 초기화</button>
+        </div>
+        <div id="label-result" style="display:none;margin-top:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px"></div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">▸ 훈련 데이터 / 테스트 데이터 비율 이해</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+          <span style="font-size:12px;color:var(--mt)">전체 데이터</span>
+          <input id="data-total" type="range" min="10" max="100" value="50" oninput="updateSplit()" style="flex:1;min-width:100px;accent-color:var(--u)">
+          <span id="data-total-v" style="font-size:12px;font-weight:700;color:var(--u)">50개</span>
+        </div>
+        <div id="split-vis" style="height:28px;border-radius:6px;overflow:hidden;display:flex;margin-bottom:8px"></div>
+        <div id="split-info" style="font-size:12px;color:var(--mt)"></div>
+      </div>
+      <div class="qwrap"><div class="qq">AI 모델을 학습시키기 위해 데이터에 정답 태그를 부여하는 과정은?</div><div class="qopts"><div class="opt" onclick="checkQ(this,false,'데이터 수집은 데이터를 모으는 과정입니다.')"><span class="onum">①</span>데이터 수집</div><div class="opt" onclick="checkQ(this,true,'레이블링은 데이터에 정답(레이블)을 부여하는 과정입니다.')"><span class="onum">②</span>레이블링(Labeling)</div><div class="opt" onclick="checkQ(this,false,'모델 학습은 레이블링된 데이터로 AI를 훈련하는 과정입니다.')"><span class="onum">③</span>모델 학습</div><div class="opt" onclick="checkQ(this,false,'성능 평가는 테스트 데이터로 AI 성능을 확인하는 과정입니다.')"><span class="onum">④</span>성능 평가</div></div><div class="qfb"></div></div>
+    </div>
+  </div>
+
+  <div class="card" id="sec-assess">
+    <div class="ch" onclick="toggleSec('sec-assess')"><div class="sn" style="background:var(--bbg);color:var(--blue)">04</div><h3>수행평가</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+    <div class="cb">
+      <div class="task"><h4>📋 AI 데이터 수집 계획서</h4>
+        <p>만들고 싶은 AI 모델을 설정하고, 필요한 데이터 수집·레이블링·분류 계획서를 작성하시오.</p>
+        <div class="srow"><div class="stepn">①</div><span>AI 모델 목적 설정 (예: 과일 분류, 감정 인식 등)</span></div>
+        <div class="srow"><div class="stepn">②</div><span>필요한 데이터 종류·수집 방법 기록</span></div>
+        <div class="srow"><div class="stepn">③</div><span>레이블 목록 작성 (분류 클래스)</span></div>
+        <div class="srow"><div class="stepn">④</div><span>훈련/테스트 데이터 분류 비율 설정</span></div>
+      </div>
+      <table class="rub"><thead><tr><th>평가 요소</th><th class="lv4">매우 잘함(4)</th><th class="lv3">잘함(3)</th><th class="lv2">보통(2)</th><th class="lv1">노력 필요(1)</th></tr></thead><tbody><tr><td><b>데이터 계획</b></td><td class="lv4">목적·수집·레이블 명확</td><td class="lv3">대체로 명확</td><td class="lv2">일부만</td><td class="lv1">없음</td></tr><tr><td><b>분류 이해</b></td><td class="lv4">훈련·테스트 비율 근거 제시</td><td class="lv3">비율 제시</td><td class="lv2">분류만</td><td class="lv1">없음</td></tr></tbody></table>
+      <div class="sclist"><div class="scitem"><label>AI에서 데이터의 역할과 중요성을 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>데이터 수집 방법 2가지를 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>레이블링·훈련/테스트 분류를 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div></div>
+      <button class="btn bsm bok" style="margin-top:10px" onclick="saveSC('l402sc')">💾 저장</button>
+    </div>
+  </div>
+
+  <div class="card" id="sec-review">
+    <div class="ch" onclick="toggleSec('sec-review')"><div class="sn" style="background:var(--gbg);color:var(--green)">05</div><h3>확인하기</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+    <div class="cb">
+      <div class="sgrid">
+        <div class="scard"><strong>데이터 역할</strong>AI 학습의 재료. 많을수록·정확할수록 성능↑</div>
+        <div class="scard"><strong>레이블링</strong>데이터에 정답 태그 부여. AI가 예측할 결과값.</div>
+        <div class="scard"><strong>훈련/테스트</strong>훈련=학습용(~80%), 테스트=평가용(~20%)</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;margin-bottom:12px"><b>✏️ 단답형:</b> AI 모델의 학습 결과가 잘 되었는지 평가하는 데 사용하는 데이터를 <span style="display:inline-block;width:80px;border-bottom:1.5px solid var(--tx)">&nbsp;</span> 데이터라고 한다.<textarea style="display:block;width:100%;margin-top:9px;padding:9px;border:1px solid var(--br);border-radius:var(--rSM);font-size:13px;font-family:inherit;resize:vertical;min-height:48px;background:var(--sf)" placeholder="정답을 입력하세요..."></textarea></div>
+      <div class="ibox ok">📖 <div><strong>다음 차시 예고:</strong> 다음 소단원부터는 실제로 이미지·소리·텍스트 데이터를 학습시켜 AI 프로그램을 만들어봅니다! (pp.179~185)</div></div>
+    </div>
+  </div>
+
+  </div>
+  <div class="ca">
+    <div class="ap"><h5>학습 진행</h5><div class="slist">
+      <div class="si" onclick="goTo('sec-goal')"><div class="dot sd">1</div>학습목표</div>
+      <div class="si" onclick="goTo('sec-concept')"><div class="dot">2</div>개념설명</div>
+      <div class="si" onclick="goTo('sec-interact')"><div class="dot sa">★</div>인터랙션</div>
+      <div class="si" onclick="goTo('sec-assess')"><div class="dot">4</div>수행평가</div>
+      <div class="si" onclick="goTo('sec-review')"><div class="dot">5</div>확인하기</div>
+    </div></div>
+    </div>
+    <div class="ap"><h5>핵심 용어</h5><div class="termlist"><div class="tterm"><span class="tw">학습 데이터</span><span class="tdef">AI 훈련 재료</span></div><div class="tterm"><span class="tw">레이블</span><span class="tdef">정답 태그</span></div><div class="tterm"><span class="tw">레이블링</span><span class="tdef">태그 부여 과정</span></div><div class="tterm"><span class="tw">훈련 데이터</span><span class="tdef">학습용 ~80%</span></div><div class="tterm"><span class="tw">테스트 데이터</span><span class="tdef">평가용 ~20%</span></div><div class="tterm"><span class="tw">직접 수집</span><span class="tdef">카메라·마이크</span></div></div></div>
+    <div class="ap" style="background:var(--ult);border-color:var(--umd)"><h5 style="color:var(--u)">단원 진도</h5>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><div class="pbtrack" style="flex:1"><div class="pbfill" style="width:21%"></div></div><span style="font-size:11px;font-weight:600;color:var(--u)">2/6</span></div>
+    </div>
+    <div class="ap" style="background:#F0FDF4;border-color:#BBF7D0">
+      <h5 style="color:#166534">🤖 AI 실습 도구</h5>
+      <a href="https://playentry.org" target="_blank" class="btn bsm" style="width:100%;justify-content:center;background:#22C55E;color:#fff;border-color:#16A34A;margin-bottom:5px">엔트리 열기 ↗</a>
+      <a href="https://teachablemachine.withgoogle.com" target="_blank" class="btn bsm" style="width:100%;justify-content:center;font-size:10px;color:var(--u);border-color:var(--umd);background:var(--ult)">티처블 머신 ↗</a>
+    </div>
+  </div>
+  </div></div>
+</main>
+<div id="toast"></div>
+<script>
+
+  // ── Google Sheets 저장 ──────────────────────────────────
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+
+  function getUserName() {
+    return localStorage.getItem('user_name') || '익명';
+  }
+
+  function postToSheets(payload) {
+    if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) return;
+    fetch(GS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},2400);}
+function toggleSec(id){var e=document.getElementById(id);if(e)e.classList.toggle('collapsed');}
+function goTo(id){var e=document.getElementById(id);if(!e)return;window.scrollTo({top:e.getBoundingClientRect().top+window.pageYOffset-64,behavior:'smooth'});}
+var tR,tRun=false,tIv=null;
+function loadSC(key){try{var d=JSON.parse(localStorage.getItem(key)||'{}');document.querySelectorAll('.scitem select').forEach(function(s,i){if(d['q'+i])s.value=d['q'+i];});}catch(e){}}
+function markDone(n){
+  try{
+    var d=JSON.parse(localStorage.getItem('u04done')||'[]');
+    if(!d.includes(n))d.push(n);
+    localStorage.setItem('u04done',JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'done',
+      userName: getUserName(),
+      unit: 'IV',
+      lessonNum: n,
+      lessonName: '인공지능'
+    });
+  }catch(e){}
+  toast('✅ 소단원 '+n+' 완료 표시!');
+}
+
+
+var mails=[
+  {txt:'[광고] 지금 바로 클릭! 100만원 당첨!!',ans:'스팸'},
+  {txt:'내일 수학 시험 범위 확인해줘.',ans:'일반'},
+  {txt:'[이벤트] 무료 상품권 지금 신청하세요',ans:'스팸'},
+  {txt:'오늘 방과 후 도서관에서 만나자.',ans:'일반'},
+  {txt:'당신이 선택받았습니다! 지금 링크 클릭',ans:'스팸'},
+  {txt:'수행평가 제출 기한이 내일까지입니다.',ans:'일반'},
+];
+var labelAns={};
+function buildLabels(){
+  var div=document.getElementById('label-items');if(!div)return;
+  div.innerHTML=mails.map(function(m,i){
+    return '<div style="background:var(--sf);border:1px solid var(--br);border-radius:var(--rSM);padding:11px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="flex:1;font-size:12px;color:var(--mt)">📧 '+m.txt+'</div><div style="display:flex;gap:6px"><button class="btn bsm" id="lb-'+i+'-일반" onclick="pickLabel('+i+','일반')">✉️ 일반</button><button class="btn bsm" id="lb-'+i+'-스팸" onclick="pickLabel('+i+','스팸')" style="border-color:#E74C3C;color:#E74C3C">🚫 스팸</button></div></div>';
+  }).join('');
+}
+function pickLabel(i,v){
+  labelAns[i]=v;
+  ['일반','스팸'].forEach(function(lv){
+    var b=document.getElementById('lb-'+i+'-'+lv);
+    if(!b)return;
+    b.style.background=lv===v?(lv==='스팸'?'#E74C3C':'var(--u)'):'var(--sf)';
+    b.style.color=lv===v?'#fff':(lv==='스팸'?'#E74C3C':'var(--tx)');
+    b.style.borderColor=lv===v?(lv==='스팸'?'#E74C3C':'var(--u)'):(lv==='스팸'?'#E74C3C':'var(--br)');
+  });
+}
+function checkLabeling(){
+  var ok=0;
+  mails.forEach(function(m,i){if(labelAns[i]===m.ans)ok++;});
+  var res=document.getElementById('label-result');res.style.display='block';
+  if(ok===6){res.style.cssText='display:block;background:var(--gbg);border:1px solid #BFDFAA;border-radius:8px;padding:10px 13px;color:#1A5000;font-size:12px';res.innerHTML='🎉 완벽! 6개 모두 정확히 레이블링했습니다. 이제 이 데이터로 스팸 분류 AI를 학습시킬 수 있어요!';}
+  else{res.style.cssText='display:block;background:var(--abg);border:1px solid #EDD070;border-radius:8px;padding:10px 13px;color:#6A5000;font-size:12px';res.innerHTML=ok+'/6 정답. 힌트: 광고·이벤트·당첨 등 클릭 유도 내용은 스팸, 일상 대화는 일반 메일입니다.';}
+}
+function resetLabeling(){labelAns={};buildLabels();document.getElementById('label-result').style.display='none';}
+function updateSplit(){
+  var total=parseInt(document.getElementById('data-total').value);
+  document.getElementById('data-total-v').textContent=total+'개';
+  var train=Math.round(total*0.8),test=total-train;
+  var vis=document.getElementById('split-vis');
+  var info=document.getElementById('split-info');
+  if(vis){vis.innerHTML='<div style="flex:8;background:var(--u);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:700">훈련 '+train+'개</div><div style="flex:2;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:700">테스트 '+test+'개</div>';}
+  if(info){info.innerHTML='훈련 데이터: <b style="color:var(--u)">'+train+'개 (80%)</b> · 테스트 데이터: <b style="color:var(--green)">'+test+'개 (20%)</b>';}
+}
+document.addEventListener('DOMContentLoaded',function(){buildLabels();updateSplit();});
+
+document.addEventListener('DOMContentLoaded',function(){loadSC('l402sc');});
+</script>
+</body></html>
