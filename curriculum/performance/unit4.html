@@ -1,1 +1,390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IV단원 수행활동 — 긍정적인 말 사용 프로그램 만들기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--uc:#3A8EC0;--ug:linear-gradient(90deg,#3A8EC0,#5BAEE0);--ul:#E6F3FB;--um:#9ACDE8;--bg:#F5F4F0;--sf:#fff;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--r:12px;--rs:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.65}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:52px;padding:0 24px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:90}
+.bc{font-size:12px;color:var(--mt);display:flex;align-items:center;gap:6px;flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rs);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s}.btn:hover{background:var(--bg)}.bp{background:var(--uc);color:#fff;border-color:var(--uc)}.bp:hover{background:#276D99}
+.page{max-width:860px;margin:0 auto;padding:28px 24px}
+.act-header{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
+.act-header::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--ug)}
+.badge-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px}
+.act-header h1{font-size:22px;font-weight:700;margin-bottom:6px}
+.act-header p{font-size:13px;color:var(--mt);line-height:1.7}
+.skills-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.skill-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--br);background:var(--bg)}
+.sk-ct{color:#1565C0;background:#E3F2FD;border-color:#BBDEFB}.sk-dg{color:#1B5E20;background:#E8F5E9;border-color:#C8E6C9}.sk-ai{color:#4A148C;background:#F3E5F5;border-color:#E1BEE7}
+.step-section{margin-bottom:14px}
+.step-header{display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--sf);border:1px solid var(--br);border-radius:var(--r) var(--r) 0 0;cursor:pointer;user-select:none;transition:background .12s}.step-header:hover{background:var(--bg)}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--uc);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-header h3{font-size:14px;font-weight:700;flex:1}
+.step-arrow{font-size:12px;color:var(--lt);transition:transform .2s}
+.step-body{background:var(--sf);border:1px solid var(--br);border-top:none;border-radius:0 0 var(--r) var(--r);padding:20px 24px}
+.step-section.collapsed .step-body{display:none}
+.step-section.collapsed .step-arrow{transform:rotate(-90deg)}
+.field{margin-bottom:16px}.field label{display:block;font-size:12px;font-weight:700;color:var(--mt);margin-bottom:6px}
+textarea,input[type=text],input[type=number]{width:100%;padding:10px 12px;border:1.5px solid var(--br);border-radius:var(--rs);font-size:13px;font-family:inherit;background:var(--sf);outline:none;resize:vertical;transition:border-color .15s}
+textarea{min-height:88px}textarea:focus,input:focus{border-color:var(--uc)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.tbl th{background:var(--uc);color:#fff;padding:9px 12px;font-weight:600;font-size:12px;text-align:left}
+.tbl td{padding:8px 12px;border-bottom:1px solid var(--br);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td textarea,.tbl td input{min-height:44px;border:1px solid #e0ddd6;border-radius:4px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fafaf8}
+.eval-box{background:var(--ul);border:1.5px solid var(--um);border-radius:var(--r);padding:18px 22px;margin-top:8px}
+.eval-box h4{font-size:13px;font-weight:700;color:var(--uc);margin-bottom:12px}
+.eval-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--um)}.eval-item:last-child{border-bottom:none}
+.eval-label{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.el-know{background:#E3F2FD;color:#1565C0}.el-skill{background:#E8F5E9;color:#2E7D32}.el-val{background:#FFF3E0;color:#E65100}
+.eval-q{font-size:13px;color:var(--mt);flex:1;line-height:1.65}
+.star-row{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
+.star{font-size:18px;cursor:pointer;color:#D1CBC0;transition:color .1s}.star.on{color:#F59E0B}
+.save-row{display:flex;gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid var(--br);flex-wrap:wrap}
+.save-msg{font-size:12px;color:#2E7D32;display:none;align-items:center;gap:5px}
 
+/* 나무 시뮬레이터 */
+.tree-demo{background:linear-gradient(180deg,#87CEEB 0%,#87CEEB 60%,#90EE90 60%,#228B22 100%);border-radius:var(--r);padding:20px;text-align:center;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;margin-bottom:12px}
+.tree-emoji{font-size:48px;transition:all .4s;line-height:1.2}
+.tree-level{font-size:11px;color:#fff;background:rgba(0,0,0,.4);padding:3px 10px;border-radius:20px;margin-top:8px}
+.tree-btns{display:flex;gap:8px;justify-content:center;margin-bottom:12px}
+.tree-btn{padding:10px 20px;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.tb-pos{background:#1B9E72;color:#fff}.tb-pos:hover{background:#0F6B4C}
+.tb-neg{background:#E53935;color:#fff}.tb-neg:hover{background:#B71C1C}
+
+/* 정확도 계산기 */
+.accuracy-box{background:var(--ul);border:1.5px solid var(--um);border-radius:var(--r);padding:16px 20px}
+.acc-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.acc-label{font-size:11px;font-weight:700;color:var(--mt);margin-bottom:4px}
+.acc-result{font-size:20px;font-weight:700;color:var(--uc);text-align:center;padding:12px;background:var(--sf);border-radius:var(--rs);border:1.5px solid var(--um)}
+
+@media(max-width:640px){.grid2,.grid3,.acc-inputs{grid-template-columns:1fr}.page{padding:16px 14px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="bc">
+    <a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a>
+    <span>›</span><a href="../unit-04/index.html">IV. 인공지능</a>
+    <span>›</span><span style="color:var(--tx);font-weight:500">과정중심 수행활동</span>
+  </div>
+  <a class="btn bsm bp" href="../unit-04/index.html">← 단원으로</a>
+</header>
+
+<div class="page">
+
+  <div class="act-header">
+    <div class="badge-row">
+      <span class="badge" style="background:var(--ul);color:var(--uc)">IV. 인공지능</span>
+      <span class="badge" style="background:#E8F5E9;color:#2E7D32">과정 중심의 수행활동</span>
+      <span class="badge" style="background:#FCE4EC;color:#880E4F">모둠 활동</span>
+    </div>
+    <h1>긍정적인 말 사용 프로그램 만들기</h1>
+    <p>텍스트를 분류하는 인공지능 모델을 만들어, 긍정/부정 말에 따라 나무가 자라거나 시드는<br>
+    엔트리 프로그램을 설계·구현합니다. 데이터 수집 → 모델 생성 → 프로그램 구현의 전 과정을 수행합니다.</p>
+    <div class="skills-row">
+      <span class="skill-chip sk-ct">💡 컴퓨팅 사고력</span>
+      <span class="skill-chip sk-dg">🌐 디지털 문화 소양</span>
+      <span class="skill-chip sk-ai">🤖 인공지능 소양</span>
+    </div>
+  </div>
+
+  <!-- 조건 박스 -->
+  <div style="background:#E8F5E9;border:1.5px solid #A5D6A7;border-radius:var(--r);padding:16px 20px;margin-bottom:20px">
+    <div style="font-size:13px;font-weight:700;color:#2E7D32;margin-bottom:8px">📋 프로그램 조건</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px;color:#1B5E20">
+      <div style="background:#fff;border-radius:var(--rs);padding:10px 14px">🌱 긍정적인 말을 들으면 → 나무가 1단계 <b>성장</b></div>
+      <div style="background:#fff;border-radius:var(--rs);padding:10px 14px">🍂 부정적인 말을 들으면 → 나무가 1단계 <b>시듦</b></div>
+    </div>
+  </div>
+
+  <!-- 나무 시뮬레이터 -->
+  <div class="step-section" id="s0">
+    <div class="step-header" onclick="toggleStep('s0')">
+      <div class="step-num">🌳</div>
+      <h3>나무 성장 시뮬레이터 (체험)</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <p style="font-size:12px;color:var(--mt);margin-bottom:14px">완성될 프로그램을 미리 체험해보세요. 긍정/부정 버튼을 눌러 나무의 변화를 확인합니다.</p>
+      <div class="tree-demo">
+        <div class="tree-emoji" id="tree-emoji">🌱</div>
+        <div class="tree-level" id="tree-level">Lv.1 — 씨앗</div>
+      </div>
+      <div class="tree-btns">
+        <button class="tree-btn tb-pos" onclick="growTree()">😊 긍정적인 말 (+1)</button>
+        <button class="tree-btn tb-neg" onclick="shrinkTree()">😠 부정적인 말 (-1)</button>
+        <button class="tree-btn" style="background:#9E9E9E;color:#fff" onclick="resetTree()">↺ 초기화</button>
+      </div>
+      <div style="font-size:12px;color:var(--mt);text-align:center">현재 레벨: <b id="tree-lv-num">1</b> / 최대 7</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: 문제 정의 -->
+  <div class="step-section" id="s1">
+    <div class="step-header" onclick="toggleStep('s1')">
+      <div class="step-num">1</div>
+      <h3>해결해야 할 문제 정의하기</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="field">
+        <label>위 조건을 보고 해결해야 할 문제를 정의해 보세요.</label>
+        <textarea id="q1" placeholder="예) 사용자가 입력한 언어가 긍정적인지 부정적인지 분류하는 AI 모델을 만들고, 그 결과에 따라 나무가 성장하거나 시드는 엔트리 프로그램을 구현한다."></textarea>
+      </div>
+      <div class="field">
+        <label>이 프로그램이 실제 생활에서 어떻게 활용될 수 있을지 써보세요.</label>
+        <textarea id="q1_use" style="min-height:60px" placeholder="예) 교실에서 친구에게 긍정적인 말을 하도록 장려하는 게임에 활용할 수 있다."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: 데이터 수집 및 레이블링 -->
+  <div class="step-section" id="s2">
+    <div class="step-header" onclick="toggleStep('s2')">
+      <div class="step-num">2</div>
+      <h3>데이터 수집 및 레이블링하기</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="field">
+        <label>⑴ 클래스를 몇 개 만들 것인지 결정하고 클래스 이름을 정해 보세요.</label>
+        <div class="grid3">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:5px">클래스 수</div>
+            <input type="number" id="class_count" min="2" max="5" value="2" style="text-align:center">
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#2E7D32;margin-bottom:5px">클래스 1 이름</div>
+            <input type="text" id="class1_name" placeholder="예) 긍정적인 말">
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#E53935;margin-bottom:5px">클래스 2 이름</div>
+            <input type="text" id="class2_name" placeholder="예) 부정적인 말">
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>⑵ 데이터를 어떻게 수집할지 방법을 생각해 보세요.</label>
+        <div class="grid2">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#2E7D32;margin-bottom:5px">긍정적인 말 수집 방법</div>
+            <textarea id="collect1" style="min-height:72px" placeholder="예) 친구에게 힘이 되는 말, 칭찬하는 말, 감사 표현을 목록으로 작성한다."></textarea>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#E53935;margin-bottom:5px">부정적인 말 수집 방법</div>
+            <textarea id="collect2" style="min-height:72px" placeholder="예) 상처를 주는 말, 비난하는 말, 무시하는 표현을 목록으로 작성한다."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>⑶ 수집한 데이터 샘플을 아래에 기록해 보세요. (각 클래스 5개 이상)</label>
+        <div class="grid2">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#2E7D32;margin-bottom:5px">😊 긍정적인 말 예시</div>
+            <textarea id="data_pos" style="min-height:120px" placeholder="1. 정말 잘했어!&#10;2. 고마워, 덕분에 힘이 났어.&#10;3. 넌 할 수 있어!&#10;4. 우리 같이 하면 잘 될 거야.&#10;5. 멋진 아이디어야!"></textarea>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#E53935;margin-bottom:5px">😠 부정적인 말 예시</div>
+            <textarea id="data_neg" style="min-height:120px" placeholder="1. 그것도 못해?&#10;2. 넌 항상 틀려.&#10;3. 왜 이렇게 느려?&#10;4. 됐어, 네 말은 필요없어.&#10;5. 그냥 꺼져."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: 모델 생성 및 평가 -->
+  <div class="step-section" id="s3">
+    <div class="step-header" onclick="toggleStep('s3')">
+      <div class="step-num">3</div>
+      <h3>인공지능 모델 생성 및 평가하기</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <a href="https://entry.ck.go.kr" target="_blank" class="btn bp">엔트리 열기 ↗</a>
+      </div>
+      <div style="background:var(--ul);border:1px solid var(--um);border-radius:var(--rs);padding:12px 16px;margin-bottom:14px;font-size:12px;color:#1A5276;line-height:1.8">
+        📌 엔트리에서 <b>인공지능 → 텍스트 분류 모델</b>을 선택하세요.<br>
+        수집한 긍정/부정 데이터를 각 클래스에 입력하고 모델을 학습시킵니다.
+      </div>
+
+      <div class="field">
+        <label>⑴ 어떤 모델을 사용할지 결정하고 그 이유를 써보세요.</label>
+        <div class="grid2">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:5px">선택한 모델</div>
+            <input type="text" id="model_type" placeholder="예) 엔트리 텍스트 분류 모델">
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:5px">선택 이유</div>
+            <input type="text" id="model_reason" placeholder="예) 텍스트를 두 클래스로 분류해야 하기 때문">
+          </div>
+        </div>
+      </div>
+
+      <!-- 정확도 계산기 -->
+      <div class="field">
+        <label>⑵ 5개의 테스트 데이터로 모델 성능을 확인하고 정확도를 계산해 보세요.</label>
+        <table class="tbl" style="margin-bottom:14px">
+          <thead><tr><th>#</th><th>테스트 입력 문장</th><th>예측 결과</th><th>정답 여부</th></tr></thead>
+          <tbody>
+            <tr><td style="text-align:center;font-weight:700">1</td><td><input type="text" id="test1_input" placeholder="테스트 문장"></td><td><input type="text" id="test1_pred" placeholder="예) 긍정적인 말"></td><td><select id="test1_yn" style="padding:5px 8px;border:1px solid var(--br);border-radius:4px;font-size:12px;font-family:inherit"><option value="">선택</option><option value="O">○ 정답</option><option value="X">✗ 오답</option></select></td></tr>
+            <tr><td style="text-align:center;font-weight:700">2</td><td><input type="text" id="test2_input" placeholder="테스트 문장"></td><td><input type="text" id="test2_pred" placeholder="예) 부정적인 말"></td><td><select id="test2_yn" style="padding:5px 8px;border:1px solid var(--br);border-radius:4px;font-size:12px;font-family:inherit"><option value="">선택</option><option value="O">○ 정답</option><option value="X">✗ 오답</option></select></td></tr>
+            <tr><td style="text-align:center;font-weight:700">3</td><td><input type="text" id="test3_input" placeholder="테스트 문장"></td><td><input type="text" id="test3_pred" placeholder="예) 긍정적인 말"></td><td><select id="test3_yn" style="padding:5px 8px;border:1px solid var(--br);border-radius:4px;font-size:12px;font-family:inherit"><option value="">선택</option><option value="O">○ 정답</option><option value="X">✗ 오답</option></select></td></tr>
+            <tr><td style="text-align:center;font-weight:700">4</td><td><input type="text" id="test4_input" placeholder="테스트 문장"></td><td><input type="text" id="test4_pred" placeholder="예) 부정적인 말"></td><td><select id="test4_yn" style="padding:5px 8px;border:1px solid var(--br);border-radius:4px;font-size:12px;font-family:inherit"><option value="">선택</option><option value="O">○ 정답</option><option value="X">✗ 오답</option></select></td></tr>
+            <tr><td style="text-align:center;font-weight:700">5</td><td><input type="text" id="test5_input" placeholder="테스트 문장"></td><td><input type="text" id="test5_pred" placeholder="예) 긍정적인 말"></td><td><select id="test5_yn" style="padding:5px 8px;border:1px solid var(--br);border-radius:4px;font-size:12px;font-family:inherit"><option value="">선택</option><option value="O">○ 정답</option><option value="X">✗ 오답</option></select></td></tr>
+          </tbody>
+        </table>
+
+        <div class="accuracy-box">
+          <div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:10px;text-align:center">
+            정확도 = (올바른 결과 수 ÷ 테스트 데이터 수) × 100
+          </div>
+          <div class="acc-inputs">
+            <div><div class="acc-label">올바른 예측 수</div><input type="number" id="correct_count" min="0" max="5" placeholder="0~5" oninput="calcAcc()"></div>
+            <div><div class="acc-label">테스트 데이터 수</div><input type="number" id="total_count" value="5" oninput="calcAcc()"></div>
+            <div><div class="acc-label">정확도</div><div class="acc-result" id="acc-result">—</div></div>
+          </div>
+          <button class="btn bp" style="width:100%;justify-content:center;margin-top:8px" onclick="autoCalcAcc()">자동 계산</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: 프로그램 구현 -->
+  <div class="step-section" id="s4">
+    <div class="step-header" onclick="toggleStep('s4')">
+      <div class="step-num">4</div>
+      <h3>나무 프로그램 구현하기</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+
+      <div class="field">
+        <label>⑴ 알고리즘을 설계해 보세요.</label>
+        <textarea id="algo" placeholder="1. 프로그램 시작, 나무 레벨 초기값 = 1&#10;2. 마이크로 입력 대기 (텍스트 분류 모델 연결)&#10;3. 입력 텍스트를 AI 모델로 분류&#10;4. 만약 '긍정적인 말' 이면 → 레벨 +1, 성장 애니메이션 재생&#10;5. 만약 '부정적인 말' 이면 → 레벨 -1, 시드는 애니메이션 재생&#10;6. 나무 모양 업데이트 후 2번으로 돌아감"></textarea>
+      </div>
+
+      <div class="field">
+        <label>⑵ 화면 구성 및 필요한 변수·신호를 정해 보세요.</label>
+        <div class="grid2">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:5px">화면 구성 요소</div>
+            <textarea id="screen" style="min-height:72px" placeholder="배경: 하늘과 땅&#10;오브젝트1: 나무 (7단계 모양)&#10;오브젝트2: 텍스트 입력 박스&#10;오브젝트3: 결과 안내 메시지"></textarea>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:5px">변수 및 신호</div>
+            <textarea id="variables" style="min-height:72px" placeholder="변수: 나무레벨 (초기값:1, 범위:1~7)&#10;신호1: 긍정입력&#10;신호2: 부정입력"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>⑶ 엔트리에서 구현한 주요 블록 코드를 설명해 보세요.</label>
+        <textarea id="code_desc" placeholder="[나무 오브젝트 코드]&#10;신호 '긍정입력' 받았을 때:&#10;  나무레벨 을 1 만큼 바꾸기&#10;  나무레벨 ≥ 7 이면 나무레벨 = 7 (최대치 제한)&#10;  모양 (나무레벨)번째로 바꾸기&#10;  '무럭무럭 자라고 있어요!' 말하기&#10;&#10;신호 '부정입력' 받았을 때:&#10;  나무레벨 을 -1 만큼 바꾸기&#10;  나무레벨 ≤ 1 이면 나무레벨 = 1 (최소치 제한)&#10;  모양 (나무레벨)번째로 바꾸기&#10;  '나무가 시들고 있어요...' 말하기"></textarea>
+      </div>
+
+      <div class="field">
+        <label>⑷ 프로그램이 올바르게 작동하는지 확인하고 개선 사항을 기록하세요.</label>
+        <div class="grid2">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:5px">잘 된 점</div>
+            <textarea id="good" style="min-height:60px"></textarea>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:5px">개선할 점</div>
+            <textarea id="improve" style="min-height:60px"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 평가 -->
+  <div class="step-section" id="s5">
+    <div class="step-header" onclick="toggleStep('s5')" style="background:var(--ul)">
+      <div class="step-num" style="background:#276D99">✓</div>
+      <h3>평가하기</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="eval-box">
+        <h4>⭐ 자기 평가</h4>
+        <div class="eval-item">
+          <span class="eval-label el-skill">과정·기능</span>
+          <span class="eval-q">인공지능을 활용하여 주어진 문제를 해결하였는가?</span>
+          <div class="star-row" data-id="e1"><span class="star" onclick="rate('e1',1)">★</span><span class="star" onclick="rate('e1',2)">★</span><span class="star" onclick="rate('e1',3)">★</span><span class="star" onclick="rate('e1',4)">★</span><span class="star" onclick="rate('e1',5)">★</span></div>
+        </div>
+        <div class="eval-item">
+          <span class="eval-label el-val">가치·태도</span>
+          <span class="eval-q">아이디어를 구현하기 위해 친구들과 다양하게 의사소통했으며, 민주적 의사 결정 과정에 따라 진행하였는가?</span>
+          <div class="star-row" data-id="e2"><span class="star" onclick="rate('e2',1)">★</span><span class="star" onclick="rate('e2',2)">★</span><span class="star" onclick="rate('e2',3)">★</span><span class="star" onclick="rate('e2',4)">★</span><span class="star" onclick="rate('e2',5)">★</span></div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:14px">
+        <label>이번 활동 소감 (배운 점 / 어려웠던 점 / 더 알고 싶은 점)</label>
+        <textarea id="reflection" placeholder="배운 점:&#10;어려웠던 점:&#10;더 알고 싶은 점:"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-row">
+    <button class="btn bp" onclick="saveAll()">💾 전체 저장</button>
+    <button class="btn" onclick="clearAll()" style="color:var(--mt)">↺ 초기화</button>
+    <span class="save-msg" id="save-msg">✅ 저장되었습니다!</span>
+  </div>
+</div>
+
+<script>
+var SAVE_KEY='perf_u4';
+var treeLevel=1;
+var TREES=['🌱','🌿','🪴','🌲','🌳','🎄','🌟'];
+var LABELS=['Lv.1 — 씨앗','Lv.2 — 새싹','Lv.3 — 어린나무','Lv.4 — 나무','Lv.5 — 큰 나무','Lv.6 — 울창한 나무','Lv.7 — 완전한 나무 ✨'];
+
+function updateTree(){document.getElementById('tree-emoji').textContent=TREES[treeLevel-1];document.getElementById('tree-level').textContent=LABELS[treeLevel-1];document.getElementById('tree-lv-num').textContent=treeLevel;}
+function growTree(){if(treeLevel<7){treeLevel++;updateTree();}}
+function shrinkTree(){if(treeLevel>1){treeLevel--;updateTree();}}
+function resetTree(){treeLevel=1;updateTree();}
+
+function calcAcc(){
+  var c=parseInt(document.getElementById('correct_count').value)||0;
+  var t=parseInt(document.getElementById('total_count').value)||5;
+  if(t>0) document.getElementById('acc-result').textContent=Math.round(c/t*100)+'%';
+}
+
+function autoCalcAcc(){
+  var correct=0,total=0;
+  ['test1_yn','test2_yn','test3_yn','test4_yn','test5_yn'].forEach(function(id){
+    var val=document.getElementById(id).value;
+    if(val){total++;if(val==='O')correct++;}
+  });
+  if(total===0){alert('테스트 결과를 먼저 선택하세요.');return;}
+  document.getElementById('correct_count').value=correct;
+  document.getElementById('total_count').value=total;
+  document.getElementById('acc-result').textContent=Math.round(correct/total*100)+'%';
+  save();
+}
+
+function toggleStep(id){document.getElementById(id).classList.toggle('collapsed');}
+function rate(id,val){var row=document.querySelector('[data-id="'+id+'"]');row.querySelectorAll('.star').forEach(function(s,i){s.classList.toggle('on',i<val);});row.dataset.val=val;save();}
+function getData(){var d={};document.querySelectorAll('textarea,input,select').forEach(function(el){if(el.id)d[el.id]=el.value;});document.querySelectorAll('.star-row').forEach(function(row){if(row.dataset.id)d['rating_'+row.dataset.id]=row.dataset.val||'0';});return d;}
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(getData()));}catch(e){}}
+function saveAll(){save();var msg=document.getElementById('save-msg');msg.style.display='flex';setTimeout(function(){msg.style.display='none';},2500);}
+function clearAll(){if(!confirm('입력 내용을 모두 초기화할까요?'))return;document.querySelectorAll('textarea,input[type=text],input[type=number],select').forEach(function(el){el.value='';});document.querySelectorAll('.star').forEach(function(s){s.classList.remove('on');});treeLevel=1;updateTree();localStorage.removeItem(SAVE_KEY);}
+function loadData(){try{var d=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');Object.keys(d).forEach(function(k){if(k.startsWith('rating_')){var id=k.slice(7);var row=document.querySelector('[data-id="'+id+'"]');if(row){var v=parseInt(d[k])||0;row.dataset.val=v;row.querySelectorAll('.star').forEach(function(s,i){s.classList.toggle('on',i<v);});}}else{var el=document.getElementById(k);if(el)el.value=d[k];}});}catch(e){}}
+document.querySelectorAll('textarea,input,select').forEach(function(el){el.addEventListener('change',save);el.addEventListener('input',save);});
+loadData();
+</script>
+</body>
+</html>
