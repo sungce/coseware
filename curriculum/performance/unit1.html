@@ -1,1 +1,401 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>I단원 수행활동 — 소음 측정 알림이 만들기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--u:#6C65CC;--ul:#EEEDFE;--um:#C8C4F0;--bg:#F5F4F0;--sf:#fff;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--r:12px;--rs:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.65}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:52px;padding:0 24px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:90}
+.bc{font-size:12px;color:var(--mt);display:flex;align-items:center;gap:6px;flex:1}
+.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rs);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s}.btn:hover{background:var(--bg)}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:#4E47AA}
+.page{max-width:860px;margin:0 auto;padding:28px 24px}
+
+/* 수행활동 헤더 */
+.act-header{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
+.act-header::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--u),#9B96E0)}
+.act-badge-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px}
+.badge-unit{background:var(--ul);color:var(--u)}
+.badge-type{background:#E8F5E9;color:#2E7D32}
+.badge-skill{background:#E3F2FD;color:#1565C0}
+.act-header h1{font-size:22px;font-weight:700;margin-bottom:6px;color:var(--tx)}
+.act-header p{font-size:13px;color:var(--mt);line-height:1.7}
+.skills-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.skill-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--br);background:var(--bg)}
+.sk-ct{color:#1565C0;background:#E3F2FD;border-color:#BBDEFB}
+.sk-dg{color:#1B5E20;background:#E8F5E9;border-color:#C8E6C9}
+.sk-ai{color:#4A148C;background:#F3E5F5;border-color:#E1BEE7}
+
+/* 단계 카드 */
+.step-section{margin-bottom:16px}
+.step-header{display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--sf);border:1px solid var(--br);border-radius:var(--r) var(--r) 0 0;cursor:pointer;user-select:none;transition:background .12s}
+.step-header:hover{background:var(--bg)}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--u);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-header h3{font-size:14px;font-weight:700;flex:1}
+.step-arrow{font-size:12px;color:var(--lt);transition:transform .2s}
+.step-body{background:var(--sf);border:1px solid var(--br);border-top:none;border-radius:0 0 var(--r) var(--r);padding:20px 24px}
+.step-section.collapsed .step-body{display:none}
+.step-section.collapsed .step-arrow{transform:rotate(-90deg)}
+
+/* 입력 요소 */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--mt);margin-bottom:6px}
+textarea,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--br);border-radius:var(--rs);font-size:13px;font-family:inherit;background:var(--sf);outline:none;resize:vertical;transition:border-color .15s}
+textarea{min-height:80px}
+textarea:focus,input:focus{border-color:var(--u)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* 표 */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.tbl th{background:var(--u);color:#fff;padding:9px 12px;font-weight:600;font-size:12px;text-align:left}
+.tbl td{padding:8px 12px;border-bottom:1px solid var(--br);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td textarea{min-height:60px;border:1px solid #e0ddd6;background:#fafaf8}
+
+/* 체크박스 선택 */
+.check-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.check-item{display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--bg);border:1.5px solid var(--br);border-radius:var(--rs);cursor:pointer;font-size:12px;transition:all .12s}
+.check-item input{accent-color:var(--u);width:15px;height:15px;flex-shrink:0}
+.check-item:has(input:checked){background:var(--ul);border-color:var(--um)}
+
+/* 평가 박스 */
+.eval-box{background:linear-gradient(135deg,var(--ul),#F0EFFE);border:1.5px solid var(--um);border-radius:var(--r);padding:18px 22px;margin-top:8px}
+.eval-box h4{font-size:13px;font-weight:700;color:var(--u);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.eval-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--um)}
+.eval-item:last-child{border-bottom:none}
+.eval-label{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.el-know{background:#E3F2FD;color:#1565C0}
+.el-skill{background:#E8F5E9;color:#2E7D32}
+.el-val{background:#FFF3E0;color:#E65100}
+.eval-q{font-size:13px;color:var(--mt);flex:1;line-height:1.65}
+.star-row{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
+.star{font-size:16px;cursor:pointer;color:#D1CBC0;transition:color .1s}
+.star.on{color:#F59E0B}
+
+/* 저장 버튼 영역 */
+.save-row{display:flex;gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid var(--br)}
+.save-msg{font-size:12px;color:#2E7D32;display:none;align-items:center;gap:5px}
+
+/* 제출 완료 배너 */
+.done-banner{display:none;background:#E8F5E9;border:1.5px solid #A5D6A7;border-radius:var(--r);padding:16px 20px;margin-top:16px;text-align:center;font-size:14px;font-weight:600;color:#2E7D32}
+
+@media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}.check-grid{grid-template-columns:1fr 1fr}.page{padding:16px 14px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="bc">
+    <a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a>
+    <span>›</span><a href="../unit-01/index.html">I. 컴퓨팅 시스템</a>
+    <span>›</span><span style="color:var(--tx);font-weight:500">과정중심 수행활동</span>
+  </div>
+  <a class="btn bsm bp" href="../unit-01/index.html">← 단원으로</a>
+</header>
+
+<div class="page">
+
+  <!-- 헤더 -->
+  <div class="act-header">
+    <div class="act-badge-row">
+      <span class="badge badge-unit">I. 컴퓨팅 시스템</span>
+      <span class="badge badge-type">과정 중심의 수행활동</span>
+      <span class="badge" style="background:#FFF3E0;color:#E65100">개별 활동</span>
+    </div>
+    <h1>소음 측정 알림이 만들기</h1>
+    <p>피지컬 컴퓨팅을 활용하여 교실 소음을 측정하고 화면에 표시하는 알림 장치를 설계·구현합니다.<br>문제 이해 → 알고리즘 설계 → 프로그래밍 → 공유·개선의 전 과정을 수행합니다.</p>
+    <div class="skills-row">
+      <span class="skill-chip sk-ct">💡 컴퓨팅 사고력</span>
+      <span class="skill-chip sk-dg">🌐 디지털 문화 소양</span>
+      <span class="skill-chip sk-ai">🤖 인공지능 소양</span>
+    </div>
+  </div>
+
+  <!-- STEP 1: 문제 상황 -->
+  <div class="step-section" id="s1">
+    <div class="step-header" onclick="toggleStep('s1')">
+      <div class="step-num">1</div>
+      <h3>문제 상황 이해하기</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <div style="background:#FFF9EC;border:1px solid #FFE082;border-radius:var(--rs);padding:14px 16px;margin-bottom:16px;font-size:13px;line-height:1.8;color:#5D4037">
+        💬 <b>상황:</b> 우리 반 진로 시간에 너무 소란스러운 것 같아. 집중이 잘 안돼.<br>
+        → 그럼 시끄러운 정도를 화면에 표시해서 알려 주는 장치를 만들어 볼까?
+      </div>
+      <div class="field">
+        <label>이 상황에서 해결해야 할 문제가 무엇인지 이야기해 보세요.</label>
+        <textarea id="q1" placeholder="예) 교실 소음 수준을 실시간으로 측정하여 화면에 표시함으로써 학생들이 스스로 소음을 조절할 수 있도록 돕는 장치가 필요하다."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: 문제 이해와 분석 -->
+  <div class="step-section" id="s2">
+    <div class="step-header" onclick="toggleStep('s2')">
+      <div class="step-num">2</div>
+      <h3>문제 이해와 분석</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <!-- (1) 문제 정의 -->
+      <div class="field">
+        <label>⑴ 해결해야 할 문제를 정의해 보세요.</label>
+        <div style="display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--br);border-radius:var(--rs);padding:10px 14px">
+          <span style="font-size:13px;white-space:nowrap;color:var(--mt)">(</span>
+          <input type="text" id="q2_1" placeholder="소음의 크기를 측정하고 알려 주기" style="flex:1;border:none;background:transparent;padding:0;font-size:13px">
+          <span style="font-size:13px;white-space:nowrap;color:var(--mt)">) 위한 피지컬 컴퓨팅 시스템을 구현해 보자.</span>
+        </div>
+      </div>
+
+      <!-- (2) 센서/액추에이터 선택 -->
+      <div class="field">
+        <label>⑵ 문제를 해결하기 위해 사용할 센서와 액추에이터를 선택하세요.</label>
+        <div class="grid2">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#1565C0;margin-bottom:8px">📡 센서</div>
+            <div class="check-grid" style="grid-template-columns:1fr 1fr">
+              <label class="check-item"><input type="checkbox" name="sensor" value="버튼">버튼</label>
+              <label class="check-item"><input type="checkbox" name="sensor" value="빛 감지 센서">빛 감지</label>
+              <label class="check-item"><input type="checkbox" name="sensor" value="터치 센서">터치</label>
+              <label class="check-item"><input type="checkbox" name="sensor" value="온도 센서">온도</label>
+              <label class="check-item"><input type="checkbox" name="sensor" value="가속도 센서">가속도</label>
+              <label class="check-item"><input type="checkbox" name="sensor" value="소리 센서" checked>소리 🎤</label>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#2E7D32;margin-bottom:8px">⚡ 액추에이터</div>
+            <div class="check-grid" style="grid-template-columns:1fr 1fr">
+              <label class="check-item"><input type="checkbox" name="actuator" value="LED 스크린" checked>LED 스크린 🖥</label>
+              <label class="check-item"><input type="checkbox" name="actuator" value="스피커">스피커 🔊</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- (3) 작은 문제로 분해 -->
+      <div class="field">
+        <label>⑶ 해결해야 할 문제를 작은 문제로 나누고 설명을 적어 보세요.</label>
+        <table class="tbl">
+          <thead><tr><th style="width:35%">작은 문제</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><input type="text" id="sp1_title" placeholder="소리 감지하기" style="width:100%;border:1px solid #e0ddd6;border-radius:4px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fafaf8"></td>
+                <td><textarea id="sp1_desc" class="tbl-ta" placeholder="소리 센서로 주변 소음의 크기를 측정한다."></textarea></td></tr>
+            <tr><td><input type="text" id="sp2_title" placeholder="소음 수준 판단하기" style="width:100%;border:1px solid #e0ddd6;border-radius:4px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fafaf8"></td>
+                <td><textarea id="sp2_desc" class="tbl-ta" placeholder="측정한 소리 크기를 기준값과 비교하여 조용/보통/시끄러움으로 구분한다."></textarea></td></tr>
+            <tr><td><input type="text" id="sp3_title" placeholder="결과 표시하기" style="width:100%;border:1px solid #e0ddd6;border-radius:4px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fafaf8"></td>
+                <td><textarea id="sp3_desc" class="tbl-ta" placeholder="LED 스크린에 소음 수준을 표정 아이콘이나 숫자로 표시한다."></textarea></td></tr>
+          </tbody>
+        </table>
+        <style>.tbl-ta{min-height:52px;width:100%;padding:6px 8px;border:1px solid #e0ddd6;border-radius:4px;font-size:12px;font-family:inherit;background:#fafaf8;resize:vertical}</style>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: 알고리즘 설계 -->
+  <div class="step-section" id="s3">
+    <div class="step-header" onclick="toggleStep('s3')">
+      <div class="step-num">3</div>
+      <h3>알고리즘 설계하기</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <p style="font-size:13px;color:var(--mt);margin-bottom:14px">각 작은 문제를 해결하기 위한 알고리즘을 순서도나 자연어로 작성해 보세요.</p>
+      <table class="tbl">
+        <thead><tr><th style="width:30%">작은 문제</th><th>알고리즘 (순서도 / 단계별 설명)</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:12px;font-weight:600;color:var(--u)">소리 감지하기</td>
+              <td><textarea id="algo1" placeholder="1. 소리 센서 값을 읽는다.&#10;2. 값이 0~255 범위로 반환된다.&#10;3. 반복하여 계속 감지한다."></textarea></td></tr>
+          <tr><td style="font-size:12px;font-weight:600;color:var(--u)">소음 수준 판단하기</td>
+              <td><textarea id="algo2" placeholder="1. 소리 값이 100 미만이면 '조용' → 😊&#10;2. 100~200 사이면 '보통' → 😐&#10;3. 200 이상이면 '시끄러움' → 😡"></textarea></td></tr>
+          <tr><td style="font-size:12px;font-weight:600;color:var(--u)">결과 표시하기</td>
+              <td><textarea id="algo3" placeholder="1. 판단 결과에 해당하는 아이콘을 LED 스크린에 출력&#10;2. 0.5초 간격으로 반복 측정·표시"></textarea></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- STEP 4: 프로그래밍 -->
+  <div class="step-section" id="s4">
+    <div class="step-header" onclick="toggleStep('s4')">
+      <div class="step-num">4</div>
+      <h3>프로그래밍하기</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <div style="background:#F3E5F5;border:1px solid #CE93D8;border-radius:var(--rs);padding:12px 16px;margin-bottom:14px;font-size:12px;color:#4A148C">
+        💡 <b>엔트리(Entry)</b> 또는 <b>마이크로비트 블록 편집기</b>로 설계한 알고리즘을 구현하세요.<br>
+        완성 후 스크린샷이나 블록 코드 설명을 아래에 기록합니다.
+      </div>
+      <div class="field">
+        <label>구현한 프로그램의 주요 블록/코드를 설명해 보세요.</label>
+        <textarea id="prog" style="min-height:120px" placeholder="예) 무한 반복 블록 안에:&#10;- 소리 감지 센서 값 읽기 → 변수 '소음' 에 저장&#10;- 만약 소음 < 100 이면 LED에 웃는 표정 표시&#10;- 만약 소음 < 200 이면 무표정 표시&#10;- 그 외는 화난 표정 표시 + 경고음 0.5초"></textarea>
+      </div>
+      <div class="field">
+        <label>프로그램을 실행했을 때 예상 결과와 실제 결과를 비교하세요.</label>
+        <div class="grid2">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:5px">예상 결과</div>
+            <textarea id="expected" style="min-height:70px" placeholder="소음 수준에 따라 세 가지 표정이 바뀌고, 시끄러울 때 경고음이 울린다."></textarea>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:5px">실제 결과</div>
+            <textarea id="actual" style="min-height:70px" placeholder="실제 실행 결과를 적어보세요."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: 공유 및 개선 -->
+  <div class="step-section" id="s5">
+    <div class="step-header" onclick="toggleStep('s5')">
+      <div class="step-num">5</div>
+      <h3>공유 및 개선하기</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="field">
+        <label>⑴ 완성한 시스템을 친구들과 공유하고, 들은 의견 중 개선할 부분을 적어보세요.</label>
+        <textarea id="share" placeholder="친구들의 피드백:&#10;- &#10;개선할 부분:&#10;-"></textarea>
+      </div>
+      <div class="field">
+        <label>⑵ 반영할 부분을 선정하고, 개선하는 방법을 작성해 보세요.</label>
+        <textarea id="improve" placeholder="반영할 의견:&#10;개선 방법:&#10;개선 후 달라지는 점:"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 평가하기 -->
+  <div class="step-section" id="s6">
+    <div class="step-header" onclick="toggleStep('s6')" style="background:var(--ul)">
+      <div class="step-num" style="background:#4E47AA">✓</div>
+      <h3>평가하기</h3>
+      <span class="step-arrow">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="eval-box">
+        <h4>⭐ 나의 성취 수준 자기 평가</h4>
+
+        <div class="eval-item">
+          <span class="eval-label el-know">지식·이해</span>
+          <span class="eval-q">친구들과 함께 피지컬 컴퓨팅을 활용하여 주어진 문제를 해결할 수 있는가?</span>
+          <div class="star-row" data-id="ev1">
+            <span class="star" onclick="rate('ev1',1)">★</span><span class="star" onclick="rate('ev1',2)">★</span>
+            <span class="star" onclick="rate('ev1',3)">★</span><span class="star" onclick="rate('ev1',4)">★</span>
+            <span class="star" onclick="rate('ev1',5)">★</span>
+          </div>
+        </div>
+
+        <div class="eval-item">
+          <span class="eval-label el-val">가치·태도</span>
+          <span class="eval-q">아이디어를 구현하기 위해 다양하게 의사소통했으며, 민주적 의사 결정 과정에 따라 진행하였는가?</span>
+          <div class="star-row" data-id="ev2">
+            <span class="star" onclick="rate('ev2',1)">★</span><span class="star" onclick="rate('ev2',2)">★</span>
+            <span class="star" onclick="rate('ev2',3)">★</span><span class="star" onclick="rate('ev2',4)">★</span>
+            <span class="star" onclick="rate('ev2',5)">★</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:14px">
+        <label>이번 활동에서 배운 점 / 어려웠던 점 / 더 알고 싶은 점</label>
+        <textarea id="reflection" style="min-height:80px" placeholder="배운 점:&#10;어려웠던 점:&#10;더 알고 싶은 점:"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 저장 -->
+  <div class="save-row">
+    <button class="btn bp" onclick="saveAll()">💾 전체 저장</button>
+    <button class="btn" onclick="clearAll()" style="color:var(--mt)">↺ 초기화</button>
+    <span class="save-msg" id="save-msg">✅ 저장되었습니다!</span>
+  </div>
+  <div class="done-banner" id="done-banner">🎉 수행활동이 제출되었습니다! 수고했어요!</div>
+
+</div>
+
+<script>
+var SAVE_KEY = 'perf_u1';
+
+function toggleStep(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+function rate(id, val) {
+  var row = document.querySelector('[data-id="' + id + '"]');
+  row.querySelectorAll('.star').forEach(function(s, i) {
+    s.classList.toggle('on', i < val);
+  });
+  row.dataset.val = val;
+  save();
+}
+
+function getData() {
+  var d = {};
+  document.querySelectorAll('textarea, input[type=text]').forEach(function(el) {
+    if (el.id) d[el.id] = el.value;
+  });
+  document.querySelectorAll('input[type=checkbox]').forEach(function(el) {
+    d['cb_' + el.value] = el.checked;
+  });
+  document.querySelectorAll('.star-row').forEach(function(row) {
+    if (row.dataset.id) d['rating_' + row.dataset.id] = row.dataset.val || '0';
+  });
+  return d;
+}
+
+function save() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(getData())); } catch(e) {}
+}
+
+function saveAll() {
+  save();
+  var msg = document.getElementById('save-msg');
+  msg.style.display = 'flex';
+  setTimeout(function() { msg.style.display = 'none'; }, 2500);
+}
+
+function clearAll() {
+  if (!confirm('입력 내용을 모두 초기화할까요?')) return;
+  document.querySelectorAll('textarea, input[type=text]').forEach(function(el) { el.value = ''; });
+  document.querySelectorAll('input[type=checkbox]').forEach(function(el) { el.checked = false; });
+  document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('on'); });
+  localStorage.removeItem(SAVE_KEY);
+}
+
+function loadData() {
+  try {
+    var d = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
+    Object.keys(d).forEach(function(k) {
+      if (k.startsWith('cb_')) {
+        var el = document.querySelector('input[value="' + k.slice(3) + '"]');
+        if (el) el.checked = d[k];
+      } else if (k.startsWith('rating_')) {
+        var id = k.slice(7);
+        var row = document.querySelector('[data-id="' + id + '"]');
+        if (row) { var v = parseInt(d[k]) || 0; row.dataset.val = v;
+          row.querySelectorAll('.star').forEach(function(s, i) { s.classList.toggle('on', i < v); }); }
+      } else {
+        var el2 = document.getElementById(k);
+        if (el2) el2.value = d[k];
+      }
+    });
+  } catch(e) {}
+}
+
+document.querySelectorAll('textarea, input[type=text], input[type=checkbox]').forEach(function(el) {
+  el.addEventListener('change', save);
+  el.addEventListener('input', save);
+});
+
+loadData();
+</script>
+</body>
+</html>
