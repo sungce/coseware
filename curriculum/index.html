@@ -1939,16 +1939,27 @@
     });
 
     // 4) lessons-list 헤더 업데이트
+    var unitNames = {
+      'all': '전체 소단원',
+      'I': 'I. 컴퓨팅 시스템',
+      'II': 'II. 데이터',
+      'III': 'III. 알고리즘과 프로그래밍',
+      'IV': 'IV. 인공지능',
+      'V': 'V. 디지털 문화'
+    };
     var header = document.querySelector('.lessons-list-header');
     if (header) {
-      header.innerHTML = '<span>📚</span> ' + (unit === 'all' ? '학습 목록 전체' : unit + '단원 소단원') + ' (' + visibleCount + '개)';
+      header.innerHTML = '<span>📚</span> ' + (unitNames[unit] || unit + '단원') + ' (' + visibleCount + '개)';
     }
 
-    // 5) 소단원 목록으로 스크롤
-    var el = document.querySelector('.lessons-list');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    // 5) 소단원 목록으로 스크롤 (setTimeout으로 DOM 업데이트 후)
+    setTimeout(function() {
+      var el = document.querySelector('.lessons-list') || document.querySelector('.section-header');
+      if (el) {
+        var top = el.getBoundingClientRect().top + window.pageYOffset - 16;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+    }, 50);
   }
 
   // Quiz
