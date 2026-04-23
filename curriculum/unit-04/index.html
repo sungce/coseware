@@ -1,1 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IV. 인공지능 — 정보 교과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--u:#378ADD;--udk:#1A5A9A;--ult:#E4F0FA;--umd:#BACED8;--rLG:14px;--rSM:8px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.65;min-height:100vh}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:52px;padding:0 28px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--mt);flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s}.btn:hover{background:var(--bg)}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}
+.page{padding:28px 32px;max-width:1100px;margin:0 auto}
+.hero{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:26px 30px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.hero h2{font-size:22px;font-weight:700;margin-bottom:8px}.hero p{font-size:13px;color:var(--mt);line-height:1.7}
+.hero-stats{display:flex;gap:12px;flex-shrink:0}.stat{text-align:center;padding:12px 16px;background:var(--bg);border-radius:var(--rSM);min-width:72px}.stat-n{font-size:22px;font-weight:700;color:var(--u)}.stat-l{font-size:11px;color:var(--mt);margin-top:2px}
+.mid-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lt);margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.mid-title::after{content:'';flex:1;height:1px;background:var(--br)}
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px}
+.lcard{display:flex;flex-direction:column;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rLG);padding:18px;text-decoration:none;color:inherit;transition:all .18s;position:relative;overflow:hidden}
+.lcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--u);opacity:0;transition:opacity .18s}
+.lcard:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(55,138,221,.13);border-color:var(--umd)}.lcard:hover::before{opacity:1}
+.ln{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--ult);color:var(--u);font-family:monospace;display:inline-block;margin-bottom:7px}
+.li{font-size:24px;margin-bottom:5px}.lt{font-size:13px;font-weight:700;margin-bottom:4px}.ld{font-size:11px;color:var(--mt);line-height:1.6;flex:1}
+.lf{display:flex;align-items:center;gap:5px;margin-top:9px;flex-wrap:wrap}
+.ltag{font-size:10px;padding:2px 8px;background:var(--bg);border:1px solid var(--br);border-radius:20px;color:var(--mt);font-weight:500}
+.ltag-u{background:var(--ult);color:var(--u);border-color:var(--umd)}
+.lgo{margin-left:auto;font-size:11px;font-weight:700;color:var(--u);opacity:0;transition:opacity .15s}
+.lcard:hover .lgo{opacity:1}
+@media(max-width:900px){.card-grid{grid-template-columns:1fr}.hero{flex-direction:column}}
+@media(max-width:600px){.page{padding:16px 18px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="bc"><a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a> › <span style="color:var(--tx);font-weight:500">IV. 인공지능</span></div>
+  <a class="btn bp" href="lesson-01/index.html">시작하기 →</a>
+</header>
+<div class="page">
+  <div class="hero">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:36px;font-weight:300;color:var(--u);line-height:1">IV</span>
+        <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);margin-bottom:3px">Unit IV</div><h2>인공지능</h2></div>
+      </div>
+      <p>인공지능의 개념·특성과 데이터 학습 원리를 이해하고,<br>이미지·소리·텍스트 분류 AI를 직접 만들어 엔트리 프로그램에 적용합니다.<br>마지막으로 AI 개발 윤리와 개인정보 보호도 탐구합니다.</p>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--ult);border:1px solid var(--umd);border-radius:20px;font-size:11px;font-weight:700;color:var(--u)">🤖 티처블 머신 활용</div>
+        <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:20px;font-size:11px;font-weight:700;color:#166534">🟢 엔트리 AI 연동</div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-n">6</div><div class="stat-l">소단원</div></div>
+      <div class="stat"><div class="stat-n">13</div><div class="stat-l">차시</div></div>
+      <div class="stat"><div class="stat-n">높음</div><div class="stat-l">난이도</div></div>
+    </div>
+  </div>
 
+  <div class="mid-title">중단원 1 — 인공지능과 학습 (2소단원 · 3차시)</div>
+  <div class="card-grid">
+    <a href="lesson-01/index.html" class="lcard">
+      <div class="ln">IV-01</div><div class="li">🤖</div>
+      <div class="lt">인공지능의 개념과 특성</div>
+      <div class="ld">4가지 특성(상황인식·학습·최적화·자율성), AI vs 일반 SW 분류 퀴즈</div>
+      <div class="lf"><span class="ltag">1차시</span><span class="ltag ltag-u">pp.165~169</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-02/index.html" class="lcard">
+      <div class="ln">IV-02</div><div class="li">📊</div>
+      <div class="lt">데이터와 학습</div>
+      <div class="ld">데이터 역할·수집·레이블링, 스팸 메일 레이블링 체험 + 훈련/테스트 분류</div>
+      <div class="lf"><span class="ltag">2차시</span><span class="ltag ltag-u">pp.170~176</span><div class="lgo">→</div></div>
+    </a>
+  </div>
+
+  <div class="mid-title">중단원 2 — 인공지능과 문제 해결 (4소단원 · 10차시)</div>
+  <div class="card-grid">
+    <a href="lesson-03/index.html" class="lcard">
+      <div class="ln">IV-03</div><div class="li">💪</div>
+      <div class="lt">팔 이미지를 이용한 운동 도우미</div>
+      <div class="ld">이미지 분류 모델, 티처블 머신 + 엔트리, 분류 신뢰도 시뮬레이터</div>
+      <div class="lf"><span class="ltag">3차시</span><span class="ltag ltag-u">pp.179~185</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-04/index.html" class="lcard">
+      <div class="ln">IV-04</div><div class="li">😄</div>
+      <div class="lt">소리 데이터를 이용한 웃음 계수 시스템</div>
+      <div class="ld">소리 분류 모델, 웃음·화남·울음·소음 시뮬레이터 + 웃음 카운터</div>
+      <div class="lf"><span class="ltag">3차시</span><span class="ltag ltag-u">pp.186~191</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-05/index.html" class="lcard">
+      <div class="ln">IV-05</div><div class="li">📝</div>
+      <div class="lt">텍스트 데이터를 이용한 영화 평가 시스템</div>
+      <div class="ld">텍스트 분류·감성 분석, 간이 감성 분석 체험 + 긍정·부정 분류 연습</div>
+      <div class="lf"><span class="ltag">3차시</span><span class="ltag ltag-u">pp.192~198</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-06/index.html" class="lcard">
+      <div class="ln">IV-06</div><div class="li">⚖️</div>
+      <div class="lt">인공지능의 윤리적 문제 해결</div>
+      <div class="ld">AI 개발 단계별 윤리, 개인정보·저작권·데이터 편향, 비식별화, 윤리 딜레마 토론</div>
+      <div class="lf"><span class="ltag">1차시</span><span class="ltag ltag-u">pp.199~203</span><div class="lgo">→</div></div>
+    </a>
+  </div>
+</div>
+</body>
+</html>
