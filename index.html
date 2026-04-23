@@ -150,9 +150,8 @@
                             class="nav-link hover:text-blue-600 transition-colors" id="nav-home">홈</a>
                         <a href="#" onclick="showSection('notices')"
                             class="nav-link hover:text-blue-600 transition-colors" id="nav-notices">공지사항</a>
-                        <!-- 교과수업 외부 링크로 변경 -->
-                        <a href="https://sungce.github.io/visang" target="_blank"
-                            class="nav-link hover:text-blue-600 transition-colors">교과수업</a>
+                        <a href="#" onclick="showSection('classes')"
+                            class="nav-link hover:text-blue-600 transition-colors" id="nav-classes">교과수업</a>
                         <a href="#" onclick="showSection('materials')"
                             class="nav-link hover:text-blue-600 transition-colors" id="nav-materials">학습자료실</a>
                         <a href="#" onclick="showSection('assignments')"
@@ -218,7 +217,7 @@
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">홈</a>
                 <a href="#" onclick="showSection('notices')"
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">공지사항</a>
-                <a href="https://sungce.github.io/visang" target="_blank"
+                <a href="#" onclick="showSection('classes')"
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">교과수업</a>
                 <a href="#" href="#" onclick="showSection('materials')"
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">학습자료실</a>
@@ -351,7 +350,7 @@
                         </p>
                         <div class="flex flex-wrap justify-center md:justify-start gap-4">
                             <!-- 외부 링크로 변경 -->
-                            <button onclick="window.open('https://sungce.github.io/visang', '_blank')"
+                            <button onclick="showSection('classes')"
                                 class="px-8 py-4 bg-white text-slate-900 font-bold rounded-2xl hover:scale-105 transition-transform duration-300 shadow-xl shadow-white/10 flex items-center">
                                 수업 참여하기 <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
                             </button>
@@ -398,7 +397,7 @@
 
                 <!-- 교과수업 (Tall/Square Card) - 외부 링크로 변경 -->
                 <div class="md:col-span-1 lg:col-span-2 group bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2rem] p-8 text-white hover:shadow-2xl hover:shadow-blue-900/20 hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden"
-                    onclick="window.open('https://sungce.github.io/visang', '_blank')">
+                    onclick="showSection('classes')">
                     <div
                         class="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform duration-500">
                         <i data-lucide="graduation-cap" class="w-64 h-64"></i>
@@ -490,20 +489,16 @@
             </div>
         </section>
 
-        <!-- ==================== 3. 교과수업 섹션 (기존 내용은 숨김 유지, 필요시 활용) ==================== -->
-        <section id="classes" class="fade-in hidden max-w-5xl mx-auto space-y-8">
-            <div class="text-center mb-12">
-                <div
-                    class="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-blue-50 text-blue-600 mb-6 shadow-sm">
-                    <i data-lucide="map" class="w-8 h-8"></i>
-                </div>
-                <h2 class="text-4xl font-black text-slate-900 tracking-tight mb-4">학습 커리큘럼 로드맵</h2>
-                <p class="text-lg text-slate-500 font-medium">1년 동안 우리가 함께 만들어갈 멋진 여정입니다.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="classes-grid">
-                <!-- JS Data Injected Here -->
-            </div>
+        <!-- ==================== 3. 교과수업 섹션 ==================== -->
+        <section id="classes" class="fade-in hidden">
+            <iframe
+                src="curriculum/index.html"
+                id="curriculum-frame"
+                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white"
+                style="min-height: 80vh; height: auto;"
+                frameborder="0"
+                onload="this.style.height = this.contentWindow.document.body.scrollHeight + 'px'">
+            </iframe>
         </section>
 
         <!-- ==================== 4. 학습자료실 섹션 ==================== -->
@@ -687,7 +682,7 @@
             <div class="flex items-center space-x-4">
                 <a href="signup.html" class="hover:text-blue-600 transition-colors">회원가입</a>
                 <span class="text-slate-300">|</span>
-                <a href="https://sungce.github.io/visang" target="_blank" class="hover:text-blue-600 transition-colors">교과수업</a>
+                <a href="#" onclick="showSection('classes')" class="hover:text-blue-600 transition-colors">교과수업</a>
             </div>
         </div>
     </footer>
@@ -1003,7 +998,7 @@
             }
 
             // 활성 메뉴 스타일
-            ['home','notices','materials','assignments','gallery'].forEach(id => {
+            ['home','notices','classes','materials','assignments','gallery'].forEach(id => {
                 const navEl = document.getElementById('nav-' + id);
                 if (navEl) navEl.classList.remove('active');
             });
