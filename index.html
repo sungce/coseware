@@ -986,13 +986,21 @@
         function sendUserNameToFrame() {
             const frame = document.getElementById('curriculum-frame');
             if (!frame) return;
-            const name = auth && auth.currentUser
-                ? (auth.currentUser.displayName || auth.currentUser.email.split('@')[0])
+            const user = auth && auth.currentUser;
+            const name = user
+                ? (user.displayName || user.email.split('@')[0])
                 : (localStorage.getItem('userName') || '');
             if (name) {
                 frame.contentWindow.postMessage({ type: 'SET_USER_NAME', name }, '*');
             }
         }
+
+        // iframe이 ready 신호를 보내면 이름 전달
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'CURRICULUM_READY') {
+                sendUserNameToFrame();
+            }
+        });
 
         // SPA Navigation
         function showSection(sectionId) {

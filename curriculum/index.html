@@ -1033,14 +1033,12 @@
 
 <!-- ─── SIDEBAR ─── -->
 <aside class="sidebar" id="sidebar">
-  <!-- 학습 기록 버튼 -->
-  <button class="record-nav-btn" onclick="showView('records');setActive(null);updateRecordView()">
-    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-    </svg>
-    나의 학습 기록
-    <span class="rn-count" id="record-count">0</span>
-  </button>
+  <!-- 사이드바 로고 -->
+  <div class="sidebar-logo">
+    <div class="logo-label">2022 개정 교육과정</div>
+    <h1>정보 교과<br>웹 학습 플랫폼</h1>
+    <div class="sub">중학교 1학년 · 총 68차시</div>
+  </div>
 
   <nav class="sidebar-nav">
     <div class="nav-section-label">홈</div>
@@ -2151,6 +2149,11 @@
       var profileEl = document.getElementById('profile-name');
       if (profileEl) profileEl.textContent = name + '님';
     }
+  });
+
+  // iframe 준비 완료 → 부모에게 알림
+  window.addEventListener('load', function() {
+    try { window.parent.postMessage({ type: 'CURRICULUM_READY' }, '*'); } catch(e) {}
   });
 
 
