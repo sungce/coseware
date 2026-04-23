@@ -1,1 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>III. 알고리즘과 프로그래밍 — 정보 교과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--u:#D85A30;--udk:#B84020;--ult:#FAECE7;--umd:#F0B8A0;--rLG:14px;--rSM:8px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.65;min-height:100vh}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:52px;padding:0 28px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--mt);flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s}.btn:hover{background:var(--bg)}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}
+.page{padding:28px 32px;max-width:1100px;margin:0 auto}
+.hero{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:26px 30px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.hero h2{font-size:22px;font-weight:700;margin-bottom:8px}.hero p{font-size:13px;color:var(--mt);line-height:1.7}
+.hero-stats{display:flex;gap:12px;flex-shrink:0}.stat{text-align:center;padding:12px 16px;background:var(--bg);border-radius:var(--rSM);min-width:72px}.stat-n{font-size:22px;font-weight:700;color:var(--u)}.stat-l{font-size:11px;color:var(--mt);margin-top:2px}
+.mid-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lt);margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.mid-title::after{content:'';flex:1;height:1px;background:var(--br)}
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px}
+.lcard{display:flex;flex-direction:column;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rLG);padding:18px;text-decoration:none;color:inherit;transition:all .18s;position:relative;overflow:hidden}
+.lcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--u);opacity:0;transition:opacity .18s}
+.lcard:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(216,90,48,.13);border-color:var(--umd)}.lcard:hover::before{opacity:1}
+.ln{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--ult);color:var(--u);font-family:monospace;display:inline-block;margin-bottom:7px}
+.li{font-size:24px;margin-bottom:5px}.lt{font-size:13px;font-weight:700;margin-bottom:4px}.ld{font-size:11px;color:var(--mt);line-height:1.6;flex:1}
+.lf{display:flex;align-items:center;gap:5px;margin-top:9px;flex-wrap:wrap}
+.ltag{font-size:10px;padding:2px 8px;background:var(--bg);border:1px solid var(--br);border-radius:20px;color:var(--mt);font-weight:500}
+.ltag-u{background:var(--ult);color:var(--u);border-color:var(--umd)}
+.lgo{margin-left:auto;font-size:11px;font-weight:700;color:var(--u);opacity:0;transition:opacity .15s}
+.lcard:hover .lgo{opacity:1}
+.entry-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:20px;background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;font-weight:700;margin-left:4px}
+@media(max-width:900px){.card-grid{grid-template-columns:1fr}.hero{flex-direction:column}}
+@media(max-width:600px){.page{padding:16px 18px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="bc"><a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a> › <span style="color:var(--tx);font-weight:500">III. 알고리즘과 프로그래밍</span></div>
+  <a class="btn bp" href="lesson-01/index.html">시작하기 →</a>
+</header>
+<div class="page">
+  <div class="hero">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:36px;font-weight:300;color:var(--u);line-height:1">III</span>
+        <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);margin-bottom:3px">Unit III</div><h2>알고리즘과 프로그래밍</h2></div>
+      </div>
+      <p>문제의 상태 정의와 추상화, 알고리즘 설계부터<br>엔트리 블록 코딩으로 사칙 연산·논리 연산·중첩 제어·리스트·함수까지<br>실생활 문제를 해결하는 프로그래밍 능력을 기릅니다.</p>
+      <div style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 12px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:20px;font-size:11px;font-weight:700;color:#166534">🟢 엔트리 기반 프로그래밍</div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-n">10</div><div class="stat-l">소단원</div></div>
+      <div class="stat"><div class="stat-n">22</div><div class="stat-l">차시</div></div>
+      <div class="stat"><div class="stat-n">높음</div><div class="stat-l">난이도</div></div>
+    </div>
+  </div>
 
+  <div class="mid-title">중단원 1 — 추상화와 알고리즘 (4소단원 · 4차시)</div>
+  <div class="card-grid">
+    <a href="lesson-01/index.html" class="lcard">
+      <div class="ln">III-01</div><div class="li">🗺️</div>
+      <div class="lt">문제의 상태와 구조화</div>
+      <div class="ld">초기·현재·목표 상태 정의, 강 건너기 문제 시뮬레이터</div>
+      <div class="lf"><span class="ltag">1차시</span><span class="ltag ltag-u">pp.93~95</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-02/index.html" class="lcard">
+      <div class="ln">III-02</div><div class="li">🔍</div>
+      <div class="lt">문제의 추상화</div>
+      <div class="ld">문제 분해·핵심 요소 추출, 자판기 추상화 카드 게임</div>
+      <div class="lf"><span class="ltag">1차시</span><span class="ltag ltag-u">pp.96~99</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-03/index.html" class="lcard">
+      <div class="ln">III-03</div><div class="li">📐</div>
+      <div class="lt">알고리즘의 이해와 표현</div>
+      <div class="ld">자연어·순서도 표현, 성적 등급 판별 순서도 조립</div>
+      <div class="lf"><span class="ltag">1차시</span><span class="ltag ltag-u">pp.100~102</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-04/index.html" class="lcard">
+      <div class="ln">III-04</div><div class="li">⚖️</div>
+      <div class="lt">알고리즘의 분석과 설계</div>
+      <div class="ld">4가지 전략(분할·시행착오·되추적·최선), 전략 매칭 퀴즈</div>
+      <div class="lf"><span class="ltag">1차시</span><span class="ltag ltag-u">pp.103~106</span><div class="lgo">→</div></div>
+    </a>
+  </div>
+
+  <div class="mid-title">중단원 2 — 프로그래밍 (6소단원 · 18차시) <span class="entry-badge">🟢 엔트리</span></div>
+  <div class="card-grid">
+    <a href="lesson-05/index.html" class="lcard">
+      <div class="ln">III-05</div><div class="li">🟢</div>
+      <div class="lt">프로그래밍 시작하기</div>
+      <div class="ld">프로그래밍 6단계, 엔트리 사칙 연산 계산기 시뮬레이터</div>
+      <div class="lf"><span class="ltag">3차시</span><span class="ltag ltag-u">pp.109~116</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-06/index.html" class="lcard">
+      <div class="ln">III-06</div><div class="li">🔀</div>
+      <div class="lt">논리 연산 프로그래밍</div>
+      <div class="ld">AND·OR·NOT, 놀이공원 입장료 계산기 인터랙티브</div>
+      <div class="lf"><span class="ltag">3차시</span><span class="ltag ltag-u">pp.117~123</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-07/index.html" class="lcard">
+      <div class="ln">III-07</div><div class="li">🔁</div>
+      <div class="lt">중첩 제어 구조 프로그래밍</div>
+      <div class="ld">반복 속 반복, Canvas 슬라이더 패턴 생성기</div>
+      <div class="lf"><span class="ltag">3차시</span><span class="ltag ltag-u">pp.124~131</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-08/index.html" class="lcard">
+      <div class="ln">III-08</div><div class="li">📋</div>
+      <div class="lt">리스트와 프로그래밍</div>
+      <div class="ld">리스트 추가·삭제·인덱스, OX 퀴즈 인터랙티브 체험</div>
+      <div class="lf"><span class="ltag">3차시</span><span class="ltag ltag-u">pp.132~139</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-09/index.html" class="lcard">
+      <div class="ln">III-09</div><div class="li">🔧</div>
+      <div class="lt">함수와 디버깅</div>
+      <div class="ld">함수 정의·호출·재사용, 버그 찾기 디버깅 게임</div>
+      <div class="lf"><span class="ltag">3차시</span><span class="ltag ltag-u">pp.140~148</span><div class="lgo">→</div></div>
+    </a>
+    <a href="lesson-10/index.html" class="lcard">
+      <div class="ln">III-10</div><div class="li">🌐</div>
+      <div class="lt">실생활과 학문 분야 문제 해결</div>
+      <div class="ld">번역기·전자투표 시뮬레이터, 통합 프로젝트 발표</div>
+      <div class="lf"><span class="ltag">3차시</span><span class="ltag ltag-u">pp.149~155</span><div class="lgo">→</div></div>
+    </a>
+  </div>
+</div>
+</body>
+</html>
