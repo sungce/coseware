@@ -157,36 +157,6 @@
             <!-- 우측 패널 -->
             <div class="space-y-6">
 
-                <!-- 관리자 설정 -->
-                <div class="card p-7">
-                    <h2 class="text-lg font-black text-slate-900 mb-5 flex items-center space-x-2">
-                        <i data-lucide="settings" class="w-5 h-5 text-amber-500"></i>
-                        <span>사이트 설정</span>
-                    </h2>
-                    <div class="space-y-4">
-                        <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">사이트 제목</label>
-                            <input type="text" id="site-title" value="Sungce Teacher Web"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">학년도</label>
-                            <input type="text" id="school-year" value="2026학년도"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">교과수업 링크</label>
-                            <input type="text" id="class-link" value="https://sungce.github.io/visang"
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
-                        </div>
-                        <button onclick="saveSettings()"
-                            class="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold py-3 rounded-xl hover:shadow-lg hover:shadow-amber-500/30 transition-all flex items-center justify-center space-x-2">
-                            <i data-lucide="save" class="w-4 h-4"></i>
-                            <span>설정 저장</span>
-                        </button>
-                    </div>
-                </div>
-
                 <!-- 공지사항 추가 -->
                 <div class="card p-7">
                     <h2 class="text-lg font-black text-slate-900 mb-5 flex items-center space-x-2">
@@ -215,8 +185,28 @@
                     </div>
                 </div>
 
-                <!-- 학습자료 추가 -->
+                <!-- 등록된 공지사항 목록 -->
                 <div class="card p-7">
+                    <div class="flex items-center justify-between mb-5">
+                        <h2 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                            <i data-lucide="bell" class="w-5 h-5 text-rose-500"></i>
+                            <span>등록된 공지사항</span>
+                        </h2>
+                        <button onclick="loadNoticesList()"
+                            class="flex items-center space-x-1.5 text-xs font-bold text-slate-500 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 px-3 py-2 rounded-xl border border-slate-100 hover:border-rose-100 transition-all">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                            <span>새로고침</span>
+                        </button>
+                    </div>
+                    <div id="notices-list-admin">
+                        <div class="py-8 flex flex-col items-center space-y-2 text-slate-400">
+                            <i data-lucide="loader" class="w-5 h-5 animate-spin text-rose-400"></i>
+                            <span class="text-xs font-medium">불러오는 중...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 학습자료 추가 -->                <div class="card p-7">
                     <h2 class="text-lg font-black text-slate-900 mb-5 flex items-center space-x-2">
                         <i data-lucide="folder-plus" class="w-5 h-5 text-emerald-500"></i>
                         <span>학습자료 추가</span>
@@ -290,6 +280,45 @@
             </div>
         </div>
     </main>
+
+    <!-- 공지사항 수정 모달 -->
+    <div id="notice-edit-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+        onclick="if(event.target===this) closeNoticeEditModal()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="pencil" class="w-5 h-5 text-rose-500"></i>
+                    <span>공지사항 수정</span>
+                </h3>
+                <button onclick="closeNoticeEditModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-8 py-6 space-y-4">
+                <input type="hidden" id="notice-edit-id">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">제목</label>
+                    <input type="text" id="notice-edit-title"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white transition-all">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">유형</label>
+                    <select id="notice-edit-type"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white transition-all">
+                        <option value="normal">일반</option>
+                        <option value="important">중요</option>
+                    </select>
+                </div>
+            </div>
+            <div class="px-8 pb-8 flex space-x-3">
+                <button onclick="closeNoticeEditModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-200 transition-colors">취소</button>
+                <button onclick="saveNoticeEdit()" id="notice-save-btn"
+                    class="flex-1 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold py-3.5 rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="save" class="w-4 h-4"></i><span>저장</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- 토스트 -->
     <!-- 수정 모달 -->
@@ -384,6 +413,7 @@
             lucide.createIcons();
             loadMembers();
             loadMaterialsList();
+            loadNoticesList();
         });
 
         async function handleSignOut() {
@@ -727,27 +757,158 @@
 
             try {
                 await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
+                    method: 'POST', mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({
-                        type      : 'notice',
-                        noticeType,
-                        title,
-                        author    : '정보선생님'
-                    })
+                    body: JSON.stringify({ type:'notice', noticeType, title, author:'정보선생님' })
                 });
-
                 document.getElementById('notice-title').value = '';
                 const cur = parseInt(document.getElementById('stat-notices').textContent) || 0;
                 document.getElementById('stat-notices').textContent = cur + 1;
                 showToast('공지사항이 등록되었습니다! 📢');
+                setTimeout(() => loadNoticesList(), 1500);
             } catch(e) {
                 showToast('등록 중 오류가 발생했습니다.', 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i data-lucide="plus" class="w-4 h-4"></i><span>공지 등록</span>';
                 lucide.createIcons();
+            }
+        }
+
+        // ==========================================
+        // 공지사항 목록 로드 (JSONP)
+        // ==========================================
+        let allNotices = [];
+
+        function loadNoticesList() {
+            const container = document.getElementById('notices-list-admin');
+            container.innerHTML = `<div class="py-8 flex flex-col items-center space-y-2 text-slate-400">
+                <i data-lucide="loader" class="w-5 h-5 animate-spin text-rose-400"></i>
+                <span class="text-xs font-medium">불러오는 중...</span></div>`;
+            lucide.createIcons();
+
+            const old = document.getElementById('jsonp-notices-admin');
+            if (old) old.remove();
+
+            const timer = setTimeout(() => {
+                container.innerHTML = `<div class="py-6 text-center text-xs text-slate-400">불러오기 실패</div>`;
+            }, 8000);
+
+            window.__noticesAdminCb = function(data) {
+                clearTimeout(timer);
+                const s = document.getElementById('jsonp-notices-admin');
+                if (s) s.remove();
+                allNotices = data.notices || [];
+                renderNoticesList();
+            };
+
+            const script = document.createElement('script');
+            script.id  = 'jsonp-notices-admin';
+            script.src = `${APPS_SCRIPT_URL}?action=getNotices&callback=__noticesAdminCb`;
+            document.body.appendChild(script);
+        }
+
+        function renderNoticesList() {
+            const container = document.getElementById('notices-list-admin');
+            if (!allNotices.length) {
+                container.innerHTML = `<div class="py-6 flex flex-col items-center space-y-2 text-slate-400">
+                    <i data-lucide="inbox" class="w-7 h-7 text-slate-300"></i>
+                    <p class="text-xs font-medium">등록된 공지사항이 없습니다.</p></div>`;
+                lucide.createIcons();
+                return;
+            }
+            container.innerHTML = `<div class="space-y-2">
+                ${allNotices.map(n => {
+                    const badge = n.type === 'important'
+                        ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500';
+                    const label = n.type === 'important' ? '중요' : '일반';
+                    return `
+                    <div class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-white border border-slate-100 hover:border-slate-200 rounded-2xl transition-all group">
+                        <div class="flex items-center space-x-3 min-w-0">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-full shrink-0 ${badge}">${label}</span>
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-slate-800 truncate">${n.title}</p>
+                                <p class="text-xs text-slate-400 font-medium mt-0.5">${n.date} · ${n.author||'정보선생님'}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1 ml-2 shrink-0">
+                            <button onclick="openNoticeEditModal('${n.id}', '${n.title.replace(/'/g,"\\'")}', '${n.type}')"
+                                class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="수정">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button onclick="deleteNotice('${n.id}', '${n.title.replace(/'/g,"\\'")}')"
+                                class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors" title="삭제">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>`;
+            lucide.createIcons();
+        }
+
+        // ── 공지사항 수정 모달 ─────────────────────────────────
+        function openNoticeEditModal(id, title, type) {
+            document.getElementById('notice-edit-id').value    = id;
+            document.getElementById('notice-edit-title').value = title;
+            document.getElementById('notice-edit-type').value  = type;
+            const modal = document.getElementById('notice-edit-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeNoticeEditModal() {
+            document.getElementById('notice-edit-modal').classList.add('hidden');
+            document.getElementById('notice-edit-modal').classList.remove('flex');
+        }
+
+        async function saveNoticeEdit() {
+            const id    = document.getElementById('notice-edit-id').value;
+            const title = document.getElementById('notice-edit-title').value.trim();
+            const type  = document.getElementById('notice-edit-type').value;
+            if (!title) { showToast('제목을 입력해주세요.', 'error'); return; }
+
+            const btn = document.getElementById('notice-save-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>저장 중...</span>';
+            lucide.createIcons();
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ type: 'updateNotice', id, title, noticeType: type })
+                });
+                const idx = allNotices.findIndex(n => n.id === id);
+                if (idx !== -1) { allNotices[idx].title = title; allNotices[idx].type = type; }
+                renderNoticesList();
+                closeNoticeEditModal();
+                showToast('공지사항이 수정되었습니다! ✅');
+            } catch(e) {
+                showToast('수정 오류: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i><span>저장</span>';
+                lucide.createIcons();
+            }
+        }
+
+        // ── 공지사항 삭제 ──────────────────────────────────────
+        async function deleteNotice(id, title) {
+            if (!confirm(`"${title}" 공지사항을 삭제할까요?`)) return;
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ type: 'deleteNotice', id })
+                });
+                allNotices = allNotices.filter(n => n.id !== id);
+                renderNoticesList();
+                const cur = parseInt(document.getElementById('stat-notices').textContent) || 1;
+                document.getElementById('stat-notices').textContent = Math.max(0, cur - 1);
+                showToast('공지사항이 삭제되었습니다.');
+            } catch(e) {
+                showToast('삭제 오류: ' + e.message, 'error');
             }
         }
 

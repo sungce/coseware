@@ -169,6 +169,22 @@ function doPost(e) {
       return jsonResponse({ result: 'success' });
     }
 
+    // 공지사항 수정
+    if (type === 'updateNotice') {
+      const sheet = ss.getSheetByName(SHEET_NOTICES);
+      if (sheet) {
+        const rows = sheet.getDataRange().getValues();
+        for (let i = 1; i < rows.length; i++) {
+          if (String(rows[i][0]) === String(data.id)) {
+            sheet.getRange(i + 1, 2).setValue(data.noticeType || 'normal');
+            sheet.getRange(i + 1, 3).setValue(data.title || '');
+            break;
+          }
+        }
+      }
+      return jsonResponse({ result: 'success' });
+    }
+
     // 공지사항 저장
     if (type === 'notice') {
       let sheet = ss.getSheetByName(SHEET_NOTICES);
