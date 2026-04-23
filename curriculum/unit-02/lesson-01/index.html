@@ -1,1 +1,424 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>II-1. 디지털 형태의 데이터 — 정보 교과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#F5F4F0;color:#1C1C1C;font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+:root{--u:#1B9E72;--udk:#0F6B4C;--ult:#E2F5EE;--umd:#A8DFC8;--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--green:#2A720E;--gbg:#E8F3DC;--amber:#7A4E0A;--abg:#FAF0DC;--red:#8C1E0E;--rbg:#FAEBE6;--blue:#0A4E8C;--bbg:#E4F0FA;--rLG:14px;--rSM:8px;--SW:240px;--TH:52px}
+.sb{width:var(--SW);background:var(--sf);border-right:1px solid var(--br);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.sb-top{padding:16px 14px 12px;border-bottom:1px solid var(--br)}.uchip{display:inline-flex;align-items:center;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.sb-top h2{font-size:12px;font-weight:700;line-height:1.4}.smeta{font-size:10px;color:var(--lt);margin-top:3px}
+.sb-nav{padding:4px 0;flex:1}.nlbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);padding:7px 13px 3px}
+.na{display:flex;align-items:center;gap:8px;padding:7px 13px;font-size:11px;color:var(--mt);text-decoration:none;border-left:2.5px solid transparent;transition:background .12s}
+.na:hover{background:var(--bg);color:var(--tx)}.na.on{color:var(--u);font-weight:600;background:var(--ult);border-left-color:var(--u)}.na.done .nn{background:var(--gbg);color:var(--green)}
+.nn{width:18px;height:18px;border-radius:50%;background:var(--br);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--mt)}.na.on .nn{background:var(--u);color:#fff}
+.nbadge{margin-left:auto;font-size:9px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:1px 5px;border-radius:10px;white-space:nowrap}
+.sb-foot{padding:10px 13px;border-top:1px solid var(--br)}.ba{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt);text-decoration:none;padding:5px 9px;border-radius:var(--rSM);border:1px solid var(--br);background:var(--sf);transition:all .12s}.ba:hover{background:var(--bg)}
+.main{margin-left:var(--SW);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:var(--TH);padding:0 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mt);flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}.bcsep{color:var(--br)}.tbr{display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s;white-space:nowrap}.btn:hover{background:var(--bg)}.bsm{padding:5px 9px;font-size:11px}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}.bok{background:var(--green);color:#fff;border-color:var(--green)}
+.page{padding:20px 22px;flex:1}.g2{display:grid;grid-template-columns:1fr minmax(0,248px);gap:16px;align-items:start}.cm{min-width:0}.ca{position:sticky;top:calc(var(--TH)+12px)}
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
+.ch{display:flex;align-items:center;gap:9px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--br);transition:background .12s;user-select:none}.ch:hover{background:var(--bg)}
+.sn{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}.ch h3{font-size:13px;font-weight:600;flex:1}
+.st{font-size:10px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:2px 7px;border-radius:20px;white-space:nowrap}.carr{font-size:11px;color:var(--lt);transition:transform .2s}.card.collapsed .carr{transform:rotate(-90deg)}.cb{padding:18px}.card.collapsed .cb{display:none}
+.ach{background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:10px 13px;margin-bottom:14px}.ach-c{font-family:monospace;font-size:11px;font-weight:700;color:var(--u);margin-bottom:3px}.ach-t{font-size:13px;line-height:1.6}
+.glist{list-style:none}.glist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid var(--br);line-height:1.6}.glist li:last-child{border-bottom:none}.gck{width:17px;height:17px;border-radius:50%;background:var(--gbg);color:var(--green);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.ctag{font-size:11px;padding:3px 10px;background:var(--bg);border:1px solid var(--br);border-radius:20px;cursor:pointer;color:var(--mt);transition:all .12s}.ctag:hover{background:var(--ult);border-color:var(--umd);color:var(--u)}
+.ibox{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6;margin-top:10px}.prev{background:var(--bg);border:1px solid var(--br);color:var(--mt)}.warn{background:#FFFBEC;border:1px solid #EDD070;color:#6A5000}.info{background:var(--bbg);border:1px solid #BACED8;color:var(--blue)}.ok{background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}
+.divl{height:1px;background:var(--br);margin:13px 0}
+.crow{display:grid;grid-template-columns:1fr minmax(0,148px);gap:13px;align-items:start;margin-bottom:13px}
+.ct h4{font-size:13px;font-weight:700;margin-bottom:7px}.ct p{font-size:13px;color:var(--mt);line-height:1.75}.ct ul{padding-left:1rem;margin-top:5px}.ct ul li{font-size:13px;color:var(--mt);margin-bottom:3px;line-height:1.6}
+.cvis{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);display:flex;align-items:center;justify-content:center;padding:8px}
+/* ── 수행활동 카드 ── */
+.activity{background:linear-gradient(135deg,var(--ult),#EDFFF6);border:2px solid var(--umd);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
+.act-head{display:flex;align-items:center;gap:9px;padding:12px 16px;border-bottom:1.5px solid var(--umd);background:var(--ult);cursor:pointer;user-select:none}.act-head:hover{background:#D0EEE3}
+.act-badge{background:var(--u);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}.act-head h3{font-size:13px;font-weight:700;color:var(--udk);flex:1}.act-body{padding:18px}
+.act-step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--br);border-radius:var(--rSM);margin-bottom:8px;min-height:160px;}
+.act-num{width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;flex:none;margin-top:1px}
+.act-step h4{font-size:12px;font-weight:700;margin-bottom:4px}.act-step p{font-size:12px;color:var(--mt);line-height:1.65}
+.act-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.act-table th{background:var(--u);color:#fff;padding:7px 10px;font-weight:600;font-size:11px;text-align:left}
+.act-table td{padding:8px 10px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.55}
+.act-table tr:last-child td{border-bottom:none}
+.act-input{width:100%;padding:8px 10px;border:1.5px solid var(--br);border-radius:var(--rSM);font-size:12px;font-family:inherit;background:var(--sf);outline:none;resize:vertical;min-height:88px;margin-top:4px}
+.act-input:focus{border-color:var(--u)}
+/* ── quiz ── */
+.qwrap{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-top:13px}.qq{font-size:14px;font-weight:500;margin-bottom:11px;line-height:1.55}.qopts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);cursor:pointer;font-size:13px;line-height:1.5;transition:all .12s}.opt:hover{border-color:var(--u);background:var(--ult)}.opt.correct{border-color:#4A9020;background:var(--gbg);color:#1A5000;pointer-events:none}.opt.wrong{border-color:#B03020;background:var(--rbg);color:#6A1000;pointer-events:none}.opt.locked{pointer-events:none;opacity:.55}
+.onum{width:21px;height:21px;border-radius:50%;background:var(--br);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.opt.correct .onum{background:#4A9020;color:#fff}.opt.wrong .onum{background:#B03020;color:#fff}
+.qfb{display:none;margin-top:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6}.qfb.ok{display:block;background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}.qfb.err{display:block;background:var(--rbg);border:1px solid #F0B8A0;color:var(--red)}
+/* ── assess ── */
+.rub{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}.rub th{background:var(--bg);padding:7px 8px;font-weight:600;border-bottom:1.5px solid var(--br);text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--mt)}.rub td{padding:8px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.5}.rub tr:last-child td{border-bottom:none}
+.lv4{color:#1A6000!important;font-weight:500}.lv3{color:#2A6830!important}.lv2{color:#7A4E00!important}.lv1{color:#8A2000!important}
+.peer-check{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}.peer-check th{background:var(--ult);padding:6px 9px;font-weight:600;border-bottom:1.5px solid var(--umd);text-align:center;color:var(--u);font-size:10px}.peer-check td{padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt);text-align:center}.peer-check td:first-child{text-align:left;font-size:11px}.peer-check input[type=radio]{accent-color:var(--u)}
+/* ── sidebar widgets ── */
+.ap{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:13px;margin-bottom:10px}.ap h5{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lt);margin-bottom:8px}
+.slist{display:flex;flex-direction:column;gap:3px}.si{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rSM);font-size:11px;color:var(--mt);cursor:pointer;transition:background .12s}.si:hover{background:var(--bg)}
+.dot{width:19px;height:19px;border-radius:50%;background:var(--br);color:var(--lt);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.dot.sa{background:var(--u);color:#fff}.dot.sd{background:var(--gbg);color:var(--green)}
+.sclist{display:flex;flex-direction:column;gap:4px}.scitem{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg);border-radius:var(--rSM);font-size:12px;border:1px solid var(--br)}.scitem label{flex:1;line-height:1.5}.scitem select{font-size:11px;padding:3px 6px;border:1px solid var(--br);border-radius:5px;background:var(--sf);font-family:inherit;color:var(--tx);cursor:pointer;flex-shrink:0}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.scard{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px 12px;font-size:12px;line-height:1.65;color:var(--mt)}.scard strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--lt);margin-bottom:4px}.termlist{display:flex;flex-direction:column}.tterm{display:flex;align-items:baseline;gap:5px;padding:4px 0;font-size:11px;border-bottom:1px solid var(--br)}.tterm:last-child{border-bottom:none}.tw{font-weight:600;color:var(--u);white-space:nowrap}.tdef{color:var(--mt)}
+.pbtrack{height:5px;background:var(--umd);border-radius:3px;overflow:hidden}.pbfill{height:100%;background:var(--u);border-radius:3px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1C1C1C;color:#fff;padding:9px 18px;border-radius:10px;font-size:12px;font-family:inherit;z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+/* ══ 반응형 레이아웃 ══ */
+*,*::before,*::after{box-sizing:border-box}
+img,canvas,video{max-width:100%;height:auto;display:block}
+table{width:100%;border-collapse:collapse}
+.act-table,.peer-check,.rub{table-layout:fixed;word-break:break-word}
+.act-table td,.act-table th,
+.rub td,.rub th,
+.peer-check td,.peer-check th{min-width:44px;word-break:break-word;overflow-wrap:break-word}
+.act-step>div:not(.act-num){min-width:0;flex:1;overflow-wrap:break-word;word-break:break-word}
+.act-body,.cb{overflow-x:hidden}
+.act-input{width:100%;box-sizing:border-box}
+.mb-workspace,.mb-row,.mb-indent,.mb-indent2{flex-wrap:wrap}
+.sim-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 1100px 이하 */
+@media(max-width:1100px){
+  .g2{grid-template-columns:1fr}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 220px;min-width:180px}
+  .crow{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr 1fr}
+}
+
+/* 900px 이하 */
+@media(max-width:900px){
+  .ca{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .ca .ap{flex:1 1 180px;min-width:160px}
+  .page{padding:16px 14px}
+  .cb,.act-body{padding:13px}
+  .sgrid{grid-template-columns:1fr 1fr}
+  .crow{grid-template-columns:1fr}
+}
+
+/* 640px 이하 */
+@media(max-width:640px){
+  .page{padding:11px 10px}
+  .cb,.act-body{padding:10px}
+  .sgrid{grid-template-columns:1fr}
+  .act-step{flex-direction:column;gap:5px}
+  .act-num{margin-bottom:0}
+  .ch h3{font-size:12px}
+  .btn{font-size:11px;padding:5px 8px}
+  .act-table td,.act-table th{padding:5px 6px;font-size:11px}
+  .rub td,.rub th{padding:5px 6px;font-size:11px}
+  .peer-check td,.peer-check th{padding:5px 6px;font-size:10px}
+  .scard{font-size:11px}
+  .opt{font-size:12px;padding:8px 10px}
+  .mb,.mb-hole{font-size:10px;padding:4px 7px}
+}
+
+/* 480px 이하 */
+@media(max-width:480px){
+  :root{--SW:0px}
+  .sb{display:none}
+  .main{margin-left:0}
+  .topbar{padding:0 10px}
+  .page{padding:8px 9px}
+  .cb,.act-body{padding:9px}
+  .tbr .btn:last-child{display:none}
+  .sgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-top"><div class="uchip">◈ Unit II</div><h2>데이터</h2><div class="smeta">중단원1: 데이터의 표현 · p.45~47</div></div>
+  <nav class="sb-nav"><div class="nlbl">소단원 목록</div><a class="na on" href="../lesson-01/index.html"><div class="nn">1</div>디지털 형태의 데이터<span class="nbadge">2차시</span></a>
+<a class="na " href="../lesson-02/index.html"><div class="nn">2</div>다양한 데이터의 디지털 표현</a>
+<a class="na " href="../lesson-03/index.html"><div class="nn">3</div>데이터의 수집과 관리</a>
+<a class="na " href="../lesson-04/index.html"><div class="nn">4</div>데이터의 구조화와 분석</a>
+<a class="na " href="../lesson-05/index.html"><div class="nn">5</div>인기 공유 동영상 데이터 분석</a>
+<a class="na " href="../lesson-06/index.html"><div class="nn">6</div>급식 잔반 데이터 분석</a>
+</nav>
+  <div class="sb-foot"><a class="ba" href="https://sungce.github.io/lesson/">← 정보 교과 학습 플랫폼</a></div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div class="bc"><a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a><span class="bcsep">›</span><a href="../../index.html">II. 데이터</a><span class="bcsep">›</span><span style="color:var(--tx);font-weight:500">1. 디지털 형태의 데이터</span></div>
+    <div class="tbr">
+      <button class="btn bsm" onclick="toast('✅ 완료 표시!');postToSheets({type:'done',userName:getUserName(),unit:'II',lessonNum:'1',lessonName:'데이터 1단원'})">✓ 완료 표시</button>
+      <a class="btn bsm bp" href="../lesson-02/index.html">다음 소단원 →</a>
+    </div>
+  </header>
+  <div class="page"><div class="g2"><div class="cm">
+
+<div class="card" id="sec-goal">
+  <div class="ch" onclick="toggleSec('sec-goal')"><div class="sn" style="background:var(--ult);color:var(--u)">01</div><h3>학습목표</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="ach"><div class="ach-c">[9정02-01] 데이터의 표현</div><div class="ach-t">디지털 형태의 데이터가 갖는 특징과 장점을 설명하고, 실생활 데이터가 디지털로 활용될 때의 긍정적 가치를 탐색할 수 있다. (pp.45~47)</div></div>
+    <ul class="glist">
+      <li><div class="gck">✓</div>생활 속 데이터의 유형(문자·숫자·이미지·소리·동영상)을 설명할 수 있다.</li>
+      <li><div class="gck">✓</div>아날로그와 디지털의 차이를 설명할 수 있다.</li>
+      <li><div class="gck">✓</div>디지털 데이터의 저장·가공·전송 특징과 장점을 분석할 수 있다.</li>
+    </ul>
+    <div class="divl"></div>
+    <div class="ctags">
+      <span class="ctag" onclick="goTo('sec-concept')">데이터</span>
+      <span class="ctag" onclick="goTo('sec-concept')">디지털</span>
+      <span class="ctag" onclick="goTo('sec-concept')">아날로그</span>
+      <span class="ctag" onclick="goTo('sec-concept')">저장·가공·전송</span>
+    </div>
+    <div class="ibox prev">📌 <b>II단원 시작:</b> 우리는 매일 문자·사진·음악·동영상을 주고받습니다. 이 모든 것이 디지털 데이터입니다. 이 단원에서 데이터의 표현과 분석을 탐구합니다.</div>
+  </div>
+</div>
+
+<div class="card" id="sec-concept">
+  <div class="ch" onclick="toggleSec('sec-concept')"><div class="sn" style="background:var(--gbg);color:var(--green)">02</div><h3>개념설명</h3><span class="st">⏱ 20분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">① 생활 속 데이터의 유형</h4>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:13px">
+      <div style="text-align:center;padding:10px 6px;background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM)"><div style="font-size:20px;margin-bottom:4px">📝</div><div style="font-size:10px;font-weight:700;color:var(--u)">문자·숫자</div><div style="font-size:9px;color:var(--mt);margin-top:2px">한글, 영문자, 기호, 가격, 점수</div></div>
+      <div style="text-align:center;padding:10px 6px;background:var(--bbg);border:1px solid #BACED8;border-radius:var(--rSM)"><div style="font-size:20px;margin-bottom:4px">🖼️</div><div style="font-size:10px;font-weight:700;color:var(--blue)">이미지</div><div style="font-size:9px;color:var(--mt);margin-top:2px">사진, 그림, 만화</div></div>
+      <div style="text-align:center;padding:10px 6px;background:var(--abg);border:1px solid #EDD070;border-radius:var(--rSM)"><div style="font-size:20px;margin-bottom:4px">🎵</div><div style="font-size:10px;font-weight:700;color:var(--amber)">소리</div><div style="font-size:9px;color:var(--mt);margin-top:2px">음악, 안내 방송</div></div>
+      <div style="text-align:center;padding:10px 6px;background:var(--gbg);border:1px solid #BFDFAA;border-radius:var(--rSM)"><div style="font-size:20px;margin-bottom:4px">🎬</div><div style="font-size:10px;font-weight:700;color:var(--green)">동영상</div><div style="font-size:9px;color:var(--mt);margin-top:2px">영화, 드라마</div></div>
+      <div style="text-align:center;padding:10px 6px;background:var(--rbg);border:1px solid #F0B8A0;border-radius:var(--rSM)"><div style="font-size:20px;margin-bottom:4px">📊</div><div style="font-size:10px;font-weight:700;color:var(--red)">측정값</div><div style="font-size:9px;color:var(--mt);margin-top:2px">관찰·측정으로 얻는 값</div></div>
+    </div>
+    <div class="divl"></div>
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">② 아날로그 vs 디지털</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px">
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:6px">📟 아날로그(Analog)</div>
+        <div style="font-size:12px;color:var(--mt);line-height:1.75">데이터를 <b>연속적인 신호</b>로 나타내는 것<br>예: 수은 온도계의 연속적인 눈금</div>
+      </div>
+      <div style="background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:6px">💻 디지털(Digital)</div>
+        <div style="font-size:12px;color:var(--mt);line-height:1.75">데이터를 <b>불연속적인 숫자(0과 1)</b>로 명확하게 표현<br>예: 디지털 온도계의 숫자 표시</div>
+      </div>
+    </div>
+    <div class="divl"></div>
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">③ 디지털 데이터의 특징과 장점</h4>
+    <div style="overflow-x:auto;margin-bottom:12px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="background:var(--u)"><th style="padding:8px 10px;color:#fff;font-size:11px">특징</th><th style="padding:8px 10px;color:#fff;font-size:11px">설명</th><th style="padding:8px 10px;color:#fff;font-size:11px">장점</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:8px 10px;border-bottom:1px solid var(--br);font-weight:600;color:var(--u)">💾 저장</td><td style="padding:8px 10px;border-bottom:1px solid var(--br);color:var(--mt)">분량이 늘어도 부피·무게 증가 없음</td><td style="padding:8px 10px;border-bottom:1px solid var(--br);color:var(--mt)">다양한 형태의 많은 데이터를 효율적으로 저장</td></tr>
+          <tr><td style="padding:8px 10px;border-bottom:1px solid var(--br);font-weight:600;color:var(--u)">⚙️ 가공</td><td style="padding:8px 10px;border-bottom:1px solid var(--br);color:var(--mt)">검색·수정·분석이 쉬움</td><td style="padding:8px 10px;border-bottom:1px solid var(--br);color:var(--mt)">다양한 분야 데이터를 가공하여 유용한 정보 획득</td></tr>
+          <tr><td style="padding:8px 10px;font-weight:600;color:var(--u)">📡 전송</td><td style="padding:8px 10px;color:var(--mt)">전송 시 손실 거의 없고 빠름</td><td style="padding:8px 10px;color:var(--mt)">디지털 기기 간 호환·공유가 쉬움</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ibox warn">⚠️ <b>디지털의 단점:</b> 아날로그→디지털 변환 시 완전한 복원 불가 / 배터리 방전·전기 없으면 이용 불가</div>
+    <div class="ibox info">📖 <b>교과서 연계:</b> pp.45~47 / 버스 안의 다양한 데이터 유형 → 디지털 특징·장점 비교</div>
+  </div>
+</div>
+
+<!-- ★ 수행 활동 ★ -->
+<div class="activity" id="sec-activity">
+  <div class="act-head" onclick="toggleSec('act-body-01')">
+    <span class="act-badge">★ 수행 활동</span>
+    <h3>디지털 데이터의 가치 탐색해 보기</h3>
+    <span style="font-size:10px;color:var(--udk);margin-left:auto">모둠 활동 | pp.47</span>
+    <span class="carr" style="color:var(--udk)">▾</span>
+  </div>
+  <div id="act-body-01" class="act-body">
+    <div class="ibox ok" style="margin-top:0;margin-bottom:14px">💡 디지털 데이터를 사용할 수 없다면 어떻게 될지 비교하고, 아날로그→디지털 변화 사례를 탐색해봅니다. (교과서 p.47 해보기)</div>
+    <div class="act-step">
+      <div class="act-num">1</div>
+      <div><h4>디지털 vs 비디지털 비교 토의</h4>
+        <p>디지털 데이터를 사용하지 못할 때 동일한 일을 하려면 어떻게 해야 할지, 그 차이점을 작성해보세요.</p>
+        <div style="overflow-x:auto">
+          <table class="act-table">
+            <thead><tr><th>상황</th><th>디지털 데이터를 이용하는 모습</th><th>디지털 데이터를 이용할 수 없을 때</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:600;color:var(--u)">버스 이용할 때</td>
+                <td style="font-size:11px;color:var(--lt)">예) 교통 카드, 스마트폰 앱으로 위치 확인</td>
+                <td><input class="act-input" style="min-height:88px" placeholder="디지털 없으면 어떻게 할까요?"></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;color:var(--u)">교실에서 수업할 때</td>
+                <td style="font-size:11px;color:var(--lt)">예) 태블릿 스마트TV 연결, 온라인 토론</td>
+                <td><input class="act-input" style="min-height:88px" placeholder="디지털 없으면 어떻게 할까요?"></td>
+              </tr>
+              <tr>
+                <td><input class="act-input" style="min-height:44px;resize:none" placeholder="직접 상황 입력..."></td>
+                <td><input class="act-input" style="min-height:88px" placeholder="디지털 이용 모습"></td>
+                <td><input class="act-input" style="min-height:88px" placeholder="디지털 없으면?"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="act-step">
+      <div class="act-num">2</div>
+      <div><h4>아날로그 → 디지털 변화 사례 탐구</h4>
+        <p>과거에 아날로그 방식이었지만 현재 디지털로 변화된 것을 찾아 특징과 가치를 정리하세요.</p>
+        <div style="background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:11px;margin-bottom:10px;font-size:12px;color:var(--mt)">
+          <b>예시:</b> 편지(아날로그) → 전자 우편(디지털)<br>
+          • 아날로그: 종이에 손으로 쓰고 우표 붙여 우체통에 넣음, 며칠 소요<br>
+          • 디지털: 키보드 입력 후 전송, 사진·문서 등 다양한 데이터 전송 가능, 즉시 전달<br>
+          • 얻을 수 있는 가치: 시간과 비용 절약, 다양한 형식의 데이터 공유 가능
+        </div>
+        <div style="overflow-x:auto">
+          <table class="act-table">
+            <thead><tr><th>아날로그 방식</th><th>디지털 방식</th><th>디지털 사용으로 얻을 수 있는 가치</th></tr></thead>
+            <tbody>
+              <tr><td><input class="act-input" style="min-height:88px" placeholder="아날로그 방식 예)"></td><td><input class="act-input" style="min-height:88px" placeholder="디지털 방식 예)"></td><td><input class="act-input" style="min-height:88px" placeholder="얻을 수 있는 가치는?"></td></tr>
+              <tr><td><input class="act-input" style="min-height:88px" placeholder="아날로그 방식 예)"></td><td><input class="act-input" style="min-height:88px" placeholder="디지털 방식 예)"></td><td><input class="act-input" style="min-height:88px" placeholder="얻을 수 있는 가치는?"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="act-step">
+      <div class="act-num">3</div>
+      <div><h4>디지털 데이터 가치 시뮬레이터</h4>
+        <p>아래 카드를 클릭하여 각 특징이 우리 생활에 어떤 가치를 만드는지 확인해보세요.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px" id="value-cards">
+          <div onclick="showValue('저장')" style="background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);padding:12px;text-align:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--u)'" onmouseout="this.style.borderColor='var(--br)'"><div style="font-size:24px;margin-bottom:5px">💾</div><div style="font-size:11px;font-weight:700">저장</div></div>
+          <div onclick="showValue('가공')" style="background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);padding:12px;text-align:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--u)'" onmouseout="this.style.borderColor='var(--br)'"><div style="font-size:24px;margin-bottom:5px">⚙️</div><div style="font-size:11px;font-weight:700">가공</div></div>
+          <div onclick="showValue('전송')" style="background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);padding:12px;text-align:center;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--u)'" onmouseout="this.style.borderColor='var(--br)'"><div style="font-size:24px;margin-bottom:5px">📡</div><div style="font-size:11px;font-weight:700">전송</div></div>
+        </div>
+        <div id="value-desc" style="background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:12px;margin-top:9px;font-size:12px;color:var(--udk);min-height:52px">카드를 클릭하면 설명이 나타납니다</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn bsm bp" onclick="saveActivity('l201_act')">💾 활동 저장</button>
+      <button class="btn bsm" onclick="toast('모둠원과 발표해봅시다!')">🗣️ 모둠 발표</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" id="sec-assess">
+  <div class="ch" onclick="toggleSec('sec-assess')"><div class="sn" style="background:var(--bbg);color:var(--blue)">04</div><h3>수행평가</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;margin-bottom:12px;border-left:3px solid var(--u)">
+      <h4 style="font-size:13px;font-weight:700;color:var(--u);margin-bottom:7px">📋 디지털 데이터의 가치 분석 보고서</h4>
+      <p style="font-size:13px;color:var(--mt)">우리 생활에서 아날로그에서 디지털로 변화한 사례 2가지를 분석하고, 디지털 데이터의 저장·가공·전송 특징과 연결하여 그 가치를 서술하시오.</p>
+    </div>
+    <table class="rub"><thead><tr><th>평가 요소</th><th class="lv4">매우 잘함(4)</th><th class="lv3">잘함(3)</th><th class="lv2">보통(2)</th><th class="lv1">노력 필요(1)</th></tr></thead><tbody><tr><td><b>사례 선정</b></td><td class="lv4">적절한 사례 2개+특징 연결</td><td class="lv3">1개 연결</td><td class="lv2">사례만 나열</td><td class="lv1">없음</td></tr><tr><td><b>가치 서술</b></td><td class="lv4">저장·가공·전송 3가지 연결</td><td class="lv3">2가지 연결</td><td class="lv2">1가지</td><td class="lv1">없음</td></tr></tbody></table>
+    <div class="sclist"><div class="scitem"><label>생활 속 데이터 유형 5가지를 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>아날로그와 디지털의 차이를 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>디지털 데이터의 저장·가공·전송 특징과 장점을 분석할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div></div>
+    <button class="btn bsm bok" style="margin-top:10px" onclick="saveSC('l201sc')">💾 저장</button>
+  </div>
+</div>
+
+<div class="card" id="sec-review">
+  <div class="ch" onclick="toggleSec('sec-review')"><div class="sn" style="background:var(--gbg);color:var(--green)">05</div><h3>확인하기</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="sgrid">
+      <div class="scard"><strong>데이터 5유형</strong>문자·숫자·이미지·소리·동영상. 관찰·측정으로 얻는 값.</div>
+      <div class="scard"><strong>아날로그 vs 디지털</strong>연속적 vs 불연속(0과 1). 디지털=명확한 숫자 표현.</div>
+      <div class="scard"><strong>디지털 3특징</strong>저장(효율적)·가공(검색·분석)·전송(빠르고 호환).</div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;margin-bottom:12px"><b>✏️ 단답형:</b> 디지털 데이터에서 데이터를 검색·수정·분석하기 쉬워 다양한 분야의 데이터를 처리하여 유용한 정보를 얻을 수 있는 특징을 <span style="display:inline-block;width:40px;border-bottom:1.5px solid var(--tx)">&nbsp;</span>(이)라고 한다.<textarea style="display:block;width:100%;margin-top:9px;padding:9px;border:1px solid var(--br);border-radius:var(--rSM);font-size:13px;font-family:inherit;resize:vertical;min-height:48px;background:var(--sf)" placeholder="정답을 입력하세요..."></textarea></div>
+    <div class="qwrap"><div class="qq">디지털 데이터의 특징에 대한 설명으로 옳지 않은 것은?</div><div class="qopts"><div class="opt" onclick="checkQ(this,false,'저장 분량이 늘어나도 부피와 무게가 증가하지 않는 것은 디지털의 저장 특징입니다.')"><span class="onum">①</span>분량이 늘어나도 부피나 무게가 증가하지 않는다.</div><div class="opt" onclick="checkQ(this,false,'빠르고 효율적으로 전송되는 것은 디지털 전송 특징입니다.')"><span class="onum">②</span>전송 시 손실이 거의 없고 빠르게 전송된다.</div><div class="opt" onclick="checkQ(this,true,'검색·수정·분석이 쉬운 것은 디지털 데이터의 가공 특징입니다. "어렵다"는 설명은 틀렸습니다.')"><span class="onum">③</span>컴퓨터 시스템에서 검색, 수정, 분석하기 어렵다.</div><div class="opt" onclick="checkQ(this,false,'디지털 기기 간 호환성이 좋은 것은 디지털 전송의 장점입니다.')"><span class="onum">④</span>디지털 기기 간 호환이 잘 되고 공유가 쉽다.</div></div><div class="qfb"></div></div>
+    <div class="ibox ok">📖 <div><strong>다음 차시 예고:</strong> 문자·이미지·소리·동영상 데이터를 <strong>이진수로 표현하는 방법</strong>을 탐구합니다! (pp.48~54)</div></div>
+  </div>
+</div>
+
+  </div>
+  <div class="ca">
+    <div class="ap"><h5>학습 진행</h5><div class="slist">
+      <div class="si" onclick="goTo('sec-goal')"><div class="dot sd">1</div>학습목표</div>
+      <div class="si" onclick="goTo('sec-concept')"><div class="dot">2</div>개념설명</div>
+      <div class="si" onclick="goTo('sec-activity')"><div class="dot sa">★</div>수행 활동</div>
+      <div class="si" onclick="goTo('sec-assess')"><div class="dot">4</div>수행평가</div>
+      <div class="si" onclick="goTo('sec-review')"><div class="dot">5</div>확인하기</div>
+    </div></div>
+    <div class="ap" style="background:var(--ult);border-color:var(--umd)"><h5 style="color:var(--u)">단원 진도</h5>
+      <div style="display:flex;align-items:center;gap:7px"><div class="pbtrack" style="flex:1"><div class="pbfill" style="width:15%"></div></div><span style="font-size:11px;font-weight:600;color:var(--u)">1/6</span></div>
+    </div>
+    <div class="ap"><h5>핵심 용어</h5><div class="termlist"><div class="tterm"><span class="tw">데이터</span><span class="tdef">관찰·측정으로 얻는 값</span></div><div class="tterm"><span class="tw">아날로그</span><span class="tdef">연속적 신호</span></div><div class="tterm"><span class="tw">디지털</span><span class="tdef">불연속적 숫자(0,1)</span></div><div class="tterm"><span class="tw">저장</span><span class="tdef">부피·무게 증가 없음</span></div><div class="tterm"><span class="tw">가공</span><span class="tdef">검색·수정·분석 용이</span></div><div class="tterm"><span class="tw">전송</span><span class="tdef">손실 없고 빠름</span></div></div></div>
+    <div class="ap" style="background:#F0FDF4;border-color:#BBF7D0">
+      <h5 style="color:#166534">🔗 데이터 도구</h5>
+      <a href="https://codap.concord.org" target="_blank" class="btn bsm" style="width:100%;justify-content:center;background:var(--u);color:#fff;border-color:var(--udk);margin-bottom:5px">코답(CODAP) 열기 ↗</a>
+      <a href="https://kosis.kr" target="_blank" class="btn bsm" style="width:100%;justify-content:center;font-size:10px;color:var(--mt)">국가통계포털 ↗</a>
+    </div>
+  </div>
+  </div></div>
+</main>
+<div id="toast"></div>
+<script>
+
+  // ── Google Sheets 저장 ──────────────────────────────────
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+
+  function getUserName() {
+    return localStorage.getItem('user_name') || '익명';
+  }
+
+  function postToSheets(payload) {
+    if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) return;
+    fetch(GS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},2400);}
+function toggleSec(id){var e=document.getElementById(id);if(e)e.classList.toggle('collapsed');}
+function goTo(id){var e=document.getElementById(id);if(!e)return;window.scrollTo({top:e.getBoundingClientRect().top+window.pageYOffset-64,behavior:'smooth'});}
+function checkQ(el,ok,msg){el.closest('.qopts').querySelectorAll('.opt').forEach(function(o){o.classList.add('locked');});el.classList.add(ok?'correct':'wrong');var fb=el.closest('.qwrap').querySelector('.qfb');if(fb){fb.className='qfb '+(ok?'ok':'err');fb.innerHTML=(ok?'✓ 정답: ':'✗ 힌트: ')+msg;}}
+function saveSC(key){
+  var d={};
+  document.querySelectorAll('.scitem select').forEach(function(s,i){d['q'+i]=s.value;});
+  try{
+    localStorage.setItem(key,JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'sc',
+      userName: getUserName(),
+      lessonKey: 'l21',
+      lessonName: 'l21',
+      answers: d
+    });
+    toast('자기평가가 저장되었습니다 ✓');
+  }catch(e){}
+}
+function loadSC(key){try{var d=JSON.parse(localStorage.getItem(key)||'{}');document.querySelectorAll('.scitem select').forEach(function(s,i){if(d['q'+i])s.value=d['q'+i];});}catch(e){}}
+function saveActivity(key){
+  var d={};
+  document.querySelectorAll('.act-input').forEach(function(el,i){d['a'+i]=el.value;});
+  document.querySelectorAll('.peer-check input[type=radio]:checked').forEach(function(el){d['r_'+el.name]=el.value;});
+  try{
+    localStorage.setItem(key,JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'act',
+      userName: getUserName(),
+      lessonKey: 'l21',
+      lessonName: 'l21',
+      answers: d
+    });
+    toast('✅ 수행 활동이 저장되었습니다!');
+  }catch(e){}
+}
+function loadActivity(key){
+  try{
+    var d=JSON.parse(localStorage.getItem(key)||'{}');
+    document.querySelectorAll('.act-input').forEach(function(el,i){if(d['a'+i])el.value=d['a'+i];});
+    Object.keys(d).filter(function(k){return k.startsWith('r_');}).forEach(function(k){
+      var el=document.querySelector('input[type=radio][name="'+k.slice(2)+'"][value="'+d[k]+'"]');
+      if(el)el.checked=true;
+    });
+  }catch(e){}
+}
+
+
+var valueData = {
+  '저장': '💾 <b>저장 특징의 가치</b><br>① 스마트폰 한 대에 수만 장의 사진 저장 가능<br>② 음악 수천 곡을 작은 기기에 보관<br>③ 도서관의 모든 책을 디지털로 저장하면 서버 하나면 충분<br>→ 다양한 형태의 방대한 데이터를 효율적으로 보존·관리',
+  '가공': '⚙️ <b>가공 특징의 가치</b><br>① 수십만 건의 데이터에서 원하는 정보를 검색어 하나로 찾음<br>② 사진 편집 앱으로 수백 장 사진을 한 번에 보정<br>③ 의료 데이터를 분석하여 질병 조기 진단<br>→ 다양한 분야의 데이터를 분석하여 유용한 정보 창출',
+  '전송': '📡 <b>전송 특징의 가치</b><br>① 지구 반대편에 있는 사람과 화상 통화 (지연 거의 없음)<br>② 대용량 파일도 몇 초 만에 공유<br>③ 다양한 기기(폰·태블릿·PC) 간 자유로운 데이터 공유<br>→ 시간과 장소의 제한 없이 데이터를 실시간으로 공유',
+};
+function showValue(type) {
+  var d = document.getElementById('value-desc');
+  if(d) d.innerHTML = valueData[type] || '';
+}
+
+document.addEventListener('DOMContentLoaded',function(){loadSC('l201sc');loadActivity('l201sc_act');});
+</script>
+</body></html>
