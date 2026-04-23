@@ -1,1 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>II단원 수행활동 — 디지털 문자 변환 게임 & 데이터 분석</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--uc:#1B9E72;--ug:linear-gradient(90deg,#1B9E72,#4CAF88);--ul:#E2F5EE;--um:#A8DFC8;--bg:#F5F4F0;--sf:#fff;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--r:12px;--rs:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.65}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:52px;padding:0 24px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:90}
+.bc{font-size:12px;color:var(--mt);display:flex;align-items:center;gap:6px;flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rs);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s}.btn:hover{background:var(--bg)}.bp{background:var(--uc);color:#fff;border-color:var(--uc)}.bp:hover{background:#0F6B4C}
+.page{max-width:900px;margin:0 auto;padding:28px 24px}
+.act-header{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
+.act-header::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--ug)}
+.badge-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px}
+.act-header h1{font-size:22px;font-weight:700;margin-bottom:6px}
+.act-header p{font-size:13px;color:var(--mt);line-height:1.7}
+.skills-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.skill-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--br);background:var(--bg)}
+.sk-ct{color:#1565C0;background:#E3F2FD;border-color:#BBDEFB}.sk-dg{color:#1B5E20;background:#E8F5E9;border-color:#C8E6C9}.sk-ai{color:#4A148C;background:#F3E5F5;border-color:#E1BEE7}
 
+/* 활동 탭 */
+.act-tabs{display:flex;gap:0;border-bottom:2px solid var(--br);margin-bottom:20px}
+.act-tab{padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2.5px solid transparent;color:var(--mt);margin-bottom:-2px;transition:all .15s}
+.act-tab.active{color:var(--uc);border-bottom-color:var(--uc)}
+.act-panel{display:none}.act-panel.active{display:block}
+
+.step-section{margin-bottom:14px}
+.step-header{display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--sf);border:1px solid var(--br);border-radius:var(--r) var(--r) 0 0;cursor:pointer;user-select:none;transition:background .12s}
+.step-header:hover{background:var(--bg)}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--uc);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-header h3{font-size:14px;font-weight:700;flex:1}
+.step-arrow{font-size:12px;color:var(--lt);transition:transform .2s}
+.step-body{background:var(--sf);border:1px solid var(--br);border-top:none;border-radius:0 0 var(--r) var(--r);padding:20px 24px}
+.step-section.collapsed .step-body{display:none}
+.step-section.collapsed .step-arrow{transform:rotate(-90deg)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--mt);margin-bottom:6px}
+textarea,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--br);border-radius:var(--rs);font-size:13px;font-family:inherit;background:var(--sf);outline:none;resize:vertical;transition:border-color .15s}
+textarea{min-height:88px}textarea:focus,input:focus{border-color:var(--uc)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.tbl th{background:var(--uc);color:#fff;padding:9px 12px;font-weight:600;font-size:12px;text-align:left}
+.tbl td{padding:8px 12px;border-bottom:1px solid var(--br);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td textarea,.tbl td input[type=text]{min-height:52px;border:1px solid #e0ddd6;border-radius:4px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fafaf8}
+.eval-box{background:var(--ul);border:1.5px solid var(--um);border-radius:var(--r);padding:18px 22px;margin-top:8px}
+.eval-box h4{font-size:13px;font-weight:700;color:var(--uc);margin-bottom:12px}
+.eval-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--um)}
+.eval-item:last-child{border-bottom:none}
+.eval-label{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.el-know{background:#E3F2FD;color:#1565C0}.el-skill{background:#E8F5E9;color:#2E7D32}.el-val{background:#FFF3E0;color:#E65100}
+.eval-q{font-size:13px;color:var(--mt);flex:1;line-height:1.65}
+.star-row{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
+.star{font-size:18px;cursor:pointer;color:#D1CBC0;transition:color .1s}.star.on{color:#F59E0B}
+.save-row{display:flex;gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid var(--br);flex-wrap:wrap}
+.save-msg{font-size:12px;color:#2E7D32;display:none;align-items:center;gap:5px}
+.info-box{border-radius:var(--rs);padding:13px 16px;margin-bottom:14px;font-size:13px;line-height:1.8}
+.mono{font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* 문자 변환표 */
+.code-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px}
+.code-table th{background:#1B9E72;color:#fff;padding:6px 10px;text-align:center;font-size:10px;font-weight:700}
+.code-table td{padding:6px 10px;border:1px solid var(--br);text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px}
+.code-table tr:nth-child(even) td{background:#f5f5f0}
+
+/* 게임 UI */
+.game-box{background:#1a1a2e;border-radius:var(--r);padding:20px;margin-bottom:14px}
+.game-input{width:100%;padding:10px 14px;background:#2a2a3e;border:1.5px solid #444;border-radius:var(--rs);color:#a0f0c8;font-family:'JetBrains Mono',monospace;font-size:14px;outline:none;margin-bottom:10px}
+.game-input:focus{border-color:#1B9E72}
+.game-output{background:#111;border-radius:var(--rs);padding:14px;min-height:60px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#4AE994;line-height:1.9;word-break:break-all}
+.game-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gbtn{padding:7px 16px;border-radius:var(--rs);border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:opacity .15s}
+.gbtn:hover{opacity:.85}
+.gbtn-enc{background:#1B9E72;color:#fff}
+.gbtn-dec{background:#5B9EDE;color:#fff}
+.gbtn-clr{background:#444;color:#aaa}
+
+@media(max-width:640px){.grid2{grid-template-columns:1fr}.page{padding:16px 14px}.code-table{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="bc">
+    <a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a>
+    <span>›</span><a href="../unit-02/index.html">II. 데이터</a>
+    <span>›</span><span style="color:var(--tx);font-weight:500">과정중심 수행활동</span>
+  </div>
+  <a class="btn bsm bp" href="../unit-02/index.html">← 단원으로</a>
+</header>
+
+<div class="page">
+
+  <div class="act-header">
+    <div class="badge-row">
+      <span class="badge" style="background:var(--ul);color:var(--uc)">II. 데이터</span>
+      <span class="badge" style="background:#E8F5E9;color:#2E7D32">과정 중심의 수행활동</span>
+    </div>
+    <h1>II단원 수행활동</h1>
+    <p>디지털 문자 변환 게임(활동 1)과 데이터 분석·의미 해석(활동 2), 두 가지 수행활동을 수행합니다.</p>
+    <div class="skills-row">
+      <span class="skill-chip sk-ct">💡 컴퓨팅 사고력</span>
+      <span class="skill-chip sk-dg">🌐 디지털 문화 소양</span>
+      <span class="skill-chip sk-ai">🤖 인공지능 소양</span>
+    </div>
+  </div>
+
+  <!-- 탭 -->
+  <div class="act-tabs">
+    <div class="act-tab active" onclick="switchTab(1)">활동 1 — 디지털 문자 변환 게임</div>
+    <div class="act-tab" onclick="switchTab(2)">활동 2 — 데이터 분석과 의미 해석</div>
+  </div>
+
+  <!-- ─── 활동 1 ─── -->
+  <div class="act-panel active" id="panel1">
+
+    <div style="background:#E8F5E9;border:1.5px solid #A5D6A7;border-radius:var(--r);padding:16px 20px;margin-bottom:18px">
+      <div style="font-size:13px;font-weight:700;color:#2E7D32;margin-bottom:6px">🎮 활동 1 · 디지털 문자 변환 게임 <span style="background:#C8E6C9;padding:2px 9px;border-radius:20px;font-size:10px;margin-left:6px">모둠 활동</span></div>
+      <div style="font-size:12px;color:#1B5E20;line-height:1.7">모스 부호를 변형하여 만든 디지털 문자 변환표를 이용하여 단어를 이진수로 변환하고, 다시 문자로 변환하는 게임을 해봅니다.</div>
+    </div>
+
+    <!-- 문자 변환표 -->
+    <div class="step-section" id="a1s1">
+      <div class="step-header" onclick="toggleStep('a1s1')">
+        <div class="step-num">표</div>
+        <h3>디지털 문자 변환표</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body" style="overflow-x:auto">
+        <table class="code-table">
+          <tr>
+            <th>자음</th><th>이진수</th><th>자음</th><th>이진수</th>
+            <th>모음</th><th>이진수</th><th>모음</th><th>이진수</th>
+          </tr>
+          <tr><td>ㄱ</td><td>0100</td><td>ㅇ</td><td>101</td><td>ㅏ</td><td>0</td><td>ㅠ</td><td>010</td></tr>
+          <tr><td>ㄴ</td><td>0010</td><td>ㅈ</td><td>0110</td><td>ㅑ</td><td>00</td><td>ㅡ</td><td>100</td></tr>
+          <tr><td>ㄷ</td><td>1000</td><td>ㅊ</td><td>1010</td><td>ㅓ</td><td>1</td><td>ㅣ</td><td>001</td></tr>
+          <tr><td>ㄹ</td><td>0001</td><td>ㅋ</td><td>1001</td><td>ㅕ</td><td>000</td><td>ㅐ</td><td>1101</td></tr>
+          <tr><td>ㅁ</td><td>11</td><td>ㅌ</td><td>1100</td><td>ㅗ</td><td>01</td><td>ㅔ</td><td>1011</td></tr>
+          <tr><td>ㅂ</td><td>011</td><td>ㅍ</td><td>111</td><td>ㅛ</td><td>10</td><td></td><td></td></tr>
+          <tr><td>ㅅ</td><td>110</td><td>ㅎ</td><td>0111</td><td>ㅜ</td><td>0000</td><td></td><td></td></tr>
+        </table>
+        <div style="font-size:11px;color:var(--mt);margin-top:4px">※ 각 자모를 이진수로 변환하여 공백으로 구분합니다. 예) 파이팅 → ㅍ ㅏ ㅇ ㅣ ㅌ ㅣ ㅇ → 111 0 101 001 1100 001 101</div>
+      </div>
+    </div>
+
+    <!-- 게임 체험 -->
+    <div class="step-section" id="a1s2">
+      <div class="step-header" onclick="toggleStep('a1s2')">
+        <div class="step-num">🎮</div>
+        <h3>인터랙티브 변환기 체험</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <div class="game-box">
+          <div style="font-size:11px;color:#aaa;margin-bottom:8px">한글 단어 입력 → 이진수 변환 / 이진수 입력 → 한글 변환</div>
+          <input class="game-input" id="game-in" type="text" placeholder="단어 입력 (예: 파이팅) 또는 이진수 입력">
+          <div class="game-btns">
+            <button class="gbtn gbtn-enc" onclick="encodeHangul()">한글→이진수 변환</button>
+            <button class="gbtn gbtn-dec" onclick="decodeHangul()">이진수→한글 변환</button>
+            <button class="gbtn gbtn-clr" onclick="clearGame()">지우기</button>
+          </div>
+          <div style="font-size:10px;color:#666;margin-top:8px">결과</div>
+          <div class="game-output" id="game-out">변환 결과가 여기에 표시됩니다...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 활동 1 수행 기록 -->
+    <div class="step-section" id="a1s3">
+      <div class="step-header" onclick="toggleStep('a1s3')">
+        <div class="step-num">1</div>
+        <h3>단어 변환 게임 기록</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <p style="font-size:13px;color:var(--mt);margin-bottom:14px">4명이 한 팀이 되어 변환 게임을 진행하고 결과를 기록하세요.</p>
+        <table class="tbl">
+          <thead><tr><th>역할</th><th>담당자</th><th>수행 내용</th><th>결과</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600;color:var(--uc)">➊ 단어 전달</td>
+              <td><input type="text" id="r1_name" placeholder="이름"></td>
+              <td><input type="text" id="r1_word" placeholder="변환할 단어 입력 (예: 정보)"></td>
+              <td><input type="text" id="r1_result" placeholder="전달 완료"></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:var(--uc)">➋ 이진수 변환</td>
+              <td><input type="text" id="r2_name" placeholder="이름"></td>
+              <td><input type="text" id="r2_input" placeholder="받은 단어"></td>
+              <td><textarea id="r2_result" style="min-height:44px" placeholder="변환된 이진수"></textarea></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:var(--uc)">➌ 문자 복원</td>
+              <td><input type="text" id="r3_name" placeholder="이름"></td>
+              <td><textarea id="r3_input" style="min-height:44px" placeholder="받은 이진수"></textarea></td>
+              <td><input type="text" id="r3_result" placeholder="복원된 자모"></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:var(--uc)">➍ 단어 완성</td>
+              <td><input type="text" id="r4_name" placeholder="이름"></td>
+              <td><input type="text" id="r4_input" placeholder="받은 자모 나열"></td>
+              <td><input type="text" id="r4_result" placeholder="완성된 단어"></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="field" style="margin-top:14px">
+          <label>문장 변환 게임 결과 (문장을 이진수로, 다시 문장으로)</label>
+          <textarea id="a1_sentence" placeholder="사용한 문장:&#10;이진수 변환 결과:&#10;복원 결과:&#10;정확히 복원되었나요?"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 평가 1 -->
+    <div class="step-section" id="a1s4">
+      <div class="step-header" onclick="toggleStep('a1s4')" style="background:var(--ul)">
+        <div class="step-num" style="background:#0F6B4C">✓</div>
+        <h3>평가하기</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <div class="eval-box">
+          <h4>⭐ 자기 평가</h4>
+          <div class="eval-item">
+            <span class="eval-label el-skill">과정·기능</span>
+            <span class="eval-q">모둠원과 협력하여 게임의 각 단계를 해결하였는가?</span>
+            <div class="star-row" data-id="a1e1"><span class="star" onclick="rate('a1e1',1)">★</span><span class="star" onclick="rate('a1e1',2)">★</span><span class="star" onclick="rate('a1e1',3)">★</span><span class="star" onclick="rate('a1e1',4)">★</span><span class="star" onclick="rate('a1e1',5)">★</span></div>
+          </div>
+          <div class="eval-item">
+            <span class="eval-label el-val">가치·태도</span>
+            <span class="eval-q">모둠원과 의사소통하며, 규칙에 따라 공정하게 게임을 진행하였는가?</span>
+            <div class="star-row" data-id="a1e2"><span class="star" onclick="rate('a1e2',1)">★</span><span class="star" onclick="rate('a1e2',2)">★</span><span class="star" onclick="rate('a1e2',3)">★</span><span class="star" onclick="rate('a1e2',4)">★</span><span class="star" onclick="rate('a1e2',5)">★</span></div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label>활동 소감 (배운 점, 어려웠던 점)</label>
+          <textarea id="a1_reflection" placeholder="배운 점:&#10;어려웠던 점:"></textarea>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel1 -->
+
+  <!-- ─── 활동 2 ─── -->
+  <div class="act-panel" id="panel2">
+
+    <div style="background:#E3F2FD;border:1.5px solid #90CAF9;border-radius:var(--r);padding:16px 20px;margin-bottom:18px">
+      <div style="font-size:13px;font-weight:700;color:#1565C0;margin-bottom:6px">📊 활동 2 · 데이터 분석과 의미 해석하기 <span style="background:#BBDEFB;padding:2px 9px;border-radius:20px;font-size:10px;margin-left:6px">개별 활동</span></div>
+      <div style="font-size:12px;color:#0D47A1;line-height:1.7">인기 SNS 상위 200인 영향력자(influencer) 데이터셋을 수집하고 분석하여 의미를 해석합니다.<br>캐글에서 'top accounts data'를 검색하여 데이터셋을 내려받아 코답(CODAP)으로 분석합니다.</div>
+    </div>
+
+    <!-- STEP 1: 데이터 수집 -->
+    <div class="step-section" id="a2s1">
+      <div class="step-header" onclick="toggleStep('a2s1')">
+        <div class="step-num">1</div>
+        <h3>데이터셋 수집 및 기본 파악</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+          <a href="https://www.kaggle.com" target="_blank" class="btn bp">캐글(Kaggle) 열기 ↗</a>
+          <a href="https://codap.concord.org" target="_blank" class="btn" style="background:#1565C0;color:#fff;border-color:#1565C0">코답(CODAP) 열기 ↗</a>
+        </div>
+        <p style="font-size:12px;color:var(--mt);margin-bottom:14px">캐글에서 'top accounts data'를 검색하여 데이터셋을 내려받은 후 코답으로 불러옵니다.</p>
+        <table class="tbl">
+          <thead><tr><th>확인 항목</th><th>내 답변</th></tr></thead>
+          <tbody>
+            <tr><td>데이터 파일은 무엇으로 구조화되었는가?</td><td><input type="text" id="da_q1" placeholder="예) 표(테이블) 형태"></td></tr>
+            <tr><td>데이터 파일의 속성(열) 개수는 몇 개인가?</td><td><input type="text" id="da_q2" placeholder="예) 8개"></td></tr>
+            <tr><td>데이터 파일의 총 데이터(행) 수는 몇 개인가?</td><td><input type="text" id="da_q3" placeholder="예) 200개"></td></tr>
+          </tbody>
+        </table>
+        <div class="field" style="margin-top:14px">
+          <label>속성명 한글 변환 (영어→한글)</label>
+          <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rs);padding:12px 16px;font-size:12px;color:var(--mt);line-height:2;font-family:'JetBrains Mono',monospace">
+            rank → <b>순위</b> &nbsp;|&nbsp; name → <b>계정 이름</b> &nbsp;|&nbsp; channel_info → <b>계정 정보</b><br>
+            category → <b>범주</b> &nbsp;|&nbsp; posts → <b>게시물 수</b> &nbsp;|&nbsp; followers → <b>팔로워 수</b><br>
+            avg_likes → <b>평균 좋아요 수</b> &nbsp;|&nbsp; eng_rate(%) → <b>참여율</b>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: 데이터 살펴보기 -->
+    <div class="step-section" id="a2s2">
+      <div class="step-header" onclick="toggleStep('a2s2')">
+        <div class="step-num">2</div>
+        <h3>데이터 살펴보기</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <table class="tbl">
+          <thead><tr><th>질문</th><th>내 답변</th></tr></thead>
+          <tbody>
+            <tr><td>게시물 수가 가장 많은 계정 이름과 계정 정보, 범주는?</td><td><textarea id="da_q4" style="min-height:52px" placeholder="계정 이름:&#10;계정 정보:&#10;범주:"></textarea></td></tr>
+            <tr><td>팔로워 수가 두 번째로 많은 계정의 이름과 팔로워 수는?</td><td><input type="text" id="da_q5" placeholder="계정 이름: / 팔로워 수:"></td></tr>
+            <tr><td>평균 좋아요 수가 네 번째로 많은 계정의 이름과 범주는?</td><td><input type="text" id="da_q6" placeholder="계정 이름: / 범주:"></td></tr>
+            <tr><td>참여율이 10 이상인 계정의 개수는?</td><td><input type="text" id="da_q7" placeholder="예) 15개"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STEP 3: 그래프 분석 -->
+    <div class="step-section" id="a2s3">
+      <div class="step-header" onclick="toggleStep('a2s3')">
+        <div class="step-num">3</div>
+        <h3>그래프로 나타내고 분석하기</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <p style="font-size:13px;color:var(--mt);margin-bottom:14px">코답에서 그래프를 작성하고 아래 질문에 답하세요.</p>
+        <table class="tbl">
+          <thead><tr><th>분석 질문</th><th>그래프 분석 결과</th></tr></thead>
+          <tbody>
+            <tr><td>계정 정보에서 빈도가 가장 높은 두 가지는?</td><td><input type="text" id="gr_q1" placeholder="1위: / 2위:"></td></tr>
+            <tr><td>범주에서 빈도가 가장 높은 세 가지는?</td><td><input type="text" id="gr_q2" placeholder="1위: / 2위: / 3위:"></td></tr>
+            <tr><td>게시물 수와 팔로워 수, 평균 좋아요 수의 상관관계는?</td><td><textarea id="gr_q3" style="min-height:60px" placeholder="예) 게시물 수와 팔로워 수는 약한 양의 상관관계를 보임..."></textarea></td></tr>
+            <tr><td>평균 좋아요 수가 가장 높은 범주는?</td><td><input type="text" id="gr_q4" placeholder="범주 이름:"></td></tr>
+            <tr><td>참여율이 가장 높은 범주는?</td><td><input type="text" id="gr_q5" placeholder="범주 이름:"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STEP 4: 종합 의미 해석 -->
+    <div class="step-section" id="a2s4">
+      <div class="step-header" onclick="toggleStep('a2s4')">
+        <div class="step-num">4</div>
+        <h3>데이터 의미 종합 해석</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <div class="field">
+          <label>⑴ 분석 내용을 바탕으로 ○, ✗ 표시하고 이유를 설명하세요.</label>
+          <table class="tbl">
+            <thead><tr><th>진술</th><th>판단 (○/✗)</th><th>이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-size:12px">개인 계정의 개수가 단체나 커뮤니티 계정보다 월등히 많다.</td>
+                <td><select id="judge1" style="width:80px;min-height:auto;padding:6px"><option value="">선택</option><option>○</option><option>✗</option></select></td>
+                <td><input type="text" id="judge1_reason" placeholder="이유"></td>
+              </tr>
+              <tr>
+                <td style="font-size:12px">오락/엔터테인먼트 분야가 빈도수가 가장 많고, 평균 좋아요 수가 가장 많다.</td>
+                <td><select id="judge2" style="width:80px;min-height:auto;padding:6px"><option value="">선택</option><option>○</option><option>✗</option></select></td>
+                <td><input type="text" id="judge2_reason" placeholder="이유"></td>
+              </tr>
+              <tr>
+                <td style="font-size:12px">게시물 수가 많을수록 팔로워 수와 평균 좋아요 수 모두 밀접하게 증가한다.</td>
+                <td><select id="judge3" style="width:80px;min-height:auto;padding:6px"><option value="">선택</option><option>○</option><option>✗</option></select></td>
+                <td><input type="text" id="judge3_reason" placeholder="이유"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="field">
+          <label>⑵ 데이터를 분석하며 새롭게 알게 된 것을 이야기해 보세요.</label>
+          <textarea id="new_discovery" placeholder="예) SNS 영향력자 중에서 스포츠 분야 계정의 참여율이 높다는 것을 알게 되었다..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 평가 2 -->
+    <div class="step-section" id="a2s5">
+      <div class="step-header" onclick="toggleStep('a2s5')" style="background:var(--ul)">
+        <div class="step-num" style="background:#0F6B4C">✓</div>
+        <h3>평가하기</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <div class="eval-box">
+          <h4>⭐ 자기 평가</h4>
+          <div class="eval-item">
+            <span class="eval-label el-know">지식·이해</span>
+            <span class="eval-q">응용 소프트웨어를 이용하여 문제 해결에 필요한 데이터 분석을 수행할 수 있는가?</span>
+            <div class="star-row" data-id="a2e1"><span class="star" onclick="rate('a2e1',1)">★</span><span class="star" onclick="rate('a2e1',2)">★</span><span class="star" onclick="rate('a2e1',3)">★</span><span class="star" onclick="rate('a2e1',4)">★</span><span class="star" onclick="rate('a2e1',5)">★</span></div>
+          </div>
+          <div class="eval-item">
+            <span class="eval-label el-val">가치·태도</span>
+            <span class="eval-q">데이터에 기반하여 객관적으로 문제에 답하고, 종합적으로 의미를 해석할 수 있는가?</span>
+            <div class="star-row" data-id="a2e2"><span class="star" onclick="rate('a2e2',1)">★</span><span class="star" onclick="rate('a2e2',2)">★</span><span class="star" onclick="rate('a2e2',3)">★</span><span class="star" onclick="rate('a2e2',4)">★</span><span class="star" onclick="rate('a2e2',5)">★</span></div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label>활동 소감</label>
+          <textarea id="a2_reflection" placeholder="배운 점:&#10;어려웠던 점:&#10;더 알고 싶은 점:"></textarea>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel2 -->
+
+  <!-- 저장 -->
+  <div class="save-row">
+    <button class="btn bp" onclick="saveAll()">💾 전체 저장</button>
+    <button class="btn" onclick="clearAll()" style="color:var(--mt)">↺ 초기화</button>
+    <span class="save-msg" id="save-msg">✅ 저장되었습니다!</span>
+  </div>
+
+</div>
+
+<script>
+var SAVE_KEY='perf_u2';
+
+// ── 탭 전환 ──
+function switchTab(n) {
+  document.querySelectorAll('.act-tab').forEach(function(t,i){ t.classList.toggle('active', i===n-1); });
+  document.querySelectorAll('.act-panel').forEach(function(p,i){ p.classList.toggle('active', i===n-1); });
+}
+
+// ── 접기/펼치기 ──
+function toggleStep(id){ document.getElementById(id).classList.toggle('collapsed'); }
+
+// ── 별점 ──
+function rate(id, val) {
+  var row = document.querySelector('[data-id="'+id+'"]');
+  row.querySelectorAll('.star').forEach(function(s,i){ s.classList.toggle('on', i<val); });
+  row.dataset.val = val; save();
+}
+
+// ── 한글 이진수 변환기 ──
+var CHAR_MAP = {
+  'ㄱ':'0100','ㄴ':'0010','ㄷ':'1000','ㄹ':'0001','ㅁ':'11','ㅂ':'011','ㅅ':'110',
+  'ㅇ':'101','ㅈ':'0110','ㅊ':'1010','ㅋ':'1001','ㅌ':'1100','ㅍ':'111','ㅎ':'0111',
+  'ㅏ':'0','ㅑ':'00','ㅓ':'1','ㅕ':'000','ㅗ':'01','ㅛ':'10','ㅜ':'0000','ㅠ':'010','ㅡ':'100','ㅣ':'001','ㅐ':'1101','ㅔ':'1011'
+};
+var REV_MAP = {};
+Object.keys(CHAR_MAP).forEach(function(k){ REV_MAP[CHAR_MAP[k]] = k; });
+
+var CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+var JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+
+function decomposeHangul(ch) {
+  var code = ch.charCodeAt(0) - 44032;
+  if (code < 0 || code > 11171) return [ch];
+  var jong = code % 28; var jung_idx = Math.floor((code - jong) / 28) % 21; var cho_idx = Math.floor(code / 28 / 21);
+  var result = [CHO[cho_idx], JUNG[jung_idx]];
+  return result;
+}
+
+function encodeHangul() {
+  var text = document.getElementById('game-in').value.trim();
+  if (!text) { document.getElementById('game-out').textContent='단어를 입력하세요.'; return; }
+  var result = [];
+  text.split('').forEach(function(ch) {
+    if (ch === ' ') { result.push('[공백]'); return; }
+    var jamo = decomposeHangul(ch);
+    jamo.forEach(function(j) {
+      if (CHAR_MAP[j]) result.push(CHAR_MAP[j]);
+      else result.push('['+j+'?]');
+    });
+  });
+  document.getElementById('game-out').innerHTML =
+    '<span style="color:#aaa;font-size:10px">입력: ' + text + '</span><br>' +
+    '<span style="color:#4AE994">' + result.join(' ') + '</span>';
+}
+
+function decodeHangul() {
+  var text = document.getElementById('game-in').value.trim();
+  var parts = text.split(/\s+/);
+  var chars = [];
+  parts.forEach(function(p) {
+    if (p === '[공백]') chars.push(' ');
+    else if (REV_MAP[p]) chars.push(REV_MAP[p]);
+    else chars.push('[?]');
+  });
+  document.getElementById('game-out').innerHTML =
+    '<span style="color:#aaa;font-size:10px">이진수: ' + text + '</span><br>' +
+    '<span style="color:#FF9A3C">' + chars.join(' ') + '</span>';
+}
+
+function clearGame() {
+  document.getElementById('game-in').value = '';
+  document.getElementById('game-out').textContent = '변환 결과가 여기에 표시됩니다...';
+}
+
+// ── 저장/불러오기 ──
+function getData() {
+  var d = {};
+  document.querySelectorAll('textarea,input[type=text],select').forEach(function(el){ if(el.id) d[el.id]=el.value; });
+  document.querySelectorAll('.star-row').forEach(function(row){ if(row.dataset.id) d['rating_'+row.dataset.id]=row.dataset.val||'0'; });
+  return d;
+}
+function save(){ try{ localStorage.setItem(SAVE_KEY,JSON.stringify(getData())); }catch(e){} }
+function saveAll(){
+  save();
+  var msg=document.getElementById('save-msg');
+  msg.style.display='flex';
+  setTimeout(function(){ msg.style.display='none'; },2500);
+}
+function clearAll(){
+  if(!confirm('입력 내용을 모두 초기화할까요?')) return;
+  document.querySelectorAll('textarea,input[type=text],select').forEach(function(el){ el.value=''; });
+  document.querySelectorAll('.star').forEach(function(s){ s.classList.remove('on'); });
+  localStorage.removeItem(SAVE_KEY);
+}
+function loadData(){
+  try{
+    var d=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');
+    Object.keys(d).forEach(function(k){
+      if(k.startsWith('rating_')){
+        var id=k.slice(7); var row=document.querySelector('[data-id="'+id+'"]');
+        if(row){var v=parseInt(d[k])||0;row.dataset.val=v;row.querySelectorAll('.star').forEach(function(s,i){s.classList.toggle('on',i<v);});}
+      } else { var el=document.getElementById(k); if(el) el.value=d[k]; }
+    });
+  }catch(e){}
+}
+document.querySelectorAll('textarea,input,select').forEach(function(el){ el.addEventListener('change',save); el.addEventListener('input',save); });
+loadData();
+</script>
+</body>
+</html>
