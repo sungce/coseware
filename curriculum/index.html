@@ -42,11 +42,12 @@
     color: var(--text);
     line-height: 1.6;
     min-height: 100vh;
-    display: flex;
+    display: block;
   }
 
   /* ─── SIDEBAR ─── */
-  .sidebar {
+  .sidebar { display: none !important; }
+  .sidebar-hidden {
     width: var(--sidebar-w);
     min-height: 100vh;
     background: var(--surface);
@@ -157,7 +158,7 @@
 
   /* ─── MAIN ─── */
   .main {
-    margin-left: var(--sidebar-w);
+    margin-left: 0;
     flex: 1;
     min-height: 100vh;
     display: flex;
@@ -217,7 +218,7 @@
   .btn-primary:hover { opacity: .85; }
 
   /* ─── VIEWS ─── */
-  .view { display: none; padding: 24px 28px; animation: fadeIn .25s ease; }
+  .view { display: none; padding: 28px 36px; animation: fadeIn .25s ease; }
   .view.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 

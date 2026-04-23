@@ -495,9 +495,10 @@
                 src="curriculum/index.html"
                 id="curriculum-frame"
                 class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white"
-                style="min-height: 82vh; height: 82vh;"
+                style="min-height: 600px; height: auto; display: block;"
                 frameborder="0"
-                onload="sendUserNameToFrame()">
+                scrolling="yes"
+                onload="this.style.height = (this.contentWindow.document.body.scrollHeight + 40) + 'px'; sendUserNameToFrame();">
             </iframe>
         </section>
 
