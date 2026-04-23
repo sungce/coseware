@@ -1,1 +1,397 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>V단원 수행활동 — 디지털 문화와 AI 윤리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--uc:#8A55A8;--ug:linear-gradient(90deg,#8A55A8,#B07BCC);--ul:#F3E5F5;--um:#CE93D8;--bg:#F5F4F0;--sf:#fff;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--r:12px;--rs:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.65}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:52px;padding:0 24px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:90}
+.bc{font-size:12px;color:var(--mt);display:flex;align-items:center;gap:6px;flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rs);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s}.btn:hover{background:var(--bg)}.bp{background:var(--uc);color:#fff;border-color:var(--uc)}.bp:hover{background:#6A3D88}
+.page{max-width:860px;margin:0 auto;padding:28px 24px}
+.act-header{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
+.act-header::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--ug)}
+.badge-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px}
+.act-header h1{font-size:22px;font-weight:700;margin-bottom:6px}
+.act-header p{font-size:13px;color:var(--mt);line-height:1.7}
+.skills-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.skill-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--br);background:var(--bg)}
+.sk-ct{color:#1565C0;background:#E3F2FD;border-color:#BBDEFB}.sk-dg{color:#1B5E20;background:#E8F5E9;border-color:#C8E6C9}.sk-ai{color:#4A148C;background:#F3E5F5;border-color:#E1BEE7}
+.act-tabs{display:flex;gap:0;border-bottom:2px solid var(--br);margin-bottom:20px}
+.act-tab{padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2.5px solid transparent;color:var(--mt);margin-bottom:-2px;transition:all .15s}
+.act-tab.active{color:var(--uc);border-bottom-color:var(--uc)}
+.act-panel{display:none}.act-panel.active{display:block}
+.step-section{margin-bottom:14px}
+.step-header{display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--sf);border:1px solid var(--br);border-radius:var(--r) var(--r) 0 0;cursor:pointer;user-select:none;transition:background .12s}.step-header:hover{background:var(--bg)}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--uc);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-header h3{font-size:14px;font-weight:700;flex:1}
+.step-arrow{font-size:12px;color:var(--lt);transition:transform .2s}
+.step-body{background:var(--sf);border:1px solid var(--br);border-top:none;border-radius:0 0 var(--r) var(--r);padding:20px 24px}
+.step-section.collapsed .step-body{display:none}
+.step-section.collapsed .step-arrow{transform:rotate(-90deg)}
+.field{margin-bottom:16px}.field label{display:block;font-size:12px;font-weight:700;color:var(--mt);margin-bottom:6px}
+textarea,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--br);border-radius:var(--rs);font-size:13px;font-family:inherit;background:var(--sf);outline:none;resize:vertical;transition:border-color .15s}
+textarea{min-height:88px}textarea:focus,input:focus{border-color:var(--uc)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.tbl th{background:var(--uc);color:#fff;padding:9px 12px;font-weight:600;font-size:12px;text-align:left}
+.tbl td{padding:8px 12px;border-bottom:1px solid var(--br);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td textarea,.tbl td input{min-height:52px;border:1px solid #e0ddd6;border-radius:4px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fafaf8}
+.eval-box{background:var(--ul);border:1.5px solid var(--um);border-radius:var(--r);padding:18px 22px;margin-top:8px}
+.eval-box h4{font-size:13px;font-weight:700;color:var(--uc);margin-bottom:12px}
+.eval-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--um)}.eval-item:last-child{border-bottom:none}
+.eval-label{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.el-know{background:#E3F2FD;color:#1565C0}.el-skill{background:#E8F5E9;color:#2E7D32}.el-val{background:#FFF3E0;color:#E65100}
+.eval-q{font-size:13px;color:var(--mt);flex:1;line-height:1.65}
+.star-row{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
+.star{font-size:18px;cursor:pointer;color:#D1CBC0;transition:color .1s}.star.on{color:#F59E0B}
+.save-row{display:flex;gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid var(--br);flex-wrap:wrap}
+.save-msg{font-size:12px;color:#2E7D32;display:none;align-items:center;gap:5px}
+.case-card{background:var(--bg);border:1.5px solid var(--br);border-radius:var(--r);padding:16px 18px;margin-bottom:8px}
+.case-letter{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--uc);color:#fff;font-size:12px;font-weight:700;margin-bottom:8px;flex-shrink:0}
+.debate-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+.debate-side{border-radius:var(--r);padding:14px 16px}
+.side-pro{background:#E8F5E9;border:1.5px solid #A5D6A7}
+.side-con{background:#FCE4EC;border:1.5px solid #F48FB1}
+.side-title{font-size:13px;font-weight:700;margin-bottom:10px}
+.side-pro .side-title{color:#1B5E20}.side-con .side-title{color:#880E4F}
+.protect-check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.protect-item{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rs);cursor:pointer;font-size:12px;transition:all .15s}
+.protect-item input{accent-color:var(--uc);width:15px;height:15px;flex-shrink:0;margin-top:1px}
+.protect-item:has(input:checked){background:var(--ul);border-color:var(--um)}
+.protect-item-text{flex:1;line-height:1.5}
+.protect-item-text b{display:block;font-size:12px;color:var(--tx)}
+.protect-item-text span{font-size:11px;color:var(--mt)}
+@media(max-width:640px){.grid2,.debate-grid,.protect-check-grid{grid-template-columns:1fr}.page{padding:16px 14px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="bc">
+    <a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a>
+    <span>›</span><span style="color:var(--tx);font-weight:500">V. 디지털 문화 · 과정중심 수행활동</span>
+  </div>
+  <a class="btn bsm bp" href="../index.html">← 메인으로</a>
+</header>
 
+<div class="page">
+
+  <div class="act-header">
+    <div class="badge-row">
+      <span class="badge" style="background:var(--ul);color:var(--uc)">V. 디지털 문화</span>
+      <span class="badge" style="background:#E8F5E9;color:#2E7D32">과정 중심의 수행활동</span>
+    </div>
+    <h1>디지털 문화와 AI 윤리 수행활동</h1>
+    <p>활동 1: 개인 정보 침해 사례를 분석하고 보호 실천 방안을 탐구합니다 (개별)<br>
+    활동 2: 인공지능이 생성한 그림의 예술성·저작권 문제를 토론합니다 (모둠)</p>
+    <div class="skills-row">
+      <span class="skill-chip sk-ct">💡 컴퓨팅 사고력</span>
+      <span class="skill-chip sk-dg">🌐 디지털 문화 소양</span>
+      <span class="skill-chip sk-ai">🤖 인공지능 소양</span>
+    </div>
+  </div>
+
+  <div class="act-tabs">
+    <div class="act-tab active" onclick="switchTab(1)">활동 1 — 개인 정보 보호 실천하기</div>
+    <div class="act-tab" onclick="switchTab(2)">활동 2 — AI 그림 토론하기</div>
+  </div>
+
+  <!-- ─── 활동 1 ─── -->
+  <div class="act-panel active" id="panel1">
+
+    <div style="background:#E8F5E9;border:1.5px solid #A5D6A7;border-radius:var(--r);padding:14px 18px;margin-bottom:18px">
+      <div style="font-size:13px;font-weight:700;color:#2E7D32;margin-bottom:4px">🔒 활동 1 · 개인 정보 보호 실천하기 <span style="background:#C8E6C9;padding:2px 9px;border-radius:20px;font-size:10px;margin-left:6px">개별 활동</span></div>
+      <div style="font-size:12px;color:#1B5E20;line-height:1.7">세 가지 개인 정보 침해 사례를 분석하고, 예방 실천 방안을 작성·발표합니다.</div>
+    </div>
+
+    <!-- 사례 분석 -->
+    <div class="step-section" id="a1s1">
+      <div class="step-header" onclick="toggleStep('a1s1')">
+        <div class="step-num">1</div>
+        <h3>사례별 발생 원인 분석하기</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+
+        <div class="case-card">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <div class="case-letter">가</div>
+            <div style="font-size:13px;font-weight:600">교실에서 친구들과 장난으로 촬영한 동영상이 인터넷 사이트에 공유되어 있는 것을 보았다.</div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>이 사례가 일어난 이유와 문제점을 분석해 보세요.</label>
+            <textarea id="case_a" placeholder="원인:&#10;문제점:&#10;관련 법률 (예: 정보통신망법, 개인정보보호법):"></textarea>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <div class="case-letter">나</div>
+            <div style="font-size:13px;font-weight:600">누군가 내 아이디로 악성 댓글을 여러 개 작성하여 해당 사이트에 더 이상 글을 올릴 수 없다는 전자 우편을 받았다.</div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>이 사례가 일어난 이유와 문제점을 분석해 보세요.</label>
+            <textarea id="case_b" placeholder="원인:&#10;문제점:&#10;관련 법률:"></textarea>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <div class="case-letter">다</div>
+            <div style="font-size:13px;font-weight:600">나와 상관없는 다른 기기에서 내 아이디로 로그인을 했다는 알림이 자주 온다.</div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>이 사례가 일어난 이유와 문제점을 분석해 보세요.</label>
+            <textarea id="case_c" placeholder="원인:&#10;문제점:&#10;예방법:"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 보호 실천 방안 -->
+    <div class="step-section" id="a1s2">
+      <div class="step-header" onclick="toggleStep('a1s2')">
+        <div class="step-num">2</div>
+        <h3>개인 정보 보호 실천 방안 작성하기</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <p style="font-size:13px;color:var(--mt);margin-bottom:14px">아래 항목 중 내가 실천할 수 있는 것을 선택하고, 추가 방안도 작성해 보세요.</p>
+        <div class="protect-check-grid">
+          <label class="protect-item">
+            <input type="checkbox" id="p1">
+            <div class="protect-item-text"><b>강력한 비밀번호 사용</b><span>영문 대소문자+숫자+특수문자 조합, 8자 이상</span></div>
+          </label>
+          <label class="protect-item">
+            <input type="checkbox" id="p2">
+            <div class="protect-item-text"><b>2단계 인증 설정</b><span>주요 계정에 OTP·인증 앱 추가</span></div>
+          </label>
+          <label class="protect-item">
+            <input type="checkbox" id="p3">
+            <div class="protect-item-text"><b>촬영 전 동의 구하기</b><span>타인을 촬영·공유할 때 반드시 허락받기</span></div>
+          </label>
+          <label class="protect-item">
+            <input type="checkbox" id="p4">
+            <div class="protect-item-text"><b>개인 정보 최소 입력</b><span>불필요한 앱·사이트에 개인정보 제공 최소화</span></div>
+          </label>
+          <label class="protect-item">
+            <input type="checkbox" id="p5">
+            <div class="protect-item-text"><b>피싱·스미싱 주의</b><span>출처 불명확 링크·첨부파일 클릭 금지</span></div>
+          </label>
+          <label class="protect-item">
+            <input type="checkbox" id="p6">
+            <div class="protect-item-text"><b>공용 기기 로그아웃</b><span>공공 컴퓨터 사용 후 즉시 로그아웃</span></div>
+          </label>
+          <label class="protect-item">
+            <input type="checkbox" id="p7">
+            <div class="protect-item-text"><b>SNS 공개 범위 설정</b><span>게시물 공개 범위를 '친구'로 제한</span></div>
+          </label>
+          <label class="protect-item">
+            <input type="checkbox" id="p8">
+            <div class="protect-item-text"><b>침해 신고 방법 숙지</b><span>개인정보 침해신고센터(118) 알아두기</span></div>
+          </label>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label>위 항목 외 내가 생각하는 추가 실천 방안을 써보세요.</label>
+          <textarea id="extra_protect" placeholder="추가 실천 방안 1:&#10;추가 실천 방안 2:&#10;추가 실천 방안 3:"></textarea>
+        </div>
+        <div class="field">
+          <label>선택한 실천 방안 중 가장 중요하다고 생각하는 것과 그 이유를 발표문 형식으로 작성해 보세요.</label>
+          <textarea id="present_text" style="min-height:100px" placeholder="저는 개인 정보를 보호하기 위해 가장 중요한 실천 방안으로 ______을 선택했습니다.&#10;그 이유는 ...&#10;이를 통해 ..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 평가 1 -->
+    <div class="step-section" id="a1s3">
+      <div class="step-header" onclick="toggleStep('a1s3')" style="background:var(--ul)">
+        <div class="step-num" style="background:#6A3D88">✓</div>
+        <h3>평가하기</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <div class="eval-box">
+          <h4>⭐ 자기 평가</h4>
+          <div class="eval-item">
+            <span class="eval-label el-know">지식·이해</span>
+            <span class="eval-q">개인 정보를 침해한 사례에 따른 문제점을 분석할 수 있는가?</span>
+            <div class="star-row" data-id="a1e1"><span class="star" onclick="rate('a1e1',1)">★</span><span class="star" onclick="rate('a1e1',2)">★</span><span class="star" onclick="rate('a1e1',3)">★</span><span class="star" onclick="rate('a1e1',4)">★</span><span class="star" onclick="rate('a1e1',5)">★</span></div>
+          </div>
+          <div class="eval-item">
+            <span class="eval-label el-val">가치·태도</span>
+            <span class="eval-q">개인 정보를 관리하고 보호하는 방법을 실천할 수 있는가?</span>
+            <div class="star-row" data-id="a1e2"><span class="star" onclick="rate('a1e2',1)">★</span><span class="star" onclick="rate('a1e2',2)">★</span><span class="star" onclick="rate('a1e2',3)">★</span><span class="star" onclick="rate('a1e2',4)">★</span><span class="star" onclick="rate('a1e2',5)">★</span></div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label>활동 소감</label>
+          <textarea id="a1_reflect" placeholder="배운 점:&#10;앞으로 실천할 점:"></textarea>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel1 -->
+
+  <!-- ─── 활동 2 ─── -->
+  <div class="act-panel" id="panel2">
+
+    <div style="background:#EDE7F6;border:1.5px solid #CE93D8;border-radius:var(--r);padding:14px 18px;margin-bottom:18px">
+      <div style="font-size:13px;font-weight:700;color:#4A148C;margin-bottom:4px">🎨 활동 2 · 인공지능이 생성한 그림 문제에 대해 토론하기 <span style="background:#D1C4E9;padding:2px 9px;border-radius:20px;font-size:10px;margin-left:6px">모둠 활동</span></div>
+      <div style="font-size:12px;color:#311B92;line-height:1.7">인공지능 생성 미술 작품의 예술성과 저작권 문제에 대해 찬반 토론을 진행합니다.</div>
+    </div>
+
+    <!-- 사례 텍스트 -->
+    <div class="step-section" id="a2s0">
+      <div class="step-header" onclick="toggleStep('a2s0')">
+        <div class="step-num">📰</div>
+        <h3>토론 배경 사례 읽기</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <div style="background:#FAFAFA;border-left:4px solid var(--uc);border-radius:0 var(--rs) var(--rs) 0;padding:16px 18px;font-size:13px;line-height:1.9;color:#333">
+          <b>📰 사례: '콜로라도 주립 박람회 미술전' AI 작품 논란</b><br><br>
+          '콜로라도 주립 박람회 미술전'의 디지털 아트 부문에서 게임 기획자인 <b>제이슨 M. 앨런</b>이 인공지능으로 생성한 작품 <b>'스페이스 오페라 극장'</b>이 1위를 차지했습니다.<br><br>
+          이 작품은 글을 입력하면 이미지로 변환해주는 AI 생성 프로그램으로 만든 것으로, 이 사실이 알려지면서 큰 논란이 일었습니다.<br><br>
+          <b>반대 측:</b> 인공지능이 만든 작품은 예술이 아니며, 단 한 번의 붓질도 없는 작품이 우승하는 것은 부당하다.<br>
+          <b>찬성 측(앨런):</b> 출처를 명시했고, 3점을 완성하는 데 80시간이 걸렸으며, 어떤 규칙도 어기지 않았다.
+        </div>
+        <div style="background:#FFF3E0;border-radius:var(--rs);padding:10px 14px;margin-top:12px;font-size:12px;color:#E65100">
+          📌 <b>토론 논제:</b> "인공지능 기술을 하나의 예술 도구로 인정하고 사용할 때이다."
+        </div>
+      </div>
+    </div>
+
+    <!-- 토론 입장 선택 -->
+    <div class="step-section" id="a2s1">
+      <div class="step-header" onclick="toggleStep('a2s1')">
+        <div class="step-num">1</div>
+        <h3>찬반 입장 선택 및 주장·근거 작성</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <div class="field">
+          <label>나의 토론 입장을 선택하세요.</label>
+          <div style="display:flex;gap:10px;margin-top:8px">
+            <label style="display:flex;align-items:center;gap:8px;padding:12px 20px;background:#E8F5E9;border:2px solid #A5D6A7;border-radius:var(--r);cursor:pointer;flex:1;font-weight:700;color:#1B5E20;transition:all .15s" id="lbl_pro">
+              <input type="radio" name="stance" id="stance_pro" value="찬성" style="width:16px;height:16px;accent-color:#1B9E72;flex-shrink:0">
+              👍 찬성 — 인공지능은 예술 도구다
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:12px 20px;background:#FCE4EC;border:2px solid #F48FB1;border-radius:var(--r);cursor:pointer;flex:1;font-weight:700;color:#880E4F;transition:all .15s" id="lbl_con">
+              <input type="radio" name="stance" id="stance_con" value="반대" style="width:16px;height:16px;accent-color:#E53935;flex-shrink:0">
+              👎 반대 — AI 작품은 예술이 아니다
+            </label>
+          </div>
+        </div>
+
+        <div class="debate-grid">
+          <div class="debate-side side-pro">
+            <div class="side-title">✅ 찬성 측 주장과 근거</div>
+            <div class="field">
+              <label style="font-size:11px">주장</label>
+              <textarea id="pro_claim" style="min-height:60px;background:#fff" placeholder="AI는 창작 과정의 협력자이며, 디지털 예술 도구로 인정받아야 한다."></textarea>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label style="font-size:11px">근거</label>
+              <textarea id="pro_reason" style="min-height:72px;background:#fff" placeholder="근거 1: 카메라가 발명됐을 때도 '진짜 예술이냐' 논쟁이 있었지만 지금은 사진예술이 인정된다.&#10;근거 2: 앨런은 80시간의 창의적 노력을 투입했다.&#10;근거 3: AI는 작가의 의도를 실현하는 도구일 뿐이다."></textarea>
+            </div>
+          </div>
+          <div class="debate-side side-con">
+            <div class="side-title">❌ 반대 측 주장과 근거</div>
+            <div class="field">
+              <label style="font-size:11px">주장</label>
+              <textarea id="con_claim" style="min-height:60px;background:#fff" placeholder="예술은 인간의 감정과 기술이 담긴 창작 행위이므로 AI 생성물은 예술이 아니다."></textarea>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label style="font-size:11px">근거</label>
+              <textarea id="con_reason" style="min-height:72px;background:#fff" placeholder="근거 1: 예술가들이 수년간 쌓은 기술과 감성이 AI에 의해 무가치해진다.&#10;근거 2: 학습 데이터로 사용된 예술가의 작품에 대한 동의 없는 사용은 저작권 침해다.&#10;근거 3: AI 생성물은 인간의 창의성이 아닌 패턴 조합이다."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 토론 진행 기록 -->
+    <div class="step-section" id="a2s2">
+      <div class="step-header" onclick="toggleStep('a2s2')">
+        <div class="step-num">2</div>
+        <h3>토론 진행 및 결론 도출</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <div class="field">
+          <label>토론 중 상대방의 주장 중 인상적이었던 내용을 기록하세요.</label>
+          <textarea id="opponent_point" placeholder="상대방 주장 중 인상적인 점:&#10;그에 대한 나의 반박:"></textarea>
+        </div>
+        <div class="field">
+          <label>찬성과 반대 입장을 종합하여 결론을 작성해 보세요.</label>
+          <div style="background:#F3E5F5;border:1.5px solid var(--um);border-radius:var(--r);padding:14px 18px">
+            <div style="font-size:12px;font-weight:700;color:var(--uc);margin-bottom:8px">📝 결론</div>
+            <textarea id="conclusion" style="min-height:80px;background:var(--sf)" placeholder="양측의 주장을 종합하면, 인공지능 생성 예술에 대해 ______라고 결론 내릴 수 있습니다.&#10;앞으로 이 문제를 해결하기 위해서는 ______이 필요합니다."></textarea>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>인공지능과 예술, 저작권에 관해 더 알아보고 싶은 점을 써보세요.</label>
+          <textarea id="more_learn" style="min-height:60px" placeholder="더 알고 싶은 점:"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 평가 2 -->
+    <div class="step-section" id="a2s3">
+      <div class="step-header" onclick="toggleStep('a2s3')" style="background:var(--ul)">
+        <div class="step-num" style="background:#6A3D88">✓</div>
+        <h3>평가하기</h3>
+        <span class="step-arrow">▾</span>
+      </div>
+      <div class="step-body">
+        <div class="eval-box">
+          <h4>⭐ 자기 평가</h4>
+          <div class="eval-item">
+            <span class="eval-label el-know">지식·이해</span>
+            <span class="eval-q">디지털 사회에서 발생하는 다양한 문제에 대하여 다양한 견해를 가질 수 있는가?</span>
+            <div class="star-row" data-id="a2e1"><span class="star" onclick="rate('a2e1',1)">★</span><span class="star" onclick="rate('a2e1',2)">★</span><span class="star" onclick="rate('a2e1',3)">★</span><span class="star" onclick="rate('a2e1',4)">★</span><span class="star" onclick="rate('a2e1',5)">★</span></div>
+          </div>
+          <div class="eval-item">
+            <span class="eval-label el-val">가치·태도</span>
+            <span class="eval-q">자료를 충분히 찾고, 친구의 생각과 의견을 존중하며 토론하였는가?</span>
+            <div class="star-row" data-id="a2e2"><span class="star" onclick="rate('a2e2',1)">★</span><span class="star" onclick="rate('a2e2',2)">★</span><span class="star" onclick="rate('a2e2',3)">★</span><span class="star" onclick="rate('a2e2',4)">★</span><span class="star" onclick="rate('a2e2',5)">★</span></div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label>활동 소감</label>
+          <textarea id="a2_reflect" placeholder="배운 점:&#10;어려웠던 점:&#10;AI 예술에 대한 나의 최종 생각:"></textarea>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel2 -->
+
+  <div class="save-row">
+    <button class="btn bp" onclick="saveAll()">💾 전체 저장</button>
+    <button class="btn" onclick="clearAll()" style="color:var(--mt)">↺ 초기화</button>
+    <span class="save-msg" id="save-msg">✅ 저장되었습니다!</span>
+  </div>
+</div>
+
+<script>
+var SAVE_KEY='perf_u5';
+function switchTab(n){document.querySelectorAll('.act-tab').forEach(function(t,i){t.classList.toggle('active',i===n-1);});document.querySelectorAll('.act-panel').forEach(function(p,i){p.classList.toggle('active',i===n-1);});}
+function toggleStep(id){document.getElementById(id).classList.toggle('collapsed');}
+function rate(id,val){var row=document.querySelector('[data-id="'+id+'"]');row.querySelectorAll('.star').forEach(function(s,i){s.classList.toggle('on',i<val);});row.dataset.val=val;save();}
+function getData(){var d={};document.querySelectorAll('textarea,input[type=text]').forEach(function(el){if(el.id)d[el.id]=el.value;});document.querySelectorAll('input[type=checkbox]').forEach(function(el){if(el.id)d[el.id]=el.checked;});var st=document.querySelector('input[name=stance]:checked');if(st)d['stance']=st.value;document.querySelectorAll('.star-row').forEach(function(row){if(row.dataset.id)d['rating_'+row.dataset.id]=row.dataset.val||'0';});return d;}
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(getData()));}catch(e){}}
+function saveAll(){save();var msg=document.getElementById('save-msg');msg.style.display='flex';setTimeout(function(){msg.style.display='none';},2500);}
+function clearAll(){if(!confirm('입력 내용을 모두 초기화할까요?'))return;document.querySelectorAll('textarea,input[type=text]').forEach(function(el){el.value='';});document.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(function(el){el.checked=false;});document.querySelectorAll('.star').forEach(function(s){s.classList.remove('on');});localStorage.removeItem(SAVE_KEY);}
+function loadData(){try{var d=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');Object.keys(d).forEach(function(k){if(k.startsWith('rating_')){var id=k.slice(7);var row=document.querySelector('[data-id="'+id+'"]');if(row){var v=parseInt(d[k])||0;row.dataset.val=v;row.querySelectorAll('.star').forEach(function(s,i){s.classList.toggle('on',i<v);});}}else if(k==='stance'){var r=document.querySelector('input[name=stance][value="'+d[k]+'"]');if(r)r.checked=true;}else{var el=document.getElementById(k);if(el){if(el.type==='checkbox')el.checked=d[k];else el.value=d[k];}}});}catch(e){}}
+document.querySelectorAll('textarea,input').forEach(function(el){el.addEventListener('change',save);el.addEventListener('input',save);});
+loadData();
+</script>
+</body>
+</html>
