@@ -1,1 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>V-2. 개인 정보 보호와 사이버 보안 — V. 디지털 문화</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--u:#7B3FA0;--udk:#5C2A7A;--ult:#F3E8FA;--umd:#D0A8E8;--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--green:#2A720E;--gbg:#E8F3DC;--amber:#7A4E0A;--abg:#FAF0DC;--red:#8C1E0E;--rbg:#FAEBE6;--blue:#0A4E8C;--bbg:#E4F0FA;--rLG:14px;--rSM:8px;--SW:0px;--TH:52px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.65;min-height:100vh}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:52px;padding:0 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mt);flex:1;overflow:hidden}.bc a{color:var(--mt);text-decoration:none;white-space:nowrap}.bc a:hover{color:var(--tx)}.bccur{color:var(--tx);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bcsep{color:var(--lt)}
+.tbr{display:flex;gap:6px;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s}.btn:hover{background:var(--bg)}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}.bsm{padding:5px 10px;font-size:11px}
+.page{padding:22px 28px;max-width:1100px;width:100%;margin:0 auto}
+.cb{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:20px 24px;margin-bottom:16px}
+.obj-list{list-style:none;padding:0;margin-top:10px}.obj-list li{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:13px}.obj-list li::before{content:'✓';color:var(--u);font-weight:700;flex-shrink:0}
+.kw-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.kw{font-size:11px;padding:3px 10px;background:var(--ult);color:var(--u);border:1px solid var(--umd);border-radius:20px;font-weight:600}
+.sect-title{font-size:13px;font-weight:700;color:var(--u);border-left:3px solid var(--u);padding-left:10px;margin-bottom:12px}
+.concept-box{background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:14px 16px;margin-bottom:10px;font-size:13px;line-height:1.8}.concept-box b{color:var(--u)}
+.warn-box{background:#FFF9E6;border:1px solid #EDD070;border-radius:var(--rSM);padding:12px 15px;font-size:12px;color:var(--amber);line-height:1.7;margin-bottom:10px}
+.case-box{background:var(--bbg);border:1px solid #AECBEA;border-radius:var(--rSM);padding:14px 16px;margin-bottom:10px;font-size:13px;line-height:1.8}.case-box b{color:var(--blue)}
+.act-card{border:1.5px solid var(--umd);border-radius:var(--rLG);overflow:hidden;margin-bottom:16px}
+.act-head{background:var(--u);padding:12px 18px;display:flex;align-items:center;gap:10px}.act-head h3{color:#fff;font-size:14px;font-weight:700}
+.act-badge{background:rgba(255,255,255,.2);color:#fff;font-size:10px;padding:2px 9px;border-radius:20px;font-weight:700}
+.act-body{padding:16px 18px;background:var(--sf)}
+.act-step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);margin-bottom:8px}
+.act-num{width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;flex:none;margin-top:1px}
+.act-step>div:not(.act-num){min-width:0;flex:1;overflow-wrap:break-word}
+.act-step h4{font-size:12px;font-weight:700;margin-bottom:4px}.act-step p{font-size:12px;color:var(--mt);line-height:1.6}
+.act-input{width:100%;padding:9px 11px;border:1.5px solid var(--br);border-radius:var(--rSM);font-size:13px;font-family:inherit;background:var(--sf);outline:none;resize:vertical;min-height:88px;margin-top:6px;box-sizing:border-box;transition:border-color .15s}.act-input:focus{border-color:var(--u)}
+.act-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.quiz-box{background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rLG);padding:18px;margin-bottom:12px}
+.quiz-q{font-size:13px;font-weight:600;margin-bottom:12px;line-height:1.6}
+.quiz-opts{display:flex;flex-direction:column;gap:7px}
+.opt{padding:10px 14px;border:1.5px solid var(--br);border-radius:var(--rSM);cursor:pointer;font-size:13px;transition:all .15s}.opt:hover{border-color:var(--umd);background:var(--ult)}
+.opt.correct{background:var(--gbg);border-color:var(--green);color:var(--green)}.opt.wrong{background:var(--rbg);border-color:var(--red);color:var(--red)}
+.quiz-fb{display:none;padding:10px 14px;border-radius:var(--rSM);font-size:12px;margin-top:8px;line-height:1.6}
+.quiz-fb.show{display:block}.quiz-fb.correct{background:var(--gbg);color:var(--green)}.quiz-fb.wrong{background:var(--rbg);color:var(--red)}
+.sc-box{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:16px 18px}
+.scitem{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--br);font-size:13px}.scitem:last-child{border-bottom:none}
+.scitem select{margin-left:auto;padding:4px 8px;border:1px solid var(--br);border-radius:6px;font-size:11px;font-family:inherit;background:var(--bg);cursor:pointer}
+.done-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;color:var(--mt)}.done-btn:hover{border-color:var(--u);color:var(--u);background:var(--ult)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1C1C1C;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:9000}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+canvas,img{max-width:100%;height:auto}
+@media(max-width:640px){.page{padding:12px 14px}.act-step{flex-direction:column;gap:4px}}
+@media(max-width:480px){.topbar{padding:0 12px}.page{padding:8px 10px}}
+/* ── 반응형 레이아웃 ── */
+*,*::before,*::after{box-sizing:border-box}img,canvas{max-width:100%;height:auto;display:block}
+table{width:100%}.act-table,.peer-check,.rub{table-layout:fixed;word-break:break-word}
+.act-step>div:not(.act-num){min-width:0;flex:1;overflow-wrap:break-word;word-break:break-word}
+.act-input{width:100%;box-sizing:border-box}
+@media(max-width:1100px){.g2{grid-template-columns:1fr}.ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}.crow{grid-template-columns:1fr}}
+@media(max-width:900px){.ca{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .ca .ap{flex:1 1 180px;min-width:160px}.page{padding:16px 14px}}
+@media(max-width:640px){.page{padding:11px 10px}.act-step{flex-direction:column;gap:5px}.act-num{margin-bottom:0}}
+@media(max-width:480px){:root{--SW:0px}.sb{display:none}.main{margin-left:0}.topbar{padding:0 10px}.page{padding:8px 9px}}
 
+/* ── 사이드바 (ca) ── */
+.g2{display:grid;grid-template-columns:1fr minmax(0,248px);gap:16px;align-items:start}
+.cm{min-width:0}
+.ca{position:sticky;top:calc(var(--TH)+12px);display:flex;flex-direction:column;gap:10px}
+.ap{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:12px 14px}
+.ap h5{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--lt);margin-bottom:8px}
+.slist{display:flex;flex-direction:column;gap:2px}
+.si{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rSM);font-size:11px;color:var(--mt);cursor:pointer;transition:background .12s}
+.si:hover{background:var(--bg)}
+.dot{width:19px;height:19px;border-radius:50%;background:var(--br);color:var(--lt);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dot.sd{background:var(--gbg);color:var(--green)}
+.dot.sa{background:var(--u);color:#fff}
+.termlist{display:flex;flex-direction:column}
+.tterm{display:flex;align-items:baseline;gap:6px;padding:4px 0;border-bottom:1px solid var(--br);font-size:11px}
+.tterm:last-child{border-bottom:none}
+.tw{font-weight:700;color:var(--u);white-space:nowrap}
+.tdef{color:var(--mt);font-size:10px}
+.pbtrack{height:5px;background:var(--br);border-radius:4px;overflow:hidden}
+.pbfill{height:100%;background:var(--u);border-radius:4px}
+@media(max-width:900px){.g2{grid-template-columns:1fr}.ca{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .ca .ap{flex:1 1 180px;min-width:160px}}
+@media(max-width:640px){.page{padding:11px 10px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="bc">
+    <a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a>
+    <span class="bcsep">›</span>
+    <a href="../index.html">V. 디지털 문화</a>
+    <span class="bcsep">›</span>
+    <span class="bccur">V-2. 개인 정보 보호와 사이버 보안</span>
+  </div>
+  <div class="tbr">
+    <button class="btn bsm done-btn" onclick="markDone('02')">✓ 완료 표시</button>
+    <a class="btn bsm bp" href="../lesson-03/index.html">다음 소단원 →</a>
+  </div>
+</header>
+<div id="toast"></div>
+<div class="page"><div class="g2"><div class="cm">
+
+<div class="cb">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <span style="background:var(--ult);color:var(--u);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px">학습목표</span>
+    <span style="font-size:11px;color:var(--mt)">[9정05-02] 개인 정보 보호 · pp.221~225</span>
+  </div>
+  <ul class="obj-list">
+    <li>개인 정보의 종류와 침해 유형을 구분할 수 있다.</li>
+    <li>비밀번호 보안·2단계 인증·피싱 예방법을 실천할 수 있다.</li>
+    <li>개인 정보 보호 실천 체크리스트를 작성할 수 있다.</li>
+  </ul>
+  <div class="kw-row"><span class="kw">개인 정보</span><span class="kw">사이버 보안</span><span class="kw">피싱</span><span class="kw">비밀번호</span><span class="kw">2단계 인증</span></div>
+</div>
+<div class="cb">
+  <div class="sect-title">📖 개인 정보의 종류</div>
+  <div class="concept-box"><b>일반 개인 정보</b>: 이름, 주소, 전화번호, 이메일, 생년월일</div>
+  <div class="concept-box"><b>민감 개인 정보</b>: 건강 정보, 종교, 정치적 성향, 유전 정보 — 더 엄격히 보호</div>
+  <div class="concept-box"><b>고유 식별 정보</b>: 주민등록번호, 여권번호, 운전면허번호 — 수집·이용 원칙적 금지</div>
+  <div class="sect-title" style="margin-top:16px">🔐 사이버 보안 실천법</div>
+  <div class="case-box"><b>강한 비밀번호</b>: 영문 대소문자+숫자+특수문자 8자 이상. 사이트마다 다르게 설정<br><b>2단계 인증</b>: 비밀번호 + 문자/앱 인증 = 계정 탈취 99% 방지<br><b>피싱 예방</b>: URL 주소 확인, 출처 불명 링크 클릭 금지, 공공 와이파이에서 로그인 금지</div>
+</div>
+<div class="cb">
+  <div class="sect-title">🧩 개념 확인 퀴즈</div>
+  <div class="quiz-box">
+    <div class="quiz-q">Q. 다음 중 '민감 개인 정보'에 해당하는 것은?</div>
+    <div class="quiz-opts">
+      <div class="opt" onclick="checkQ(this,false,'q1','이름은 일반 개인 정보입니다.')">① 이름</div>
+      <div class="opt" onclick="checkQ(this,false,'q1','이메일은 일반 개인 정보입니다.')">② 이메일 주소</div>
+      <div class="opt" onclick="checkQ(this,true,'q1','건강 정보는 민감 개인 정보로 더 엄격히 보호됩니다.')">③ 건강 정보</div>
+      <div class="opt" onclick="checkQ(this,false,'q1','전화번호는 일반 개인 정보입니다.')">④ 전화번호</div>
+    </div>
+    <div class="quiz-fb" id="q1"></div>
+  </div>
+</div>
+<div class="act-card">
+  <div class="act-head"><h3>★ 수행 활동 — 개인 정보 보호 실천하기</h3><span class="act-badge">개별 활동</span><span class="act-badge">pp.225</span></div>
+  <div class="act-body">
+    <div class="act-step"><div class="act-num">1</div><div><h4>나의 디지털 생활에서 노출될 수 있는 개인 정보를 3가지 이상 적고, 각각의 보호 방법을 쓰세요.</h4><textarea class="act-input" placeholder="예) SNS 프로필 사진 → 공개 범위를 친구로 제한한다&#10;학교 게시판의 이름 → 닉네임 사용..."></textarea></div></div>
+    <div class="act-step"><div class="act-num">2</div><div><h4>강한 비밀번호 만들기 규칙 3가지를 직접 만들어 보세요.</h4><textarea class="act-input" style="min-height:72px" placeholder="예) 1. 영문 대소문자, 숫자, 특수문자 모두 포함&#10;2. 8자 이상..."></textarea></div></div>
+    <div class="act-step"><div class="act-num">3</div><div><h4>피싱 이메일을 구별하는 방법을 2가지 이상 쓰세요.</h4><textarea class="act-input" placeholder="예) URL이 공식 주소와 다르다, 개인 정보 요청이 있다..."></textarea></div></div>
+    <div class="act-row"><button class="btn bp bsm" onclick="saveActivity('l502_act')">💾 활동 저장</button></div>
+  </div>
+</div>
+<div class="cb">
+  <div class="sect-title">✅ 자기평가</div>
+  <div class="sc-box">
+    <div class="scitem">개인 정보의 종류(일반·민감·고유식별)를 구분할 수 있다.<select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>보통이다</option><option>아직 모르겠다</option></select></div>
+    <div class="scitem">강한 비밀번호 만들기와 2단계 인증의 필요성을 이해했다.<select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>보통이다</option><option>아직 모르겠다</option></select></div>
+    <div class="scitem">피싱 이메일을 구별하고 예방하는 방법을 실천할 수 있다.<select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>보통이다</option><option>아직 모르겠다</option></select></div>
+  </div>
+  <div class="act-row" style="margin-top:10px"><button class="btn bsm bp" onclick="saveSC('l502sc')">자기평가 저장</button></div>
+</div>
+</div>  <!-- cm -->
+<div class="ca">
+    <div class="ap"><h5>학습 진행</h5><div class="slist">
+      <div class="si" onclick="goTo('sec-goal')"><div class="dot sd">1</div>학습목표</div>
+      <div class="si" onclick="goTo('sec-concept')"><div class="dot">2</div>개념설명</div>
+      <div class="si" onclick="goTo('sec-activity')"><div class="dot sa">★</div>수행 활동</div>
+      <div class="si" onclick="goTo('sec-assess')"><div class="dot">4</div>수행평가</div>
+      <div class="si" onclick="goTo('sec-review')"><div class="dot">5</div>확인하기</div>
+    </div></div>
+    <div class="ap" style="background:var(--ult);border-color:var(--umd)"><h5 style="color:var(--u)">단원 진도</h5>
+      <div style="display:flex;align-items:center;gap:7px"><div class="pbtrack" style="flex:1"><div class="pbfill" style="width:33%"></div></div><span style="font-size:11px;font-weight:600;color:var(--u)">2/6</span></div>
+    </div>
+    <div class="ap"><h5>핵심 용어</h5><div class="termlist"><div class="tterm"><span class="tw">개인 정보</span><span class="tdef">식별 가능한 정보</span></div><div class="tterm"><span class="tw">사이버 보안</span><span class="tdef">디지털 자산 보호</span></div><div class="tterm"><span class="tw">피싱</span><span class="tdef">사기성 정보 수집</span></div><div class="tterm"><span class="tw">2단계 인증</span><span class="tdef">이중 보안 방식</span></div><div class="tterm"><span class="tw">암호화</span><span class="tdef">데이터 변환 보호</span></div></div></div>
+    <div class="ap" style="background:#F3E8FA;border-color:#D0A8E8">
+      <h5 style="color:#7B3FA0">🌐 디지털 문화 자료</h5>
+      <a href="https://www.cyber112.or.kr" target="_blank" class="btn bsm" style="width:100%;justify-content:center;margin-bottom:5px;font-size:10px">사이버범죄 신고 ↗</a>
+      <a href="https://www.koreacopyright.or.kr" target="_blank" class="btn bsm" style="width:100%;justify-content:center;font-size:10px;color:var(--mt)">저작권위원회 ↗</a>
+    </div>
+  </div>
+</div>  <!-- g2 -->
+</div>  <!-- page -->
+<script>
+  var GS_URL='https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+  function getUserName(){return localStorage.getItem('user_name')||'익명';}
+  function postToSheets(p){if(!GS_URL||GS_URL.indexOf('script.google.com')===-1)return;fetch(GS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)}).catch(function(){});}
+  function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2400);}
+  function markDone(n){try{var d=JSON.parse(localStorage.getItem('u05done')||'[]');if(!d.includes(n))d.push(n);localStorage.setItem('u05done',JSON.stringify(d));postToSheets({type:'done',userName:getUserName(),unit:'V',lessonNum:n,lessonName:'디지털 문화'});}catch(e){}toast('✅ 소단원 '+n+' 완료 표시!');}
+  function saveActivity(key){var d={};document.querySelectorAll('.act-input').forEach(function(el,i){d['a'+i]=el.value;});try{localStorage.setItem(key,JSON.stringify(d));postToSheets({type:'act',userName:getUserName(),lessonKey:key,lessonName:document.title,answers:d});toast('✅ 수행 활동이 저장되었습니다!');}catch(e){}}
+  function saveSC(key){var d={};document.querySelectorAll('.scitem select').forEach(function(s,i){d['q'+i]=s.value;});try{localStorage.setItem(key,JSON.stringify(d));postToSheets({type:'sc',userName:getUserName(),lessonKey:key,lessonName:document.title,answers:d});toast('자기평가가 저장되었습니다 ✓');}catch(e){}}
+  function loadSC(key){try{var d=JSON.parse(localStorage.getItem(key)||'{}');document.querySelectorAll('.scitem select').forEach(function(s,i){if(d['q'+i])s.value=d['q'+i];})}catch(e){}}
+  function checkQ(el,correct,fb_id,hint){var opts=el.closest('.quiz-opts').querySelectorAll('.opt');opts.forEach(function(o){o.onclick=null;o.style.cursor='default';});var fb=document.getElementById(fb_id);if(correct){el.classList.add('correct');fb.className='quiz-fb show correct';fb.textContent='✓ 정답! '+hint;}else{el.classList.add('wrong');fb.className='quiz-fb show wrong';fb.textContent='✗ 오답. 힌트: '+hint;}}
+  document.addEventListener('DOMContentLoaded',function(){loadSC('l502sc');});
+</script>
+</body>
+</html>
