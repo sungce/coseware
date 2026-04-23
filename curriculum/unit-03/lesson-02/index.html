@@ -1,1 +1,418 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>III-2. 문제의 추상화 — 정보 교과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#F5F4F0;color:#1C1C1C;font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+:root{--u:#D85A30;--udk:#B84020;--ult:#FAECE7;--umd:#F0B8A0;--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--green:#2A720E;--gbg:#E8F3DC;--amber:#7A4E0A;--abg:#FAF0DC;--red:#8C1E0E;--rbg:#FAEBE6;--blue:#0A4E8C;--bbg:#E4F0FA;--rLG:14px;--rSM:8px;--SW:236px;--TH:52px}
+.sb{width:var(--SW);background:var(--sf);border-right:1px solid var(--br);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.sb-top{padding:16px 14px 12px;border-bottom:1px solid var(--br)}
+.uchip{display:inline-flex;align-items:center;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.sb-top h2{font-size:12px;font-weight:700;line-height:1.4}.smeta{font-size:10px;color:var(--lt);margin-top:3px}
+.sb-nav{padding:4px 0;flex:1}.nlbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);padding:7px 13px 3px}
+.na{display:flex;align-items:center;gap:8px;padding:7px 13px;font-size:11px;color:var(--mt);text-decoration:none;border-left:2.5px solid transparent;transition:background .12s}
+.na:hover{background:var(--bg);color:var(--tx)}.na.on{color:var(--u);font-weight:600;background:var(--ult);border-left-color:var(--u)}.na.done .nn{background:var(--gbg);color:var(--green)}
+.nn{width:18px;height:18px;border-radius:50%;background:var(--br);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--mt)}.na.on .nn{background:var(--u);color:#fff}
+.nbadge{margin-left:auto;font-size:9px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:1px 5px;border-radius:10px;white-space:nowrap}
+.sb-foot{padding:10px 13px;border-top:1px solid var(--br)}.ba{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt);text-decoration:none;padding:5px 9px;border-radius:var(--rSM);border:1px solid var(--br);background:var(--sf);transition:all .12s}.ba:hover{background:var(--bg)}
+.main{margin-left:var(--SW);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:var(--TH);padding:0 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mt);flex:1;flex-wrap:wrap}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}.bcsep{color:var(--br)}.bccur{color:var(--tx);font-weight:500}.tbr{display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s;white-space:nowrap}.btn:hover{background:var(--bg)}.bsm{padding:5px 9px;font-size:11px}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}.bok{background:var(--green);color:#fff;border-color:var(--green)}
+.page{padding:20px 22px;flex:1}.g2{display:grid;grid-template-columns:1fr minmax(0,248px);gap:16px;align-items:start}.cm{min-width:0}.ca{position:sticky;top:calc(var(--TH)+12px)}
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}.card:hover{box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.ch{display:flex;align-items:center;gap:9px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--br);transition:background .12s;user-select:none}.ch:hover{background:var(--bg)}
+.sn{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}.ch h3{font-size:13px;font-weight:600;flex:1}
+.st{font-size:10px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:2px 7px;border-radius:20px;white-space:nowrap}.carr{font-size:11px;color:var(--lt);transition:transform .2s}.card.collapsed .carr{transform:rotate(-90deg)}.cb{padding:18px}.card.collapsed .cb{display:none}
+.ach{background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:10px 13px;margin-bottom:14px}.ach-c{font-family:monospace;font-size:11px;font-weight:700;color:var(--u);margin-bottom:3px}.ach-t{font-size:13px;line-height:1.6}
+.glist{list-style:none}.glist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid var(--br);line-height:1.6}.glist li:last-child{border-bottom:none}.gck{width:17px;height:17px;border-radius:50%;background:var(--gbg);color:var(--green);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.ctag{font-size:11px;padding:3px 10px;background:var(--bg);border:1px solid var(--br);border-radius:20px;cursor:pointer;color:var(--mt);transition:all .12s}.ctag:hover{background:var(--ult);border-color:var(--umd);color:var(--u)}
+.ibox{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6;margin-top:10px}.prev{background:var(--bg);border:1px solid var(--br);color:var(--mt)}.warn{background:#FFFBEC;border:1px solid #EDD070;color:#6A5000}.info{background:var(--bbg);border:1px solid #BACED8;color:var(--blue)}.ok{background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}
+.divl{height:1px;background:var(--br);margin:13px 0}
+.crow{display:grid;grid-template-columns:1fr minmax(0,148px);gap:13px;align-items:start;margin-bottom:13px}
+.ct h4{font-size:13px;font-weight:700;margin-bottom:7px}.ct p{font-size:13px;color:var(--mt);line-height:1.75}.ct ul{padding-left:1rem;margin-top:5px}.ct ul li{font-size:13px;color:var(--mt);margin-bottom:3px;line-height:1.6}
+.cvis{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);display:flex;align-items:center;justify-content:center;padding:8px}
+.qwrap{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-top:13px}.qq{font-size:14px;font-weight:500;margin-bottom:11px;line-height:1.55}.qopts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);cursor:pointer;font-size:13px;line-height:1.5;transition:all .12s}.opt:hover{border-color:var(--u);background:var(--ult)}.opt.correct{border-color:#4A9020;background:var(--gbg);color:#1A5000;pointer-events:none}.opt.wrong{border-color:#B03020;background:var(--rbg);color:#6A1000;pointer-events:none}.opt.locked{pointer-events:none;opacity:.55}
+.onum{width:21px;height:21px;border-radius:50%;background:var(--br);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.opt.correct .onum{background:#4A9020;color:#fff}.opt.wrong .onum{background:#B03020;color:#fff}
+.qfb{display:none;margin-top:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6}.qfb.ok{display:block;background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}.qfb.err{display:block;background:var(--rbg);border:1px solid #F0B8A0;color:var(--red)}
+.rub{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}.rub th{background:var(--bg);padding:7px 8px;font-weight:600;border-bottom:1.5px solid var(--br);text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--mt)}.rub td{padding:8px 8px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.5}.rub tr:last-child td{border-bottom:none}
+.lv4{color:#1A6000!important;font-weight:500}.lv3{color:#2A6830!important}.lv2{color:#7A4E00!important}.lv1{color:#8A2000!important}
+.task{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--blue)}.task h4{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:7px}.task p{font-size:13px;color:var(--mt);line-height:1.75}.srow{display:flex;align-items:flex-start;gap:7px;padding:5px 0;border-top:1px solid var(--br);margin-top:6px;font-size:12px;color:var(--mt)}.stepn{width:18px;height:18px;border-radius:50%;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.sclist{display:flex;flex-direction:column;gap:4px}.scitem{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg);border-radius:var(--rSM);font-size:12px;border:1px solid var(--br)}.scitem label{flex:1;line-height:1.5}.scitem select{font-size:11px;padding:3px 6px;border:1px solid var(--br);border-radius:5px;background:var(--sf);font-family:inherit;color:var(--tx);cursor:pointer;flex-shrink:0}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.scard{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px 12px;font-size:12px;line-height:1.65;color:var(--mt)}.scard strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--lt);margin-bottom:4px}
+.ap{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:13px;margin-bottom:10px}.ap h5{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lt);margin-bottom:8px}
+.slist{display:flex;flex-direction:column;gap:3px}.si{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rSM);font-size:11px;color:var(--mt);cursor:pointer;transition:background .12s}.si:hover{background:var(--bg)}.si.sa{background:var(--ult);color:var(--u);font-weight:500}.si.sd{color:var(--tx)}
+.dot{width:19px;height:19px;border-radius:50%;background:var(--br);color:var(--lt);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.dot.sa{background:var(--u);color:#fff}.dot.sd{background:var(--gbg);color:var(--green)}
+.td-num{font-size:28px;font-weight:300;text-align:center;display:block;font-variant-numeric:tabular-nums}.td-lbl{font-size:10px;color:var(--lt);text-align:center;margin-top:3px;margin-bottom:9px}
+.trow{display:flex;gap:5px}.trow .btn{flex:1;justify-content:center;font-size:10px}
+.termlist{display:flex;flex-direction:column}.tterm{display:flex;align-items:baseline;gap:5px;padding:4px 0;font-size:11px;border-bottom:1px solid var(--br)}.tterm:last-child{border-bottom:none}.tw{font-weight:600;color:var(--u);white-space:nowrap}.tdef{color:var(--mt)}
+.pbtrack{height:5px;background:var(--umd);border-radius:3px;overflow:hidden}.pbfill{height:100%;background:var(--u);border-radius:3px}
+/* Entry blocks */
+.eblocks{display:flex;flex-wrap:wrap;gap:5px;padding:14px;background:#1a1a2e;border-radius:var(--rSM);margin:8px 0}
+.eb{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;font-size:12px;font-family:'Courier New',monospace;font-weight:700;color:#fff;cursor:default;position:relative}
+.eb-start{background:#FF8C00;box-shadow:0 3px 0 #B85A00}.eb-move{background:#4A7ED9;box-shadow:0 3px 0 #2A50A0}.eb-look{background:#9B59B6;box-shadow:0 3px 0 #6C3483}.eb-sound{background:#E91E63;box-shadow:0 3px 0 #880033}.eb-calc{background:#27AE60;box-shadow:0 3px 0 #1A7A40}.eb-flow{background:#FF6B35;box-shadow:0 3px 0 #C04010}.eb-data{background:#3498DB;box-shadow:0 3px 0 #1A5A9A}.eb-func{background:#8E44AD;box-shadow:0 3px 0 #5E2080}.eb-input{background:#F39C12;box-shadow:0 3px 0 #C07000}.eb-judge{background:#E74C3C;box-shadow:0 3px 0 #A01010}
+.eb-hole{display:inline-block;background:rgba(255,255,255,.2);border-radius:4px;padding:2px 8px;font-size:11px;min-width:24px;text-align:center}
+.entry-link{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;background:linear-gradient(135deg,#22C55E,#16A34A);color:#fff;border-radius:var(--rSM);font-size:12px;font-weight:700;text-decoration:none;transition:opacity .15s}.entry-link:hover{opacity:.88}
+/* Flowchart */
+.fc-wrap{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:16px;overflow-x:auto}
+.fc-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:4px 0;flex-wrap:wrap}
+.fc-start,.fc-end{background:var(--u);color:#fff;border-radius:30px;padding:6px 18px;font-size:11px;font-weight:700}
+.fc-proc{background:#E4F0FA;border:1.5px solid #0A4E8C;color:#0A4E8C;border-radius:4px;padding:6px 14px;font-size:11px;font-weight:500}
+.fc-dec{background:#FAF0DC;border:1.5px solid var(--amber);color:var(--amber);padding:6px 14px;font-size:11px;font-weight:500;transform:skewX(-10deg)}.fc-dec span{display:inline-block;transform:skewX(10deg)}
+.fc-io{background:#E8F3DC;border:1.5px solid var(--green);color:var(--green);padding:6px 14px;font-size:11px;font-weight:500;border-radius:4px}
+.fc-arr{color:var(--lt);font-size:12px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1C1C1C;color:#fff;padding:9px 18px;border-radius:10px;font-size:12px;font-family:inherit;z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+/* ══ 반응형 레이아웃 ══ */
+*,*::before,*::after{box-sizing:border-box}
+img,canvas,video{max-width:100%;height:auto;display:block}
+table{width:100%;border-collapse:collapse}
+.act-table,.peer-check,.rub{table-layout:fixed;word-break:break-word}
+.act-table td,.act-table th,
+.rub td,.rub th,
+.peer-check td,.peer-check th{min-width:44px;word-break:break-word;overflow-wrap:break-word}
+.act-step>div:not(.act-num){min-width:0;flex:1;overflow-wrap:break-word;word-break:break-word}
+.act-body,.cb{overflow-x:hidden}
+.act-input{width:100%;box-sizing:border-box}
+.mb-workspace,.mb-row,.mb-indent,.mb-indent2{flex-wrap:wrap}
+.sim-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
+/* 1100px 이하 */
+@media(max-width:1100px){
+  .g2{grid-template-columns:1fr 220px}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 220px;min-width:180px}
+  .crow{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr 1fr}
+}
+
+/* 900px 이하 */
+@media(max-width:900px){
+  .g2{grid-template-columns:1fr 200px}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 180px;min-width:160px}
+  .page{padding:16px 14px}
+  .cb,.act-body{padding:13px}
+  .sgrid{grid-template-columns:1fr 1fr}
+  .crow{grid-template-columns:1fr}
+}
+
+/* 640px 이하 */
+@media(max-width:640px){
+  .page{padding:11px 10px}
+  .cb,.act-body{padding:10px}
+  .sgrid{grid-template-columns:1fr}
+  .act-step{flex-direction:column;gap:5px}
+  .act-num{margin-bottom:0}
+  .ch h3{font-size:12px}
+  .btn{font-size:11px;padding:5px 8px}
+  .act-table td,.act-table th{padding:5px 6px;font-size:11px}
+  .rub td,.rub th{padding:5px 6px;font-size:11px}
+  .peer-check td,.peer-check th{padding:5px 6px;font-size:10px}
+  .scard{font-size:11px}
+  .opt{font-size:12px;padding:8px 10px}
+  .mb,.mb-hole{font-size:10px;padding:4px 7px}
+}
+
+/* 480px 이하 */
+@media(max-width:480px){
+  :root{--SW:0px}
+  .sb{display:none}
+  .main{margin-left:0}
+  .topbar{padding:0 10px}
+  .page{padding:8px 9px}
+  .cb,.act-body{padding:9px}
+  .tbr .btn:last-child{display:none}
+  .sgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-top">
+    <div class="uchip">◈ Unit III</div>
+    <h2>알고리즘과 프로그래밍</h2>
+    <div class="smeta">중단원 1: 추상화와 알고리즘 · 1차시 · 교과서 p.96~99</div>
+  </div>
+  <nav class="sb-nav"><div class="nlbl">소단원 목록</div><a class="na done" href="../lesson-01/index.html"><div class="nn">✓</div>문제의 상태와 구조화</a>
+<a class="na on" href="../lesson-02/index.html"><div class="nn">2</div>문제의 추상화<span class="nbadge">1차시</span></a>
+<a class="na " href="../lesson-03/index.html"><div class="nn">3</div>알고리즘의 이해와 표현</a>
+<a class="na " href="../lesson-04/index.html"><div class="nn">4</div>알고리즘의 분석과 설계</a>
+<a class="na " href="../lesson-05/index.html"><div class="nn">5</div>프로그래밍 시작하기</a>
+<a class="na " href="../lesson-06/index.html"><div class="nn">6</div>논리 연산 프로그래밍</a>
+<a class="na " href="../lesson-07/index.html"><div class="nn">7</div>중첩 제어 구조 프로그래밍</a>
+<a class="na " href="../lesson-08/index.html"><div class="nn">8</div>리스트와 프로그래밍</a>
+<a class="na " href="../lesson-09/index.html"><div class="nn">9</div>함수와 디버깅</a>
+<a class="na " href="../lesson-10/index.html"><div class="nn">10</div>실생활과 학문 분야 문제 해결</a>
+</nav>
+  <div class="sb-foot"><a class="ba" href="https://sungce.github.io/lesson/">← 정보 교과 학습 플랫폼</a></div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div class="bc"><a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a><span class="bcsep">›</span><a href="../../index.html">III. 알고리즘과 프로그래밍</a><span class="bcsep">›</span><span class="bccur">2. 문제의 추상화</span></div>
+    <div class="tbr">
+      <button class="btn bsm" onclick="markDone('02')">✓ 완료 표시</button>
+      <a class="btn bsm bp" href="../lesson-03/index.html">다음 소단원 →</a>
+    </div>
+  </header>
+  <div class="page"><div class="g2"><div class="cm">
+
+<div class="card" id="sec-goal">
+  <div class="ch" onclick="toggleSec('sec-goal')"><div class="sn" style="background:var(--ult);color:var(--u)">01</div><h3>학습목표</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="ach"><div class="ach-c">[9정03-01] 추상화와 알고리즘 중단원</div><div class="ach-t">추상화의 의미와 중요성을 설명하고, 문제를 작은 문제로 나누어 핵심 요소를 추출할 수 있다. (교과서 pp.96~99)</div></div>
+    <ul class="glist">
+      <li><div class="gck">✓</div>추상화의 의미와 중요성을 설명할 수 있다.</li>
+      <li><div class="gck">✓</div>문제를 작은 문제(문제 분해)로 나눌 수 있다.</li>
+      <li><div class="gck">✓</div>문제 해결에 필요한 핵심 요소를 추출할 수 있다.</li>
+    </ul>
+    <div class="divl"></div>
+    <div class="ctags">
+      <span class="ctag" onclick="goTo('sec-concept')">추상화</span>
+      <span class="ctag" onclick="goTo('sec-concept')">문제 분해</span>
+      <span class="ctag" onclick="goTo('sec-concept')">핵심 요소 추출</span>
+    </div>
+    <div class="ibox prev">📌 <b>이전 차시 연결:</b> 지난 시간에 문제의 초기·현재·목표 상태를 정의하고 구조화하는 방법을 배웠습니다. 이번에는 복잡한 문제를 단순화하는 추상화를 탐구합니다.</div>
+  </div>
+</div>
+
+<div class="card" id="sec-concept">
+  <div class="ch" onclick="toggleSec('sec-concept')"><div class="sn" style="background:var(--gbg);color:var(--green)">02</div><h3>개념설명</h3><span class="st">⏱ 15분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="crow">
+      <div class="ct">
+        <h4>추상화(Abstraction)란?</h4>
+        <p>문제의 목적에 따라 <strong>문제 해결에 필요한 요소를 찾아내고, 문제를 작은 문제로 나누어 해결 가능한 수준으로 만드는 것</strong>을 추상화라고 합니다.</p>
+        <ul>
+          <li>복잡성을 줄여 효율적으로 문제 해결</li>
+          <li>같은 대상도 목적에 따라 추상화 방식이 달라짐</li>
+          <li>지도 예시: 지역지도, 도로지도, 맛집지도 (같은 제주도)</li>
+        </ul>
+      </div>
+      <div class="cvis">
+        <svg viewBox="0 0 130 100" width="130">
+          <rect x="2" y="4" width="126" height="20" rx="4" fill="#F0F0F0" stroke="#999" stroke-width="1"/>
+          <text x="65" y="17" font-size="8" fill="#333" text-anchor="middle" font-family="sans-serif" font-weight="bold">복잡한 현실 문제</text>
+          <path d="M40 24 L30 44" stroke="#aaa" stroke-width="1.2" marker-end="url(#am)"/>
+          <path d="M65 24 L65 44" stroke="#aaa" stroke-width="1.2" marker-end="url(#am)"/>
+          <path d="M90 24 L100 44" stroke="#aaa" stroke-width="1.2" marker-end="url(#am)"/>
+          <rect x="2"  y="44" width="38" height="18" rx="4" fill="var(--bbg)" stroke="var(--blue)" stroke-width="1"/>
+          <text x="21" y="56" font-size="7.5" fill="var(--blue)" text-anchor="middle" font-family="sans-serif">소문제 A</text>
+          <rect x="46" y="44" width="38" height="18" rx="4" fill="var(--ult)" stroke="var(--u)" stroke-width="1"/>
+          <text x="65" y="56" font-size="7.5" fill="var(--u)" text-anchor="middle" font-family="sans-serif">소문제 B</text>
+          <rect x="90" y="44" width="38" height="18" rx="4" fill="var(--gbg)" stroke="var(--green)" stroke-width="1"/>
+          <text x="109" y="56" font-size="7.5" fill="var(--green)" text-anchor="middle" font-family="sans-serif">소문제 C</text>
+          <text x="65" y="80" font-size="8" fill="var(--mt)" text-anchor="middle" font-family="sans-serif">↓ 핵심 요소 추출</text>
+          <rect x="20" y="84" width="90" height="14" rx="4" fill="#E8F3DC" stroke="var(--green)" stroke-width="1"/>
+          <text x="65" y="94" font-size="7.5" fill="var(--green)" text-anchor="middle" font-family="sans-serif">알고리즘 설계 가능!</text>
+          <defs><marker id="am" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#aaa"/></marker></defs>
+        </svg>
+      </div>
+    </div>
+    <div class="divl"></div>
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">교과서 예시: 위험물 피하기 게임 추상화</h4>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="background:var(--bg)">
+          <th style="padding:7px 9px;border-bottom:1.5px solid var(--br);font-size:11px;color:var(--mt)">소문제</th>
+          <th style="padding:7px 9px;border-bottom:1.5px solid var(--br);font-size:11px;color:var(--mt)">표현 대상</th>
+          <th style="padding:7px 9px;border-bottom:1.5px solid var(--br);font-size:11px;color:var(--mt)">핵심 요소</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt)">캐릭터 움직이기</td><td style="padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt)">캐릭터</td><td style="padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt)">이름, 위치, 모습</td></tr>
+          <tr><td style="padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt)">위험물 기능 설정</td><td style="padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt)">위험물</td><td style="padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt)">종류, 위치</td></tr>
+          <tr><td style="padding:7px 9px;color:var(--mt)">점수 확인하기</td><td style="padding:7px 9px;color:var(--mt)">점수</td><td style="padding:7px 9px;color:var(--mt)">시작 점수, 계산식, 표시 위치</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ibox info" style="margin-top:10px">💡 같은 게임 캐릭터라도 <b>목적</b>에 따라 추출하는 핵심 요소가 달라집니다. (이동 vs 대전 vs 꾸미기)</div>
+  </div>
+</div>
+
+<div class="card" id="sec-interact">
+  <div class="ch" onclick="toggleSec('sec-interact')"><div class="sn" style="background:var(--rbg);color:var(--red)">03</div><h3>인터랙션 — 추상화 분해 카드 게임</h3><span class="st">⏱ 15분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="ibox ok" style="margin-top:0;margin-bottom:14px">💡 아래 게임 문제를 소문제로 분해하고, 각 소문제의 핵심 요소를 선택해보세요!</div>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--tx)">🎮 문제: 음료수 자동판매기 소프트웨어 만들기</div>
+      <div style="font-size:12px;color:var(--mt);margin-bottom:12px">자판기는 돈을 넣으면 음료수가 나오는 기계입니다. 소프트웨어로 만들려면 어떤 소문제로 분해할 수 있을까요?</div>
+      <div id="decomp-area" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="decomp-card" data-id="0" style="border:1.5px solid var(--br);border-radius:var(--rSM);padding:12px;cursor:pointer;transition:all .15s;background:var(--sf)" onclick="selectDecomp(0)">
+          <div style="font-size:11px;font-weight:700;margin-bottom:5px">💰 소문제 A</div>
+          <div style="font-size:11px;color:var(--mt)">음료수 목록 표시하기</div>
+          <div style="font-size:10px;color:var(--lt);margin-top:4px">선택: <span class="sel-elem">?</span></div>
+        </div>
+        <div class="decomp-card" data-id="1" style="border:1.5px solid var(--br);border-radius:var(--rSM);padding:12px;cursor:pointer;transition:all .15s;background:var(--sf)" onclick="selectDecomp(1)">
+          <div style="font-size:11px;font-weight:700;margin-bottom:5px">🥤 소문제 B</div>
+          <div style="font-size:11px;color:var(--mt)">금액 확인 후 음료수 제공</div>
+          <div style="font-size:10px;color:var(--lt);margin-top:4px">선택: <span class="sel-elem">?</span></div>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:7px">핵심 요소 목록 (각 소문제에 끌어넣기)</div>
+        <div id="elem-pool" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--sf);border:1px solid var(--br);border-radius:var(--rSM);min-height:44px">
+          <div class="elem-chip" data-val="음료수 종류·가격·개수" onclick="assignElem(this,0)" style="padding:4px 10px;background:var(--bbg);border:1.5px solid #0A4E8C;border-radius:20px;font-size:11px;cursor:pointer;color:var(--blue)">음료수 종류·가격·개수</div>
+          <div class="elem-chip" data-val="투입 금액·선택 음료수" onclick="assignElem(this,1)" style="padding:4px 10px;background:var(--ult);border:1.5px solid var(--u);border-radius:20px;font-size:11px;cursor:pointer;color:var(--u)">투입 금액·선택 음료수</div>
+          <div class="elem-chip" data-val="잔돈 계산 공식" onclick="assignElem(this,1)" style="padding:4px 10px;background:var(--gbg);border:1.5px solid var(--green);border-radius:20px;font-size:11px;cursor:pointer;color:var(--green)">잔돈 계산 공식</div>
+          <div class="elem-chip" data-val="재고 수량" onclick="assignElem(this,0)" style="padding:4px 10px;background:var(--abg);border:1.5px solid var(--amber);border-radius:20px;font-size:11px;cursor:pointer;color:var(--amber)">재고 수량</div>
+        </div>
+      </div>
+      <button class="btn bsm bp" style="margin-top:10px" onclick="checkDecomp()">✓ 확인하기</button>
+      <div id="decomp-result" style="display:none;margin-top:9px;padding:10px 12px;border-radius:var(--rSM);font-size:12px"></div>
+    </div>
+    <div class="qwrap">
+      <div class="qq">추상화의 두 가지 방법이 아닌 것은?</div>
+      <div class="qopts">
+        <div class="opt" onclick="checkQ(this,false,'문제 분해는 추상화의 핵심 방법 중 하나입니다. 큰 문제를 작은 문제로 나눕니다.')"><span class="onum">①</span>문제 분해 — 하나의 큰 문제를 작은 문제들로 나누기</div>
+        <div class="opt" onclick="checkQ(this,false,'핵심 요소 추출은 추상화의 또 다른 핵심 방법입니다.')"><span class="onum">②</span>핵심 요소 추출 — 필요 없는 요소를 제거하고 필요한 것만 선택</div>
+        <div class="opt" onclick="checkQ(this,true,'코딩은 추상화 이후 알고리즘을 구현하는 단계입니다. 추상화의 방법이 아닙니다.')"><span class="onum">③</span>코딩 — 컴퓨터 언어로 명령을 직접 작성하기</div>
+        <div class="opt" onclick="checkQ(this,false,'목적 명확화는 추상화에서 핵심 요소를 추출하기 위한 전제 조건입니다.')"><span class="onum">④</span>목적 명확화 — 문제의 목적을 파악하여 추상화 방향 설정</div>
+      </div>
+      <div class="qfb"></div>
+    </div>
+  </div>
+</div>
+
+<div class="card" id="sec-assess">
+  <div class="ch" onclick="toggleSec('sec-assess')"><div class="sn" style="background:var(--bbg);color:var(--blue)">04</div><h3>수행평가</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="task"><h4>📋 나만의 게임 추상화 설계</h4>
+      <p>만들고 싶은 엔트리 게임을 선택하여 문제 분해와 핵심 요소를 추출하는 추상화 설계서를 작성하시오.</p>
+      <div class="srow"><div class="stepn">①</div><span>만들 게임 종류 선택 (피하기·퀴즈·그림판·계산기 등)</span></div>
+      <div class="srow"><div class="stepn">②</div><span>큰 문제를 2~3개의 소문제로 분해</span></div>
+      <div class="srow"><div class="stepn">③</div><span>각 소문제의 핵심 요소 추출 (표로 정리)</span></div>
+    </div>
+    <table class="rub"><thead><tr><th>평가 요소</th><th class="lv4">매우 잘함(4)</th><th class="lv3">잘함(3)</th><th class="lv2">보통(2)</th><th class="lv1">노력 필요(1)</th></tr></thead><tbody>
+      <tr><td><b>문제 분해</b></td><td class="lv4">2~3개 명확·논리적</td><td class="lv3">2개 분해</td><td class="lv2">1개만</td><td class="lv1">분해 없음</td></tr>
+      <tr><td><b>핵심 요소</b></td><td class="lv4">각 소문제별 명확</td><td class="lv3">대체로 명확</td><td class="lv2">일부만</td><td class="lv1">없음</td></tr>
+    </tbody></table>
+    <div class="sclist">
+      <div class="scitem"><label>추상화의 의미와 중요성을 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>문제를 작은 소문제로 분해할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>핵심 요소를 목적에 맞게 추출할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div>
+    </div>
+    <button class="btn bsm bok" style="margin-top:10px" onclick="saveSC('l302sc')">💾 저장</button>
+  </div>
+</div>
+
+<div class="card" id="sec-review">
+  <div class="ch" onclick="toggleSec('sec-review')"><div class="sn" style="background:var(--gbg);color:var(--green)">05</div><h3>확인하기</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="sgrid">
+      <div class="scard"><strong>추상화</strong>문제를 해결 가능한 수준으로 단순화. 복잡성 감소.</div>
+      <div class="scard"><strong>문제 분해</strong>큰 문제 → 작은 소문제로 나누기. 복잡성 감소.</div>
+      <div class="scard"><strong>핵심 요소</strong>불필요 요소 제거, 목적에 맞는 요소만 선택.</div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;margin-bottom:12px">
+      <b>✏️ 단답형:</b> 복잡한 문제를 해결하기 위해 작은 문제로 나누는 과정을 <span style="display:inline-block;width:70px;border-bottom:1.5px solid var(--tx)">&nbsp;</span>라고 한다.
+      <textarea style="display:block;width:100%;margin-top:9px;padding:9px;border:1px solid var(--br);border-radius:var(--rSM);font-size:13px;font-family:inherit;resize:vertical;min-height:48px;background:var(--sf)" placeholder="정답을 입력하세요..." onfocus="this.style.borderColor='var(--u)'" onblur="this.style.borderColor=''"></textarea>
+    </div>
+    <div class="ibox ok">📖 <div><strong>다음 차시 예고:</strong> 다음 소단원에서는 추상화로 추출한 핵심 요소로 <strong>알고리즘</strong>을 표현하는 방법(자연어·순서도)을 학습합니다! (교과서 pp.100~102)</div></div>
+  </div>
+</div>
+
+  </div>
+  <div class="ca">
+    <div class="ap"><h5>학습 진행</h5><div class="slist">
+      <div class="si" onclick="goTo('sec-goal')"><div class="dot sd">1</div>학습목표</div>
+      <div class="si" onclick="goTo('sec-concept')"><div class="dot">2</div>개념설명</div>
+      <div class="si" onclick="goTo('sec-interact')"><div class="dot sa">★</div>인터랙션</div>
+      <div class="si" onclick="goTo('sec-assess')"><div class="dot">4</div>수행평가</div>
+      <div class="si" onclick="goTo('sec-review')"><div class="dot">5</div>확인하기</div>
+    </div></div>
+    </div>
+    <div class="ap"><h5>핵심 용어</h5><div class="termlist"><div class="tterm"><span class="tw">추상화</span><span class="tdef">복잡성 줄여 단순화</span></div><div class="tterm"><span class="tw">문제 분해</span><span class="tdef">큰→작은 문제</span></div><div class="tterm"><span class="tw">핵심 요소 추출</span><span class="tdef">목적에 맞는 요소만</span></div><div class="tterm"><span class="tw">목적</span><span class="tdef">추상화 방향 결정</span></div><div class="tterm"><span class="tw">단순화</span><span class="tdef">불필요 제거</span></div></div></div>
+    <div class="ap" style="background:var(--ult);border-color:var(--umd)">
+      <h5 style="color:var(--u)">단원 진도</h5>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><div class="pbtrack" style="flex:1"><div class="pbfill" style="width:20%"></div></div><span style="font-size:11px;font-weight:600;color:var(--u)">2/10</span></div>
+    </div>
+    <div class="ap" style="background:#F0FDF4;border-color:#BBF7D0">
+      <h5 style="color:#166534">🟢 엔트리 실습</h5>
+      <a href="https://playentry.org" target="_blank" class="entry-link" style="width:100%;justify-content:center;margin-bottom:5px">엔트리 열기 ↗</a>
+      <a href="https://playentry.org/learn" target="_blank" class="btn bsm" style="width:100%;justify-content:center;font-size:10px;color:var(--mt)">튜토리얼 ↗</a>
+    </div>
+  </div>
+  </div></div>
+</main>
+<div id="toast"></div>
+<script>
+
+  // ── Google Sheets 저장 ──────────────────────────────────
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+
+  function getUserName() {
+    return localStorage.getItem('user_name') || '익명';
+  }
+
+  function postToSheets(payload) {
+    if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) return;
+    fetch(GS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},2400);}
+function toggleSec(id){var e=document.getElementById(id);if(e)e.classList.toggle('collapsed');}
+function goTo(id){var e=document.getElementById(id);if(!e)return;window.scrollTo({top:e.getBoundingClientRect().top+window.pageYOffset-64,behavior:'smooth'});}
+var tR,tRun=false,tIv=null;
+function loadSC(key){try{var d=JSON.parse(localStorage.getItem(key)||'{}');document.querySelectorAll('.scitem select').forEach(function(s,i){if(d['q'+i])s.value=d['q'+i];});}catch(e){}}
+function markDone(n){
+  try{
+    var d=JSON.parse(localStorage.getItem('u03done')||'[]');
+    if(!d.includes(n))d.push(n);
+    localStorage.setItem('u03done',JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'done',
+      userName: getUserName(),
+      unit: 'III',
+      lessonNum: n,
+      lessonName: '알고리즘과 프로그래밍'
+    });
+  }catch(e){}
+  toast('✅ 소단원 '+n+' 완료 표시!');
+}
+
+
+var decompAnswers = {0:'음료수 종류·가격·개수', 1:'투입 금액·선택 음료수'};
+var decompSelected = {0:null, 1:null};
+var activeCard = null;
+function selectDecomp(id){
+  activeCard = id;
+  document.querySelectorAll('.decomp-card').forEach(function(c){
+    c.style.borderColor = parseInt(c.dataset.id)===id ? 'var(--u)' : 'var(--br)';
+    c.style.background = parseInt(c.dataset.id)===id ? 'var(--ult)' : 'var(--sf)';
+  });
+}
+function assignElem(el, targetId){
+  if(activeCard===null){toast('먼저 소문제 카드를 클릭하여 선택하세요!');return;}
+  decompSelected[activeCard] = el.dataset.val;
+  var cards = document.querySelectorAll('.decomp-card');
+  if(cards[activeCard]) cards[activeCard].querySelector('.sel-elem').textContent = el.dataset.val.substring(0,10)+'...';
+  toast('소문제 '+(['A','B'][activeCard])+' 에 배정!');
+}
+function checkDecomp(){
+  var ok=0;
+  for(var k in decompAnswers){
+    if(decompSelected[k] && decompSelected[k]===decompAnswers[k]) ok++;
+  }
+  var res=document.getElementById('decomp-result');
+  res.style.display='block';
+  if(ok===2){
+    res.style.cssText='display:block;background:var(--gbg);border:1px solid #BFDFAA;color:#1A5000;padding:10px 12px;border-radius:8px;font-size:12px';
+    res.innerHTML='🎉 정답! A=음료수 목록(종류·가격·개수), B=제공 처리(투입금액·선택음료수)로 완벽하게 추상화했습니다!';
+  } else {
+    res.style.cssText='display:block;background:var(--abg);border:1px solid #EDD070;color:#6A5000;padding:10px 12px;border-radius:8px;font-size:12px';
+    res.innerHTML='📝 '+ok+'/2 정답. 힌트: A는 무엇을 "표시"할지, B는 무엇을 "확인"할지 생각해보세요.';
+  }
+}
+
+document.addEventListener('DOMContentLoaded',function(){loadSC('l302sc');});
+</script>
+</body></html>
