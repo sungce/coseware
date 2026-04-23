@@ -1046,6 +1046,12 @@
       대시보드
     </a>
 
+    <a class="nav-item" href="./" onclick="showView('records'); setActive(this); updateRecordView(); return false;">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      나의 학습기록
+      <span class="nav-badge" id="record-count-nav">0</span>
+    </a>
+
     <div class="nav-section-label" style="margin-top:8px">단원</div>
 
     <a class="nav-item nav-unit1" id="nav-unit1-head" href="unit-01/index.html"
@@ -2176,15 +2182,21 @@
   }
 
   function initProfile() {
+    // 부모(index.html)에서 전달된 Firebase 이름 우선 사용
+    var parentName = localStorage.getItem('curriculum_user_name');
+    if (parentName) {
+      applyProfile(parentName, '');
+      closeLoginModal();
+      updateRecordCount();
+      return;
+    }
     var isGoogle = localStorage.getItem('user_google') === '1';
     var name     = localStorage.getItem('user_name');
     if (isGoogle && name) {
-      // Google 로그인 완료 상태
       var picture = localStorage.getItem('user_picture') || '';
       applyProfile(name, picture);
       closeLoginModal();
     } else {
-      // 기존 정보 초기화 후 로그인 강제
       localStorage.removeItem('user_name');
       localStorage.removeItem('user_picture');
       localStorage.removeItem('user_email');
@@ -2194,11 +2206,35 @@
     updateRecordCount();
   }
 
+  // ── 부모 Firebase 사용자명 수신 ──────────────────────────
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'SET_USER_NAME' && e.data.name) {
+      var name = e.data.name;
+      localStorage.setItem('curriculum_user_name', name);
+      applyProfile(name, '');
+      closeLoginModal();
+      var el = document.getElementById('record-count-nav');
+      if (el) updateRecordCount();
+    }
+  });
+
+  // iframe 로드 완료 → 부모에게 READY 신호 (여러번 시도)
+  window.addEventListener('load', function() {
+    function notifyParent() {
+      try { window.parent.postMessage({ type: 'CURRICULUM_READY' }, '*'); } catch(e) {}
+    }
+    notifyParent();
+    setTimeout(notifyParent, 300);
+    setTimeout(notifyParent, 1000);
+    setTimeout(notifyParent, 2500);
+  });
   function updateRecordCount() {
     var data  = collectRecords();
     var total = data.list.length + data.done.length;
-    var el    = document.getElementById('record-count');
+    var el = document.getElementById('record-count');
     if (el) el.textContent = total;
+    var el2 = document.getElementById('record-count-nav');
+    if (el2) el2.textContent = total;
 
     // Google Sheets 동기화 표시
     var sub = document.getElementById('profile-sub');

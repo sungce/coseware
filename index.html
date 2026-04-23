@@ -990,15 +990,27 @@
             const user = auth && auth.currentUser;
             const name = user
                 ? (user.displayName || user.email.split('@')[0])
-                : (localStorage.getItem('userName') || '');
-            if (name) {
+                : '';
+            if (!name) return;
+            // localStorage에도 저장해 iframe이 바로 읽을 수 있게
+            try { localStorage.setItem('curriculum_user_name', name); } catch(e) {}
+            try {
                 frame.contentWindow.postMessage({ type: 'SET_USER_NAME', name }, '*');
-            }
+            } catch(e) {}
         }
 
         // iframe이 ready 신호를 보내면 이름 전달
         window.addEventListener('message', function(e) {
             if (e.data && e.data.type === 'CURRICULUM_READY') {
+                sendUserNameToFrame();
+            }
+        });
+
+        // Firebase 로그인 완료 시에도 전달
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                const name = user.displayName || user.email.split('@')[0];
+                try { localStorage.setItem('curriculum_user_name', name); } catch(e) {}
                 sendUserNameToFrame();
             }
         });
