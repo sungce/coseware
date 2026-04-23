@@ -1,1 +1,729 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>과정 중심의 수행활동 — 정보 교과 학습 플랫폼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F4F0;--sf:#fff;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;
+  --r:14px;--rs:8px;
+  --c1:#7B8CDE;--c2:#1D9E75;--c3:#E8804A;--c4:#378ADD;--c5:#9B59B6;
+  --c1l:#EEF0FB;--c2l:#E8F5EF;--c3l:#FDF0E8;--c4l:#E8F2FB;--c5l:#F5EEF8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.65;min-height:100vh}
+
+/* ── 상단바 ── */
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:52px;padding:0 24px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:90}
+.bc{font-size:12px;color:var(--mt);flex:1;display:flex;align-items:center;gap:6px}
+.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rs);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s}
+.btn:hover{background:var(--bg)}
+
+.page{max-width:960px;margin:0 auto;padding:40px 24px 60px}
+
+/* ── 히어로 ── */
+.hero{text-align:center;padding:48px 20px 40px;margin-bottom:40px}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--c5);padding:5px 14px;border-radius:20px;background:var(--c5l);border:1px solid #CE93D8;margin-bottom:18px}
+.eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--c5);animation:dot 2s ease-in-out infinite}
+@keyframes dot{0%,100%{opacity:.5}50%{opacity:1}}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(26px,4vw,42px);font-weight:400;letter-spacing:-.01em;color:var(--tx);margin-bottom:14px}
+.hero h1 em{font-style:italic;color:var(--c5)}
+.hero p{font-size:14px;color:var(--mt);max-width:520px;margin:0 auto;line-height:1.85}
+.hero-stats{display:flex;justify-content:center;gap:32px;margin-top:28px}
+.hstat-n{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--tx);line-height:1;margin-bottom:4px}
+.hstat-l{font-size:11px;color:var(--lt)}
+
+/* ── 단원 카드 그리드 ── */
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lt)}
+.section-line{flex:1;height:1px;background:var(--br)}
+
+.units-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:44px}
+.unit-card{background:var(--sf);border:1.5px solid var(--br);border-radius:var(--r);padding:22px 18px;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:all .22s;position:relative;overflow:hidden;cursor:pointer}
+.unit-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ug,#ccc)}
+.unit-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,0,0,.1);border-color:var(--uc,#ccc)}
+.unit-roman{font-family:'DM Serif Display',serif;font-size:34px;line-height:1;color:var(--uc,#888);margin-bottom:10px;opacity:.85}
+.unit-name{font-size:13px;font-weight:700;margin-bottom:4px;line-height:1.3;color:var(--tx)}
+.unit-meta{font-size:10px;color:var(--lt);margin-bottom:14px}
+.unit-acts{display:flex;flex-direction:column;gap:6px;flex:1}
+.act-item{background:var(--bg);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--mt);line-height:1.5}
+.act-item b{display:block;font-weight:600;color:var(--tx);margin-bottom:2px;font-size:11px}
+.act-tag{display:inline-block;font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px;margin-top:3px}
+.tag-ind{background:#E3F2FD;color:#1565C0}
+.tag-grp{background:#FCE4EC;color:#880E4F}
+.go-btn{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:5px;padding:10px;border-radius:var(--rs);background:var(--uc);color:#fff;font-size:12px;font-weight:700;text-align:center;transition:opacity .15s}
+.unit-card:hover .go-btn{opacity:.85}
+.act-count-badge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.25);font-size:10px;font-weight:700;color:#fff}
+
+/* ── 상세 목록 테이블 ── */
+.list-section{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);overflow:hidden;margin-bottom:24px}
+.list-header{padding:18px 24px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:12px}
+.list-header .unit-dot{width:10px;height:10px;border-radius:50%}
+.list-header h2{font-size:15px;font-weight:700}
+.list-header .cnt{font-size:11px;color:var(--lt);margin-left:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:#FAFAF8;font-size:10px;font-weight:700;color:var(--lt);padding:10px 16px;text-align:left;border-bottom:1px solid var(--br);letter-spacing:.05em;text-transform:uppercase}
+tbody tr{border-bottom:1px solid var(--br);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#FAFAF8}
+td{padding:16px 16px;vertical-align:top}
+.td-num{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;width:48px;padding-top:14px}
+.td-lesson{font-size:11px;color:var(--lt);margin-bottom:4px}
+.td-title{font-weight:700;margin-bottom:4px;font-size:13px;line-height:1.4}
+.td-desc{font-size:12px;color:var(--mt);line-height:1.65}
+.td-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:6px}
+.badge-ind{background:#E3F2FD;color:#1565C0}
+.badge-grp{background:#FCE4EC;color:#880E4F}
+.badge-rub{background:#E8F5E9;color:#1B5E20}
+.td-skill{font-size:11px;color:var(--lt);margin-top:4px}
+.go-link{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rs);font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;transition:all .15s;border:1.5px solid}
+.go-link:hover{opacity:.85;transform:translateY(-1px)}
+
+/* ── 저장 현황 dot ── */
+.saved-dot{width:8px;height:8px;border-radius:50%;background:#D1CBC2;display:inline-block;vertical-align:middle}
+.saved-dot.done{background:#1D9E75}
+
+/* ── 반응형 ── */
+@media(max-width:1000px){.units-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.units-grid{grid-template-columns:1fr 1fr}.page{padding:20px 14px}}
+@media(max-width:480px){.units-grid{grid-template-columns:1fr}table{font-size:12px}.td-title{font-size:12px}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="bc">
+    <a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a>
+    <span>›</span>
+    <span style="color:var(--tx);font-weight:500">과정 중심의 수행활동</span>
+  </div>
+  <a class="btn" href="../index.html">← 메인으로</a>
+</header>
+
+<div class="page">
+
+  <!-- 히어로 -->
+  <div class="hero">
+    <div class="eyebrow">2022 개정 교육과정 · 중학교 1학년 · 과정 중심 평가</div>
+    <h1>과정 중심의<em>수행활동</em></h1>
+    <p>단순 결과 제출이 아닌, <b>사고의 과정을 기록</b>하는 수행활동.<br>
+    각 소단원의 핵심 성취기준을 루브릭 기반으로 평가합니다.</p>
+   </div>
+
+  <!-- 단원 카드 -->
+  <div class="section-header">
+    <span class="section-label">단원별 수행활동 바로가기</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="units-grid">
+
+    <a class="unit-card" href="unit1.html"
+       style="--uc:var(--c1);--ug:linear-gradient(90deg,var(--c1),#5B6BBE)">
+      <div class="unit-roman">I</div>
+      <div class="unit-name">컴퓨팅 시스템</div>
+      <div class="unit-meta">6개 수행활동 · 마이크로비트</div>
+      <div class="unit-acts">
+        <div class="act-item"><b>L1 동작 원리 분석</b><span class="act-tag tag-ind">개별</span></div>
+        <div class="act-item"><b>L2 피지컬 가치 판단</b><span class="act-tag tag-grp">모둠</span></div>
+        <div class="act-item" style="color:var(--lt);font-size:10px">+ 4개 더 ···</div>
+      </div>
+      <div class="go-btn">I단원 수행활동 →</div>
+    </a>
+
+    <a class="unit-card" href="unit2.html"
+       style="--uc:var(--c2);--ug:linear-gradient(90deg,var(--c2),#1A7A5A)">
+      <div class="unit-roman">II</div>
+      <div class="unit-name">데이터</div>
+      <div class="unit-meta">6개 수행활동 · CODAP</div>
+      <div class="unit-acts">
+        <div class="act-item"><b>L1 디지털 가치 탐색</b><span class="act-tag tag-grp">모둠</span></div>
+        <div class="act-item"><b>L2 디지털 변환 체험</b><span class="act-tag tag-grp">모둠</span></div>
+        <div class="act-item" style="color:var(--lt);font-size:10px">+ 4개 더 ···</div>
+      </div>
+      <div class="go-btn">II단원 수행활동 →</div>
+    </a>
+
+    <a class="unit-card" href="unit3.html"
+       style="--uc:var(--c3);--ug:linear-gradient(90deg,var(--c3),#C05A28)">
+      <div class="unit-roman">III</div>
+      <div class="unit-name">알고리즘과<br>프로그래밍</div>
+      <div class="unit-meta">10개 수행활동 · 엔트리</div>
+      <div class="unit-acts">
+        <div class="act-item"><b>L1 문제 상태 구조화</b><span class="act-tag tag-ind">개별</span></div>
+        <div class="act-item"><b>L5 사칙 연산 계산기</b><span class="act-tag tag-ind">개별</span></div>
+        <div class="act-item" style="color:var(--lt);font-size:10px">+ 8개 더 ···</div>
+      </div>
+      <div class="go-btn">III단원 수행활동 →</div>
+    </a>
+
+    <a class="unit-card" href="unit4.html"
+       style="--uc:var(--c4);--ug:linear-gradient(90deg,var(--c4),#2A6EAA)">
+      <div class="unit-roman">IV</div>
+      <div class="unit-name">인공지능</div>
+      <div class="unit-meta">6개 수행활동 · 티처블머신</div>
+      <div class="unit-acts">
+        <div class="act-item"><b>L1 AI 사례 분석</b><span class="act-tag tag-ind">개별</span></div>
+        <div class="act-item"><b>L3 이미지 분류 AI</b><span class="act-tag tag-grp">모둠</span></div>
+        <div class="act-item" style="color:var(--lt);font-size:10px">+ 4개 더 ···</div>
+      </div>
+      <div class="go-btn">IV단원 수행활동 →</div>
+    </a>
+
+    <a class="unit-card" href="unit5.html"
+       style="--uc:var(--c5);--ug:linear-gradient(90deg,var(--c5),#7B3EA8)">
+      <div class="unit-roman">V</div>
+      <div class="unit-name">디지털 문화</div>
+      <div class="unit-meta">2개 수행활동 · 토론·윤리</div>
+      <div class="unit-acts">
+        <div class="act-item"><b>개인정보 보호 실천</b><span class="act-tag tag-ind">개별</span></div>
+        <div class="act-item"><b>AI 생성 그림 토론</b><span class="act-tag tag-grp">모둠</span></div>
+      </div>
+      <div class="go-btn">V단원 수행활동 →</div>
+    </a>
+
+  </div>
+
+  <!-- 전체 목록 테이블 — I단원 -->
+  <div class="section-header" style="margin-top:8px">
+    <span class="section-label">전체 수행활동 목록</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- I단원 -->
+  <div class="list-section">
+    <div class="list-header">
+      <div class="unit-dot" style="background:var(--c1)"></div>
+      <h2 style="color:var(--c1)">I. 컴퓨팅 시스템</h2>
+      <span class="cnt">6개 수행활동</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:52px">번호</th>
+          <th>소단원 · 수행활동 제목</th>
+          <th style="width:90px">형태</th>
+          <th style="width:80px">핵심기술</th>
+          <th style="width:110px">바로가기</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-num" style="color:var(--c1)">01</td>
+          <td>
+            <div class="td-lesson">I-1. 컴퓨팅 시스템의 구성과 동작 원리</div>
+            <div class="td-title">컴퓨팅 시스템의 동작 원리 분석하기</div>
+            <div class="td-desc">스마트폰·PC·태블릿 등 기기를 선택해 HW 5종과 SW의 역할을 분석하고 동작 원리를 도식화합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">분석·표현</span></td>
+          <td><a class="go-link" href="../unit-01/lesson-01/index.html"
+               style="color:var(--c1);border-color:var(--c1)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c1)">02</td>
+          <td>
+            <div class="td-lesson">I-2. 피지컬 컴퓨팅 시스템의 이해</div>
+            <div class="td-title">피지컬 컴퓨팅 시스템의 필요성과 가치 판단하기</div>
+            <div class="td-desc">마이크로비트 구성 요소를 탐색하고, 일상생활에서 피지컬 컴퓨팅의 필요성과 가치를 논리적으로 판단합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">탐구·판단</span></td>
+          <td><a class="go-link" href="../unit-01/lesson-02/index.html"
+               style="color:var(--c1);border-color:var(--c1)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c1)">03</td>
+          <td>
+            <div class="td-lesson">I-3. 운동 횟수 표시 장치 만들기</div>
+            <div class="td-title">가속도 센서를 활용한 피지컬 컴퓨팅 장치 만들기</div>
+            <div class="td-desc">가속도 센서와 변수를 활용해 운동 횟수를 감지·표시하는 마이크로비트 장치를 설계·제작합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">설계·제작</span></td>
+          <td><a class="go-link" href="../unit-01/lesson-03/index.html"
+               style="color:var(--c1);border-color:var(--c1)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c1)">04</td>
+          <td>
+            <div class="td-lesson">I-4. 수면 온도 알림이 장치 만들기</div>
+            <div class="td-title">빛 감지·온도 센서를 활용한 장치 만들기</div>
+            <div class="td-desc">온도·빛 센서로 수면 환경을 감지하고 조건에 따라 LED·버저로 알림을 주는 스마트 장치를 제작합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">설계·제작</span></td>
+          <td><a class="go-link" href="../unit-01/lesson-04/index.html"
+               style="color:var(--c1);border-color:var(--c1)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c1)">05</td>
+          <td>
+            <div class="td-lesson">I-5. 소리에 반응하는 애니메이션 장치</div>
+            <div class="td-title">스피커·소리 센서를 활용한 장치 만들기</div>
+            <div class="td-desc">소리 센서로 입력을 받아 LED 애니메이션과 스피커 출력이 연동되는 반응형 장치를 설계·제작합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">설계·제작</span></td>
+          <td><a class="go-link" href="../unit-01/lesson-05/index.html"
+               style="color:var(--c1);border-color:var(--c1)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c1)">06</td>
+          <td>
+            <div class="td-lesson">I-6. 이심전심 게임 장치 만들기</div>
+            <div class="td-title">무선 통신을 활용한 장치 만들기</div>
+            <div class="td-desc">라디오 통신으로 두 마이크로비트가 데이터를 주고받는 이심전심 게임 장치를 설계·제작합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">통신·제작</span></td>
+          <td><a class="go-link" href="../unit-01/lesson-06/index.html"
+               style="color:var(--c1);border-color:var(--c1)">학습하기 →</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- II단원 -->
+  <div class="list-section">
+    <div class="list-header">
+      <div class="unit-dot" style="background:var(--c2)"></div>
+      <h2 style="color:var(--c2)">II. 데이터</h2>
+      <span class="cnt">6개 수행활동</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:52px">번호</th>
+          <th>소단원 · 수행활동 제목</th>
+          <th style="width:90px">형태</th>
+          <th style="width:80px">핵심기술</th>
+          <th style="width:110px">바로가기</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-num" style="color:var(--c2)">01</td>
+          <td>
+            <div class="td-lesson">II-1. 디지털 형태의 데이터</div>
+            <div class="td-title">디지털 데이터의 가치 탐색해 보기</div>
+            <div class="td-desc">아날로그 vs 디지털 데이터의 차이를 비교하고, 실생활에서 디지털 데이터가 저장·처리·전송되는 과정과 가치를 탐색합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">탐색·비교</span></td>
+          <td><a class="go-link" href="../unit-02/lesson-01/index.html"
+               style="color:var(--c2);border-color:var(--c2)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c2)">02</td>
+          <td>
+            <div class="td-lesson">II-2. 다양한 데이터의 디지털 표현</div>
+            <div class="td-title">문자·이미지·소리 디지털 변환 체험</div>
+            <div class="td-desc">ASCII 코드로 문자를, 픽셀 그리드로 이미지를, 표본화·양자화로 소리를 직접 디지털 변환하는 체험 활동을 수행합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">변환·체험</span></td>
+          <td><a class="go-link" href="../unit-02/lesson-02/index.html"
+               style="color:var(--c2);border-color:var(--c2)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c2)">03</td>
+          <td>
+            <div class="td-lesson">II-3. 데이터의 수집과 관리</div>
+            <div class="td-title">응용 소프트웨어를 이용해 수집한 데이터 관리하기</div>
+            <div class="td-desc">설문조사로 직접 데이터를 수집하고, CODAP으로 범주형·수치형 데이터를 정리·관리하는 과정을 기록합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">수집·관리</span></td>
+          <td><a class="go-link" href="../unit-02/lesson-03/index.html"
+               style="color:var(--c2);border-color:var(--c2)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c2)">04</td>
+          <td>
+            <div class="td-lesson">II-4. 데이터의 구조화와 분석</div>
+            <div class="td-title">실생활 데이터 구조화 + 경제 분야 데이터 수집·분석</div>
+            <div class="td-desc">표·계층형·그래프형 다이어그램으로 데이터를 구조화하고, 경제 분야 공공데이터를 산점도로 시각화해 의미를 해석합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">구조화·분석</span></td>
+          <td><a class="go-link" href="../unit-02/lesson-04/index.html"
+               style="color:var(--c2);border-color:var(--c2)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c2)">05</td>
+          <td>
+            <div class="td-lesson">II-5. 인기 공유 동영상 데이터 분석</div>
+            <div class="td-title">인기 공유 동영상 데이터 그래프 표현·의미 해석</div>
+            <div class="td-desc">캐글에서 수집한 유튜브 트렌딩 데이터를 CODAP으로 그래프화하고 데이터 기반 주장을 논리적으로 서술합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">시각화·해석</span></td>
+          <td><a class="go-link" href="../unit-02/lesson-05/index.html"
+               style="color:var(--c2);border-color:var(--c2)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c2)">06</td>
+          <td>
+            <div class="td-lesson">II-6. 급식 잔반 데이터 분석</div>
+            <div class="td-title">급식 잔반 데이터 그래프 표현·의미 해석</div>
+            <div class="td-desc">학교 급식 잔반율 데이터를 막대그래프로 시각화하고, 잔반 감소 방안을 데이터 근거로 제안합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">시각화·제안</span></td>
+          <td><a class="go-link" href="../unit-02/lesson-06/index.html"
+               style="color:var(--c2);border-color:var(--c2)">학습하기 →</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- III단원 -->
+  <div class="list-section">
+    <div class="list-header">
+      <div class="unit-dot" style="background:var(--c3)"></div>
+      <h2 style="color:var(--c3)">III. 알고리즘과 프로그래밍</h2>
+      <span class="cnt">10개 수행활동</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:52px">번호</th>
+          <th>소단원 · 수행활동 제목</th>
+          <th style="width:90px">형태</th>
+          <th style="width:80px">핵심기술</th>
+          <th style="width:110px">바로가기</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-num" style="color:var(--c3)">01</td>
+          <td>
+            <div class="td-lesson">III-1. 문제의 상태와 구조화</div>
+            <div class="td-title">문제 상태 정의 및 구조화</div>
+            <div class="td-desc">일상생활에서 해결할 문제를 선택해 초기·현재·목표 상태를 정의하고 수행 가능한 형태로 구조화합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">정의·구조화</span></td>
+          <td><a class="go-link" href="../unit-03/lesson-01/index.html"
+               style="color:var(--c3);border-color:var(--c3)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c3)">02</td>
+          <td>
+            <div class="td-lesson">III-2. 문제의 추상화</div>
+            <div class="td-title">나만의 게임 추상화 설계</div>
+            <div class="td-desc">만들고 싶은 엔트리 게임을 선택해 문제를 분해하고 핵심 요소를 추출하는 추상화 설계서를 작성합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">분해·추상화</span></td>
+          <td><a class="go-link" href="../unit-03/lesson-02/index.html"
+               style="color:var(--c3);border-color:var(--c3)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c3)">03</td>
+          <td>
+            <div class="td-lesson">III-3. 알고리즘의 이해와 표현</div>
+            <div class="td-title">일상생활 알고리즘 순서도 작성</div>
+            <div class="td-desc">일상생활 절차를 자연어와 순서도 두 가지 방법으로 표현하고 두 표현의 차이점을 비교합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">표현·비교</span></td>
+          <td><a class="go-link" href="../unit-03/lesson-03/index.html"
+               style="color:var(--c3);border-color:var(--c3)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c3)">04</td>
+          <td>
+            <div class="td-lesson">III-4. 알고리즘의 분석과 설계</div>
+            <div class="td-title">알고리즘 설계 및 효율성 비교</div>
+            <div class="td-desc">동일한 문제를 2가지 이상 알고리즘 전략(분할·시행착오·되추적·최선)으로 설계하고 효율성을 비교 분석합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">설계·비교</span></td>
+          <td><a class="go-link" href="../unit-03/lesson-04/index.html"
+               style="color:var(--c3);border-color:var(--c3)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c3)">05</td>
+          <td>
+            <div class="td-lesson">III-5. 프로그래밍 시작하기</div>
+            <div class="td-title">엔트리 사칙 연산 계산기 만들기</div>
+            <div class="td-desc">두 숫자를 입력받아 사칙 연산 결과를 출력하는 엔트리 프로그램을 6단계 프로그래밍 과정에 따라 완성합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">프로그래밍</span></td>
+          <td><a class="go-link" href="../unit-03/lesson-05/index.html"
+               style="color:var(--c3);border-color:var(--c3)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c3)">06</td>
+          <td>
+            <div class="td-lesson">III-6. 논리 연산 프로그래밍</div>
+            <div class="td-title">놀이공원 입장료 계산기 엔트리 구현</div>
+            <div class="td-desc">AND·OR·NOT 조건 3가지를 모두 적용해 나이·키 조건별 입장료를 계산하는 엔트리 프로그램을 구현합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">논리·프로그래밍</span></td>
+          <td><a class="go-link" href="../unit-03/lesson-06/index.html"
+               style="color:var(--c3);border-color:var(--c3)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c3)">07</td>
+          <td>
+            <div class="td-lesson">III-7. 중첩 제어 구조 프로그래밍</div>
+            <div class="td-title">엔트리 문양 그리기 프로그램</div>
+            <div class="td-desc">중첩 반복 구조를 활용해 다양한 기하학적 문양을 그리는 엔트리 프로그램을 완성하고 결과를 설명합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">중첩·반복</span></td>
+          <td><a class="go-link" href="../unit-03/lesson-07/index.html"
+               style="color:var(--c3);border-color:var(--c3)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c3)">08</td>
+          <td>
+            <div class="td-lesson">III-8. 리스트와 프로그래밍</div>
+            <div class="td-title">엔트리 OX 퀴즈 프로그램</div>
+            <div class="td-desc">리스트에 문제·정답·해설을 저장하고 5문제 이상의 OX 퀴즈를 구현하는 엔트리 프로그램을 완성합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">리스트·프로그래밍</span></td>
+          <td><a class="go-link" href="../unit-03/lesson-08/index.html"
+               style="color:var(--c3);border-color:var(--c3)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c3)">09</td>
+          <td>
+            <div class="td-lesson">III-9. 함수와 디버깅</div>
+            <div class="td-title">엔트리 함수 활용 프로그램</div>
+            <div class="td-desc">반복되는 기능을 함수로 정의·호출해 재사용하는 엔트리 프로그램을 완성하고 디버깅 과정을 기록합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">함수·디버깅</span></td>
+          <td><a class="go-link" href="../unit-03/lesson-09/index.html"
+               style="color:var(--c3);border-color:var(--c3)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c3)">10</td>
+          <td>
+            <div class="td-lesson">III-10. 실생활과 학문 분야 문제 해결</div>
+            <div class="td-title">실생활 문제 해결 엔트리 통합 프로젝트</div>
+            <div class="td-desc">변수·리스트·조건·반복·함수 개념을 모두 활용해 실생활 문제를 해결하는 엔트리 프로그램을 완성하고 발표합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">통합·발표</span></td>
+          <td><a class="go-link" href="../unit-03/lesson-10/index.html"
+               style="color:var(--c3);border-color:var(--c3)">학습하기 →</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- IV단원 -->
+  <div class="list-section">
+    <div class="list-header">
+      <div class="unit-dot" style="background:var(--c4)"></div>
+      <h2 style="color:var(--c4)">IV. 인공지능</h2>
+      <span class="cnt">6개 수행활동</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:52px">번호</th>
+          <th>소단원 · 수행활동 제목</th>
+          <th style="width:90px">형태</th>
+          <th style="width:80px">핵심기술</th>
+          <th style="width:110px">바로가기</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-num" style="color:var(--c4)">01</td>
+          <td>
+            <div class="td-lesson">IV-1. 인공지능의 개념과 특성</div>
+            <div class="td-title">AI 활용 사례 분석 보고서</div>
+            <div class="td-desc">주변 AI 활용 사례 2가지를 분석하고 4가지 특성(상황인식·학습·최적화·자율성) 중 해당되는 것을 근거와 함께 연결합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">분석·보고</span></td>
+          <td><a class="go-link" href="../unit-04/lesson-01/index.html"
+               style="color:var(--c4);border-color:var(--c4)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c4)">02</td>
+          <td>
+            <div class="td-lesson">IV-2. 데이터와 학습</div>
+            <div class="td-title">AI 데이터 수집 계획서 작성</div>
+            <div class="td-desc">만들고 싶은 AI 모델을 설정하고 필요한 데이터 수집·레이블링·훈련/테스트 분류 계획서를 체계적으로 작성합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">기획·계획</span></td>
+          <td><a class="go-link" href="../unit-04/lesson-02/index.html"
+               style="color:var(--c4);border-color:var(--c4)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c4)">03</td>
+          <td>
+            <div class="td-lesson">IV-3. 팔 이미지를 이용한 운동 도우미</div>
+            <div class="td-title">이미지 분류 AI + 엔트리 운동 도우미 제작</div>
+            <div class="td-desc">티처블 머신으로 팔 동작 이미지 분류 모델을 학습시키고 엔트리에서 운동 횟수를 세는 도우미 프로그램을 완성합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">ML·프로그래밍</span></td>
+          <td><a class="go-link" href="../unit-04/lesson-03/index.html"
+               style="color:var(--c4);border-color:var(--c4)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c4)">04</td>
+          <td>
+            <div class="td-lesson">IV-4. 소리 데이터를 이용한 웃음 계수 시스템</div>
+            <div class="td-title">소리 분류 AI + 엔트리 웃음 계수 시스템</div>
+            <div class="td-desc">티처블 머신으로 웃음 소리 분류 모델을 만들고 엔트리에서 웃음 횟수를 세고 시각화하는 프로그램을 완성합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">ML·프로그래밍</span></td>
+          <td><a class="go-link" href="../unit-04/lesson-04/index.html"
+               style="color:var(--c4);border-color:var(--c4)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c4)">05</td>
+          <td>
+            <div class="td-lesson">IV-5. 텍스트 데이터를 이용한 영화 평가 시스템</div>
+            <div class="td-title">텍스트 분류 AI + 엔트리 영화 평가 시스템</div>
+            <div class="td-desc">긍정·부정 텍스트 분류 모델을 학습시키고 엔트리에서 영화 리뷰 감성을 자동 분류하는 평가 시스템을 구현합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">ML·감성분석</span></td>
+          <td><a class="go-link" href="../unit-04/lesson-05/index.html"
+               style="color:var(--c4);border-color:var(--c4)">학습하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c4)">06</td>
+          <td>
+            <div class="td-lesson">IV-6. 인공지능의 윤리적 문제 해결</div>
+            <div class="td-title">AI 윤리 문제 분석 및 해결 방안 보고서</div>
+            <div class="td-desc">실제 AI 활용 사례 1가지를 선택해 개인정보 침해·알고리즘 편향 등 윤리적 문제를 분석하고 해결 방안을 제시합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">분석·제안</span></td>
+          <td><a class="go-link" href="../unit-04/lesson-06/index.html"
+               style="color:var(--c4);border-color:var(--c4)">학습하기 →</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- V단원 -->
+  <div class="list-section">
+    <div class="list-header">
+      <div class="unit-dot" style="background:var(--c5)"></div>
+      <h2 style="color:var(--c5)">V. 디지털 문화</h2>
+      <span class="cnt">2개 수행활동</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:52px">번호</th>
+          <th>소단원 · 수행활동 제목</th>
+          <th style="width:90px">형태</th>
+          <th style="width:80px">핵심기술</th>
+          <th style="width:110px">바로가기</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-num" style="color:var(--c5)">01</td>
+          <td>
+            <div class="td-lesson">V — 개인 정보 보호 실천하기</div>
+            <div class="td-title">나의 개인 정보 보호 실천 방안 작성</div>
+            <div class="td-desc">디지털 환경에서 개인정보 침해 사례를 분석하고, 나만의 개인 정보 보호 실천 방안 5가지를 구체적으로 작성합니다.</div>
+            <span class="td-badge badge-ind">개별</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-ind">개별</span></td>
+          <td><span class="td-skill">분석·실천</span></td>
+          <td><a class="go-link" href="unit5.html"
+               style="color:var(--c5);border-color:var(--c5)">수행하기 →</a></td>
+        </tr>
+        <tr>
+          <td class="td-num" style="color:var(--c5)">02</td>
+          <td>
+            <div class="td-lesson">V — AI 생성 그림의 저작권 토론</div>
+            <div class="td-title">AI 생성 그림 저작권 찬반 토론</div>
+            <div class="td-desc">AI 생성 그림의 저작권 인정 여부에 대해 찬성·반대 입장을 정하고, 근거를 갖춘 토론 발언문과 최종 의견서를 작성합니다.</div>
+            <span class="td-badge badge-grp">모둠</span>
+            <span class="td-badge badge-rub">루브릭</span>
+          </td>
+          <td><span class="td-badge badge-grp">모둠</span></td>
+          <td><span class="td-skill">토론·논증</span></td>
+          <td><a class="go-link" href="unit5.html"
+               style="color:var(--c5);border-color:var(--c5)">수행하기 →</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>
