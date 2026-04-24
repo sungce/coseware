@@ -42,13 +42,14 @@ function doGet(e) {
       const sheet = ss.getSheetByName(SHEET_NOTICES);
       let notices = [];
       if (sheet && sheet.getLastRow() > 1) {
-        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues();
+        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
         notices = rows.filter(r => r[2]).map((r, i) => ({
-          id    : r[0] ? String(r[0]) : String(i + 1),
-          type  : r[1] ? String(r[1]) : 'normal',
-          title : r[2] ? String(r[2]) : '',
-          date  : r[3] ? String(r[3]) : '',
-          author: r[4] ? String(r[4]) : '정보선생님',
+          id     : r[0] ? String(r[0]) : String(i + 1),
+          type   : r[1] ? String(r[1]) : 'normal',
+          title  : r[2] ? String(r[2]) : '',
+          content: r[3] ? String(r[3]) : '',
+          date   : r[4] ? String(r[4]) : '',
+          author : r[5] ? String(r[5]) : '정보선생님',
         }));
         notices.reverse();
       }
@@ -190,14 +191,14 @@ function doPost(e) {
       let sheet = ss.getSheetByName(SHEET_NOTICES);
       if (!sheet) {
         sheet = ss.insertSheet(SHEET_NOTICES);
-        sheet.appendRow(['ID', '유형', '제목', '날짜', '작성자']);
-        sheet.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#ea4335').setFontColor('#ffffff');
+        sheet.appendRow(['ID', '유형', '제목', '내용', '날짜', '작성자']);
+        sheet.getRange(1, 1, 1, 6).setFontWeight('bold').setBackground('#ea4335').setFontColor('#ffffff');
       }
       const id   = String(sheet.getLastRow());
       const date = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul',
         year: 'numeric', month: '2-digit', day: '2-digit'
       }).replace(/\. /g, '.').replace(/\.$/, '');
-      sheet.appendRow([id, data.noticeType || 'normal', data.title, date, data.author || '정보선생님']);
+      sheet.appendRow([id, data.noticeType || 'normal', data.title, data.content || '', date, data.author || '정보선생님']);
       return jsonResponse({ result: 'success' });
     }
 
