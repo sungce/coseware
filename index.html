@@ -1039,6 +1039,7 @@
 
             if (sectionId === 'notices')   { noticesLoaded = false; loadNotices(); }
             if (sectionId === 'materials') loadInlineMaterials();
+            if (sectionId === 'classes')   { setTimeout(sendUserNameToFrame, 400); setTimeout(sendUserNameToFrame, 1500); }
 
             mobileMenu.classList.add('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });

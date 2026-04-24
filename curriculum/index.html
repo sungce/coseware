@@ -1046,7 +1046,7 @@
       대시보드
     </a>
 
-    <a class="nav-item" href="my_records.html">
+    <a class="nav-item" href="./" onclick="showView('records'); setActive(this); updateRecordView(); return false;">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
       나의 학습기록
       <span class="nav-badge" id="record-count-nav">0</span>
@@ -2193,28 +2193,29 @@
   }
 
   function initProfile() {
-    // 부모(index.html)에서 전달된 Firebase 이름 우선 사용
+    // curriculum_user_name 키로 부모 Firebase 이름 우선 확인
     var parentName = localStorage.getItem('curriculum_user_name');
     if (parentName) {
       applyProfile(parentName, '');
-      closeLoginModal();
       updateRecordCount();
       return;
     }
-    var isGoogle = localStorage.getItem('user_google') === '1';
-    var name     = localStorage.getItem('user_name');
-    if (isGoogle && name) {
-      var picture = localStorage.getItem('user_picture') || '';
-      applyProfile(name, picture);
-      closeLoginModal();
-    } else {
-      localStorage.removeItem('user_name');
-      localStorage.removeItem('user_picture');
-      localStorage.removeItem('user_email');
-      localStorage.removeItem('user_google');
-      showLoginModal();
-    }
-    updateRecordCount();
+    // 이름이 아직 없으면 최대 5초간 폴링
+    var tries = 0;
+    var poll = setInterval(function() {
+      tries++;
+      var n = localStorage.getItem('curriculum_user_name');
+      if (n) {
+        clearInterval(poll);
+        applyProfile(n, '');
+        updateRecordCount();
+      } else if (tries >= 10) {
+        clearInterval(poll);
+        // 끝까지 없으면 기존 user_name 시도
+        var fallback = localStorage.getItem('user_name');
+        if (fallback) applyProfile(fallback, '');
+      }
+    }, 500);
   }
 
   // ── 부모 Firebase 사용자명 수신 ──────────────────────────
