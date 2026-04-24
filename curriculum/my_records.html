@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>나의 학습 기록 — 정보 교과 학습 플랫폼</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f9fafb;--surface:#fff;--border:#e5e7eb;--text:#1f2937;--muted:#6b7280;
+  --unit-1:#6366F1;--unit-2:#22C55E;--unit-3:#F97316;--unit-4:#3B82F6;--unit-5:#A855F7;
+  --unit-1-light:#EEF2FF;--unit-2-light:#F0FDF4;--unit-3-light:#FFF7ED;--unit-4-light:#EFF6FF;--unit-5-light:#FAF5FF;
+  --radius:14px;--shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* NAV */
+.topnav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
+.topnav a{display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;transition:all .15s}
+.topnav a:hover{background:var(--bg);color:var(--text)}
+.topnav-title{font-size:14px;font-weight:700;color:var(--text);margin-left:4px}
+
+/* MAIN */
+.main{max-width:820px;margin:0 auto;padding:28px 20px 60px}
+
+/* HEADER */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.page-header h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.clear-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border:1px solid #fee2e2;background:#fff;color:#ef4444;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.clear-btn:hover{background:#fee2e2}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;box-shadow:var(--shadow)}
+.stat-n{font-size:28px;font-weight:700;margin-bottom:4px}
+.stat-l{font-size:11px;color:var(--muted)}
+
+/* FILTER */
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.f-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s}
+.f-btn:hover{border-color:#6366F1;color:#6366F1}
+.f-btn.active{background:#6366F1;border-color:#6366F1;color:#fff}
+
+/* LIST */
+.rec-list{display:flex;flex-direction:column;gap:10px}
+.rec-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);transition:all .15s}
+.rec-item:hover{border-color:#c7d2fe;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.rec-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.rec-info{flex:1;min-width:0}
+.rec-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-meta{font-size:11px;color:var(--muted)}
+.rec-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;flex-shrink:0}
+.badge-done{background:#DCFCE7;color:#15803D}
+.badge-act{background:#EEF2FF;color:#4338CA}
+.badge-sc{background:#FEF9C3;color:#854D0E}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;background:var(--surface);border:1.5px dashed var(--border);border-radius:var(--radius)}
+.empty-icon{font-size:48px;margin-bottom:14px;opacity:.35}
+.empty h3{font-size:15px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.empty p{font-size:12px;color:#9ca3af}
+
+/* SECTION HEADER */
+.sec-title{font-size:13px;font-weight:700;color:var(--muted);margin:20px 0 10px;padding-left:4px;text-transform:uppercase;letter-spacing:.05em}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    교과수업 홈
+  </a>
+  <span class="topnav-title">나의 학습 기록</span>
+</nav>
+
+<main class="main">
+  <div class="page-header">
+    <h1>
+      <svg width="20" height="20" fill="none" stroke="var(--unit-2)" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      나의 학습 기록
+    </h1>
+    <button class="clear-btn" onclick="clearAll()">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      전체 초기화
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-n" style="color:var(--unit-1)" id="stat-act">0</div>
+      <div class="stat-l">저장한 활동</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-n" style="color:var(--unit-4)" id="stat-sc">0</div>
+      <div class="stat-l">완료한 자기평가</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-n" style="color:var(--unit-2)" id="stat-done">0</div>
+      <div class="stat-l">완료 표시 소단원</div>
+    </div>
+  </div>
+
+  <div class="filter-row" id="filter-row">
+    <button class="f-btn active" onclick="setFilter('all',this)">전체</button>
+    <button class="f-btn" onclick="setFilter('act',this)">활동 저장</button>
+    <button class="f-btn" onclick="setFilter('sc',this)">자기평가</button>
+    <button class="f-btn" onclick="setFilter('done',this)">완료 표시</button>
+  </div>
+
+  <div id="record-area"></div>
+</main>
+
+<script>
+var UNIT_BG   = {I:'#EEF2FF',II:'#F0FDF4',III:'#FFF7ED',IV:'#EFF6FF',V:'#FAF5FF'};
+var UNIT_COL  = {I:'#6366F1',II:'#22C55E',III:'#F97316',IV:'#3B82F6',V:'#A855F7'};
+var UNIT_NAME = {I:'컴퓨팅 시스템',II:'데이터',III:'알고리즘·프로그래밍',IV:'인공지능',V:'디지털 문화'};
+var UNIT_ICON = {I:'💻',II:'💾',III:'🟢',IV:'🤖',V:'🌐'};
+
+// 단원-소단원 매핑
+var LESSON_MAP = {
+  // unit-01
+  'l101':  {unit:'I',  title:'I-1. 컴퓨팅 시스템의 구성과 동작 원리'},
+  'l102':  {unit:'I',  title:'I-2. 피지컬 컴퓨팅 시스템의 이해'},
+  'l103':  {unit:'I',  title:'I-3. 운동 횟수 표시 장치 만들기'},
+  'l104':  {unit:'I',  title:'I-4. 수면 온도 알림이 장치 만들기'},
+  'l105':  {unit:'I',  title:'I-5. 소리에 반응하는 애니메이션 장치'},
+  'l106':  {unit:'I',  title:'I-6. 무선 통신 게임 만들기'},
+  // unit-02
+  'l201':  {unit:'II', title:'II-1. 디지털 형태의 데이터'},
+  'l202':  {unit:'II', title:'II-2. 다양한 데이터의 디지털 표현'},
+  'l203':  {unit:'II', title:'II-3. 데이터의 수집과 관리'},
+  'l204':  {unit:'II', title:'II-4. 데이터의 구조화와 분석'},
+  'l205':  {unit:'II', title:'II-5. 인기 공유 동영상 데이터 분석'},
+  'l206':  {unit:'II', title:'II-6. 급식 잔반 데이터 분석'},
+  // unit-03
+  'l301':  {unit:'III',title:'III-1. 문제 분석과 추상화'},
+  'l302':  {unit:'III',title:'III-2. 알고리즘 설계'},
+  'l303':  {unit:'III',title:'III-3. 순서도와 의사코드'},
+  'l304':  {unit:'III',title:'III-4. 순차 구조'},
+  'l305':  {unit:'III',title:'III-5. 선택 구조'},
+  'l306':  {unit:'III',title:'III-6. 반복 구조'},
+  'l307':  {unit:'III',title:'III-7. 변수와 연산'},
+  'l308':  {unit:'III',title:'III-8. 리스트'},
+  'l309':  {unit:'III',title:'III-9. 함수'},
+  'l310':  {unit:'III',title:'III-10. 프로젝트'},
+  // unit-04
+  'l401':  {unit:'IV', title:'IV-1. 인공지능의 이해'},
+  'l402':  {unit:'IV', title:'IV-2. 머신러닝 원리'},
+  'l403':  {unit:'IV', title:'IV-3. 이미지 분류 (티처블머신)'},
+  'l404':  {unit:'IV', title:'IV-4. 소리와 텍스트 분류'},
+  'l405':  {unit:'IV', title:'IV-5. 인공지능 윤리'},
+  'l406':  {unit:'IV', title:'IV-6. 개인정보보호'},
+  // unit-05
+  'l501':  {unit:'V',  title:'V-1. 디지털 시민의식'},
+  'l502':  {unit:'V',  title:'V-2. 저작권'},
+  'l503':  {unit:'V',  title:'V-3. 개인정보'},
+  'l504':  {unit:'V',  title:'V-4. 사이버폭력 예방'},
+  'l505':  {unit:'V',  title:'V-5. 미디어 리터러시'},
+  'l506':  {unit:'V',  title:'V-6. 올바른 인터넷 사용'},
+};
+
+var currentFilter = 'all';
+var allRecords = [];
+
+function loadRecords() {
+  var records = [];
+  // localStorage 전체 키 순회
+  for (var i = 0; i < localStorage.length; i++) {
+    var key = localStorage.key(i);
+    if (!key) continue;
+    var val;
+    try { val = JSON.parse(localStorage.getItem(key)); } catch(e) { continue; }
+    if (!val) continue;
+
+    // 활동 저장 (saveActivity 형식: {text, ts, ...})
+    if (val.text !== undefined && val.ts !== undefined) {
+      var lessonKey = key.replace(/_act.*/, '').replace(/[_\-]act$/, '').replace(/_act$/, '');
+      var lcode = extractLessonCode(key);
+      var L = LESSON_MAP[lcode] || guessLesson(key);
+      records.push({type:'act', key:key, L:L, ts:val.ts, text:val.text});
+    }
+    // 자기평가 (saveSC 형식: {items:[...], ts})
+    else if (val.items !== undefined && val.ts !== undefined) {
+      var lcode = extractLessonCode(key);
+      var L = LESSON_MAP[lcode] || guessLesson(key);
+      records.push({type:'sc', key:key, L:L, ts:val.ts, count:val.items.length});
+    }
+  }
+
+  // 완료 표시 (lesson_done_XX_YY 형식)
+  var doneRecords = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    var key = localStorage.key(i);
+    if (!key) continue;
+    if (key.startsWith('done_') || key.includes('_done') || key.includes('lesson_done')) {
+      var lcode = extractLessonCode(key);
+      var L = LESSON_MAP[lcode] || guessLesson(key);
+      doneRecords.push({type:'done', key:key, L:L, ts:null});
+    }
+  }
+
+  allRecords = records.concat(doneRecords)
+    .sort(function(a,b){ return (b.ts||0) - (a.ts||0); });
+
+  var actCount  = records.filter(function(r){ return r.type==='act'; }).length;
+  var scCount   = records.filter(function(r){ return r.type==='sc'; }).length;
+  var doneCount = doneRecords.length;
+
+  document.getElementById('stat-act').textContent  = actCount;
+  document.getElementById('stat-sc').textContent   = scCount;
+  document.getElementById('stat-done').textContent = doneCount;
+
+  renderRecords();
+}
+
+function extractLessonCode(key) {
+  var m = key.match(/l(\d{3})/i);
+  if (m) return 'l' + m[1];
+  var m2 = key.match(/(\d{1})(\d{2})/);
+  if (m2) return 'l' + m2[1] + m2[2];
+  return '';
+}
+
+function guessLesson(key) {
+  var units = ['I','II','III','IV','V'];
+  for (var i=0; i<units.length; i++) {
+    var n = String(i+1);
+    if (key.includes('0'+n) || key.startsWith('l'+n)) {
+      return {unit:units[i], title:key};
+    }
+  }
+  return {unit:'?', title:key};
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.f-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderRecords();
+}
+
+function renderRecords() {
+  var area = document.getElementById('record-area');
+  var filtered = currentFilter === 'all'
+    ? allRecords
+    : allRecords.filter(function(r){ return r.type === currentFilter; });
+
+  if (!filtered.length) {
+    area.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><h3>기록이 없습니다.</h3><p>각 소단원에서 활동을 저장하거나 자기평가를 완료하면 여기에 기록됩니다.</p></div>';
+    return;
+  }
+
+  var html = '<div class="rec-list">';
+  filtered.forEach(function(r) {
+    var unit = r.L ? r.L.unit : '?';
+    var title = r.L ? r.L.title : r.key;
+    var bg    = UNIT_BG[unit]   || '#f5f5f5';
+    var col   = UNIT_COL[unit]  || '#333';
+    var icon  = UNIT_ICON[unit] || '📌';
+    var badge, meta;
+    if (r.type === 'act') {
+      badge = '<span class="rec-badge badge-act">활동 저장</span>';
+      meta  = '수행 활동 저장';
+    } else if (r.type === 'sc') {
+      badge = '<span class="rec-badge badge-sc">자기평가</span>';
+      meta  = '자기평가 완료 (' + r.count + '항목)';
+    } else {
+      badge = '<span class="rec-badge badge-done">완료</span>';
+      meta  = '소단원 완료 표시';
+    }
+    var ts = r.ts ? new Date(r.ts).toLocaleDateString('ko-KR') : '';
+    html +=
+      '<div class="rec-item">' +
+        '<div class="rec-icon" style="background:' + bg + '">' + icon + '</div>' +
+        '<div class="rec-info">' +
+          '<div class="rec-title">' + title + '</div>' +
+          '<div class="rec-meta" style="color:' + col + '">' + meta + (ts ? ' · ' + ts : '') + '</div>' +
+        '</div>' +
+        badge +
+      '</div>';
+  });
+  html += '</div>';
+  area.innerHTML = html;
+}
+
+function clearAll() {
+  if (!confirm('모든 학습 기록을 초기화할까요?\n이 작업은 되돌릴 수 없습니다.')) return;
+  var toDelete = [];
+  for (var i=0; i<localStorage.length; i++) {
+    var key = localStorage.key(i);
+    if (!key) continue;
+    try {
+      var val = JSON.parse(localStorage.getItem(key));
+      if (val && (val.text !== undefined || val.items !== undefined)) toDelete.push(key);
+    } catch(e){}
+    if (key.includes('done') || key.includes('_act')) toDelete.push(key);
+  }
+  toDelete.forEach(function(k){ localStorage.removeItem(k); });
+  loadRecords();
+}
+
+loadRecords();
+</script>
+</body>
+</html>
