@@ -1,1 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>I-4. 수면 온도 알림이 장치 만들기 — 정보 교과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#F5F4F0;color:#1C1C1C;font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+:root{--u:#6C65CC;--udk:#4E48A8;--ult:#ECEAFE;--umd:#C8C4F0;--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--green:#2A720E;--gbg:#E8F3DC;--amber:#7A4E0A;--abg:#FAF0DC;--red:#8C1E0E;--rbg:#FAEBE6;--blue:#0A4E8C;--bbg:#E4F0FA;--rLG:14px;--rSM:8px;--SW:240px;--TH:52px}
+.sb{width:var(--SW);background:var(--sf);border-right:1px solid var(--br);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.sb-top{padding:16px 14px 12px;border-bottom:1px solid var(--br)}.uchip{display:inline-flex;align-items:center;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.sb-top h2{font-size:12px;font-weight:700;line-height:1.4}.smeta{font-size:10px;color:var(--lt);margin-top:3px}
+.sb-nav{padding:4px 0;flex:1}.nlbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);padding:7px 13px 3px}
+.na{display:flex;align-items:center;gap:8px;padding:7px 13px;font-size:11px;color:var(--mt);text-decoration:none;border-left:2.5px solid transparent;transition:background .12s}
+.na:hover{background:var(--bg);color:var(--tx)}.na.on{color:var(--u);font-weight:600;background:var(--ult);border-left-color:var(--u)}.na.done .nn{background:var(--gbg);color:var(--green)}
+.nn{width:18px;height:18px;border-radius:50%;background:var(--br);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--mt)}.na.on .nn{background:var(--u);color:#fff}
+.nbadge{margin-left:auto;font-size:9px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:1px 5px;border-radius:10px;white-space:nowrap}
+.sb-foot{padding:10px 13px;border-top:1px solid var(--br)}.ba{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt);text-decoration:none;padding:5px 9px;border-radius:var(--rSM);border:1px solid var(--br);background:var(--sf);transition:all .12s}.ba:hover{background:var(--bg)}
+.main{margin-left:var(--SW);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:var(--TH);padding:0 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mt);flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}.bcsep{color:var(--br)}.bccur{color:var(--tx);font-weight:500}.tbr{display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s;white-space:nowrap}.btn:hover{background:var(--bg)}.bsm{padding:5px 9px;font-size:11px}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}.bok{background:var(--green);color:#fff;border-color:var(--green)}
+.page{padding:20px 22px;flex:1}.g2{display:grid;grid-template-columns:1fr minmax(0,248px);gap:16px;align-items:start}.cm{min-width:0}.ca{position:sticky;top:calc(var(--TH)+12px)}
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
+.ch{display:flex;align-items:center;gap:9px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--br);transition:background .12s;user-select:none}.ch:hover{background:var(--bg)}
+.sn{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}.ch h3{font-size:13px;font-weight:600;flex:1}
+.st{font-size:10px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:2px 7px;border-radius:20px;white-space:nowrap}.carr{font-size:11px;color:var(--lt);transition:transform .2s}.card.collapsed .carr{transform:rotate(-90deg)}.cb{padding:18px}.card.collapsed .cb{display:none}
+.ach{background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:10px 13px;margin-bottom:14px}.ach-c{font-family:monospace;font-size:11px;font-weight:700;color:var(--u);margin-bottom:3px}.ach-t{font-size:13px;line-height:1.6}
+.glist{list-style:none}.glist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid var(--br);line-height:1.6}.glist li:last-child{border-bottom:none}.gck{width:17px;height:17px;border-radius:50%;background:var(--gbg);color:var(--green);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.ctag{font-size:11px;padding:3px 10px;background:var(--bg);border:1px solid var(--br);border-radius:20px;cursor:pointer;color:var(--mt);transition:all .12s}.ctag:hover{background:var(--ult);border-color:var(--umd);color:var(--u)}
+.ibox{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6;margin-top:10px}.prev{background:var(--bg);border:1px solid var(--br);color:var(--mt)}.warn{background:#FFFBEC;border:1px solid #EDD070;color:#6A5000}.info{background:var(--bbg);border:1px solid #BACED8;color:var(--blue)}.ok{background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}
+.divl{height:1px;background:var(--br);margin:13px 0}
+.crow{display:grid;grid-template-columns:1fr minmax(0,148px);gap:13px;align-items:start;margin-bottom:13px}
+.ct h4{font-size:13px;font-weight:700;margin-bottom:7px}.ct p{font-size:13px;color:var(--mt);line-height:1.75}.ct ul{padding-left:1rem;margin-top:5px}.ct ul li{font-size:13px;color:var(--mt);margin-bottom:3px;line-height:1.6}
+.cvis{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);display:flex;align-items:center;justify-content:center;padding:8px}
+/* ── 수행활동 (해보기) ── */
+.activity{background:linear-gradient(135deg,var(--ult),#F5F4FF);border:2px solid var(--umd);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
+.act-head{display:flex;align-items:center;gap:9px;padding:12px 16px;border-bottom:1.5px solid var(--umd);background:var(--ult);cursor:pointer;user-select:none}.act-head:hover{background:#E4E0FC}
+.act-badge{background:var(--u);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}.act-head h3{font-size:13px;font-weight:700;color:var(--udk);flex:1}
+.act-body{padding:18px}
+.act-step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--br);border-radius:var(--rSM);margin-bottom:8px;min-height:160px;}
+.act-num{width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;flex:none;margin-top:1px}
+.act-step h4{font-size:12px;font-weight:700;margin-bottom:4px}.act-step p{font-size:12px;color:var(--mt);line-height:1.65}
+.act-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.act-table th{background:var(--u);color:#fff;padding:7px 10px;font-weight:600;font-size:11px;text-align:left}
+.act-table td{padding:8px 10px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.55}
+.act-table tr:last-child td{border-bottom:none}
+.act-input{width:100%;padding:8px 10px;border:1.5px solid var(--br);border-radius:var(--rSM);font-size:12px;font-family:inherit;background:var(--sf);outline:none;resize:vertical;min-height:88px;margin-top:4px}
+.act-input:focus{border-color:var(--u)}
+/* ── 마이크로비트 블록 ── */
+.mb-workspace{background:#1e1e2e;border-radius:var(--rSM);padding:14px;margin:8px 0;display:flex;flex-direction:column;gap:5px}
+.mb-row{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.mb-indent{margin-left:22px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.mb-indent2{margin-left:44px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.mb{display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:6px;font-size:11px;font-family:'Courier New',monospace;font-weight:700;color:#fff;cursor:default}
+.mb-hole{display:inline-block;background:rgba(255,255,255,.2);border-radius:3px;padding:1px 7px;font-size:10px;min-width:20px;text-align:center}
+.mb-start{background:#FF8C00;box-shadow:0 3px 0 #B85A00}
+.mb-motion{background:#4A7ED9;box-shadow:0 3px 0 #2A50A0}
+.mb-led{background:#9B59B6;box-shadow:0 3px 0 #6C3483}
+.mb-input{background:#F39C12;box-shadow:0 3px 0 #C07000}
+.mb-logic{background:#E74C3C;box-shadow:0 3px 0 #A01010}
+.mb-loop{background:#27AE60;box-shadow:0 3px 0 #1A7A40}
+.mb-var{background:#3498DB;box-shadow:0 3px 0 #1A5A9A}
+.mb-music{background:#E91E63;box-shadow:0 3px 0 #880033}
+.mb-radio{background:#00BCD4;box-shadow:0 3px 0 #007A88}
+.mb-sensor{background:#FF6B35;box-shadow:0 3px 0 #C04010}
+/* ── quiz ── */
+.qwrap{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-top:13px}.qq{font-size:14px;font-weight:500;margin-bottom:11px;line-height:1.55}.qopts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);cursor:pointer;font-size:13px;line-height:1.5;transition:all .12s}.opt:hover{border-color:var(--u);background:var(--ult)}.opt.correct{border-color:#4A9020;background:var(--gbg);color:#1A5000;pointer-events:none}.opt.wrong{border-color:#B03020;background:var(--rbg);color:#6A1000;pointer-events:none}.opt.locked{pointer-events:none;opacity:.55}
+.onum{width:21px;height:21px;border-radius:50%;background:var(--br);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.opt.correct .onum{background:#4A9020;color:#fff}.opt.wrong .onum{background:#B03020;color:#fff}
+.qfb{display:none;margin-top:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6}.qfb.ok{display:block;background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}.qfb.err{display:block;background:var(--rbg);border:1px solid #F0B8A0;color:var(--red)}
+/* ── assess ── */
+.rub{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}.rub th{background:var(--bg);padding:7px 8px;font-weight:600;border-bottom:1.5px solid var(--br);text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--mt)}.rub td{padding:8px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.5}.rub tr:last-child td{border-bottom:none}
+.lv4{color:#1A6000!important;font-weight:500}.lv3{color:#2A6830!important}.lv2{color:#7A4E00!important}.lv1{color:#8A2000!important}
+.peer-check{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+.peer-check th{background:var(--ult);padding:6px 9px;font-weight:600;border-bottom:1.5px solid var(--umd);text-align:center;color:var(--u);font-size:10px}
+.peer-check td{padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt);text-align:center}
+.peer-check td:first-child{text-align:left;font-size:11px}
+.peer-check input[type=radio]{accent-color:var(--u)}
+/* ── sidebar ── */
+.ap{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:13px;margin-bottom:10px}.ap h5{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lt);margin-bottom:8px}
+.slist{display:flex;flex-direction:column;gap:3px}.si{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rSM);font-size:11px;color:var(--mt);cursor:pointer;transition:background .12s}.si:hover{background:var(--bg)}
+.dot{width:19px;height:19px;border-radius:50%;background:var(--br);color:var(--lt);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dot.sa{background:var(--u);color:#fff}.dot.sd{background:var(--gbg);color:var(--green)}
+.sclist{display:flex;flex-direction:column;gap:4px}.scitem{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg);border-radius:var(--rSM);font-size:12px;border:1px solid var(--br)}.scitem label{flex:1;line-height:1.5}.scitem select{font-size:11px;padding:3px 6px;border:1px solid var(--br);border-radius:5px;background:var(--sf);font-family:inherit;color:var(--tx);cursor:pointer;flex-shrink:0}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.scard{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px 12px;font-size:12px;line-height:1.65;color:var(--mt)}.scard strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--lt);margin-bottom:4px}.termlist{display:flex;flex-direction:column}.tterm{display:flex;align-items:baseline;gap:5px;padding:4px 0;font-size:11px;border-bottom:1px solid var(--br)}.tterm:last-child{border-bottom:none}.tw{font-weight:600;color:var(--u);white-space:nowrap}.tdef{color:var(--mt)}
+.pbtrack{height:5px;background:var(--umd);border-radius:3px;overflow:hidden}.pbfill{height:100%;background:var(--u);border-radius:3px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1C1C1C;color:#fff;padding:9px 18px;border-radius:10px;font-size:12px;font-family:inherit;z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+/* ══ 반응형 레이아웃 ══ */
+*,*::before,*::after{box-sizing:border-box}
+img,canvas,video{max-width:100%;height:auto;display:block}
+table{width:100%;border-collapse:collapse}
+.act-table,.peer-check,.rub{table-layout:fixed;word-break:break-word}
+.act-table td,.act-table th,
+.rub td,.rub th,
+.peer-check td,.peer-check th{min-width:44px;word-break:break-word;overflow-wrap:break-word}
+.act-step>div:not(.act-num){min-width:0;flex:1;overflow-wrap:break-word;word-break:break-word}
+.act-body,.cb{overflow-x:hidden}
+.act-input{width:100%;box-sizing:border-box}
+.mb-workspace,.mb-row,.mb-indent,.mb-indent2{flex-wrap:wrap}
+.sim-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
+/* 1100px 이하 */
+@media(max-width:1100px){
+  .g2{grid-template-columns:1fr}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 220px;min-width:180px}
+  .crow{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr 1fr}
+}
+
+/* 900px 이하 */
+@media(max-width:900px){
+  .ca{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .ca .ap{flex:1 1 180px;min-width:160px}
+  .page{padding:16px 14px}
+  .cb,.act-body{padding:13px}
+  .sgrid{grid-template-columns:1fr 1fr}
+  .crow{grid-template-columns:1fr}
+}
+
+/* 640px 이하 */
+@media(max-width:640px){
+  .page{padding:11px 10px}
+  .cb,.act-body{padding:10px}
+  .sgrid{grid-template-columns:1fr}
+  .act-step{flex-direction:column;gap:5px}
+  .act-num{margin-bottom:0}
+  .ch h3{font-size:12px}
+  .btn{font-size:11px;padding:5px 8px}
+  .act-table td,.act-table th{padding:5px 6px;font-size:11px}
+  .rub td,.rub th{padding:5px 6px;font-size:11px}
+  .peer-check td,.peer-check th{padding:5px 6px;font-size:10px}
+  .scard{font-size:11px}
+  .opt{font-size:12px;padding:8px 10px}
+  .mb,.mb-hole{font-size:10px;padding:4px 7px}
+}
+
+/* 480px 이하 */
+@media(max-width:480px){
+  :root{--SW:0px}
+  .sb{display:none}
+  .main{margin-left:0}
+  .topbar{padding:0 10px}
+  .page{padding:8px 9px}
+  .cb,.act-body{padding:9px}
+  .tbr .btn:last-child{display:none}
+  .sgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-top"><div class="uchip">◈ Unit I</div><h2>컴퓨팅 시스템</h2><div class="smeta">중단원2: 피지컬 컴퓨팅 프로그래밍 · p.24~27</div></div>
+  <nav class="sb-nav"><div class="nlbl">소단원 목록</div><a class="na done" href="../lesson-01/index.html"><div class="nn">✓</div>컴퓨팅 시스템의 구성과 동작 원리</a>
+<a class="na done" href="../lesson-02/index.html"><div class="nn">✓</div>피지컬 컴퓨팅 시스템의 이해</a>
+<a class="na done" href="../lesson-03/index.html"><div class="nn">✓</div>운동 횟수 표시 장치 만들기</a>
+<a class="na on" href="../lesson-04/index.html"><div class="nn">4</div>수면 온도 알림이 장치 만들기<span class="nbadge">2차시</span></a>
+<a class="na " href="../lesson-05/index.html"><div class="nn">5</div>소리에 반응하는 애니메이션 장치 만들기</a>
+<a class="na " href="../lesson-06/index.html"><div class="nn">6</div>이심전심 게임 장치 만들기</a>
+</nav>
+  <div class="sb-foot"><a class="ba" href="https://sungce.github.io/lesson/">← 정보 교과 학습 플랫폼</a></div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div class="bc"><a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a><span class="bcsep">›</span><a href="../../index.html">I. 컴퓨팅 시스템</a><span class="bcsep">›</span><span class="bccur">4. 수면 온도 알림이 장치 만들기</span></div>
+    <div class="tbr">
+      <button class="btn bsm" onclick="markDone('04')">✓ 완료 표시</button>
+      <a class="btn bsm bp" href="../lesson-05/index.html">다음 소단원 →</a>
+    </div>
+  </header>
+  <div class="page"><div class="g2"><div class="cm">
+
+<div class="card" id="sec-goal">
+  <div class="ch" onclick="toggleSec('sec-goal')"><div class="sn" style="background:var(--ult);color:var(--u)">01</div><h3>학습목표</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="ach"><div class="ach-c">[9정01-04] 피지컬 컴퓨팅 프로그래밍</div><div class="ach-t">온도 센서와 빛 감지 센서를 활용하여 밤과 낮을 구분하고 밤에 방 안의 온도를 표시해 주는 장치를 만들 수 있다. (pp.24~27)</div></div>
+    <ul class="glist">
+      <li><div class="gck">✓</div>온도 센서와 빛 감지 센서의 측정 범위와 원리를 설명할 수 있다.</li>
+      <li><div class="gck">✓</div>빛 감지 센서로 밤·낮을 구분하는 알고리즘을 설계할 수 있다.</li>
+      <li><div class="gck">✓</div>수면 온도 알림이 장치 프로그램을 MakeCode로 작성할 수 있다.</li>
+    </ul>
+    <div class="divl"></div>
+    <div class="ctags">
+      <span class="ctag" onclick="goTo('sec-concept')">온도 센서</span>
+      <span class="ctag" onclick="goTo('sec-concept')">빛 감지 센서</span>
+      <span class="ctag" onclick="goTo('sec-concept')">조건문</span>
+      <span class="ctag" onclick="goTo('sec-concept')">야간 알림</span>
+    </div>
+    <div class="ibox prev">📌 <b>이전 차시:</b> 가속도 센서로 운동 횟수를 감지했습니다. 이번에는 온도·빛 센서를 조합하여 야간 수면 온도 알림이를 만듭니다.</div>
+  </div>
+</div>
+
+<div class="card" id="sec-concept">
+  <div class="ch" onclick="toggleSec('sec-concept')"><div class="sn" style="background:var(--gbg);color:var(--green)">02</div><h3>개념설명</h3><span class="st">⏱ 15분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px">
+      <div style="background:var(--abg);border:1px solid #EDD070;border-radius:var(--rSM);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:6px">🌡️ 온도 센서</div>
+        <div style="font-size:12px;color:var(--mt);line-height:1.75">측정 범위: <b>-5 ~ 50℃</b><br>주변 온도를 수치로 측정<br><b>계절별 실내 적정 온도:</b><br>봄·가을: 19~23℃ / 여름: 24~27℃ / 겨울: 18~21℃</div>
+      </div>
+      <div style="background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:6px">☀️ 빛 감지 센서</div>
+        <div style="font-size:12px;color:var(--mt);line-height:1.75">측정 범위: <b>0(어두움) ~ 255(밝음)</b><br>주변 밝기로 밤·낮 구분<br><b>기준값 예: 128</b><br>128 미만 = 밤 / 128 이상 = 낮</div>
+      </div>
+    </div>
+    <div class="divl"></div>
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">알고리즘 설계 (3단계)</h4>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;font-size:12px;color:var(--mt);line-height:2;margin-bottom:12px">
+      ➊ <b>A 버튼</b> → 현재 온도를 LED 스크린에 출력<br>
+      ➋ <b>B 버튼</b> → 빛 감지 센서로 밤(🌙)/낮(☀️) 아이콘 표현<br>
+      ➌ <b>흔들림 감지</b> → 밤이면 온도에 따라 ↓(낮음)/🫀(적정)/↑(높음) 표시
+    </div>
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">MakeCode 블록 (핵심: 야간 온도 안내)</h4>
+    <div class="mb-workspace">
+      <div class="mb-row"><span class="mb mb-sensor">📳 흔들림 감지 시</span></div>
+      <div class="mb-indent"><span class="mb mb-logic">만약 빛센서 < 128 (밤)</span></div>
+      <div class="mb-indent2"><span class="mb mb-logic">만약 온도 < 19 (너무 낮음)</span></div>
+      <div class="mb-indent2"><span class="mb mb-led">LED: ↓ (온도 낮음)</span></div>
+      <div class="mb-indent2"><span class="mb mb-logic">아니고 온도 > 23 (너무 높음)</span></div>
+      <div class="mb-indent2"><span class="mb mb-led">LED: ↑ (온도 높음)</span></div>
+      <div class="mb-indent2"><span class="mb mb-logic">아니면 (적정)</span></div>
+      <div class="mb-indent2"><span class="mb mb-led">LED: 🫀 (적정 온도)</span></div>
+      <div class="mb-indent"><span class="mb mb-logic">아니면 (낮)</span></div>
+      <div class="mb-indent2"><span class="mb mb-led">LED 화면 지우기</span></div>
+    </div>
+    <div class="ibox info">📖 <b>교과서 연계:</b> pp.24~27 / 봄 기준: 적정 온도 19~23℃</div>
+  </div>
+</div>
+
+<!-- ★ 수행 활동 ★ -->
+<div class="activity" id="sec-activity">
+  <div class="act-head" onclick="toggleSec('act-body-04')">
+    <span class="act-badge">★ 수행 활동</span>
+    <h3>빛 감지·온도 센서를 활용한 장치 만들기</h3>
+    <span style="font-size:10px;color:var(--udk);margin-left:auto">모둠 활동 | pp.27</span>
+    <span class="carr" style="color:var(--udk)">▾</span>
+  </div>
+  <div id="act-body-04" class="act-body">
+    <div class="ibox ok" style="margin-top:0;margin-bottom:14px">💡 빛 감지 센서와 온도 센서를 활용하는 두 가지 장치를 만들어봅니다. (교과서 p.27 해보기)</div>
+
+    <!-- 활동 1: 스마트 가로등 -->
+    <div style="background:var(--sf);border:2px solid var(--umd);border-radius:var(--rSM);padding:14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:8px">📋 활동 1 — 스마트 가로등 프로그램 만들기</div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px;margin-bottom:10px;font-size:12px;color:var(--mt)">
+        <b>조건 (1단계):</b> 빛 감지 센서값 ≥ 128 → 가로등 꺼짐 / 128 미만 → 최대 밝기로 켜짐<br>
+        <b>조건 (2단계):</b> 128↑ → 꺼짐 / 85~128 → 조금 어두움(중간 밝기) / 85↓ → 완전 어두움(최대 밝기)
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--mt);margin-bottom:7px">알고리즘 작성 (2단계 포함)</div>
+      <textarea class="act-input" placeholder="1단계 알고리즘:&#10;만약 빛센서 ≥ 128 이면: LED 꺼짐&#10;아니면: LED 최대 밝기&#10;&#10;2단계 알고리즘: (밝기 3단계 조절)&#10;..."></textarea>
+
+      <!-- 시뮬레이터 -->
+      <div style="background:#1a2040;border-radius:var(--rSM);padding:14px;margin-top:10px;text-align:center">
+        <div style="font-size:10px;color:#aaa;margin-bottom:8px">스마트 가로등 시뮬레이터</div>
+        <div style="margin-bottom:9px">
+          <label style="font-size:11px;color:#aaa">주변 밝기 (빛 감지 센서값)</label><br>
+          <input type="range" id="light-range" min="0" max="255" value="150" oninput="updateStreetLight()" style="width:80%;margin-top:5px;accent-color:var(--u)">
+          <span id="light-val" style="font-size:12px;color:var(--u);margin-left:6px;font-weight:700">150</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:16px">
+          <div style="text-align:center">
+            <div id="streetlight-icon" style="font-size:40px;transition:all .4s">💡</div>
+            <div id="streetlight-label" style="font-size:11px;color:#aaa;margin-top:4px">낮 → 꺼짐</div>
+          </div>
+          <div style="text-align:left;font-size:11px;color:#aaa;line-height:2">
+            <div id="sl-cond1" style="padding:3px 7px;border-radius:4px">🟡 빛 ≥ 128: 꺼짐</div>
+            <div id="sl-cond2" style="padding:3px 7px;border-radius:4px">⬜ 빛 85~128: 중간</div>
+            <div id="sl-cond3" style="padding:3px 7px;border-radius:4px">⬜ 빛 < 85: 최대</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 활동 2: 선풍기 속도 -->
+    <div style="background:var(--sf);border:2px solid var(--umd);border-radius:var(--rSM);padding:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:8px">📋 활동 2 — 온도에 따른 선풍기 속도 조절 애니메이션 (pp.27)</div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px;margin-bottom:10px;font-size:12px;color:var(--mt);line-height:1.9">
+        <b>조건:</b> 30℃↑=초강풍 / 28~30℃=강풍 / 25~28℃=약풍 / 22~25℃=미풍 / 22℃↓=정지
+      </div>
+      <div style="text-align:center;background:#1a2040;border-radius:var(--rSM);padding:14px;margin-bottom:10px">
+        <div style="font-size:10px;color:#aaa;margin-bottom:6px">온도 입력 (℃)</div>
+        <input type="range" id="temp-range" min="15" max="35" value="22" oninput="updateFan()" style="width:80%;accent-color:var(--u)">
+        <span id="temp-val" style="font-size:12px;color:var(--u);margin-left:6px;font-weight:700">22℃</span>
+        <div id="fan-display" style="font-size:48px;margin:10px 0;transition:all .3s">⚪</div>
+        <div id="fan-label" style="font-size:13px;color:#FF6B35;font-weight:700">정지</div>
+        <div id="fan-speed-bar" style="height:8px;background:#333;border-radius:4px;overflow:hidden;margin-top:8px;width:80%;margin-left:auto;margin-right:auto">
+          <div id="fan-bar-fill" style="height:100%;background:var(--u);width:0%;transition:width .4s;border-radius:4px"></div>
+        </div>
+      </div>
+      <textarea class="act-input" placeholder="알고리즘 작성:&#10;만약 온도 ≥ 30 이면: 초강풍 (애니메이션 빠르게)&#10;아니고 온도 ≥ 28 이면: 강풍&#10;..."></textarea>
+    </div>
+
+    <!-- 평가하기 -->
+    <div style="margin-top:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">📝 평가하기 (교과서 p.26)</div>
+      <div style="overflow-x:auto;margin-top:12px"><table class="peer-check"><thead><tr><th style="text-align:left">평가 항목</th><th colspan="2">자기 평가</th><th colspan="2">동료 평가</th></tr></thead><tbody><tr><td>A 버튼을 누르면 현재 온도가 출력되는가?</td><td><label><input type="radio" name="pe0a" value="예"> 예</label></td><td><label><input type="radio" name="pe0a" value="아니요"> 아니요</label></td><td><label><input type="radio" name="pe0b" value="예"> 예</label></td><td><label><input type="radio" name="pe0b" value="아니요"> 아니요</label></td></tr><tr><td>낮과 밤을 구분하는 기준값이 올바르게 설정되었는가?</td><td><label><input type="radio" name="pe1a" value="예"> 예</label></td><td><label><input type="radio" name="pe1a" value="아니요"> 아니요</label></td><td><label><input type="radio" name="pe1b" value="예"> 예</label></td><td><label><input type="radio" name="pe1b" value="아니요"> 아니요</label></td></tr><tr><td>B 버튼을 누르면 주변 상태에 따라 낮과 밤을 인식하는가?</td><td><label><input type="radio" name="pe2a" value="예"> 예</label></td><td><label><input type="radio" name="pe2a" value="아니요"> 아니요</label></td><td><label><input type="radio" name="pe2b" value="예"> 예</label></td><td><label><input type="radio" name="pe2b" value="아니요"> 아니요</label></td></tr><tr><td>야간에 적정 온도 상태를 올바르게 안내하는가?</td><td><label><input type="radio" name="pe3a" value="예"> 예</label></td><td><label><input type="radio" name="pe3a" value="아니요"> 아니요</label></td><td><label><input type="radio" name="pe3b" value="예"> 예</label></td><td><label><input type="radio" name="pe3b" value="아니요"> 아니요</label></td></tr></tbody></table></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn bsm bp" onclick="saveActivity('l104_act')">💾 활동 저장</button>
+      <a href="https://makecode.microbit.org" target="_blank" class="btn bsm" style="background:#0078D4;color:#fff;border-color:#005A9E">MakeCode 열기 ↗</a>
+    </div>
+  </div>
+</div>
+
+<div class="card" id="sec-assess">
+  <div class="ch" onclick="toggleSec('sec-assess')"><div class="sn" style="background:var(--bbg);color:var(--blue)">04</div><h3>수행평가</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;margin-bottom:12px;border-left:3px solid var(--u)">
+      <h4 style="font-size:13px;font-weight:700;color:var(--u);margin-bottom:7px">📋 수면 온도 알림이 + 스마트 가로등 완성</h4>
+      <p style="font-size:13px;color:var(--mt)">온도·빛 감지 센서를 활용한 피지컬 컴퓨팅 프로그램 2가지를 MakeCode로 완성하시오.</p>
+    </div>
+    <table class="rub"><thead><tr><th>평가 요소</th><th class="lv4">매우 잘함(4)</th><th class="lv3">잘함(3)</th><th class="lv2">보통(2)</th><th class="lv1">노력 필요(1)</th></tr></thead><tbody><tr><td><b>센서 활용</b></td><td class="lv4">온도·빛 센서 정확 조합</td><td class="lv3">1가지 정확</td><td class="lv2">센서 사용만</td><td class="lv1">없음</td></tr><tr><td><b>조건 처리</b></td><td class="lv4">다중 조건 정확 구현</td><td class="lv3">2단계 구현</td><td class="lv2">1단계</td><td class="lv1">없음</td></tr><tr><td><b>결과 출력</b></td><td class="lv4">LED 아이콘 정상 표시</td><td class="lv3">부분 표시</td><td class="lv2">단순 수치</td><td class="lv1">없음</td></tr></tbody></table>
+    <div class="sclist"><div class="scitem"><label>온도·빛 감지 센서의 범위와 원리를 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>조건문으로 밤·낮을 구분하는 알고리즘을 설계할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>수면 온도 알림이 프로그램을 MakeCode로 작성할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div></div>
+    <button class="btn bsm bok" style="margin-top:10px" onclick="saveSC('l104sc')">💾 저장</button>
+  </div>
+</div>
+
+<div class="card" id="sec-review">
+  <div class="ch" onclick="toggleSec('sec-review')"><div class="sn" style="background:var(--gbg);color:var(--green)">05</div><h3>확인하기</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="sgrid">
+      <div class="scard"><strong>온도 센서</strong>-5~50℃ 측정. 봄·가을 적정: 19~23℃.</div>
+      <div class="scard"><strong>빛 감지 센서</strong>0~255 측정. 128 미만=밤, 이상=낮.</div>
+      <div class="scard"><strong>다중 조건</strong>if→else if→else로 3단계 이상 분기 가능.</div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;margin-bottom:12px"><b>✏️ 단답형:</b> 빛 감지 센서값이 128 미만이면 밤, 128 이상이면 낮으로 판별할 때 사용하는 기준값을 <span style="display:inline-block;width:60px;border-bottom:1.5px solid var(--tx)">&nbsp;</span>이라고 한다.<textarea style="display:block;width:100%;margin-top:9px;padding:9px;border:1px solid var(--br);border-radius:var(--rSM);font-size:13px;font-family:inherit;resize:vertical;min-height:48px;background:var(--sf)" placeholder="정답을 입력하세요..."></textarea></div>
+    <div class="ibox ok">📖 <div><strong>다음 차시 예고:</strong> 소리 센서와 스피커로 <strong>소리에 반응하는 애니메이션 장치</strong>를 만들어봅니다! (pp.28~31)</div></div>
+  </div>
+</div>
+
+  </div>
+  <div class="ca">
+    <div class="ap"><h5>학습 진행</h5><div class="slist">
+      <div class="si" onclick="goTo('sec-goal')"><div class="dot sd">1</div>학습목표</div>
+      <div class="si" onclick="goTo('sec-concept')"><div class="dot">2</div>개념설명</div>
+      <div class="si" onclick="goTo('sec-activity')"><div class="dot sa">★</div>수행 활동</div>
+      <div class="si" onclick="goTo('sec-assess')"><div class="dot">4</div>수행평가</div>
+      <div class="si" onclick="goTo('sec-review')"><div class="dot">5</div>확인하기</div>
+    </div></div>
+    <div class="ap" style="background:var(--ult);border-color:var(--umd)"><h5 style="color:var(--u)">단원 진도</h5>
+      <div style="display:flex;align-items:center;gap:7px"><div class="pbtrack" style="flex:1"><div class="pbfill" style="width:54%"></div></div><span style="font-size:11px;font-weight:600;color:var(--u)">4/6</span></div>
+    </div>
+    <div class="ap"><h5>핵심 용어</h5><div class="termlist"><div class="tterm"><span class="tw">온도 센서</span><span class="tdef">-5~50℃ 측정</span></div><div class="tterm"><span class="tw">빛 감지 센서</span><span class="tdef">0~255 밝기</span></div><div class="tterm"><span class="tw">기준값</span><span class="tdef">센서값 비교 기준</span></div><div class="tterm"><span class="tw">조건문</span><span class="tdef">if/else 분기</span></div><div class="tterm"><span class="tw">야간 적정</span><span class="tdef">봄·가을 19~23℃</span></div></div></div>
+    <div class="ap" style="background:#F0FDF4;border-color:#BBF7D0">
+      <h5 style="color:#166534">🔧 마이크로비트</h5>
+      <a href="https://makecode.microbit.org" target="_blank" class="btn bsm" style="width:100%;justify-content:center;background:#0078D4;color:#fff;border-color:#005A9E;margin-bottom:5px">MakeCode 열기 ↗</a>
+      <a href="https://makecode.microbit.org/#editor" target="_blank" class="btn bsm" style="width:100%;justify-content:center;font-size:10px;color:var(--mt)">시뮬레이터 ↗</a>
+    </div>
+  </div>
+  </div></div>
+</main>
+<div id="toast"></div>
+<script>
+
+  // ── Google Sheets 저장 ──────────────────────────────────
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+
+  function getUserName() {
+    return localStorage.getItem('user_name') || '익명';
+  }
+
+  function postToSheets(payload) {
+    if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) return;
+    fetch(GS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},2400);}
+function toggleSec(id){var e=document.getElementById(id);if(e)e.classList.toggle('collapsed');}
+function goTo(id){var e=document.getElementById(id);if(!e)return;window.scrollTo({top:e.getBoundingClientRect().top+window.pageYOffset-64,behavior:'smooth'});}
+function checkQ(el,ok,msg){el.closest('.qopts').querySelectorAll('.opt').forEach(function(o){o.classList.add('locked');});el.classList.add(ok?'correct':'wrong');var fb=el.closest('.qwrap').querySelector('.qfb');if(fb){fb.className='qfb '+(ok?'ok':'err');fb.innerHTML=(ok?'✓ 정답: ':'✗ 힌트: ')+msg;}}
+function saveSC(key){
+  var d={};
+  document.querySelectorAll('.scitem select').forEach(function(s,i){d['q'+i]=s.value;});
+  try{
+    localStorage.setItem(key,JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'sc',
+      userName: getUserName(),
+      lessonKey: 'l14',
+      lessonName: 'l14',
+      answers: d
+    });
+    toast('자기평가가 저장되었습니다 ✓');
+  }catch(e){}
+}
+function loadSC(key){try{var d=JSON.parse(localStorage.getItem(key)||'{}');document.querySelectorAll('.scitem select').forEach(function(s,i){if(d['q'+i])s.value=d['q'+i];});}catch(e){}}
+function markDone(n){
+  try{
+    var d=JSON.parse(localStorage.getItem('u01done')||'[]');
+    if(!d.includes(n))d.push(n);
+    localStorage.setItem('u01done',JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'done',
+      userName: getUserName(),
+      unit: 'I',
+      lessonNum: n,
+      lessonName: '컴퓨팅 시스템'
+    });
+  }catch(e){}
+  toast('✅ 소단원 '+n+' 완료 표시!');
+}
+function saveActivity(key){
+  var d={};
+  document.querySelectorAll('.act-input').forEach(function(el,i){d['a'+i]=el.value;});
+  document.querySelectorAll('.peer-check input[type=radio]:checked').forEach(function(el){d['r_'+el.name]=el.value;});
+  try{
+    localStorage.setItem(key,JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'act',
+      userName: getUserName(),
+      lessonKey: 'l14',
+      lessonName: 'l14',
+      answers: d
+    });
+    toast('✅ 수행 활동이 저장되었습니다!');
+  }catch(e){}
+}
+function loadActivity(key){
+  try{
+    var d=JSON.parse(localStorage.getItem(key)||'{}');
+    document.querySelectorAll('.act-input').forEach(function(el,i){if(d['a'+i])el.value=d['a'+i];});
+    Object.keys(d).filter(function(k){return k.startsWith('r_');}).forEach(function(k){
+      var el=document.querySelector('input[type=radio][name="'+k.slice(2)+'"][value="'+d[k]+'"]');
+      if(el)el.checked=true;
+    });
+  }catch(e){}
+}
+
+
+function updateStreetLight(){
+  var v = parseInt(document.getElementById('light-range').value);
+  document.getElementById('light-val').textContent = v;
+  var icon = document.getElementById('streetlight-icon');
+  var lbl = document.getElementById('streetlight-label');
+  var c1=document.getElementById('sl-cond1'), c2=document.getElementById('sl-cond2'), c3=document.getElementById('sl-cond3');
+  [c1,c2,c3].forEach(function(e){e.style.background='';e.style.color='#aaa';});
+  if(v >= 128){icon.textContent='⚫';icon.style.filter='';lbl.textContent='낮 → 가로등 꺼짐';c1.style.background='#2A4020';c1.style.color='#88CC66';}
+  else if(v >= 85){icon.textContent='🟡';icon.style.filter='drop-shadow(0 0 6px #FFA)';lbl.textContent='조금 어두움 → 중간 밝기';c2.style.background='#402A20';c2.style.color='#FFCC66';}
+  else{icon.textContent='💡';icon.style.filter='drop-shadow(0 0 12px #FFD700)';lbl.textContent='완전 어두움 → 최대 밝기';c3.style.background='#402010';c3.style.color='#FF8844';}
+}
+var fanAnim = null;
+function updateFan(){
+  var t = parseInt(document.getElementById('temp-range').value);
+  document.getElementById('temp-val').textContent = t + '℃';
+  var icons = ['⚪','🌀','💨','🌪️','🌊'];
+  var labels = ['정지','미풍','약풍','강풍','초강풍'];
+  var speeds = [0, 20, 45, 70, 100];
+  var delays = [0, 600, 350, 200, 100];
+  var level = t >= 30 ? 4 : t >= 28 ? 3 : t >= 25 ? 2 : t >= 22 ? 1 : 0;
+  document.getElementById('fan-label').textContent = labels[level];
+  document.getElementById('fan-bar-fill').style.width = speeds[level] + '%';
+  clearInterval(fanAnim);
+  if(level > 0){
+    var frames = ['🌀','⭕','🔄','💫'];
+    var fi = 0;
+    fanAnim = setInterval(function(){
+      document.getElementById('fan-display').textContent = frames[fi % frames.length]; fi++;
+    }, delays[level]);
+  } else {
+    document.getElementById('fan-display').textContent = '⚪';
+  }
+}
+document.addEventListener('DOMContentLoaded',function(){updateStreetLight();updateFan();});
+
+document.addEventListener('DOMContentLoaded',function(){loadSC('l104sc');loadActivity('l104sc_act');});
+</script>
+</body></html>
