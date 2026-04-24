@@ -418,10 +418,15 @@
                 return;
             }
             tbody.innerHTML = list.map((s, i) => {
-                const link = s.link || s.url || '';
-                const linkHtml = link
-                    ? `<a href="${link}" target="_blank" class="text-blue-500 hover:underline font-medium truncate max-w-[180px] block" title="${link}">${link.length > 30 ? link.slice(0,30)+'…' : link}</a>`
-                    : `<span class="text-slate-400 text-xs">${(s.content||'').slice(0,40) || '-'}</span>`;
+                const raw = (s.link || '').trim();
+                const isUrl = raw.startsWith('http://') || raw.startsWith('https://');
+                const linkHtml = raw
+                    ? isUrl
+                        ? `<a href="${raw}" target="_blank" rel="noopener noreferrer"
+                                class="text-blue-500 hover:underline font-medium truncate max-w-[200px] block"
+                                title="${raw}">${raw.length > 35 ? raw.slice(0,35)+'…' : raw}</a>`
+                        : `<span class="text-slate-600 text-xs font-medium truncate max-w-[200px] block" title="${raw}">${raw.length > 40 ? raw.slice(0,40)+'…' : raw}</span>`
+                    : `<span class="text-slate-300 text-xs">-</span>`;
                 return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                     <td class="px-4 py-3.5 text-xs font-bold text-slate-400">${i+1}</td>
                     <td class="px-4 py-3.5 text-slate-500 font-medium text-sm">${s.studentId || '-'}</td>
@@ -429,7 +434,7 @@
                     <td class="px-4 py-3.5 text-slate-600 font-medium text-sm max-w-[160px]">
                         <span class="bg-violet-50 text-violet-700 text-xs font-bold px-2 py-0.5 rounded-lg">${s.assignment || '-'}</span>
                     </td>
-                    <td class="px-4 py-3.5">${linkHtml}</td>
+                    <td class="px-4 py-3.5 max-w-[200px]">${linkHtml}</td>
                     <td class="px-4 py-3.5 text-slate-400 text-xs font-medium whitespace-nowrap">${s.date ? s.date.substring(0,16) : '-'}</td>
                 </tr>`;
             }).join('');
