@@ -8,6 +8,8 @@
     <link rel="stylesheet" as="style" crossorigin
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <style>
         body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
         .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
@@ -136,60 +138,55 @@
     </footer>
 
     <script>
-        // ==========================================
-        // 갤러리 데이터 — 실제 작품으로 교체해 주세요
-        // ==========================================
-        const projects = [
-            { id:1, year:'2026', team:'Team Alpha', title:'스마트 급식 알리미',   desc:'매일 아침 오늘의 급식을 알려주는 웹앱입니다. 알림 기능과 영양 정보를 함께 제공합니다.', imgColor:'from-blue-400 to-indigo-500',   likes:34, link:'' },
-            { id:2, year:'2026', team:'Team Beta',  title:'재활용 분리수거 도우미', desc:'쓰레기를 카메라로 인식하여 올바른 분리수거 방법을 안내해주는 AI 앱입니다.',               imgColor:'from-emerald-400 to-teal-500',  likes:28, link:'' },
-            { id:3, year:'2026', team:'Team Gamma', title:'교내 분실물 센터',       desc:'학교 내 분실물을 사진과 함께 등록하고 찾을 수 있는 커뮤니티 플랫폼입니다.',             imgColor:'from-orange-400 to-rose-400',   likes:45, link:'' },
-            { id:4, year:'2026', team:'Team Delta', title:'집중력 향상 타이머',     desc:'뽀모도로 기법을 활용해 공부와 휴식을 리듬감 있게 관리하는 스터디 타이머입니다.',         imgColor:'from-purple-400 to-pink-500',   likes:19, link:'' },
-            { id:5, year:'2025', team:'Team Sigma', title:'학교 버스 알리미',       desc:'실시간으로 학교 버스 위치를 확인하고 도착 예정 시간을 알려주는 서비스입니다.',           imgColor:'from-cyan-400 to-blue-500',     likes:37, link:'' },
-            { id:6, year:'2025', team:'Team Pi',    title:'우리반 독서 기록장',     desc:'반 친구들과 읽은 책을 공유하고 짧은 감상을 남기는 독서 커뮤니티 앱입니다.',             imgColor:'from-lime-400 to-emerald-500',  likes:22, link:'' },
-        ];
+        const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
+        const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        const db  = firebase.firestore(app);
 
-        let currentFilter = { year: 'all', query: '' };
+        let projects = [], currentFilter = { year:'all', query:'' };
+
+        async function loadProjects() {
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-400 font-medium">불러오는 중...</div>`;
+            try {
+                const snap = await db.collection('student_works').orderBy('createdAt','desc').get();
+                projects = snap.docs.map(doc=>({id:doc.id,...doc.data(),year:String(doc.data().year)}));
+                document.getElementById('total-count').textContent = projects.length + '개 작품';
+                buildYearFilters(); renderGallery();
+            } catch(e) { grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-400">불러오기 실패: ${e.message}</div>`; }
+        }
+
+        function buildYearFilters() {
+            const years = [...new Set(projects.map(p=>p.year))].sort((a,b)=>b-a);
+            const fd = document.getElementById('year-filter');
+            fd.innerHTML = `<button onclick="setYearFilter('all')" id="year-all" class="px-4 py-3 rounded-2xl text-sm font-bold bg-amber-500 text-white">전체</button>`;
+            years.forEach(y => { fd.innerHTML += `<button onclick="setYearFilter('${y}')" id="year-${y}" class="px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600">${y}</button>`; });
+        }
 
         function renderGallery() {
-            const grid  = document.getElementById('gallery-grid');
-            const empty = document.getElementById('gallery-empty');
-            const filtered = projects.filter(p => {
-                const matchYear  = currentFilter.year === 'all' || p.year === currentFilter.year;
-                const matchQuery = p.title.toLowerCase().includes(currentFilter.query) ||
-                                   p.team.toLowerCase().includes(currentFilter.query) ||
-                                   p.desc.toLowerCase().includes(currentFilter.query);
-                return matchYear && matchQuery;
+            const grid=document.getElementById('gallery-grid'), empty=document.getElementById('gallery-empty');
+            const filtered=projects.filter(p=>{
+                const my=currentFilter.year==='all'||p.year===currentFilter.year;
+                const mq=!currentFilter.query||p.title.toLowerCase().includes(currentFilter.query)||p.team.toLowerCase().includes(currentFilter.query)||p.desc.toLowerCase().includes(currentFilter.query);
+                return my&&mq;
             });
-
-            document.getElementById('total-count').textContent = `${filtered.length}개 작품`;
-
-            if (!filtered.length) {
-                grid.innerHTML = '';
-                empty.classList.remove('hidden');
-                return;
-            }
+            document.getElementById('total-count').textContent = filtered.length+'개 작품';
+            if (!filtered.length) { grid.innerHTML=''; empty.classList.remove('hidden'); return; }
             empty.classList.add('hidden');
-
-            grid.innerHTML = filtered.map(p => `
-                <div onclick='openProjectModal(${p.id})'
-                    class="card-hover bg-white rounded-[1.75rem] overflow-hidden border border-slate-100 shadow-sm cursor-pointer group">
-                    <div class="h-44 bg-gradient-to-br ${p.imgColor} flex items-center justify-center p-5 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
-                        <h3 class="text-white font-black text-xl text-center z-10 drop-shadow-md leading-snug
-                                   transform group-hover:scale-105 transition-transform duration-500">${p.title}</h3>
+            grid.innerHTML = filtered.map(p=>`
+                <div onclick="openProjectModal('${p.id}')" class="card-hover bg-white rounded-[1.75rem] overflow-hidden border border-slate-100 shadow-sm cursor-pointer group">
+                    <div class="h-44 bg-gradient-to-br ${p.imgColor||'from-orange-400 to-rose-400'} flex items-center justify-center p-5 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                        <h3 class="text-white font-black text-xl text-center z-10 drop-shadow-md leading-snug transform group-hover:scale-105 transition-transform">${p.title}</h3>
                     </div>
                     <div class="p-5">
                         <div class="flex justify-between items-center mb-3">
-                            <span class="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1 rounded-lg">${p.team}</span>
+                            <span class="text-xs font-black text-slate-400 bg-slate-50 px-2.5 py-1 rounded-lg">${p.team||''}</span>
                             <span class="text-xs font-bold text-slate-300">${p.year}</span>
                         </div>
-                        <p class="text-sm text-slate-500 font-medium leading-relaxed line-clamp-2">${p.desc}</p>
+                        <p class="text-sm text-slate-500 leading-relaxed line-clamp-2">${p.desc||''}</p>
                         <div class="flex items-center justify-between mt-4">
-                            <div class="flex items-center space-x-1 text-xs font-bold text-slate-400">
-                                <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-400"></i>
-                                <span>${p.likes}</span>
-                            </div>
-                            <span class="text-xs text-amber-500 font-bold group-hover:underline">자세히 보기 →</span>
+                            <div class="flex items-center space-x-1 text-xs text-slate-400"><i data-lucide="heart" class="w-3.5 h-3.5 text-rose-400"></i><span>${p.likes||0}</span></div>
+                            <span class="text-xs text-amber-500 font-bold">자세히 보기 →</span>
                         </div>
                     </div>
                 </div>`).join('');
@@ -197,55 +194,34 @@
         }
 
         function setYearFilter(year) {
-            currentFilter.year = year;
-            ['all','2026','2025'].forEach(y => {
-                const btn = document.getElementById('year-' + y);
-                btn.className = y === year
-                    ? 'px-4 py-3 rounded-2xl text-sm font-bold bg-amber-500 text-white transition-all shadow-sm'
-                    : 'px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 transition-all';
+            currentFilter.year=year;
+            document.querySelectorAll('[id^="year-"]').forEach(btn=>{
+                const y=btn.id.replace('year-','');
+                btn.className=y===year?'px-4 py-3 rounded-2xl text-sm font-bold bg-amber-500 text-white':'px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600';
             });
             renderGallery();
         }
 
-        function filterGallery() {
-            currentFilter.query = document.getElementById('gallery-search').value.toLowerCase();
-            renderGallery();
-        }
+        function filterGallery() { currentFilter.query=document.getElementById('gallery-search').value.toLowerCase(); renderGallery(); }
 
         function openProjectModal(id) {
-            const p = projects.find(x => x.id === id);
-            if (!p) return;
-            document.getElementById('modal-cover').className =
-                `h-52 rounded-t-[2rem] flex items-center justify-center relative overflow-hidden bg-gradient-to-br ${p.imgColor}`;
-            document.getElementById('modal-title-display').textContent = p.title;
-            document.getElementById('modal-team').textContent = p.team;
-            document.getElementById('modal-year').textContent = p.year + '년';
-            document.getElementById('modal-desc').textContent = p.desc;
-            document.getElementById('modal-likes').textContent = p.likes;
-            const linkBtn = document.getElementById('modal-link');
-            if (p.link) {
-                linkBtn.href = p.link;
-                linkBtn.classList.remove('hidden');
-                linkBtn.classList.add('flex');
-            } else {
-                linkBtn.classList.add('hidden');
-                linkBtn.classList.remove('flex');
-            }
-            const modal = document.getElementById('project-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            const p=projects.find(x=>x.id===id); if(!p) return;
+            document.getElementById('modal-cover').className=`h-52 rounded-t-[2rem] flex items-center justify-center relative overflow-hidden bg-gradient-to-br ${p.imgColor||'from-orange-400 to-rose-400'}`;
+            document.getElementById('modal-title-display').textContent=p.title;
+            document.getElementById('modal-team').textContent=p.team||'';
+            document.getElementById('modal-year').textContent=p.year+'년';
+            document.getElementById('modal-desc').textContent=p.desc||'';
+            document.getElementById('modal-likes').textContent=p.likes||0;
+            const lb=document.getElementById('modal-link');
+            if(p.link){lb.href=p.link;lb.classList.remove('hidden');lb.classList.add('flex');}
+            else{lb.classList.add('hidden');lb.classList.remove('flex');}
+            const modal=document.getElementById('project-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
             lucide.createIcons();
         }
+        function closeProjectModal(){document.getElementById('project-modal').classList.add('hidden');document.getElementById('project-modal').classList.remove('flex');}
 
-        function closeProjectModal() {
-            document.getElementById('project-modal').classList.add('hidden');
-            document.getElementById('project-modal').classList.remove('flex');
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            renderGallery();
-        });
+        document.addEventListener('DOMContentLoaded',()=>{lucide.createIcons();loadProjects();});
     </script>
 </body>
 </html>

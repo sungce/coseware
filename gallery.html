@@ -8,6 +8,8 @@
     <link rel="stylesheet" as="style" crossorigin
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <style>
         body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
         .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
@@ -136,19 +138,34 @@
     </footer>
 
     <script>
-        // ==========================================
-        // 갤러리 데이터 — 실제 작품으로 교체해 주세요
-        // ==========================================
-        const projects = [
-            { id:1, year:'2026', team:'Team Alpha', title:'스마트 급식 알리미',   desc:'매일 아침 오늘의 급식을 알려주는 웹앱입니다. 알림 기능과 영양 정보를 함께 제공합니다.', imgColor:'from-blue-400 to-indigo-500',   likes:34, link:'' },
-            { id:2, year:'2026', team:'Team Beta',  title:'재활용 분리수거 도우미', desc:'쓰레기를 카메라로 인식하여 올바른 분리수거 방법을 안내해주는 AI 앱입니다.',               imgColor:'from-emerald-400 to-teal-500',  likes:28, link:'' },
-            { id:3, year:'2026', team:'Team Gamma', title:'교내 분실물 센터',       desc:'학교 내 분실물을 사진과 함께 등록하고 찾을 수 있는 커뮤니티 플랫폼입니다.',             imgColor:'from-orange-400 to-rose-400',   likes:45, link:'' },
-            { id:4, year:'2026', team:'Team Delta', title:'집중력 향상 타이머',     desc:'뽀모도로 기법을 활용해 공부와 휴식을 리듬감 있게 관리하는 스터디 타이머입니다.',         imgColor:'from-purple-400 to-pink-500',   likes:19, link:'' },
-            { id:5, year:'2025', team:'Team Sigma', title:'학교 버스 알리미',       desc:'실시간으로 학교 버스 위치를 확인하고 도착 예정 시간을 알려주는 서비스입니다.',           imgColor:'from-cyan-400 to-blue-500',     likes:37, link:'' },
-            { id:6, year:'2025', team:'Team Pi',    title:'우리반 독서 기록장',     desc:'반 친구들과 읽은 책을 공유하고 짧은 감상을 남기는 독서 커뮤니티 앱입니다.',             imgColor:'from-lime-400 to-emerald-500',  likes:22, link:'' },
-        ];
+        const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
+        const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        const db  = firebase.firestore(app);
 
+        let projects = [];
         let currentFilter = { year: 'all', query: '' };
+
+        async function loadProjects() {
+            document.getElementById('gallery-grid').innerHTML = `<div class="col-span-full py-16 flex flex-col items-center space-y-3 text-slate-400"><svg class="w-8 h-8 animate-spin text-amber-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg><span class="font-medium">불러오는 중...</span></div>`;
+            try {
+                const snap = await db.collection('gallery_projects').orderBy('createdAt','desc').get();
+                projects = snap.docs.map(doc => ({ id: doc.id, ...doc.data(), year: String(doc.data().year) }));
+                document.getElementById('total-count').textContent = `${projects.length}개 작품`;
+                buildYearFilters();
+                renderGallery();
+            } catch(e) {
+                document.getElementById('gallery-grid').innerHTML = `<div class="col-span-full py-16 text-center text-slate-400">불러오기 실패: ${e.message}</div>`;
+            }
+        }
+
+        function buildYearFilters() {
+            const years = [...new Set(projects.map(p => p.year))].sort((a,b)=>b-a);
+            const filterDiv = document.getElementById('year-filter');
+            filterDiv.innerHTML = `<button onclick="setYearFilter('all')" id="year-all" class="px-4 py-3 rounded-2xl text-sm font-bold bg-amber-500 text-white transition-all shadow-sm">전체</button>`;
+            years.forEach(y => {
+                filterDiv.innerHTML += `<button onclick="setYearFilter('${y}')" id="year-${y}" class="px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 transition-all">${y}</button>`;
+            });
+        }
 
         function renderGallery() {
             const grid  = document.getElementById('gallery-grid');
@@ -244,7 +261,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            renderGallery();
+            loadProjects();
         });
     </script>
 </body>
