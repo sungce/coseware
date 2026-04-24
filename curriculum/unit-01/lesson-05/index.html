@@ -1,1 +1,566 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>I-5. 소리에 반응하는 애니메이션 장치 만들기 — 정보 교과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#F5F4F0;color:#1C1C1C;font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+:root{--u:#6C65CC;--udk:#4E48A8;--ult:#ECEAFE;--umd:#C8C4F0;--bg:#F5F4F0;--sf:#FFF;--br:#E2DFD6;--tx:#1C1C1C;--mt:#696760;--lt:#A8A59E;--green:#2A720E;--gbg:#E8F3DC;--amber:#7A4E0A;--abg:#FAF0DC;--red:#8C1E0E;--rbg:#FAEBE6;--blue:#0A4E8C;--bbg:#E4F0FA;--rLG:14px;--rSM:8px;--SW:240px;--TH:52px}
+.sb{width:var(--SW);background:var(--sf);border-right:1px solid var(--br);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto;z-index:100}
+.sb-top{padding:16px 14px 12px;border-bottom:1px solid var(--br)}.uchip{display:inline-flex;align-items:center;background:var(--ult);color:var(--u);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.sb-top h2{font-size:12px;font-weight:700;line-height:1.4}.smeta{font-size:10px;color:var(--lt);margin-top:3px}
+.sb-nav{padding:4px 0;flex:1}.nlbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);padding:7px 13px 3px}
+.na{display:flex;align-items:center;gap:8px;padding:7px 13px;font-size:11px;color:var(--mt);text-decoration:none;border-left:2.5px solid transparent;transition:background .12s}
+.na:hover{background:var(--bg);color:var(--tx)}.na.on{color:var(--u);font-weight:600;background:var(--ult);border-left-color:var(--u)}.na.done .nn{background:var(--gbg);color:var(--green)}
+.nn{width:18px;height:18px;border-radius:50%;background:var(--br);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--mt)}.na.on .nn{background:var(--u);color:#fff}
+.nbadge{margin-left:auto;font-size:9px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:1px 5px;border-radius:10px;white-space:nowrap}
+.sb-foot{padding:10px 13px;border-top:1px solid var(--br)}.ba{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt);text-decoration:none;padding:5px 9px;border-radius:var(--rSM);border:1px solid var(--br);background:var(--sf);transition:all .12s}.ba:hover{background:var(--bg)}
+.main{margin-left:var(--SW);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+.topbar{background:var(--sf);border-bottom:1px solid var(--br);height:var(--TH);padding:0 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:90}
+.bc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mt);flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}.bcsep{color:var(--br)}.bccur{color:var(--tx);font-weight:500}.tbr{display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s;white-space:nowrap}.btn:hover{background:var(--bg)}.bsm{padding:5px 9px;font-size:11px}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}.bok{background:var(--green);color:#fff;border-color:var(--green)}
+.page{padding:20px 22px;flex:1}.g2{display:grid;grid-template-columns:1fr minmax(0,248px);gap:16px;align-items:start}.cm{min-width:0}.ca{position:sticky;top:calc(var(--TH)+12px)}
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
+.ch{display:flex;align-items:center;gap:9px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--br);transition:background .12s;user-select:none}.ch:hover{background:var(--bg)}
+.sn{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}.ch h3{font-size:13px;font-weight:600;flex:1}
+.st{font-size:10px;color:var(--lt);background:var(--bg);border:1px solid var(--br);padding:2px 7px;border-radius:20px;white-space:nowrap}.carr{font-size:11px;color:var(--lt);transition:transform .2s}.card.collapsed .carr{transform:rotate(-90deg)}.cb{padding:18px}.card.collapsed .cb{display:none}
+.ach{background:var(--ult);border:1px solid var(--umd);border-radius:var(--rSM);padding:10px 13px;margin-bottom:14px}.ach-c{font-family:monospace;font-size:11px;font-weight:700;color:var(--u);margin-bottom:3px}.ach-t{font-size:13px;line-height:1.6}
+.glist{list-style:none}.glist li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid var(--br);line-height:1.6}.glist li:last-child{border-bottom:none}.gck{width:17px;height:17px;border-radius:50%;background:var(--gbg);color:var(--green);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.ctag{font-size:11px;padding:3px 10px;background:var(--bg);border:1px solid var(--br);border-radius:20px;cursor:pointer;color:var(--mt);transition:all .12s}.ctag:hover{background:var(--ult);border-color:var(--umd);color:var(--u)}
+.ibox{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6;margin-top:10px}.prev{background:var(--bg);border:1px solid var(--br);color:var(--mt)}.warn{background:#FFFBEC;border:1px solid #EDD070;color:#6A5000}.info{background:var(--bbg);border:1px solid #BACED8;color:var(--blue)}.ok{background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}
+.divl{height:1px;background:var(--br);margin:13px 0}
+.crow{display:grid;grid-template-columns:1fr minmax(0,148px);gap:13px;align-items:start;margin-bottom:13px}
+.ct h4{font-size:13px;font-weight:700;margin-bottom:7px}.ct p{font-size:13px;color:var(--mt);line-height:1.75}.ct ul{padding-left:1rem;margin-top:5px}.ct ul li{font-size:13px;color:var(--mt);margin-bottom:3px;line-height:1.6}
+.cvis{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);display:flex;align-items:center;justify-content:center;padding:8px}
+/* ── 수행활동 (해보기) ── */
+.activity{background:linear-gradient(135deg,var(--ult),#F5F4FF);border:2px solid var(--umd);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
+.act-head{display:flex;align-items:center;gap:9px;padding:12px 16px;border-bottom:1.5px solid var(--umd);background:var(--ult);cursor:pointer;user-select:none}.act-head:hover{background:#E4E0FC}
+.act-badge{background:var(--u);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}.act-head h3{font-size:13px;font-weight:700;color:var(--udk);flex:1}
+.act-body{padding:18px}
+.act-step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--br);border-radius:var(--rSM);margin-bottom:8px;min-height:160px;}
+.act-num{width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;flex:none;margin-top:1px}
+.act-step h4{font-size:12px;font-weight:700;margin-bottom:4px}.act-step p{font-size:12px;color:var(--mt);line-height:1.65}
+.act-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.act-table th{background:var(--u);color:#fff;padding:7px 10px;font-weight:600;font-size:11px;text-align:left}
+.act-table td{padding:8px 10px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.55}
+.act-table tr:last-child td{border-bottom:none}
+.act-input{width:100%;padding:8px 10px;border:1.5px solid var(--br);border-radius:var(--rSM);font-size:12px;font-family:inherit;background:var(--sf);outline:none;resize:vertical;min-height:88px;margin-top:4px}
+.act-input:focus{border-color:var(--u)}
+/* ── 마이크로비트 블록 ── */
+.mb-workspace{background:#1e1e2e;border-radius:var(--rSM);padding:14px;margin:8px 0;display:flex;flex-direction:column;gap:5px}
+.mb-row{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.mb-indent{margin-left:22px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.mb-indent2{margin-left:44px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.mb{display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:6px;font-size:11px;font-family:'Courier New',monospace;font-weight:700;color:#fff;cursor:default}
+.mb-hole{display:inline-block;background:rgba(255,255,255,.2);border-radius:3px;padding:1px 7px;font-size:10px;min-width:20px;text-align:center}
+.mb-start{background:#FF8C00;box-shadow:0 3px 0 #B85A00}
+.mb-motion{background:#4A7ED9;box-shadow:0 3px 0 #2A50A0}
+.mb-led{background:#9B59B6;box-shadow:0 3px 0 #6C3483}
+.mb-input{background:#F39C12;box-shadow:0 3px 0 #C07000}
+.mb-logic{background:#E74C3C;box-shadow:0 3px 0 #A01010}
+.mb-loop{background:#27AE60;box-shadow:0 3px 0 #1A7A40}
+.mb-var{background:#3498DB;box-shadow:0 3px 0 #1A5A9A}
+.mb-music{background:#E91E63;box-shadow:0 3px 0 #880033}
+.mb-radio{background:#00BCD4;box-shadow:0 3px 0 #007A88}
+.mb-sensor{background:#FF6B35;box-shadow:0 3px 0 #C04010}
+/* ── quiz ── */
+.qwrap{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:14px;margin-top:13px}.qq{font-size:14px;font-weight:500;margin-bottom:11px;line-height:1.55}.qopts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rSM);cursor:pointer;font-size:13px;line-height:1.5;transition:all .12s}.opt:hover{border-color:var(--u);background:var(--ult)}.opt.correct{border-color:#4A9020;background:var(--gbg);color:#1A5000;pointer-events:none}.opt.wrong{border-color:#B03020;background:var(--rbg);color:#6A1000;pointer-events:none}.opt.locked{pointer-events:none;opacity:.55}
+.onum{width:21px;height:21px;border-radius:50%;background:var(--br);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.opt.correct .onum{background:#4A9020;color:#fff}.opt.wrong .onum{background:#B03020;color:#fff}
+.qfb{display:none;margin-top:9px;padding:10px 13px;border-radius:var(--rSM);font-size:12px;line-height:1.6}.qfb.ok{display:block;background:var(--gbg);border:1px solid #BFDFAA;color:var(--green)}.qfb.err{display:block;background:var(--rbg);border:1px solid #F0B8A0;color:var(--red)}
+/* ── assess ── */
+.rub{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}.rub th{background:var(--bg);padding:7px 8px;font-weight:600;border-bottom:1.5px solid var(--br);text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--mt)}.rub td{padding:8px;border-bottom:1px solid var(--br);color:var(--mt);vertical-align:top;line-height:1.5}.rub tr:last-child td{border-bottom:none}
+.lv4{color:#1A6000!important;font-weight:500}.lv3{color:#2A6830!important}.lv2{color:#7A4E00!important}.lv1{color:#8A2000!important}
+.peer-check{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+.peer-check th{background:var(--ult);padding:6px 9px;font-weight:600;border-bottom:1.5px solid var(--umd);text-align:center;color:var(--u);font-size:10px}
+.peer-check td{padding:7px 9px;border-bottom:1px solid var(--br);color:var(--mt);text-align:center}
+.peer-check td:first-child{text-align:left;font-size:11px}
+.peer-check input[type=radio]{accent-color:var(--u)}
+/* ── sidebar ── */
+.ap{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);padding:13px;margin-bottom:10px}.ap h5{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lt);margin-bottom:8px}
+.slist{display:flex;flex-direction:column;gap:3px}.si{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rSM);font-size:11px;color:var(--mt);cursor:pointer;transition:background .12s}.si:hover{background:var(--bg)}
+.dot{width:19px;height:19px;border-radius:50%;background:var(--br);color:var(--lt);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dot.sa{background:var(--u);color:#fff}.dot.sd{background:var(--gbg);color:var(--green)}
+.sclist{display:flex;flex-direction:column;gap:4px}.scitem{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg);border-radius:var(--rSM);font-size:12px;border:1px solid var(--br)}.scitem label{flex:1;line-height:1.5}.scitem select{font-size:11px;padding:3px 6px;border:1px solid var(--br);border-radius:5px;background:var(--sf);font-family:inherit;color:var(--tx);cursor:pointer;flex-shrink:0}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.scard{background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px 12px;font-size:12px;line-height:1.65;color:var(--mt)}.scard strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--lt);margin-bottom:4px}.termlist{display:flex;flex-direction:column}.tterm{display:flex;align-items:baseline;gap:5px;padding:4px 0;font-size:11px;border-bottom:1px solid var(--br)}.tterm:last-child{border-bottom:none}.tw{font-weight:600;color:var(--u);white-space:nowrap}.tdef{color:var(--mt)}
+.pbtrack{height:5px;background:var(--umd);border-radius:3px;overflow:hidden}.pbfill{height:100%;background:var(--u);border-radius:3px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1C1C1C;color:#fff;padding:9px 18px;border-radius:10px;font-size:12px;font-family:inherit;z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+/* ══ 반응형 레이아웃 ══ */
+*,*::before,*::after{box-sizing:border-box}
+img,canvas,video{max-width:100%;height:auto;display:block}
+table{width:100%;border-collapse:collapse}
+.act-table,.peer-check,.rub{table-layout:fixed;word-break:break-word}
+.act-table td,.act-table th,
+.rub td,.rub th,
+.peer-check td,.peer-check th{min-width:44px;word-break:break-word;overflow-wrap:break-word}
+.act-step>div:not(.act-num){min-width:0;flex:1;overflow-wrap:break-word;word-break:break-word}
+.act-body,.cb{overflow-x:hidden}
+.act-input{width:100%;box-sizing:border-box}
+.mb-workspace,.mb-row,.mb-indent,.mb-indent2{flex-wrap:wrap}
+.sim-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
+/* 1100px 이하 */
+@media(max-width:1100px){
+  .g2{grid-template-columns:1fr}
+  .ca{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .ca .ap{flex:1 1 220px;min-width:180px}
+  .crow{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr 1fr}
+}
+
+/* 900px 이하 */
+@media(max-width:900px){
+  .ca{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .ca .ap{flex:1 1 180px;min-width:160px}
+  .page{padding:16px 14px}
+  .cb,.act-body{padding:13px}
+  .sgrid{grid-template-columns:1fr 1fr}
+  .crow{grid-template-columns:1fr}
+}
+
+/* 640px 이하 */
+@media(max-width:640px){
+  .page{padding:11px 10px}
+  .cb,.act-body{padding:10px}
+  .sgrid{grid-template-columns:1fr}
+  .act-step{flex-direction:column;gap:5px}
+  .act-num{margin-bottom:0}
+  .ch h3{font-size:12px}
+  .btn{font-size:11px;padding:5px 8px}
+  .act-table td,.act-table th{padding:5px 6px;font-size:11px}
+  .rub td,.rub th{padding:5px 6px;font-size:11px}
+  .peer-check td,.peer-check th{padding:5px 6px;font-size:10px}
+  .scard{font-size:11px}
+  .opt{font-size:12px;padding:8px 10px}
+  .mb,.mb-hole{font-size:10px;padding:4px 7px}
+}
+
+/* 480px 이하 */
+@media(max-width:480px){
+  :root{--SW:0px}
+  .sb{display:none}
+  .main{margin-left:0}
+  .topbar{padding:0 10px}
+  .page{padding:8px 9px}
+  .cb,.act-body{padding:9px}
+  .tbr .btn:last-child{display:none}
+  .sgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-top"><div class="uchip">◈ Unit I</div><h2>컴퓨팅 시스템</h2><div class="smeta">중단원2: 피지컬 컴퓨팅 프로그래밍 · p.28~31</div></div>
+  <nav class="sb-nav"><div class="nlbl">소단원 목록</div><a class="na done" href="../lesson-01/index.html"><div class="nn">✓</div>컴퓨팅 시스템의 구성과 동작 원리</a>
+<a class="na done" href="../lesson-02/index.html"><div class="nn">✓</div>피지컬 컴퓨팅 시스템의 이해</a>
+<a class="na done" href="../lesson-03/index.html"><div class="nn">✓</div>운동 횟수 표시 장치 만들기</a>
+<a class="na done" href="../lesson-04/index.html"><div class="nn">✓</div>수면 온도 알림이 장치 만들기</a>
+<a class="na on" href="../lesson-05/index.html"><div class="nn">5</div>소리에 반응하는 애니메이션 장치 만들기<span class="nbadge">3차시</span></a>
+<a class="na " href="../lesson-06/index.html"><div class="nn">6</div>이심전심 게임 장치 만들기</a>
+</nav>
+  <div class="sb-foot"><a class="ba" href="https://sungce.github.io/lesson/">← 정보 교과 학습 플랫폼</a></div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div class="bc"><a href="https://sungce.github.io/lesson/">정보 교과 학습 플랫폼</a><span class="bcsep">›</span><a href="../../index.html">I. 컴퓨팅 시스템</a><span class="bcsep">›</span><span class="bccur">5. 소리에 반응하는 애니메이션 장치 만들기</span></div>
+    <div class="tbr">
+      <button class="btn bsm" onclick="markDone('05')">✓ 완료 표시</button>
+      <a class="btn bsm bp" href="../lesson-06/index.html">다음 소단원 →</a>
+    </div>
+  </header>
+  <div class="page"><div class="g2"><div class="cm">
+
+<div class="card" id="sec-goal">
+  <div class="ch" onclick="toggleSec('sec-goal')"><div class="sn" style="background:var(--ult);color:var(--u)">01</div><h3>학습목표</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="ach"><div class="ach-c">[9정01-05] 피지컬 컴퓨팅 프로그래밍</div><div class="ach-t">소리 센서와 스피커를 활용하여 큰 소리가 나면 애니메이션과 멜로디가 재생되는 피지컬 컴퓨팅 시스템을 만들 수 있다. (pp.28~31)</div></div>
+    <ul class="glist">
+      <li><div class="gck">✓</div>소리 센서와 스피커의 특성을 설명할 수 있다.</li>
+      <li><div class="gck">✓</div>변수와 조건을 활용한 알고리즘을 설계할 수 있다.</li>
+      <li><div class="gck">✓</div>소리에 반응하는 LED 애니메이션·멜로디 장치를 MakeCode로 완성할 수 있다.</li>
+    </ul>
+    <div class="divl"></div>
+    <div class="ctags">
+      <span class="ctag" onclick="goTo('sec-concept')">소리 센서</span>
+      <span class="ctag" onclick="goTo('sec-concept')">스피커</span>
+      <span class="ctag" onclick="goTo('sec-concept')">변수</span>
+      <span class="ctag" onclick="goTo('sec-concept')">애니메이션</span>
+      <span class="ctag" onclick="goTo('sec-concept')">멜로디</span>
+    </div>
+    <div class="ibox prev">📌 <b>이전 차시:</b> 온도·빛 센서로 수면 온도 알림이를 만들었습니다. 이번에는 소리 센서와 스피커로 재미있는 애니메이션 장치를 만들어봅니다!</div>
+  </div>
+</div>
+
+<div class="card" id="sec-concept">
+  <div class="ch" onclick="toggleSec('sec-concept')"><div class="sn" style="background:var(--gbg);color:var(--green)">02</div><h3>개념설명</h3><span class="st">⏱ 20분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px">
+      <div style="background:var(--rbg);border:1px solid #F0B8A0;border-radius:var(--rSM);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:5px">🎤 소리 센서</div>
+        <div style="font-size:12px;color:var(--mt);line-height:1.75">측정 범위: <b>0 ~ 255</b><br>뒷면 MICROPHONE 칩에 내장<br>큰 소리 감지 시 앞면 마이크 LED 점등<br>기준값으로 큰 소리 여부 판별</div>
+      </div>
+      <div style="background:var(--gbg);border:1px solid #BFDFAA;border-radius:var(--rSM);padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:5px">🔊 스피커</div>
+        <div style="font-size:12px;color:var(--mt);line-height:1.75">다양한 주파수로 음 출력<br>멜로디 블록 → 곡 재생<br>음표 블록 → 개별 음 재생<br>bpm 설정으로 속도 조절</div>
+      </div>
+    </div>
+    <div class="divl"></div>
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">알고리즘 설계 (4단계)</h4>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;font-size:12px;color:var(--mt);line-height:2;margin-bottom:12px">
+      ➊ 시작 → '작동 시작' 변수 0 초기화 + 소리 기준값 250 설정 + 시작 멜로디 재생<br>
+      ➋ 큰 소리 감지 → '작동 시작' 변수에 <b>1</b> 저장<br>
+      ➌ '작동 시작' = 1 이면 → 뛰어오르는·뛰어내리는 <b>멜로디</b> 순서대로 출력<br>
+      ➍ '작동 시작' = 1 이면 → LED에 <b>춤 추는 애니메이션</b> 출력
+    </div>
+    <h4 style="font-size:13px;font-weight:700;margin-bottom:9px">MakeCode 블록 예시</h4>
+    <div class="mb-workspace">
+      <div class="mb-row"><span class="mb mb-start">🟢 시작하면</span></div>
+      <div class="mb-indent"><span class="mb mb-var">작동시작 ← 0</span></div>
+      <div class="mb-indent"><span class="mb mb-sensor">소리 기준값 250으로 설정</span></div>
+      <div class="mb-indent"><span class="mb mb-music">🎵 전원켜는 멜로디 재생</span></div>
+      <div class="mb-row"><span class="mb mb-sensor">🔊 큰 소리 감지 시</span></div>
+      <div class="mb-indent"><span class="mb mb-var">작동시작 ← 1</span></div>
+      <div class="mb-row"><span class="mb mb-loop">🔁 무한 반복</span></div>
+      <div class="mb-indent"><span class="mb mb-logic">만약 작동시작 = 1</span></div>
+      <div class="mb-indent2"><span class="mb mb-music">🎵 뛰어오르는 멜로디 (1번)</span></div>
+      <div class="mb-indent2"><span class="mb mb-music">🎵 뛰어내리는 멜로디 (1번)</span></div>
+      <div class="mb-indent2"><span class="mb mb-var">작동시작 ← 0</span></div>
+    </div>
+    <div class="ibox warn">⚠️ <b>핵심:</b> 멜로디 블록과 애니메이션 블록을 별도의 <b>무한 반복</b>에 넣어 동시에 실행되도록 설계합니다.</div>
+    <div class="ibox info">📖 <b>교과서 연계:</b> pp.28~31</div>
+  </div>
+</div>
+
+<!-- ★ 수행 활동 ★ -->
+<div class="activity" id="sec-activity">
+  <div class="act-head" onclick="toggleSec('act-body-05')">
+    <span class="act-badge">★ 수행 활동</span>
+    <h3>스피커·소리 센서를 활용한 장치 만들기</h3>
+    <span style="font-size:10px;color:var(--udk);margin-left:auto">모둠 활동 | pp.31</span>
+    <span class="carr" style="color:var(--udk)">▾</span>
+  </div>
+  <div id="act-body-05" class="act-body">
+    <div class="ibox ok" style="margin-top:0;margin-bottom:14px">💡 스피커와 소리 센서를 활용한 세 가지 수행 활동입니다. (교과서 p.31 해보기)</div>
+
+    <!-- 활동 1: 학교 종 노래 -->
+    <div style="background:var(--sf);border:2px solid var(--umd);border-radius:var(--rSM);padding:14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:8px">📋 활동 1 — 학교 종 노래 재생 프로그램 (pp.31)</div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:8px">🎵 학교 종 악보 (솔=G4, 라=A4, 미=E4, 도=C4, 레=D4)</div>
+        <div style="font-family:monospace;font-size:11px;color:var(--mt);line-height:2">
+          학-교-종-이-땡-땡-땡: 솔솔라라솔솔미<br>
+          어-서-모-이-자: 솔솔미미레<br>
+          선-생-님-이-우-리-를: 솔솔라라솔솔미<br>
+          기-다-리-신-다: 솔미레미도
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:10px" id="piano-keys"></div>
+        <div id="song-display" style="font-size:12px;color:var(--u);margin-top:7px;font-weight:700;min-height:18px"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button class="btn bsm bp" onclick="playSong()">▶ 학교 종 재생</button>
+        <button class="btn bsm" onclick="stopSong()">⏹ 정지</button>
+      </div>
+      <textarea class="act-input" placeholder="MakeCode로 학교 종 노래를 작성하는 방법을 기록하세요.&#10;힌트: 음악 블록의 '음표 연주' 블록을 사용합니다.&#10;G4=솔, A4=라, E4=미, C4=도, D4=레"></textarea>
+    </div>
+
+    <!-- 활동 2: 어울리는 애니메이션 -->
+    <div style="background:var(--sf);border:2px solid var(--umd);border-radius:var(--rSM);padding:14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:8px">📋 활동 2 — 노래에 어울리는 애니메이션 구상</div>
+      <div style="font-size:12px;color:var(--mt);margin-bottom:9px">학교 종 노래와 어울리는 LED 애니메이션을 구상하고, 각 장면을 5×5 LED 격자에 그려보세요.</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">
+        <div id="led-grid-1" style="padding:10px;background:#1e1e2e;border-radius:var(--rSM);cursor:pointer"></div>
+        <div id="led-grid-2" style="padding:10px;background:#1e1e2e;border-radius:var(--rSM);cursor:pointer"></div>
+        <div id="led-grid-3" style="padding:10px;background:#1e1e2e;border-radius:var(--rSM);cursor:pointer"></div>
+      </div>
+      <div style="font-size:10px;color:var(--lt);margin-bottom:8px">LED 격자를 클릭하여 켜고 끄세요</div>
+      <textarea class="act-input" placeholder="애니메이션 구상 설명:&#10;예) 학교 종 소리에 맞춰 학교 건물 모양, 종 모양 등을 표현..."></textarea>
+    </div>
+
+    <!-- 활동 3: 박수 소리 누적 비교 -->
+    <div style="background:var(--sf);border:2px solid var(--umd);border-radius:var(--rSM);padding:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--u);margin-bottom:8px">📋 활동 3 — 두 모둠 박수 소리 누적 비교 장치 (pp.31)</div>
+      <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:11px;margin-bottom:10px;font-size:12px;color:var(--mt);line-height:1.9">
+        <b>조건:</b><br>① A 버튼 → 5초 동안 소리 크기를 그래프로 보여주며 값 누적 저장<br>② B 버튼 → 5초 동안 소리 크기를 그래프로 보여주며 값 누적 저장<br>③ 로고 터치 → A와 B 누적값 비교 후 큰 쪽 문자('A' or 'B') 출력
+      </div>
+      <div style="background:#1e1e2e;border-radius:var(--rSM);padding:14px;margin-bottom:10px">
+        <div style="font-size:10px;color:#aaa;margin-bottom:8px;text-align:center">박수 소리 대결 시뮬레이터</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div style="text-align:center">
+            <button class="btn bsm" id="btn-a-clap" onclick="startClap('A')" style="width:100%;background:#4A7ED9;color:#fff;border-color:#2A50A0;font-size:13px;font-weight:700">A 모둠 박수!</button>
+            <div id="a-bar" style="height:60px;background:#333;border-radius:4px;margin-top:7px;overflow:hidden;position:relative">
+              <div id="a-fill" style="position:absolute;bottom:0;width:100%;background:#4A7ED9;height:0%;transition:height .3s;border-radius:4px"></div>
+            </div>
+            <div id="a-score" style="font-size:12px;color:#4A7ED9;margin-top:4px;font-weight:700">0점</div>
+          </div>
+          <div style="text-align:center">
+            <button class="btn bsm" id="btn-b-clap" onclick="startClap('B')" style="width:100%;background:#E74C3C;color:#fff;border-color:#A01010;font-size:13px;font-weight:700">B 모둠 박수!</button>
+            <div id="b-bar" style="height:60px;background:#333;border-radius:4px;margin-top:7px;overflow:hidden;position:relative">
+              <div id="b-fill" style="position:absolute;bottom:0;width:100%;background:#E74C3C;height:0%;transition:height .3s;border-radius:4px"></div>
+            </div>
+            <div id="b-score" style="font-size:12px;color:#E74C3C;margin-top:4px;font-weight:700">0점</div>
+          </div>
+        </div>
+        <button class="btn bsm" id="btn-logo" onclick="showResult()" style="width:100%;background:#FF6B35;color:#fff;border-color:#C04010;font-size:13px">🏆 로고 터치 → 결과 확인</button>
+        <div id="clap-result" style="font-size:16px;font-weight:700;text-align:center;margin-top:10px;color:#FF6B35;min-height:24px"></div>
+        <div id="clap-timer" style="font-size:10px;color:#aaa;text-align:center;min-height:16px"></div>
+      </div>
+      <textarea class="act-input" placeholder="알고리즘 작성:&#10;A 버튼 → 5초 타이머 시작, 소리 센서값 누적(A_누적)&#10;B 버튼 → 5초 타이머 시작, 소리 센서값 누적(B_누적)&#10;로고 터치 → 만약 A_누적 > B_누적 이면: 'A' 출력..."></textarea>
+    </div>
+
+    <!-- 평가하기 -->
+    <div style="margin-top:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">📝 평가하기 (교과서 p.30)</div>
+      <div style="overflow-x:auto;margin-top:12px"><table class="peer-check"><thead><tr><th style="text-align:left">평가 항목</th><th colspan="2">자기 평가</th><th colspan="2">동료 평가</th></tr></thead><tbody><tr><td>애니메이션 시작을 감지하여 작동 시작 변수가 활성화되는가?</td><td><label><input type="radio" name="pe0a" value="예"> 예</label></td><td><label><input type="radio" name="pe0a" value="아니요"> 아니요</label></td><td><label><input type="radio" name="pe0b" value="예"> 예</label></td><td><label><input type="radio" name="pe0b" value="아니요"> 아니요</label></td></tr><tr><td>음악이나 애니메이션을 한 번 실행하면 작동 시작 변수가 초기화되는가?</td><td><label><input type="radio" name="pe1a" value="예"> 예</label></td><td><label><input type="radio" name="pe1a" value="아니요"> 아니요</label></td><td><label><input type="radio" name="pe1b" value="예"> 예</label></td><td><label><input type="radio" name="pe1b" value="아니요"> 아니요</label></td></tr><tr><td>음악과 애니메이션의 재생 속도와 간격이 맞는가?</td><td><label><input type="radio" name="pe2a" value="예"> 예</label></td><td><label><input type="radio" name="pe2a" value="아니요"> 아니요</label></td><td><label><input type="radio" name="pe2b" value="예"> 예</label></td><td><label><input type="radio" name="pe2b" value="아니요"> 아니요</label></td></tr></tbody></table></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn bsm bp" onclick="saveActivity('l105_act')">💾 활동 저장</button>
+      <a href="https://makecode.microbit.org" target="_blank" class="btn bsm" style="background:#0078D4;color:#fff;border-color:#005A9E">MakeCode 열기 ↗</a>
+    </div>
+  </div>
+</div>
+
+<div class="card" id="sec-assess">
+  <div class="ch" onclick="toggleSec('sec-assess')"><div class="sn" style="background:var(--bbg);color:var(--blue)">04</div><h3>수행평가</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:12px;margin-bottom:12px;border-left:3px solid var(--u)">
+      <h4 style="font-size:13px;font-weight:700;color:var(--u);margin-bottom:7px">📋 소리 반응 애니메이션 + 학교 종 노래 프로그램</h4>
+      <p style="font-size:13px;color:var(--mt)">소리 센서와 스피커를 활용한 프로그램 2가지를 MakeCode로 완성하고 모둠 발표를 수행하시오.</p>
+    </div>
+    <table class="rub"><thead><tr><th>평가 요소</th><th class="lv4">매우 잘함(4)</th><th class="lv3">잘함(3)</th><th class="lv2">보통(2)</th><th class="lv1">노력 필요(1)</th></tr></thead><tbody><tr><td><b>소리 감지</b></td><td class="lv4">기준값 설정·큰 소리 감지 정확</td><td class="lv3">부분 정확</td><td class="lv2">감지만</td><td class="lv1">없음</td></tr><tr><td><b>멜로디·애니메이션</b></td><td class="lv4">멜로디+애니메이션 동시 실행</td><td class="lv3">한 가지 실행</td><td class="lv2">재생만</td><td class="lv1">없음</td></tr><tr><td><b>노래 프로그램</b></td><td class="lv4">학교 종 전체 음 정확 구현</td><td class="lv3">절반 이상</td><td class="lv2">일부만</td><td class="lv1">없음</td></tr></tbody></table>
+    <div class="sclist"><div class="scitem"><label>소리 센서와 스피커의 특성을 설명할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>변수와 조건으로 알고리즘을 설계할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div><div class="scitem"><label>소리에 반응하는 애니메이션·멜로디 프로그램을 작성할 수 있다.</label><select><option value="">선택</option><option>매우 그렇다</option><option>그렇다</option><option>아직 모르겠다</option></select></div></div>
+    <button class="btn bsm bok" style="margin-top:10px" onclick="saveSC('l105sc')">💾 저장</button>
+  </div>
+</div>
+
+<div class="card" id="sec-review">
+  <div class="ch" onclick="toggleSec('sec-review')"><div class="sn" style="background:var(--gbg);color:var(--green)">05</div><h3>확인하기</h3><span class="st">⏱ 5분</span><span class="carr">▾</span></div>
+  <div class="cb">
+    <div class="sgrid">
+      <div class="scard"><strong>소리 센서</strong>0~255 소리 크기. 기준값으로 큰 소리 판별.</div>
+      <div class="scard"><strong>작동 시작 변수</strong>0=대기, 1=작동. 큰 소리 시 1로 변경.</div>
+      <div class="scard"><strong>무한 반복 병렬</strong>멜로디·애니메이션을 별도 반복으로 동시 실행.</div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--br);border-radius:var(--rSM);padding:13px;margin-bottom:12px"><b>✏️ 단답형:</b> 소리에 반응하는 애니메이션 장치에서 큰 소리가 감지되었을 때 1, 대기 상태일 때 0을 저장하는 것을 <span style="display:inline-block;width:50px;border-bottom:1.5px solid var(--tx)">&nbsp;</span>(이)라고 한다.<textarea style="display:block;width:100%;margin-top:9px;padding:9px;border:1px solid var(--br);border-radius:var(--rSM);font-size:13px;font-family:inherit;resize:vertical;min-height:48px;background:var(--sf)" placeholder="정답을 입력하세요..."></textarea></div>
+    <div class="ibox ok">📖 <div><strong>다음 차시 예고:</strong> 마지막으로 <strong>라디오 무선 통신</strong>으로 이심전심 게임 장치를 만들어봅니다! (pp.32~35)</div></div>
+  </div>
+</div>
+
+  </div>
+  <div class="ca">
+    <div class="ap"><h5>학습 진행</h5><div class="slist">
+      <div class="si" onclick="goTo('sec-goal')"><div class="dot sd">1</div>학습목표</div>
+      <div class="si" onclick="goTo('sec-concept')"><div class="dot">2</div>개념설명</div>
+      <div class="si" onclick="goTo('sec-activity')"><div class="dot sa">★</div>수행 활동</div>
+      <div class="si" onclick="goTo('sec-assess')"><div class="dot">4</div>수행평가</div>
+      <div class="si" onclick="goTo('sec-review')"><div class="dot">5</div>확인하기</div>
+    </div></div>
+    <div class="ap" style="background:var(--ult);border-color:var(--umd)"><h5 style="color:var(--u)">단원 진도</h5>
+      <div style="display:flex;align-items:center;gap:7px"><div class="pbtrack" style="flex:1"><div class="pbfill" style="width:77%"></div></div><span style="font-size:11px;font-weight:600;color:var(--u)">5/6</span></div>
+    </div>
+    <div class="ap"><h5>핵심 용어</h5><div class="termlist"><div class="tterm"><span class="tw">소리 센서</span><span class="tdef">0~255 소리 크기</span></div><div class="tterm"><span class="tw">큰 소리 이벤트</span><span class="tdef">기준값 초과 시 실행</span></div><div class="tterm"><span class="tw">변수 플래그</span><span class="tdef">0=대기, 1=작동</span></div><div class="tterm"><span class="tw">멜로디 블록</span><span class="tdef">음악 재생 블록</span></div><div class="tterm"><span class="tw">무한 반복</span><span class="tdef">병렬 실행</span></div></div></div>
+    <div class="ap" style="background:#F0FDF4;border-color:#BBF7D0">
+      <h5 style="color:#166534">🔧 마이크로비트</h5>
+      <a href="https://makecode.microbit.org" target="_blank" class="btn bsm" style="width:100%;justify-content:center;background:#0078D4;color:#fff;border-color:#005A9E;margin-bottom:5px">MakeCode 열기 ↗</a>
+      <a href="https://makecode.microbit.org/#editor" target="_blank" class="btn bsm" style="width:100%;justify-content:center;font-size:10px;color:var(--mt)">시뮬레이터 ↗</a>
+    </div>
+  </div>
+  </div></div>
+</main>
+<div id="toast"></div>
+<script>
+
+  // ── Google Sheets 저장 ──────────────────────────────────
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+
+  function getUserName() {
+    return localStorage.getItem('user_name') || '익명';
+  }
+
+  function postToSheets(payload) {
+    if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) return;
+    fetch(GS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},2400);}
+function toggleSec(id){var e=document.getElementById(id);if(e)e.classList.toggle('collapsed');}
+function goTo(id){var e=document.getElementById(id);if(!e)return;window.scrollTo({top:e.getBoundingClientRect().top+window.pageYOffset-64,behavior:'smooth'});}
+function checkQ(el,ok,msg){el.closest('.qopts').querySelectorAll('.opt').forEach(function(o){o.classList.add('locked');});el.classList.add(ok?'correct':'wrong');var fb=el.closest('.qwrap').querySelector('.qfb');if(fb){fb.className='qfb '+(ok?'ok':'err');fb.innerHTML=(ok?'✓ 정답: ':'✗ 힌트: ')+msg;}}
+function saveSC(key){
+  var d={};
+  document.querySelectorAll('.scitem select').forEach(function(s,i){d['q'+i]=s.value;});
+  try{
+    localStorage.setItem(key,JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'sc',
+      userName: getUserName(),
+      lessonKey: 'l15',
+      lessonName: 'l15',
+      answers: d
+    });
+    toast('자기평가가 저장되었습니다 ✓');
+  }catch(e){}
+}
+function loadSC(key){try{var d=JSON.parse(localStorage.getItem(key)||'{}');document.querySelectorAll('.scitem select').forEach(function(s,i){if(d['q'+i])s.value=d['q'+i];});}catch(e){}}
+function markDone(n){
+  try{
+    var d=JSON.parse(localStorage.getItem('u01done')||'[]');
+    if(!d.includes(n))d.push(n);
+    localStorage.setItem('u01done',JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'done',
+      userName: getUserName(),
+      unit: 'I',
+      lessonNum: n,
+      lessonName: '컴퓨팅 시스템'
+    });
+  }catch(e){}
+  toast('✅ 소단원 '+n+' 완료 표시!');
+}
+function saveActivity(key){
+  var d={};
+  document.querySelectorAll('.act-input').forEach(function(el,i){d['a'+i]=el.value;});
+  document.querySelectorAll('.peer-check input[type=radio]:checked').forEach(function(el){d['r_'+el.name]=el.value;});
+  try{
+    localStorage.setItem(key,JSON.stringify(d));
+    // Google Sheets 저장
+    postToSheets({
+      type:'act',
+      userName: getUserName(),
+      lessonKey: 'l15',
+      lessonName: 'l15',
+      answers: d
+    });
+    toast('✅ 수행 활동이 저장되었습니다!');
+  }catch(e){}
+}
+function loadActivity(key){
+  try{
+    var d=JSON.parse(localStorage.getItem(key)||'{}');
+    document.querySelectorAll('.act-input').forEach(function(el,i){if(d['a'+i])el.value=d['a'+i];});
+    Object.keys(d).filter(function(k){return k.startsWith('r_');}).forEach(function(k){
+      var el=document.querySelector('input[type=radio][name="'+k.slice(2)+'"][value="'+d[k]+'"]');
+      if(el)el.checked=true;
+    });
+  }catch(e){}
+}
+
+
+// 학교 종 음표
+var songNotes = [
+  {note:'G4',dur:0.5},{note:'G4',dur:0.5},{note:'A4',dur:0.5},{note:'A4',dur:0.5},
+  {note:'G4',dur:0.5},{note:'G4',dur:0.5},{note:'E4',dur:1},
+  {note:'G4',dur:0.5},{note:'G4',dur:0.5},{note:'E4',dur:0.5},{note:'E4',dur:0.5},{note:'D4',dur:1},
+  {note:'G4',dur:0.5},{note:'G4',dur:0.5},{note:'A4',dur:0.5},{note:'A4',dur:0.5},
+  {note:'G4',dur:0.5},{note:'G4',dur:0.5},{note:'E4',dur:1},
+  {note:'G4',dur:0.5},{note:'E4',dur:0.5},{note:'D4',dur:0.5},{note:'E4',dur:0.5},{note:'C4',dur:1}
+];
+var noteFreq = {C4:261,D4:293,E4:329,G4:392,A4:440};
+var noteNames = {C4:'도',D4:'레',E4:'미',G4:'솔',A4:'라'};
+var audioCtx = null;
+var songTimer = null;
+
+function playSong(){
+  if(songTimer){clearTimeout(songTimer);}
+  try{audioCtx = new (window.AudioContext || window.webkitAudioContext)();}catch(e){toast('오디오 재생 불가');return;}
+  var idx = 0;
+  var disp = document.getElementById('song-display');
+  function playNext(){
+    if(idx >= songNotes.length){if(disp)disp.textContent='🎵 재생 완료!';return;}
+    var n = songNotes[idx];
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.frequency.value = noteFreq[n.note] || 440;
+    osc.type = 'square';
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + n.dur * 0.45);
+    osc.start(); osc.stop(audioCtx.currentTime + n.dur * 0.5);
+    if(disp) disp.textContent = '♪ ' + (noteNames[n.note]||n.note) + ' (' + n.note + ')';
+    idx++;
+    songTimer = setTimeout(playNext, n.dur * 500);
+  }
+  playNext();
+}
+function stopSong(){if(songTimer)clearTimeout(songTimer);if(audioCtx)audioCtx.close();var d=document.getElementById('song-display');if(d)d.textContent='⏹ 정지';}
+
+// LED 그리드
+var ledGrids = {1:Array(25).fill(0), 2:Array(25).fill(0), 3:Array(25).fill(0)};
+function buildLedGrid(id){
+  var div = document.getElementById('led-grid-'+id);
+  if(!div) return;
+  div.innerHTML = '';
+  var grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(5,1fr);gap:3px';
+  for(var i=0;i<25;i++){
+    (function(idx){
+      var dot = document.createElement('div');
+      dot.style.cssText = 'width:14px;height:14px;border-radius:50%;background:'+(ledGrids[id][idx]?'#FF6B35':'#333')+';cursor:pointer;transition:background .15s';
+      dot.onclick = function(){ledGrids[id][idx]=ledGrids[id][idx]?0:1;buildLedGrid(id);};
+      grid.appendChild(dot);
+    })(i);
+  }
+  div.appendChild(grid);
+  var lbl = document.createElement('div');
+  lbl.style.cssText = 'font-size:9px;color:#888;text-align:center;margin-top:4px';
+  lbl.textContent = '장면 '+id;
+  div.appendChild(lbl);
+}
+
+// 박수 시뮬레이터
+var clapScores = {A:0, B:0};
+var clapActive = null;
+var clapIv = null;
+function startClap(team){
+  if(clapActive) return;
+  clapActive = team;
+  var other = team==='A'?'B':'A';
+  document.getElementById('btn-'+team.toLowerCase()+'-clap').disabled = true;
+  document.getElementById('btn-'+other.toLowerCase()+'-clap').disabled = true;
+  var t = 0; var score = 0;
+  var disp = document.getElementById('clap-timer');
+  clapIv = setInterval(function(){
+    t += 0.2;
+    var rand = Math.floor(Math.random()*30);
+    score += rand;
+    var pct = Math.min(100, score/500*100);
+    document.getElementById(team.toLowerCase()+'-fill').style.height = pct+'%';
+    document.getElementById(team.toLowerCase()+'-score').textContent = score+'점';
+    if(disp) disp.textContent = team+' 모둠 측정 중... '+(5-t).toFixed(1)+'초';
+    if(t >= 5){
+      clearInterval(clapIv);
+      clapScores[team] = score;
+      clapActive = null;
+      document.getElementById('btn-'+team.toLowerCase()+'-clap').disabled = false;
+      document.getElementById('btn-'+other.toLowerCase()+'-clap').disabled = false;
+      if(disp) disp.textContent = '측정 완료! 로고 버튼으로 결과 확인';
+    }
+  }, 200);
+}
+function showResult(){
+  var r = document.getElementById('clap-result');
+  if(!r) return;
+  if(clapScores.A===0 && clapScores.B===0){r.textContent='먼저 A·B 모둠 박수를 측정하세요!';return;}
+  if(clapScores.A > clapScores.B) r.innerHTML='🏆 A 모둠 승리! ('+clapScores.A+' > '+clapScores.B+')';
+  else if(clapScores.B > clapScores.A) r.innerHTML='🏆 B 모둠 승리! ('+clapScores.B+' > '+clapScores.A+')';
+  else r.innerHTML='🤝 무승부! ('+clapScores.A+' = '+clapScores.B+')';
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  [1,2,3].forEach(buildLedGrid);
+});
+
+document.addEventListener('DOMContentLoaded',function(){loadSC('l105sc');loadActivity('l105sc_act');});
+</script>
+</body></html>
