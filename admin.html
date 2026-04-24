@@ -211,6 +211,41 @@
                     </div>
                 </div>
 
+                <!-- 수행평가 과제 관리 -->
+                <div class="card p-7">
+                    <div class="flex items-center justify-between mb-5">
+                        <h2 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                            <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-500"></i>
+                            <span>수행평가 과제 관리</span>
+                        </h2>
+                        <button onclick="loadAssignmentsList()"
+                            class="flex items-center space-x-1.5 text-xs font-bold text-slate-500 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 px-3 py-2 rounded-xl border border-slate-100 hover:border-blue-100 transition-all">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                            <span>새로고침</span>
+                        </button>
+                    </div>
+                    <!-- 과제 추가 폼 -->
+                    <div class="space-y-3 mb-5 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <input type="text" id="assign-title" placeholder="과제명 (예: [1차] 나만의 웹 프로필)"
+                            class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        <input type="text" id="assign-desc" placeholder="설명 (선택)"
+                            class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        <input type="date" id="assign-due"
+                            class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        <button onclick="addAssignment()"
+                            class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i><span>과제 추가</span>
+                        </button>
+                    </div>
+                    <!-- 과제 목록 -->
+                    <div id="assignments-admin-list">
+                        <div class="py-6 flex flex-col items-center space-y-2 text-slate-400">
+                            <i data-lucide="loader" class="w-5 h-5 animate-spin text-blue-400"></i>
+                            <span class="text-xs font-medium">불러오는 중...</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 학습자료 추가 -->                <div class="card p-7">
                     <h2 class="text-lg font-black text-slate-900 mb-5 flex items-center space-x-2">
                         <i data-lucide="folder-plus" class="w-5 h-5 text-emerald-500"></i>
@@ -419,6 +454,7 @@
             loadMembers();
             loadMaterialsList();
             loadNoticesList();
+            loadAssignmentsList();
         });
 
         async function handleSignOut() {
@@ -625,7 +661,90 @@
         // 학습자료 추가 (Google Sheets 저장)
         // ==========================================
         // ==========================================
-        // 학습자료 추가 (Cloudinary 파일 업로드 + Firestore)
+        // 수행평가 과제 관리 (Firestore)
+        // ==========================================
+        let allAssignments = [];
+
+        async function loadAssignmentsList() {
+            const container = document.getElementById('assignments-admin-list');
+            container.innerHTML = `<div class="py-6 flex flex-col items-center space-y-2 text-slate-400">
+                <i data-lucide="loader" class="w-5 h-5 animate-spin text-blue-400"></i>
+                <span class="text-xs font-medium">불러오는 중...</span></div>`;
+            lucide.createIcons();
+            try {
+                const snap = await db.collection('assignments').orderBy('createdAt','asc').get();
+                allAssignments = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderAssignmentsList();
+            } catch(e) {
+                container.innerHTML = `<div class="py-4 text-center text-xs text-slate-400">불러오기 실패: ${e.message}</div>`;
+            }
+        }
+
+        function renderAssignmentsList() {
+            const container = document.getElementById('assignments-admin-list');
+            if (!allAssignments.length) {
+                container.innerHTML = `<div class="py-6 flex flex-col items-center space-y-2 text-slate-400">
+                    <i data-lucide="inbox" class="w-6 h-6 text-slate-300"></i>
+                    <p class="text-xs font-medium">등록된 과제가 없습니다.</p></div>`;
+                lucide.createIcons(); return;
+            }
+            container.innerHTML = `<div class="space-y-2">
+                ${allAssignments.map(a => `
+                <div class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-white border border-slate-100 hover:border-slate-200 rounded-2xl transition-all">
+                    <div class="min-w-0">
+                        <p class="text-sm font-bold text-slate-800 truncate">${a.title}</p>
+                        <p class="text-xs text-slate-400 font-medium mt-0.5">${a.desc || ''}${a.due ? ' · 마감: '+a.due : ''}</p>
+                    </div>
+                    <button onclick="deleteAssignment('${a.id}','${(a.title||'').replace(/'/g,"\\'")}')"
+                        class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors ml-2 shrink-0">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>`).join('')}
+            </div>`;
+            lucide.createIcons();
+        }
+
+        async function addAssignment() {
+            const title = document.getElementById('assign-title').value.trim();
+            const desc  = document.getElementById('assign-desc').value.trim();
+            const due   = document.getElementById('assign-due').value;
+            if (!title) { showToast('과제명을 입력해주세요.', 'error'); return; }
+
+            const btn = document.querySelector('button[onclick="addAssignment()"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>추가 중...</span>';
+            lucide.createIcons();
+
+            try {
+                await db.collection('assignments').add({
+                    title, desc, due,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                document.getElementById('assign-title').value = '';
+                document.getElementById('assign-desc').value  = '';
+                document.getElementById('assign-due').value   = '';
+                showToast(`"${title}" 과제가 추가되었습니다! ✅`);
+                loadAssignmentsList();
+            } catch(e) {
+                showToast('추가 오류: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="plus" class="w-4 h-4"></i><span>과제 추가</span>';
+                lucide.createIcons();
+            }
+        }
+
+        async function deleteAssignment(id, title) {
+            if (!confirm(`"${title}" 과제를 삭제할까요?`)) return;
+            try {
+                await db.collection('assignments').doc(id).delete();
+                allAssignments = allAssignments.filter(a => a.id !== id);
+                renderAssignmentsList();
+                showToast('과제가 삭제되었습니다.');
+            } catch(e) {
+                showToast('삭제 오류: ' + e.message, 'error');
+            }
+        }
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             const fileInput = document.getElementById('mat-file');

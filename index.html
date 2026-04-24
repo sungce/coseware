@@ -585,8 +585,6 @@
                                     class="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all appearance-none cursor-pointer font-medium"
                                     required>
                                     <option value="" disabled selected>제출할 과제를 선택해 주세요</option>
-                                    <option value="[1차] 나만의 웹 프로필">[1차] 나만의 웹 프로필 제작</option>
-                                    <option value="[2차] 파이썬 알고리즘">[2차] 파이썬 일상생활 문제해결</option>
                                 </select>
                                 <i data-lucide="chevron-down"
                                     class="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none"></i>
@@ -708,7 +706,32 @@
         let auth = null;
         let currentUser = null;
 
-        // Firebase 초기화
+        // ── 수행평가 과제 목록 (Firestore) ──────────────────────
+        async function loadAssignmentOptions() {
+            const sel = document.getElementById('assignment-title');
+            if (!sel) return;
+            try {
+                const snap = await db.collection('assignments').orderBy('createdAt','asc').get();
+                const existing = sel.querySelector('option[value=""]');
+                sel.innerHTML = '';
+                if (existing) sel.appendChild(existing);
+                else {
+                    const def = document.createElement('option');
+                    def.value = ''; def.disabled = true; def.selected = true;
+                    def.textContent = '제출할 과제를 선택해 주세요';
+                    sel.appendChild(def);
+                }
+                snap.docs.forEach(doc => {
+                    const d = doc.data();
+                    const opt = document.createElement('option');
+                    opt.value = d.title;
+                    opt.textContent = d.title + (d.due ? ' (마감: '+d.due+')' : '');
+                    sel.appendChild(opt);
+                });
+            } catch(e) {
+                console.error('과제 로드 실패:', e);
+            }
+        }
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         auth = firebase.auth();
         const db = firebase.firestore();
@@ -1037,9 +1060,10 @@
             const activeNav = document.getElementById('nav-' + sectionId);
             if (activeNav) activeNav.classList.add('active');
 
-            if (sectionId === 'notices')   { noticesLoaded = false; loadNotices(); }
-            if (sectionId === 'materials') loadInlineMaterials();
-            if (sectionId === 'classes')   { setTimeout(sendUserNameToFrame, 400); setTimeout(sendUserNameToFrame, 1500); }
+            if (sectionId === 'notices')     { noticesLoaded = false; loadNotices(); }
+            if (sectionId === 'materials')   loadInlineMaterials();
+            if (sectionId === 'assignments') loadAssignmentOptions();
+            if (sectionId === 'classes')     { setTimeout(sendUserNameToFrame, 400); setTimeout(sendUserNameToFrame, 1500); }
 
             mobileMenu.classList.add('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
