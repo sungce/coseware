@@ -195,6 +195,7 @@
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">과제명</th>
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">제출물</th>
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">제출일</th>
+                                <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">관리</th>
                             </tr>
                         </thead>
                         <tbody id="submit-tbody">
@@ -213,6 +214,56 @@
             </div>
         </div>
     </main>
+
+    <!-- 제출 수정 모달 -->
+    <div id="submit-edit-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+        onclick="if(event.target===this) closeSubmitEdit()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="pencil" class="w-5 h-5 text-emerald-500"></i>
+                    <span>제출 내역 수정</span>
+                </h3>
+                <button onclick="closeSubmitEdit()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-8 py-6 space-y-4">
+                <input type="hidden" id="edit-submit-row">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">학번</label>
+                    <input type="text" id="edit-submit-studentid"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">이름</label>
+                    <input type="text" id="edit-submit-name"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">과제명</label>
+                    <input type="text" id="edit-submit-assignment"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">제출물 (URL 또는 텍스트)</label>
+                    <input type="text" id="edit-submit-link" placeholder="https:// 또는 내용"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                </div>
+                <p class="text-xs text-slate-400 font-medium flex items-center space-x-1">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                    <span>Google Sheets의 해당 행이 직접 업데이트됩니다.</span>
+                </p>
+            </div>
+            <div class="px-8 pb-8 flex space-x-3">
+                <button onclick="closeSubmitEdit()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-200 transition-colors">취소</button>
+                <button onclick="saveSubmitEdit()" id="submit-save-btn"
+                    class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold py-3.5 rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="save" class="w-4 h-4"></i><span>저장</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- 토스트 -->
     <div id="toast" class="fixed bottom-8 right-8 bg-slate-900/95 backdrop-blur-md text-white px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-32 opacity-0 z-50 flex items-center space-x-3 border border-slate-700">
@@ -414,7 +465,7 @@
         function renderSubmissions(list) {
             const tbody = document.getElementById('submit-tbody');
             if (!list.length) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-slate-400 font-medium">제출 내역이 없습니다.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400 font-medium">제출 내역이 없습니다.</td></tr>`;
                 return;
             }
             tbody.innerHTML = list.map((s, i) => {
@@ -423,21 +474,102 @@
                 const linkHtml = raw
                     ? isUrl
                         ? `<a href="${raw}" target="_blank" rel="noopener noreferrer"
-                                class="text-blue-500 hover:underline font-medium truncate max-w-[200px] block"
-                                title="${raw}">${raw.length > 35 ? raw.slice(0,35)+'…' : raw}</a>`
-                        : `<span class="text-slate-600 text-xs font-medium truncate max-w-[200px] block" title="${raw}">${raw.length > 40 ? raw.slice(0,40)+'…' : raw}</span>`
+                                class="text-blue-500 hover:underline font-medium truncate max-w-[180px] block"
+                                title="${raw}">${raw.length > 30 ? raw.slice(0,30)+'…' : raw}</a>`
+                        : `<span class="text-slate-600 text-xs font-medium truncate max-w-[180px] block" title="${raw}">${raw.length > 35 ? raw.slice(0,35)+'…' : raw}</span>`
                     : `<span class="text-slate-300 text-xs">-</span>`;
+                const globalIdx = allSubmissions.indexOf(s);
                 return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                     <td class="px-4 py-3.5 text-xs font-bold text-slate-400">${i+1}</td>
                     <td class="px-4 py-3.5 text-slate-500 font-medium text-sm">${s.studentId || '-'}</td>
                     <td class="px-4 py-3.5 font-bold text-slate-800">${s.name || '-'}</td>
-                    <td class="px-4 py-3.5 text-slate-600 font-medium text-sm max-w-[160px]">
+                    <td class="px-4 py-3.5 text-slate-600 font-medium text-sm max-w-[140px]">
                         <span class="bg-violet-50 text-violet-700 text-xs font-bold px-2 py-0.5 rounded-lg">${s.assignment || '-'}</span>
                     </td>
-                    <td class="px-4 py-3.5 max-w-[200px]">${linkHtml}</td>
+                    <td class="px-4 py-3.5 max-w-[180px]">${linkHtml}</td>
                     <td class="px-4 py-3.5 text-slate-400 text-xs font-medium whitespace-nowrap">${s.date ? s.date.substring(0,16) : '-'}</td>
+                    <td class="px-4 py-3.5">
+                        <div class="flex items-center space-x-1">
+                            <button onclick="openSubmitEdit(${globalIdx})"
+                                class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="수정">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button onclick="deleteSubmission(${globalIdx}, '${(s.name||'').replace(/'/g,"\\'")}', '${(s.assignment||'').replace(/'/g,"\\'")}')"
+                                class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors" title="삭제">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </td>
                 </tr>`;
             }).join('');
+            lucide.createIcons();
+        }
+
+        // ── 제출 수정 ──────────────────────────────────────────
+        function openSubmitEdit(idx) {
+            const s = allSubmissions[idx]; if (!s) return;
+            document.getElementById('edit-submit-row').value        = idx;
+            document.getElementById('edit-submit-studentid').value  = s.studentId  || '';
+            document.getElementById('edit-submit-name').value       = s.name       || '';
+            document.getElementById('edit-submit-assignment').value = s.assignment || '';
+            document.getElementById('edit-submit-link').value       = s.link       || '';
+            const modal = document.getElementById('submit-edit-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeSubmitEdit() {
+            document.getElementById('submit-edit-modal').classList.add('hidden');
+            document.getElementById('submit-edit-modal').classList.remove('flex');
+        }
+
+        async function saveSubmitEdit() {
+            const idx        = parseInt(document.getElementById('edit-submit-row').value);
+            const studentId  = document.getElementById('edit-submit-studentid').value.trim();
+            const name       = document.getElementById('edit-submit-name').value.trim();
+            const assignment = document.getElementById('edit-submit-assignment').value.trim();
+            const link       = document.getElementById('edit-submit-link').value.trim();
+            if (!name || !assignment) { showToast('이름과 과제명을 입력해주세요.', 'error'); return; }
+
+            const btn = document.getElementById('submit-save-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>저장 중...</span>';
+            lucide.createIcons();
+
+            try {
+                const s = allSubmissions[idx];
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ type: 'updateSubmission', email: s.email, date: s.date, studentId, name, assignment, link })
+                });
+                Object.assign(allSubmissions[idx], { studentId, name, assignment, link });
+                filterSubmissions();
+                closeSubmitEdit();
+                showToast('제출 내역이 수정되었습니다! ✅');
+            } catch(e) { showToast('수정 오류: ' + e.message, 'error'); }
+            finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i><span>저장</span>';
+                lucide.createIcons();
+            }
+        }
+
+        // ── 제출 삭제 ──────────────────────────────────────────
+        async function deleteSubmission(idx, name, assignment) {
+            if (!confirm(`"${name}" 학생의 "${assignment}" 제출을 삭제할까요?`)) return;
+            const s = allSubmissions[idx];
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ type: 'deleteSubmission', email: s.email, date: s.date, assignment: s.assignment })
+                });
+                allSubmissions.splice(idx, 1);
+                document.getElementById('stat-total-submit').textContent = allSubmissions.length;
+                filterSubmissions();
+                showToast(`${name} 학생의 제출이 삭제되었습니다.`);
+            } catch(e) { showToast('삭제 오류: ' + e.message, 'error'); }
         }
 
         // ── 토스트 ────────────────────────────────────────────

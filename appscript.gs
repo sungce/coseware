@@ -231,6 +231,41 @@ function doPost(e) {
       return jsonResponse({ result: 'success' });
     }
 
+    // 제출 수정
+    if (type === 'updateSubmission') {
+      const sheet = ss.getSheetByName(SHEET_SUBMIT);
+      if (sheet && sheet.getLastRow() > 1) {
+        const rows = sheet.getRange(2, 1, sheet.getLastRow()-1, 6).getValues();
+        for (let i = 0; i < rows.length; i++) {
+          if (String(rows[i][2]) === String(data.email) && String(rows[i][0]) === String(data.date)) {
+            sheet.getRange(i+2, 2).setValue(data.studentId  || '');
+            sheet.getRange(i+2, 3).setValue(data.email      || '');
+            sheet.getRange(i+2, 4).setValue(data.name       || '');
+            sheet.getRange(i+2, 5).setValue(data.assignment || '');
+            sheet.getRange(i+2, 6).setValue(data.link       || '');
+            break;
+          }
+        }
+      }
+      return jsonResponse({ result: 'success' });
+    }
+
+    // 제출 삭제
+    if (type === 'deleteSubmission') {
+      const sheet = ss.getSheetByName(SHEET_SUBMIT);
+      if (sheet && sheet.getLastRow() > 1) {
+        const rows = sheet.getRange(2, 1, sheet.getLastRow()-1, 6).getValues();
+        for (let i = rows.length-1; i >= 0; i--) {
+          if (String(rows[i][2]) === String(data.email) &&
+              String(rows[i][4]) === String(data.assignment)) {
+            sheet.deleteRow(i+2);
+            break;
+          }
+        }
+      }
+      return jsonResponse({ result: 'success' });
+    }
+
     // 회원 정보 수정
     if (type === 'updateMember') {
       const sheet   = ss.getSheetByName(SHEET_MEMBERS);
