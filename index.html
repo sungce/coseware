@@ -150,8 +150,8 @@
                             class="nav-link hover:text-blue-600 transition-colors" id="nav-home">홈</a>
                         <a href="#" onclick="showSection('notices')"
                             class="nav-link hover:text-blue-600 transition-colors" id="nav-notices">공지사항</a>
-                        <a href="curriculum/index.html"
-                            class="nav-link hover:text-blue-600 transition-colors">교과수업</a>
+                        <a href="#" onclick="showSection('classes'); return false;"
+                            class="nav-link hover:text-blue-600 transition-colors" id="nav-classes">교과수업</a>
                         <a href="#" onclick="showSection('materials')"
                             class="nav-link hover:text-blue-600 transition-colors" id="nav-materials">학습자료실</a>
                         <a href="#" onclick="showSection('assignments')"
@@ -217,7 +217,7 @@
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">홈</a>
                 <a href="#" onclick="showSection('notices')"
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">공지사항</a>
-                <a href="curriculum/index.html"
+                <a href="#" onclick="showSection('classes'); return false;"
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">교과수업</a>
                 <a href="#" href="#" onclick="showSection('materials')"
                     class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">학습자료실</a>
@@ -494,11 +494,9 @@
             <iframe
                 src="curriculum/index.html"
                 id="curriculum-frame"
-                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white"
-                style="min-height: 600px; height: auto; display: block;"
-                frameborder="0"
-                scrolling="yes"
-                onload="this.style.height = (this.contentWindow.document.body.scrollHeight + 40) + 'px'; sendUserNameToFrame();">
+                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
+                style="min-height: 80vh; height: 80vh; overflow: auto;"
+                frameborder="0">
             </iframe>
         </section>
 
@@ -681,7 +679,7 @@
             <div class="flex items-center space-x-4">
                 <a href="signup.html" class="hover:text-blue-600 transition-colors">회원가입</a>
                 <span class="text-slate-300">|</span>
-                <a href="curriculum/index.html" class="hover:text-blue-600 transition-colors">교과수업</a>
+                <a href="#" onclick="showSection('classes')" class="hover:text-blue-600 transition-colors">교과수업</a>
             </div>
         </div>
     </footer>
@@ -1063,7 +1061,16 @@
             if (sectionId === 'notices')     { noticesLoaded = false; loadNotices(); }
             if (sectionId === 'materials')   loadInlineMaterials();
             if (sectionId === 'assignments') loadAssignmentOptions();
-            if (sectionId === 'classes')     { setTimeout(sendUserNameToFrame, 400); setTimeout(sendUserNameToFrame, 1500); }
+            if (sectionId === 'classes') {
+                // iframe이 아직 로드 안 됐으면 src 세팅, 됐으면 이름만 전달
+                const frame = document.getElementById('curriculum-frame');
+                if (frame && !frame.dataset.loaded) {
+                    frame.dataset.loaded = '1';
+                    frame.src = 'curriculum/index.html';
+                }
+                setTimeout(sendUserNameToFrame, 500);
+                setTimeout(sendUserNameToFrame, 1500);
+            }
 
             mobileMenu.classList.add('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
