@@ -179,6 +179,7 @@ function doPost(e) {
           if (String(rows[i][0]) === String(data.id)) {
             sheet.getRange(i + 1, 2).setValue(data.noticeType || 'normal');
             sheet.getRange(i + 1, 3).setValue(data.title || '');
+            sheet.getRange(i + 1, 4).setValue(data.content || '');
             break;
           }
         }
