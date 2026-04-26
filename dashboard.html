@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
         tailwind.config = {
             theme: { extend: { fontFamily: { sans: ['Pretendard', 'sans-serif'] } } }
@@ -124,11 +125,18 @@
                         <i data-lucide="history" class="w-5 h-5 text-indigo-500"></i>
                         <span>제출 내역</span>
                     </h2>
-                    <button onclick="loadDashboard()"
-                        class="flex items-center space-x-1.5 text-sm font-bold text-slate-500 hover:text-blue-600 bg-white border border-slate-200 hover:border-blue-200 px-3 py-2 rounded-xl transition-all">
-                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                        <span>새로고침</span>
-                    </button>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openAddSubmit()"
+                            class="flex items-center space-x-1.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-xl transition-all">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>제출 추가</span>
+                        </button>
+                        <button onclick="loadDashboard()"
+                            class="flex items-center space-x-1.5 text-sm font-bold text-slate-500 hover:text-blue-600 bg-white border border-slate-200 hover:border-blue-200 px-3 py-2 rounded-xl transition-all">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            <span>새로고침</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card overflow-hidden">
@@ -151,6 +159,7 @@
                                 <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-wider">학번</th>
                                 <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-wider">제출링크</th>
                                 <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-wider">제출일시</th>
+                                <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-wider">관리</th>
                             </tr>
                         </thead>
                         <tbody id="submissions-tbody"></tbody>
@@ -159,6 +168,48 @@
             </div>
         </div>
     </main>
+
+    <!-- 제출 추가/수정 모달 -->
+    <div id="submit-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+        onclick="if(event.target===this) closeSubmitModal()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="send" class="w-5 h-5 text-blue-500"></i>
+                    <span id="submit-modal-title">제출 추가</span>
+                </h3>
+                <button onclick="closeSubmitModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-8 py-6 space-y-4">
+                <input type="hidden" id="submit-edit-idx">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">과제 선택</label>
+                    <select id="submit-assignment-sel"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                        <option value="" disabled selected>과제를 선택하세요</option>
+                    </select>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">제출물 (URL 또는 내용)</label>
+                    <input type="text" id="submit-link-input" placeholder="https:// 또는 코드, 설명 등"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                </div>
+                <p class="text-xs text-slate-400 font-medium flex items-center space-x-1">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                    <span>학번과 이름은 로그인 정보에서 자동으로 가져옵니다.</span>
+                </p>
+            </div>
+            <div class="px-8 pb-8 flex space-x-3">
+                <button onclick="closeSubmitModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-200 transition-colors">취소</button>
+                <button onclick="saveSubmitModal()" id="submit-modal-btn"
+                    class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="send" class="w-4 h-4"></i><span>제출</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- 프로필 수정 모달 -->
     <div id="edit-profile-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
@@ -229,14 +280,31 @@
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmN8kW5ZIUBpfSupZ_M8BJMZbMLleyw7MGV0CEh-wdcv1csV0-ZUMxFlKM_XE9uzM/exec';
 
         // 수행평가 목록 (index.html과 동일하게 유지)
-        const ASSIGNMENTS = [
-            '[1차] 나만의 웹 프로필',
-            '[2차] 파이썬 알고리즘',
-        ];
+        let ASSIGNMENTS = [];  // Firestore에서 로드
 
         const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(app);
+        const db   = firebase.firestore(app);
         let currentUser = null;
+        let currentSubmissions = [];
+
+        // 과제 목록 로드 (Firestore)
+        async function loadAssignments() {
+            try {
+                const snap = await db.collection('assignments').orderBy('createdAt','asc').get();
+                ASSIGNMENTS = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // 제출 모달 드롭다운 갱신
+                const sel = document.getElementById('submit-assignment-sel');
+                if (sel) {
+                    sel.innerHTML = '<option value="" disabled selected>과제를 선택하세요</option>';
+                    ASSIGNMENTS.forEach(a => {
+                        const opt = document.createElement('option');
+                        opt.value = a.title; opt.textContent = a.title + (a.due ? ' (마감: '+a.due+')' : '');
+                        sel.appendChild(opt);
+                    });
+                }
+            } catch(e) { console.error('과제 로드 실패:', e); }
+        }
 
         auth.onAuthStateChanged((user) => {
             if (!user) {
@@ -250,10 +318,10 @@
             document.getElementById('nav-user-name').textContent  = name;
             document.getElementById('profile-name').textContent   = name;
             document.getElementById('profile-email').textContent  = user.email;
-            // 학번은 localStorage에서 (가입 시 저장 or 수정 시 저장)
             const savedId = localStorage.getItem('studentId_' + user.uid) || '';
             if (savedId) document.getElementById('profile-studentid').textContent = '학번: ' + savedId;
             lucide.createIcons();
+            await loadAssignments();
             loadDashboard();
         });
 
@@ -366,53 +434,63 @@
         // 렌더링
         // ==========================================
         function renderDashboard(submissions) {
+            currentSubmissions = submissions;
             document.getElementById('submissions-loading').classList.add('hidden');
 
-            // 제출된 과제명 Set
             const submitted = new Set(submissions.map(s => s.assignment));
-
-            // 통계
             const doneCount    = submitted.size;
-            const pendingCount = ASSIGNMENTS.length - doneCount;
-            const rate         = ASSIGNMENTS.length > 0
-                ? Math.round((doneCount / ASSIGNMENTS.length) * 100) + '%'
-                : '0%';
+            const pendingCount = Math.max(0, ASSIGNMENTS.length - doneCount);
+            const rate = ASSIGNMENTS.length > 0
+                ? Math.round((doneCount / ASSIGNMENTS.length) * 100) + '%' : '0%';
 
             document.getElementById('stat-submitted').textContent = doneCount;
             document.getElementById('stat-pending').textContent   = pendingCount;
             document.getElementById('stat-rate').textContent      = rate;
 
-            // 과제 현황 카드
+            // 과제 현황 카드 (Firestore 과제 기준)
             const cards = document.getElementById('assignment-cards');
-            cards.innerHTML = ASSIGNMENTS.map(title => {
-                const done = submitted.has(title);
-                const sub  = submissions.find(s => s.assignment === title);
-                return `
-                <div class="card p-5 flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center ${done ? 'bg-emerald-50' : 'bg-amber-50'}">
-                            <i data-lucide="${done ? 'check-circle' : 'clock'}" class="w-5 h-5 ${done ? 'text-emerald-500' : 'text-amber-500'}"></i>
+            if (!ASSIGNMENTS.length) {
+                cards.innerHTML = `<div class="card p-5 text-center text-slate-400 text-sm font-medium">등록된 과제가 없습니다.</div>`;
+            } else {
+                cards.innerHTML = ASSIGNMENTS.map(a => {
+                    const title = a.title || a;
+                    const done  = submitted.has(title);
+                    const sub   = submissions.find(s => s.assignment === title);
+                    return `
+                    <div class="card p-5 flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center ${done ? 'bg-emerald-50' : 'bg-amber-50'}">
+                                <i data-lucide="${done ? 'check-circle' : 'clock'}" class="w-5 h-5 ${done ? 'text-emerald-500' : 'text-amber-500'}"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm">${title}</p>
+                                <p class="text-xs text-slate-400 mt-0.5">${
+                                    done ? (sub.date||'').substring(0,10)+' 제출'
+                                    : (a.due ? '마감: '+a.due : '미제출')
+                                }</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-bold text-slate-800 text-sm">${title}</p>
-                            <p class="text-xs text-slate-400 mt-0.5">${done ? sub.date.substring(0,10) + ' 제출' : '미제출'}</p>
-                        </div>
-                    </div>
-                    <span class="text-xs font-bold px-3 py-1.5 rounded-full ${done ? 'status-done' : 'status-pending'}">
-                        ${done ? '완료' : '미제출'}
-                    </span>
-                </div>`;
-            }).join('');
+                        <span class="text-xs font-bold px-3 py-1.5 rounded-full ${done ? 'status-done' : 'status-pending'}">
+                            ${done ? '완료' : '미제출'}
+                        </span>
+                    </div>`;
+                }).join('');
+            }
 
             // 제출 내역 테이블
             if (!submissions.length) {
                 document.getElementById('submissions-empty').classList.remove('hidden');
                 document.getElementById('submissions-empty').classList.add('flex');
+                document.getElementById('submissions-table').classList.add('hidden');
             } else {
+                document.getElementById('submissions-empty').classList.add('hidden');
+                document.getElementById('submissions-empty').classList.remove('flex');
                 document.getElementById('submissions-table').classList.remove('hidden');
                 document.getElementById('submissions-tbody').innerHTML = submissions
                     .slice().reverse()
-                    .map(s => `
+                    .map((s, i) => {
+                        const ri = submissions.length - 1 - i; // real index
+                        return `
                         <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                             <td class="px-5 py-4 font-bold text-slate-800">${s.assignment || '-'}</td>
                             <td class="px-5 py-4 text-slate-500 font-medium">${s.studentId || '-'}</td>
@@ -423,10 +501,95 @@
                                 }
                             </td>
                             <td class="px-5 py-4 text-slate-400 text-xs font-medium">${s.date ? s.date.substring(0,16) : '-'}</td>
-                        </tr>
-                    `).join('');
+                            <td class="px-5 py-4">
+                                <div class="flex items-center space-x-1">
+                                    <button onclick="openEditSubmit(${ri})"
+                                        class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="수정">
+                                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <button onclick="deleteSubmit(${ri})"
+                                        class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors" title="삭제">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
+                    }).join('');
             }
             lucide.createIcons();
+        }
+
+        // ── 제출 추가/수정 모달 ────────────────────────────────
+        function openAddSubmit() {
+            document.getElementById('submit-modal-title').textContent = '제출 추가';
+            document.getElementById('submit-edit-idx').value = '';
+            document.getElementById('submit-assignment-sel').value = '';
+            document.getElementById('submit-link-input').value = '';
+            document.getElementById('submit-modal-btn').innerHTML = '<i data-lucide="send" class="w-4 h-4"></i><span>제출</span>';
+            const modal = document.getElementById('submit-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function openEditSubmit(idx) {
+            const s = currentSubmissions[idx]; if (!s) return;
+            document.getElementById('submit-modal-title').textContent = '제출 수정';
+            document.getElementById('submit-edit-idx').value = idx;
+            document.getElementById('submit-assignment-sel').value = s.assignment || '';
+            document.getElementById('submit-link-input').value = s.link || '';
+            document.getElementById('submit-modal-btn').innerHTML = '<i data-lucide="save" class="w-4 h-4"></i><span>저장</span>';
+            const modal = document.getElementById('submit-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submit-modal').classList.add('hidden');
+            document.getElementById('submit-modal').classList.remove('flex');
+        }
+
+        async function saveSubmitModal() {
+            const assignment = document.getElementById('submit-assignment-sel').value;
+            const link       = document.getElementById('submit-link-input').value.trim();
+            const editIdx    = document.getElementById('submit-edit-idx').value;
+            if (!assignment) { showToast('과제를 선택해주세요.', 'error'); return; }
+            if (!link)       { showToast('제출물을 입력해주세요.', 'error'); return; }
+
+            const btn = document.getElementById('submit-modal-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>처리 중...</span>';
+            lucide.createIcons();
+
+            const name      = currentUser.displayName || '';
+            const studentId = localStorage.getItem('studentId_' + currentUser.uid) || '';
+            const email     = currentUser.email;
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method:'POST', mode:'no-cors',
+                    headers:{'Content-Type':'text/plain'},
+                    body: JSON.stringify({ type:'submission', studentId, email, name, assignment, link })
+                });
+                closeSubmitModal();
+                showToast(editIdx !== '' ? '제출이 수정되었습니다! ✅' : '과제가 제출되었습니다! 🎉');
+                setTimeout(() => loadDashboard(), 1500);
+            } catch(e) { showToast('오류: ' + e.message, 'error'); }
+            finally { btn.disabled=false; lucide.createIcons(); }
+        }
+
+        async function deleteSubmit(idx) {
+            const s = currentSubmissions[idx]; if (!s) return;
+            if (!confirm(`"${s.assignment}" 제출을 삭제할까요?`)) return;
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method:'POST', mode:'no-cors',
+                    headers:{'Content-Type':'text/plain'},
+                    body: JSON.stringify({ type:'deleteSubmission', email: s.email || currentUser.email, date: s.date, assignment: s.assignment })
+                });
+                currentSubmissions.splice(idx, 1);
+                renderDashboard(currentSubmissions);
+                showToast('제출이 삭제되었습니다.');
+            } catch(e) { showToast('삭제 오류: ' + e.message, 'error'); }
         }
 
         document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
