@@ -119,12 +119,12 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-slate-50 border-b border-slate-100">
-                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-16">번호</th>
-                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-28">성명</th>
-                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-28">학번</th>
-                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">이메일</th>
-                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-48">가입일시</th>
-                            <th class="text-left px-5 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-24">관리</th>
+                            <th class="text-left px-4 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-12">번호</th>
+                            <th class="text-left px-4 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-24">성명</th>
+                            <th class="text-left px-4 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-24">학번</th>
+                            <th class="text-left px-4 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest">이메일</th>
+                            <th class="text-left px-4 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-44">가입일시</th>
+                            <th class="text-center px-4 py-3.5 text-xs font-black text-slate-400 uppercase tracking-widest w-20">관리</th>
                         </tr>
                     </thead>
                     <tbody id="member-table-body">
@@ -286,20 +286,20 @@
             }
             tbody.innerHTML = list.map((m, i) => `
                 <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                    <td class="px-5 py-4 text-sm font-bold text-slate-400 whitespace-nowrap">${i + 1}</td>
-                    <td class="px-5 py-4 font-bold text-slate-800 whitespace-nowrap">${m.name || '-'}</td>
-                    <td class="px-5 py-4 text-slate-500 font-medium whitespace-nowrap">${m.studentId || '-'}</td>
-                    <td class="px-5 py-4 text-slate-500 font-medium text-sm">${m.email || '-'}</td>
-                    <td class="px-5 py-4 text-slate-400 font-medium text-sm whitespace-nowrap">${m.date || '-'}</td>
-                    <td class="px-5 py-4">
-                        <div class="flex items-center space-x-1">
+                    <td class="px-4 py-4 text-sm font-bold text-slate-400 whitespace-nowrap">${i + 1}</td>
+                    <td class="px-4 py-4 font-bold text-slate-800 whitespace-nowrap">${m.name || '-'}</td>
+                    <td class="px-4 py-4 text-slate-500 font-medium whitespace-nowrap">${m.studentId || '-'}</td>
+                    <td class="px-4 py-4 text-slate-500 font-medium text-sm">${m.email || '-'}</td>
+                    <td class="px-4 py-4 text-slate-400 font-medium text-sm whitespace-nowrap">${m.date || '-'}</td>
+                    <td class="px-4 py-4">
+                        <div class="flex items-center justify-center space-x-1">
                             <button onclick="openEditModal(${allMembers.indexOf(m)})"
-                                class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="수정">
-                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                                class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="수정">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                             </button>
                             <button onclick="deleteMember(${allMembers.indexOf(m)}, '${(m.name||'').replace(/'/g,"\\'")}', '${(m.email||'').replace(/'/g,"\\'")}')"
-                                class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors" title="삭제">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors" title="삭제">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
                     </td>
