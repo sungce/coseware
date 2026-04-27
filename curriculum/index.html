@@ -2230,6 +2230,9 @@
       }
       applyProfile(name, '');
       closeLoginModal();
+      // hero-name 직접 업데이트 (applyProfile이 놓칠 경우 대비)
+      var hn = document.getElementById('hero-name');
+      if (hn) hn.textContent = name;
       var el = document.getElementById('record-count-nav');
       if (el) updateRecordCount();
     }
