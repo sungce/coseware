@@ -1826,7 +1826,7 @@
 <script>
 
   // ── Google Sheets 연동 ─────────────────────────────────────────
-  var GS_URL = 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev';
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbyvDEA2D-dsxWV93uQy9a8lfIso_5ZXoSXmHvOkRXJ3xZQW5kjRvD9UzSaSymBetPNY/exec';
 
   function postToSheets(payload) {
     if (!GS_URL || GS_URL.indexOf('script.google.com') === -1) return;
@@ -2151,7 +2151,7 @@
     el = document.getElementById('profile-name');
     if (el) el.textContent = name + '님';
     el = document.getElementById('profile-sub');
-    if (el) el.textContent = (GS_URL && GS_URL !== 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev') ? '☁️ Sheets 연동 중...' : '로컬 저장 중';
+    if (el) el.textContent = (GS_URL && GS_URL !== 'https://script.google.com/macros/s/AKfycbyvDEA2D-dsxWV93uQy9a8lfIso_5ZXoSXmHvOkRXJ3xZQW5kjRvD9UzSaSymBetPNY/exec') ? '☁️ Sheets 연동 중...' : '로컬 저장 중';
     el = document.getElementById('hero-name');
     if (el) el.textContent = name;
   }
@@ -2253,7 +2253,7 @@
     var sub = document.getElementById('profile-sub');
     var name = localStorage.getItem('user_name');
     if (sub && name) {
-      if (GS_URL && GS_URL !== 'https://script.google.com/macros/s/AKfycbydUWKsYeqOu8LneWmoSISoGvUOTUae1biYrMrshXo/dev') {
+      if (GS_URL && GS_URL !== 'https://script.google.com/macros/s/AKfycbyvDEA2D-dsxWV93uQy9a8lfIso_5ZXoSXmHvOkRXJ3xZQW5kjRvD9UzSaSymBetPNY/exec') {
         sub.textContent = '☁️ Sheets 연동 중...';
         fetchRecordsFromSheets(name, function(sheetData) {
           if (sheetData) {
