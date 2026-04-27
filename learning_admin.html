@@ -55,26 +55,6 @@
 
     <main class="max-w-7xl mx-auto px-6 pt-28 pb-24 fade-in">
 
-        <!-- Apps Script URL 설정 -->
-        <div id="setup-banner" class="card p-6 mb-8 border-amber-200 bg-amber-50">
-            <div class="flex items-start space-x-4">
-                <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
-                </div>
-                <div class="flex-1">
-                    <h3 class="font-black text-slate-900 mb-1">학습 기록 Google Sheets 연동 설정</h3>
-                    <p class="text-sm text-slate-600 font-medium mb-3">새 Apps Script 배포 후 URL을 입력하세요. 아래 <strong>연동 방법</strong>을 참고하세요.</p>
-                    <div class="flex space-x-3">
-                        <input type="text" id="gs-url-input" placeholder="https://script.google.com/macros/s/.../exec"
-                            class="flex-1 bg-white border border-amber-300 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
-                        <button onclick="saveGsUrl()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-xl transition-colors text-sm">
-                            저장 & 로드
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- 통계 카드 -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             <div class="card p-5">
@@ -365,7 +345,7 @@
         const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
         const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(app);
-        let GS_URL = localStorage.getItem(STORAGE_KEY) || '';
+        let GS_URL = 'https://script.google.com/macros/s/AKfycbxBfaaTJ6aHhegyfB1qDxHn-_QemVA0D5CkVPETCH1VtqBGUbVnISb3hvydkQJs4A/exec';
         let allData = { completed: [], activities: [], selfchecks: [] };
         let currentTab = 'completed';
 
@@ -377,10 +357,7 @@
             }
             document.getElementById('admin-name').textContent = user.displayName || user.email.split('@')[0];
             lucide.createIcons();
-            if (GS_URL) {
-                document.getElementById('gs-url-input').value = GS_URL;
-                loadData();
-            }
+            loadData();
         });
 
         async function handleSignOut() { await auth.signOut(); window.location.href = 'index.html'; }
