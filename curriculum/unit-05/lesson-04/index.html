@@ -174,7 +174,7 @@ table{width:100%}.act-table,.peer-check,.rub{table-layout:fixed;word-break:break
 </div>  <!-- g2 -->
 </div>  <!-- page -->
 <script>
-  var GS_URL='https://script.google.com/macros/s/AKfycbxBfaaTJ6aHhegyfB1qDxHn-_QemVA0D5CkVPETCH1VtqBGUbVnISb3hvydkQJs4A/exec';
+  var GS_URL='https://script.google.com/macros/s/AKfycbwtFKbSDysgz49kaBmMN_FsnW5fHM126tX3wr9bNVonop3fz-e7l5PWS0dPt462umhU/exec';
   function getUserName(){return localStorage.getItem('user_name')||'익명';}
   function postToSheets(p){if(!GS_URL||GS_URL.indexOf('script.google.com')===-1)return;fetch(GS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)}).catch(function(){});}
   function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2400);}
