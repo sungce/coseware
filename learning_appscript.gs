@@ -13,6 +13,7 @@ const SHEET_DONE     = 'Completed';    // 완료 표시 저장
 const SHEET_PERF     = 'Performance';  // 과정 중심 활동 저장
 
 
+function doGet(e) {
   var params = e.parameter;
   var cb     = params.callback || 'callback';
 
