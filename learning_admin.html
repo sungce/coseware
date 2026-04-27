@@ -99,6 +99,30 @@
             </div>
         </div>
 
+        <!-- 단원/소단원 필터 -->
+        <div class="card p-5 mb-6">
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="text-xs font-black text-slate-500 uppercase tracking-wider shrink-0">대단원</span>
+                <div class="flex flex-wrap gap-2" id="unit-filter-btns">
+                    <button onclick="setUnitFilter('all')" id="uf-all"
+                        class="text-xs font-bold px-3 py-1.5 rounded-full bg-teal-500 text-white transition-all">전체</button>
+                    <button onclick="setUnitFilter('I')"   id="uf-I"   class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-teal-50 hover:text-teal-600 transition-all">I. 컴퓨팅</button>
+                    <button onclick="setUnitFilter('II')"  id="uf-II"  class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-teal-50 hover:text-teal-600 transition-all">II. 데이터</button>
+                    <button onclick="setUnitFilter('III')" id="uf-III" class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-teal-50 hover:text-teal-600 transition-all">III. 알고리즘</button>
+                    <button onclick="setUnitFilter('IV')"  id="uf-IV"  class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-teal-50 hover:text-teal-600 transition-all">IV. 인공지능</button>
+                    <button onclick="setUnitFilter('V')"   id="uf-V"   class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-teal-50 hover:text-teal-600 transition-all">V. 디지털문화</button>
+                </div>
+                <span id="unit-lesson-filter-wrap" class="hidden items-center space-x-2">
+                    <span class="text-xs font-black text-slate-400">·</span>
+                    <span class="text-xs font-black text-slate-500 uppercase tracking-wider">소단원</span>
+                    <select id="lesson-filter" onchange="renderCurrentTab()"
+                        class="text-xs font-bold bg-white border border-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all">
+                        <option value="all">전체 소단원</option>
+                    </select>
+                </span>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             <!-- 학생별 요약 -->
@@ -164,58 +188,6 @@
             </div>
         </div>
 
-        <!-- 연동 방법 안내 -->
-        <div class="card p-8 mt-6">
-            <h2 class="text-lg font-black text-slate-900 mb-4 flex items-center space-x-2">
-                <i data-lucide="book-open" class="w-5 h-5 text-teal-500"></i>
-                <span>학습 기록 Google Sheets 연동 방법</span>
-            </h2>
-            <div class="space-y-4 text-sm text-slate-600 font-medium">
-                <div class="flex items-start space-x-3">
-                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">1</span>
-                    <div>
-                        <p class="font-bold text-slate-800">새 Google Sheets 생성</p>
-                        <p class="text-slate-500">Google Drive에서 새 스프레드시트 생성 → 이름: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">정보교과_학습기록</code></p>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">2</span>
-                    <div>
-                        <p class="font-bold text-slate-800">시트 ID 복사</p>
-                        <p class="text-slate-500">URL에서 <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">/d/[이 부분]/edit</code> 복사</p>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">3</span>
-                    <div>
-                        <p class="font-bold text-slate-800">Apps Script 편집기 열기</p>
-                        <p class="text-slate-500">스프레드시트 → 확장 프로그램 → Apps Script → <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">learning_appscript.gs</code> 내용을 붙여넣기</p>
-                        <p class="text-slate-500 mt-1"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">LEARNING_SPREADSHEET_ID</code> 를 복사한 시트 ID로 교체</p>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">4</span>
-                    <div>
-                        <p class="font-bold text-slate-800">배포</p>
-                        <p class="text-slate-500">배포 → 새 배포 → 웹 앱 → 액세스 권한: <strong>모든 사용자</strong> → 배포 → URL 복사</p>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">5</span>
-                    <div>
-                        <p class="font-bold text-slate-800">URL 입력</p>
-                        <p class="text-slate-500">위 <strong>학습 기록 Google Sheets 연동 설정</strong> 란에 복사한 URL 입력 → <strong>저장 & 로드</strong></p>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">6</span>
-                    <div>
-                        <p class="font-bold text-slate-800">curriculum 파일 GS_URL 업데이트</p>
-                        <p class="text-slate-500">배포 URL을 관리자에게 알려주면 모든 curriculum 파일의 <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">GS_URL</code>을 자동으로 업데이트해 드립니다.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
 
     <!-- 토스트 -->
@@ -225,7 +197,58 @@
     </div>
 
     <script>
-        const ADMIN_EMAILS = ['sungce27@gmail.com'];
+        const UNIT_LESSONS = {
+            'I'  : ['1. 컴퓨팅 시스템의 이해','2. 운영체제','3. HW와 SW 구성','4. 피지컬 컴퓨팅 기초','5. 마이크로비트','6. 센서 기반 프로그래밍'],
+            'II' : ['1. 디지털 데이터 표현','2. 문자와 이미지 인코딩','3. 소리와 동영상 데이터','4. 데이터 수집','5. 데이터 구조화','6. 데이터 분석(CODAP)'],
+            'III': ['1. 문제 분석과 추상화','2. 알고리즘 설계','3. 순서도와 의사코드','4. 순차 구조','5. 선택 구조','6. 반복 구조','7. 변수와 연산','8. 리스트','9. 함수','10. 프로젝트'],
+            'IV' : ['1. 인공지능의 이해','2. 머신러닝 원리','3. 이미지 분류(티처블머신)','4. 소리와 텍스트 분류','5. AI 윤리','6. 개인정보 보호'],
+            'V'  : ['1. 디지털 시민의식','2. 저작권','3. 개인정보','4. 사이버폭력 예방','5. 미디어 리터러시','6. 올바른 인터넷 사용'],
+        };
+        let currentUnitFilter   = 'all';
+        let currentLessonFilter = 'all';
+
+        function setUnitFilter(unit) {
+            currentUnitFilter   = unit;
+            currentLessonFilter = 'all';
+            // 버튼 스타일
+            ['all','I','II','III','IV','V'].forEach(u => {
+                const btn = document.getElementById('uf-'+u);
+                if (!btn) return;
+                btn.className = u===unit
+                    ? 'text-xs font-bold px-3 py-1.5 rounded-full bg-teal-500 text-white transition-all'
+                    : 'text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-teal-50 hover:text-teal-600 transition-all';
+            });
+            // 소단원 선택 표시/숨김
+            const wrap = document.getElementById('unit-lesson-filter-wrap');
+            const sel  = document.getElementById('lesson-filter');
+            if (unit !== 'all' && UNIT_LESSONS[unit]) {
+                sel.innerHTML = '<option value="all">전체 소단원</option>' +
+                    UNIT_LESSONS[unit].map((l,i) => `<option value="${i+1}">${l}</option>`).join('');
+                wrap.classList.remove('hidden'); wrap.classList.add('flex');
+            } else {
+                wrap.classList.add('hidden'); wrap.classList.remove('flex');
+            }
+            renderCurrentTab();
+        }
+
+        function getUnitFromRecord(r) {
+            // completed: unit 필드 직접
+            if (r.unit) return r.unit;
+            // activities/selfchecks: lessonKey 형식 'lXX' → 단원 추정
+            const key = (r.lessonKey || '').toLowerCase();
+            if (key.startsWith('l1')) return 'I';
+            if (key.startsWith('l2')) return 'II';
+            if (key.startsWith('l3')) return 'III';
+            if (key.startsWith('l4')) return 'IV';
+            if (key.startsWith('l5')) return 'V';
+            return '';
+        }
+
+        function getLessonNumFromRecord(r) {
+            if (r.lessonNum) return String(r.lessonNum);
+            const key = (r.lessonKey || '').replace(/[^0-9]/g,'');
+            return key ? String(parseInt(key.slice(-2)||key)) : '';
+        }
         const STORAGE_KEY  = 'learning_gs_url';
         const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
         const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
@@ -340,9 +363,22 @@
         }
 
         function renderCurrentTab() {
-            const q = (document.getElementById('record-search').value || '').toLowerCase();
+            const q       = (document.getElementById('record-search').value || '').toLowerCase();
+            const lessonF = (document.getElementById('lesson-filter') || {}).value || 'all';
             let rows = allData[currentTab] || [];
+
+            // 학생명 검색
             if (q) rows = rows.filter(r => (r.userName||'').toLowerCase().includes(q));
+
+            // 대단원 필터
+            if (currentUnitFilter !== 'all') {
+                rows = rows.filter(r => getUnitFromRecord(r) === currentUnitFilter);
+            }
+
+            // 소단원 필터
+            if (lessonF !== 'all') {
+                rows = rows.filter(r => getLessonNumFromRecord(r) === lessonF);
+            }
 
             document.getElementById('record-count-label').textContent = `${rows.length}건`;
 
@@ -353,19 +389,21 @@
             }
 
             tbody.innerHTML = rows.map(r => {
-                let unit = '', content = '';
+                const unit    = getUnitFromRecord(r);
+                const lessonN = getLessonNumFromRecord(r);
+                let unitBadge = '', content = '';
                 if (currentTab === 'completed') {
-                    unit    = `<span class="bg-teal-50 text-teal-700 text-xs font-bold px-2 py-0.5 rounded-lg">단원 ${r.unit || ''}</span>`;
-                    content = `소단원 ${r.lessonNum || ''} · ${r.lessonName || ''}`;
+                    unitBadge = `<span class="bg-teal-50 text-teal-700 text-xs font-bold px-2 py-0.5 rounded-lg">단원 ${unit}</span>`;
+                    content   = `소단원 ${r.lessonNum || lessonN} · ${r.lessonName || ''}`;
                 } else {
-                    unit    = `<span class="text-xs font-medium text-slate-500">${r.lessonKey || ''}</span>`;
-                    content = r.lessonName || '';
+                    unitBadge = unit ? `<span class="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-0.5 rounded-lg">단원 ${unit}</span>` : `<span class="text-xs font-medium text-slate-400">${r.lessonKey||''}</span>`;
+                    content   = r.lessonName || r.lessonKey || '-';
                 }
                 const dateStr = r.date ? String(r.date).substring(0,16) : '-';
                 return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                     <td class="px-4 py-3.5 text-xs text-slate-400 font-medium whitespace-nowrap">${dateStr}</td>
-                    <td class="px-4 py-3.5 font-bold text-slate-800 text-sm">${r.userName || '-'}</td>
-                    <td class="px-4 py-3.5">${unit}</td>
+                    <td class="px-4 py-3.5 font-bold text-slate-800 text-sm whitespace-nowrap">${r.userName || '-'}</td>
+                    <td class="px-4 py-3.5">${unitBadge}</td>
                     <td class="px-4 py-3.5 text-slate-600 font-medium text-sm">${content}</td>
                 </tr>`;
             }).join('');
