@@ -15,7 +15,15 @@ const SHEET_PERF     = 'Performance';  // 과정 중심 활동 저장
 
 function doGet(e) {
   var params = e.parameter;
-  var cb     = params.callback || 'callback';
+  var cb     = params.callback || '';
+
+  // ── 내부 헬퍼: JSON 또는 JSONP 응답 ──────────────────────
+  function makeResponse(data) {
+    var json = JSON.stringify(data);
+    var body = cb ? cb + '(' + json + ')' : json;
+    var mime = cb ? ContentService.MimeType.JAVASCRIPT : ContentService.MimeType.JSON;
+    return ContentService.createTextOutput(body).setMimeType(mime);
+  }
 
   // 학생별 학습 기록 조회
   if (params.action === 'getRecords') {
@@ -55,14 +63,10 @@ function doGet(e) {
           }));
       }
 
-      return ContentService
-        .createTextOutput(cb + '(' + JSON.stringify(result) + ')')
-        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+      return makeResponse(result);
 
     } catch(err) {
-      return ContentService
-        .createTextOutput(cb + '({"error":"' + err.message + '"})')
-        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+      return makeResponse({ error: err.message });
     }
   }
 
@@ -83,19 +87,13 @@ function doGet(e) {
         });
       }
       var arr = Object.values(summary).sort((a,b) => b.count - a.count);
-      return ContentService
-        .createTextOutput(cb + '(' + JSON.stringify({ summary: arr }) + ')')
-        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+      return makeResponse({ summary: arr });
     } catch(err) {
-      return ContentService
-        .createTextOutput(cb + '({"error":"' + err.message + '"})')
-        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+      return makeResponse({ error: err.message });
     }
   }
 
-  return ContentService
-    .createTextOutput(cb + '({"error":"unknown action"})')
-    .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  return makeResponse({ error: 'unknown action' });
 }
 
 function doPost(e) {
