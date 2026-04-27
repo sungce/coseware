@@ -400,7 +400,11 @@ table{width:100%;border-collapse:collapse}
   var GS_URL = 'https://script.google.com/macros/s/AKfycbyvDEA2D-dsxWV93uQy9a8lfIso_5ZXoSXmHvOkRXJ3xZQW5kjRvD9UzSaSymBetPNY/exec';
 
   function getUserName() {
-    return localStorage.getItem('user_name') || '익명';
+    return localStorage.getItem('curriculum_user_name') ||
+           localStorage.getItem('user_name') || '익명';
+  }
+  function getStudentId() {
+    return localStorage.getItem('curriculum_student_id') || '';
   }
 
   function postToSheets(payload) {
@@ -427,6 +431,7 @@ function saveSC(key){
     postToSheets({
       type:'sc',
       userName: getUserName(),
+      studentId: getStudentId(),
       lessonKey: 'l12',
       lessonName: 'l12',
       answers: d
@@ -444,6 +449,7 @@ function markDone(n){
     postToSheets({
       type:'done',
       userName: getUserName(),
+      studentId: getStudentId(),
       unit: 'I',
       lessonNum: n,
       lessonName: '컴퓨팅 시스템'
@@ -461,6 +467,7 @@ function saveActivity(key){
     postToSheets({
       type:'act',
       userName: getUserName(),
+      studentId: getStudentId(),
       lessonKey: 'l12',
       lessonName: 'l12',
       answers: d

@@ -306,7 +306,11 @@ table{width:100%;border-collapse:collapse}
   var GS_URL = 'https://script.google.com/macros/s/AKfycbyvDEA2D-dsxWV93uQy9a8lfIso_5ZXoSXmHvOkRXJ3xZQW5kjRvD9UzSaSymBetPNY/exec';
 
   function getUserName() {
-    return localStorage.getItem('user_name') || '익명';
+    return localStorage.getItem('curriculum_user_name') ||
+           localStorage.getItem('user_name') || '익명';
+  }
+  function getStudentId() {
+    return localStorage.getItem('curriculum_student_id') || '';
   }
 
   function postToSheets(payload) {
@@ -333,6 +337,7 @@ function markDone(n){
     postToSheets({
       type:'done',
       userName: getUserName(),
+      studentId: getStudentId(),
       unit: 'III',
       lessonNum: n,
       lessonName: '알고리즘과 프로그래밍'

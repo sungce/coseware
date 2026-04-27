@@ -2224,6 +2224,10 @@
     if (e.data && e.data.type === 'SET_USER_NAME' && e.data.name) {
       var name = e.data.name;
       localStorage.setItem('curriculum_user_name', name);
+      localStorage.setItem('user_name', name);
+      if (e.data.studentId) {
+        localStorage.setItem('curriculum_student_id', e.data.studentId);
+      }
       applyProfile(name, '');
       closeLoginModal();
       var el = document.getElementById('record-count-nav');

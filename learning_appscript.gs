@@ -24,7 +24,7 @@ function doGet(e) {
       if (shA && shA.getLastRow() > 1) {
         result.activities = shA.getRange(2, 1, shA.getLastRow()-1, shA.getLastColumn())
           .getValues().filter(r => r[0]).map(r => ({
-            date: r[0], userName: r[1], lessonKey: r[2], lessonName: r[3], answers: r[4]
+            date: r[0], userName: r[1], studentId: r[2], lessonKey: r[3], lessonName: r[4], answers: r[5]
           }));
       }
 
@@ -32,7 +32,7 @@ function doGet(e) {
       if (shS && shS.getLastRow() > 1) {
         result.selfchecks = shS.getRange(2, 1, shS.getLastRow()-1, shS.getLastColumn())
           .getValues().filter(r => r[0]).map(r => ({
-            date: r[0], userName: r[1], lessonKey: r[2], lessonName: r[3], answers: r[4]
+            date: r[0], userName: r[1], studentId: r[2], lessonKey: r[3], lessonName: r[4], answers: r[5]
           }));
       }
 
@@ -40,7 +40,7 @@ function doGet(e) {
       if (shD && shD.getLastRow() > 1) {
         result.completed = shD.getRange(2, 1, shD.getLastRow()-1, shD.getLastColumn())
           .getValues().filter(r => r[0]).map(r => ({
-            date: r[0], userName: r[1], unit: r[2], lessonNum: r[3], lessonName: r[4]
+            date: r[0], userName: r[1], studentId: r[2], unit: r[3], lessonNum: r[4], lessonName: r[5]
           }));
       }
 
@@ -95,22 +95,22 @@ function doPost(e) {
 
     // 수행 활동 저장
     if (data.type === 'act') {
-      var sh = getOrCreateSheet(ss, SHEET_ACTIVITY, ['날짜','학생명','소단원키','소단원명','답변내용']);
-      sh.appendRow([date, userName, data.lessonKey || '', data.lessonName || '',
+      var sh = getOrCreateSheet(ss, SHEET_ACTIVITY, ['날짜','학생명','학번','소단원키','소단원명','답변내용']);
+      sh.appendRow([date, userName, data.studentId || '', data.lessonKey || '', data.lessonName || '',
                     JSON.stringify(data.answers || {})]);
     }
 
     // 자기 평가 저장
     if (data.type === 'sc') {
-      var sh = getOrCreateSheet(ss, SHEET_SELFCHECK, ['날짜','학생명','소단원키','소단원명','평가내용']);
-      sh.appendRow([date, userName, data.lessonKey || '', data.lessonName || '',
+      var sh = getOrCreateSheet(ss, SHEET_SELFCHECK, ['날짜','학생명','학번','소단원키','소단원명','평가내용']);
+      sh.appendRow([date, userName, data.studentId || '', data.lessonKey || '', data.lessonName || '',
                     JSON.stringify(data.answers || {})]);
     }
 
     // 완료 표시 저장
     if (data.type === 'done') {
-      var sh = getOrCreateSheet(ss, SHEET_DONE, ['날짜','학생명','대단원','소단원번호','소단원명']);
-      sh.appendRow([date, userName, data.unit || '', data.lessonNum || '', data.lessonName || '']);
+      var sh = getOrCreateSheet(ss, SHEET_DONE, ['날짜','학생명','학번','대단원','소단원번호','소단원명']);
+      sh.appendRow([date, userName, data.studentId || '', data.unit || '', data.lessonNum || '', data.lessonName || '']);
     }
 
     return ContentService

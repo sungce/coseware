@@ -1034,10 +1034,12 @@
                 ? (user.displayName || user.email.split('@')[0])
                 : '';
             if (!name) return;
+            const studentId = user ? (localStorage.getItem('studentId_' + user.uid) || '') : '';
             // localStorage에도 저장해 iframe이 바로 읽을 수 있게
             try { localStorage.setItem('curriculum_user_name', name); } catch(e) {}
+            try { localStorage.setItem('curriculum_student_id', studentId); } catch(e) {}
             try {
-                frame.contentWindow.postMessage({ type: 'SET_USER_NAME', name }, '*');
+                frame.contentWindow.postMessage({ type: 'SET_USER_NAME', name, studentId }, '*');
             } catch(e) {}
         }
 
