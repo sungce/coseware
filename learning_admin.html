@@ -250,6 +250,18 @@
     </div>
 
     <script>
+        const ADMIN_EMAILS = ['sungce27@gmail.com'];
+        const GS_URL = 'https://script.google.com/macros/s/AKfycbxBfaaTJ6aHhegyfB1qDxHn-_QemVA0D5CkVPETCH1VtqBGUbVnISb3hvydkQJs4A/exec';
+
+        const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
+        const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(app);
+
+        let allData = { completed: [], activities: [], selfchecks: [], performance: [] };
+        let currentTab = 'completed';
+        let currentUnitFilter   = 'all';
+        let currentLessonFilter = 'all';
+
         const UNIT_LESSONS = {
             'I'  : [
                 '1. 컴퓨팅 시스템의 구성과 동작 원리',
@@ -341,13 +353,6 @@
             const key = (r.lessonKey || '').replace(/[^0-9]/g,'');
             return key ? String(parseInt(key.slice(-2)||key)) : '';
         }
-        const STORAGE_KEY  = 'learning_gs_url';
-        const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
-        const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(app);
-        let GS_URL = 'https://script.google.com/macros/s/AKfycbxBfaaTJ6aHhegyfB1qDxHn-_QemVA0D5CkVPETCH1VtqBGUbVnISb3hvydkQJs4A/exec';
-        let allData = { completed: [], activities: [], selfchecks: [] };
-        let currentTab = 'completed';
 
         auth.onAuthStateChanged(user => {
             if (!user || !ADMIN_EMAILS.includes(user.email)) {
@@ -362,39 +367,43 @@
 
         async function handleSignOut() { await auth.signOut(); window.location.href = 'index.html'; }
 
-        function saveGsUrl() {
-            const url = document.getElementById('gs-url-input').value.trim();
-            if (!url || !url.includes('script.google.com')) { showToast('올바른 Apps Script URL을 입력해주세요.', 'error'); return; }
-            GS_URL = url;
-            localStorage.setItem(STORAGE_KEY, url);
-            loadData();
-            showToast('URL이 저장되었습니다! 데이터를 불러옵니다.');
-        }
-
         // ── 데이터 로드 ───────────────────────────────────────
         function loadData() {
-            if (!GS_URL) {
-                document.getElementById('student-summary').innerHTML =
-                    `<p class="text-xs text-slate-400 text-center py-4">위에서 Apps Script URL을 먼저 입력해주세요.</p>`;
-                return;
-            }
+            // 로딩 상태 표시
+            document.getElementById('student-summary').innerHTML =
+                `<div class="py-8 flex flex-col items-center space-y-2 text-slate-400"><i data-lucide="loader" class="w-5 h-5 animate-spin text-teal-400"></i><span class="text-xs">불러오는 중...</span></div>`;
+            document.getElementById('record-tbody').innerHTML =
+                `<tr><td colspan="5" class="text-center py-10 text-slate-400 font-medium text-sm"><span class="flex items-center justify-center gap-2"><svg class="w-4 h-4 animate-spin text-teal-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>데이터를 불러오는 중...</span></td></tr>`;
+            lucide.createIcons();
 
-            // 학생 요약
-            const s1 = document.createElement('script');
-            s1.src = `${GS_URL}?action=getSummary&callback=__summaryCb&_=${Date.now()}`;
+            // 오류 타임아웃
+            const timer = setTimeout(() => {
+                document.getElementById('student-summary').innerHTML =
+                    `<div class="py-6 text-center text-rose-400 text-xs font-medium">⚠️ 데이터 로드 실패. 새로고침 해주세요.</div>`;
+                document.getElementById('record-tbody').innerHTML =
+                    `<tr><td colspan="5" class="text-center py-8 text-rose-400 font-medium text-sm">⚠️ 데이터 로드 실패. 새로고침을 눌러주세요.</td></tr>`;
+            }, 10000);
+            window.__loadTimer = timer;
+
+            // JSONP — 요약
             const old1 = document.getElementById('jsonp-summary'); if (old1) old1.remove();
-            s1.id = 'jsonp-summary';
+            const s1 = document.createElement('script');
+            s1.id  = 'jsonp-summary';
+            s1.src = `${GS_URL}?action=getSummary&callback=__summaryCb&_=${Date.now()}`;
+            s1.onerror = () => console.error('getSummary 로드 실패');
             document.body.appendChild(s1);
 
-            // 상세 기록
-            const s2 = document.createElement('script');
-            s2.src = `${GS_URL}?action=getRecords&callback=__recordsCb&_=${Date.now()}`;
+            // JSONP — 상세 기록
             const old2 = document.getElementById('jsonp-records'); if (old2) old2.remove();
-            s2.id = 'jsonp-records';
+            const s2 = document.createElement('script');
+            s2.id  = 'jsonp-records';
+            s2.src = `${GS_URL}?action=getRecords&callback=__recordsCb&_=${Date.now()}`;
+            s2.onerror = () => console.error('getRecords 로드 실패');
             document.body.appendChild(s2);
         }
 
         window.__summaryCb = function(data) {
+            clearTimeout(window.__loadTimer);
             const el = document.getElementById('student-summary');
             const list = data.summary || [];
             document.getElementById('stat-students').textContent = list.length;
@@ -405,13 +414,13 @@
             el.innerHTML = `<div class="space-y-2">
                 ${list.map(s => `
                 <div class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-white border border-slate-100 hover:border-teal-100 rounded-2xl transition-all cursor-pointer"
-                    onclick="filterByStudent('${s.name.replace(/'/g,"\\'")}')">
+                    onclick="filterByStudent('${(s.name||'').replace(/'/g,"\\'")}')">
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center font-black text-xs">
-                            ${s.name.charAt(0)}
+                            ${(s.name||'?').charAt(0)}
                         </div>
                         <div>
-                            <p class="text-sm font-bold text-slate-800">${s.name}</p>
+                            <p class="text-sm font-bold text-slate-800">${s.name||'-'}</p>
                             <p class="text-xs text-slate-400">최근: ${s.latest ? String(s.latest).substring(0,10) : '-'}</p>
                         </div>
                     </div>
@@ -422,6 +431,7 @@
         };
 
         window.__recordsCb = function(data) {
+            clearTimeout(window.__loadTimer);
             allData.activities   = (data.activities  || []).reverse();
             allData.selfchecks   = (data.selfchecks  || []).reverse();
             allData.completed    = (data.completed   || []).reverse();
