@@ -591,9 +591,30 @@
 
                         <div class="space-y-2">
                             <label class="text-sm font-bold text-slate-700">결과물 링크 (URL) 또는 내용</label>
-                            <textarea id="assignment-link" rows="4" placeholder="Replit, Github 링크 또는 코드를 직접 입력하세요."
-                                class="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all resize-none font-medium"
-                                required></textarea>
+                            <textarea id="assignment-link" rows="3" placeholder="Replit, Github 링크 또는 코드를 직접 입력하세요."
+                                class="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all resize-none font-medium"></textarea>
+                        </div>
+
+                        <!-- 파일 첨부 -->
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700">파일 첨부 (선택, 최대 10MB)</label>
+                            <label id="submit-file-zone"
+                                class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 rounded-2xl cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-all">
+                                <i data-lucide="upload-cloud" class="w-6 h-6 text-slate-300 mb-1" id="submit-file-icon"></i>
+                                <p class="text-sm font-bold text-slate-400" id="submit-file-label">클릭 또는 파일을 드래그하세요</p>
+                                <p class="text-xs text-slate-300 mt-0.5">PDF, HWP, PPT, ZIP, 이미지 등</p>
+                                <input type="file" id="submit-file" class="hidden" accept=".pdf,.ppt,.pptx,.hwp,.hwpx,.doc,.docx,.zip,.png,.jpg,.jpeg,.mp4">
+                            </label>
+                            <!-- 진행률 -->
+                            <div id="submit-upload-wrap" class="hidden">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-bold text-slate-500" id="submit-upload-text">업로드 중...</span>
+                                    <span class="text-xs font-bold text-blue-600" id="submit-upload-pct">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-1.5">
+                                    <div id="submit-upload-bar" class="bg-blue-500 h-1.5 rounded-full transition-all" style="width:0%"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <button type="submit"
@@ -1060,7 +1081,22 @@
 
             if (sectionId === 'notices')     { noticesLoaded = false; loadNotices(); }
             if (sectionId === 'materials')   loadInlineMaterials();
-            if (sectionId === 'assignments') loadAssignmentOptions();
+            if (sectionId === 'assignments') {
+                loadAssignmentOptions();
+                // 파일 선택 UI
+                const fi = document.getElementById('submit-file');
+                if (fi && !fi.dataset.bound) {
+                    fi.dataset.bound = '1';
+                    fi.addEventListener('change', () => {
+                        const f = fi.files[0];
+                        if (!f) return;
+                        document.getElementById('submit-file-label').textContent = `${f.name} (${(f.size/1024/1024).toFixed(1)}MB)`;
+                        document.getElementById('submit-file-label').classList.add('text-blue-600');
+                        document.getElementById('submit-file-icon').setAttribute('data-lucide','file-check');
+                        lucide.createIcons();
+                    });
+                }
+            }
             if (sectionId === 'classes') {
                 // iframe이 아직 로드 안 됐으면 src 세팅, 됐으면 이름만 전달
                 const frame = document.getElementById('curriculum-frame');
@@ -1249,24 +1285,62 @@
             const studentId  = document.getElementById('student-id').value;
             const name       = document.getElementById('student-name').value;
             const assignment = document.getElementById('assignment-title').value;
-            const link       = document.getElementById('assignment-link').value;
+            const linkVal    = document.getElementById('assignment-link').value.trim();
+            const file       = document.getElementById('submit-file').files[0];
 
             try {
+                let link = linkVal;
+
+                // 파일 첨부 시 Cloudinary 업로드
+                if (file) {
+                    if (file.size > 10*1024*1024) {
+                        showToast('파일 크기는 10MB 이하여야 합니다.', 'error');
+                        btn.disabled = false; btnText.textContent = '과제 완벽하게 제출하기'; return;
+                    }
+                    btnText.textContent = '파일 업로드 중...';
+                    document.getElementById('submit-upload-wrap').classList.remove('hidden');
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', 'school_materials');
+                    formData.append('folder', 'submissions');
+                    const fileUrl = await new Promise((resolve, reject) => {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', 'https://api.cloudinary.com/v1_1/dudh0etdr/auto/upload');
+                        xhr.upload.onprogress = e => {
+                            if (e.lengthComputable) {
+                                const pct = Math.round(e.loaded/e.total*100);
+                                document.getElementById('submit-upload-bar').style.width = pct+'%';
+                                document.getElementById('submit-upload-pct').textContent = pct+'%';
+                            }
+                        };
+                        xhr.onload = () => xhr.status===200
+                            ? resolve(JSON.parse(xhr.responseText).secure_url)
+                            : reject(new Error('업로드 실패'));
+                        xhr.onerror = () => reject(new Error('네트워크 오류'));
+                        xhr.send(formData);
+                    });
+                    document.getElementById('submit-upload-text').textContent = '업로드 완료!';
+                    link = fileUrl + (linkVal ? '\n' + linkVal : '');
+                }
+
+                btnText.textContent = '제출 중...';
                 await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify({
-                        type      : 'submission',
-                        studentId,
-                        email     : currentUser.email,
-                        name,
-                        assignment,
-                        link,
+                        type: 'submission', studentId,
+                        email: currentUser.email, name, assignment, link,
                     })
                 });
                 showToast(`${name} 학생의 과제가 제출되었습니다! 🎉`);
                 document.getElementById('assignment-submit-form').reset();
+                // 파일 UI 초기화
+                document.getElementById('submit-file-label').textContent = '클릭 또는 파일을 드래그하세요';
+                document.getElementById('submit-file-icon').setAttribute('data-lucide','upload-cloud');
+                document.getElementById('submit-upload-wrap').classList.add('hidden');
+                document.getElementById('submit-upload-bar').style.width = '0%';
+                lucide.createIcons();
             } catch(e) {
                 showToast('제출 중 오류가 발생했습니다.', 'error');
             } finally {
