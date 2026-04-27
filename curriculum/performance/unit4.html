@@ -347,6 +347,13 @@ textarea{min-height:88px}textarea:focus,input:focus{border-color:var(--uc)}
 </div>
 
 <script>
+
+var PERF_GS_URL   = 'https://script.google.com/macros/s/AKfycbzaefIbAiOpeJ1nJwhGIQxij_XosrE5nZerUsGy3_31nX4WBCxdBKM2Jhyn4KUP-Vif/exec';
+var PERF_UNIT_KEY = 'IV';
+function getUserNamePerf(){return localStorage.getItem('curriculum_user_name')||localStorage.getItem('user_name')||'익명';}
+function getStudentIdPerf(){return localStorage.getItem('curriculum_student_id')||'';}
+function postPerfToSheets(d){if(!PERF_GS_URL)return;fetch(PERF_GS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).catch(function(){});}
+
 var SAVE_KEY='perf_u4';
 var treeLevel=1;
 var TREES=['🌱','🌿','🪴','🌲','🌳','🎄','🌟'];
@@ -380,7 +387,7 @@ function toggleStep(id){document.getElementById(id).classList.toggle('collapsed'
 function rate(id,val){var row=document.querySelector('[data-id="'+id+'"]');row.querySelectorAll('.star').forEach(function(s,i){s.classList.toggle('on',i<val);});row.dataset.val=val;save();}
 function getData(){var d={};document.querySelectorAll('textarea,input,select').forEach(function(el){if(el.id)d[el.id]=el.value;});document.querySelectorAll('.star-row').forEach(function(row){if(row.dataset.id)d['rating_'+row.dataset.id]=row.dataset.val||'0';});return d;}
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(getData()));}catch(e){}}
-function saveAll(){save();var msg=document.getElementById('save-msg');msg.style.display='flex';setTimeout(function(){msg.style.display='none';},2500);}
+function saveAll(){save();postPerfToSheets({type:'perf',userName:getUserNamePerf(),studentId:getStudentIdPerf(),unit:PERF_UNIT_KEY,saveKey:SAVE_KEY,answers:getData()});var msg=document.getElementById('save-msg');msg.style.display='flex';setTimeout(function(){msg.style.display='none';},2500);}
 function clearAll(){if(!confirm('입력 내용을 모두 초기화할까요?'))return;document.querySelectorAll('textarea,input[type=text],input[type=number],select').forEach(function(el){el.value='';});document.querySelectorAll('.star').forEach(function(s){s.classList.remove('on');});treeLevel=1;updateTree();localStorage.removeItem(SAVE_KEY);}
 function loadData(){try{var d=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');Object.keys(d).forEach(function(k){if(k.startsWith('rating_')){var id=k.slice(7);var row=document.querySelector('[data-id="'+id+'"]');if(row){var v=parseInt(d[k])||0;row.dataset.val=v;row.querySelectorAll('.star').forEach(function(s,i){s.classList.toggle('on',i<v);});}}else{var el=document.getElementById(k);if(el)el.value=d[k];}});}catch(e){}}
 document.querySelectorAll('textarea,input,select').forEach(function(el){el.addEventListener('change',save);el.addEventListener('input',save);});

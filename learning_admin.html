@@ -120,6 +120,17 @@
                         <option value="all">전체 소단원</option>
                     </select>
                 </span>
+                <span class="text-xs font-black text-slate-400">·</span>
+                <span class="text-xs font-black text-slate-500 uppercase tracking-wider shrink-0">과정중심</span>
+                <select id="perf-filter" onchange="onPerfChange()"
+                    class="text-xs font-bold bg-white border border-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all">
+                    <option value="all">전체 대단원</option>
+                    <option value="I">I. 컴퓨팅 시스템</option>
+                    <option value="II">II. 데이터</option>
+                    <option value="III">III. 알고리즘과 프로그래밍</option>
+                    <option value="IV">IV. 인공지능</option>
+                    <option value="V">V. 디지털 문화</option>
+                </select>
             </div>
         </div>
 
@@ -228,6 +239,25 @@
                         <div class="py-6 text-center text-slate-400 text-xs font-medium">저장된 평가가 없습니다.</div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- 과정중심 활동 기록 패널 -->
+        <div id="perf-detail-panel" class="hidden mt-6 card p-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h2 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                        <i data-lucide="clipboard-check" class="w-5 h-5 text-orange-500"></i>
+                        <span id="perf-detail-title">과정 중심 활동 기록</span>
+                    </h2>
+                    <p class="text-xs text-slate-400 font-medium mt-1" id="perf-detail-count"></p>
+                </div>
+                <button onclick="closePerfDetail()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="perf-records-list">
+                <div class="py-8 text-center text-slate-400 text-sm font-medium">기록이 없습니다.</div>
             </div>
         </div>
 
@@ -415,9 +445,10 @@
         };
 
         window.__recordsCb = function(data) {
-            allData.activities  = (data.activities  || []).reverse();
-            allData.selfchecks  = (data.selfchecks  || []).reverse();
-            allData.completed   = (data.completed   || []).reverse();
+            allData.activities   = (data.activities  || []).reverse();
+            allData.selfchecks   = (data.selfchecks  || []).reverse();
+            allData.completed    = (data.completed   || []).reverse();
+            allData.performance  = (data.performance || []).reverse();
 
             document.getElementById('stat-completed').textContent  = allData.completed.length;
             document.getElementById('stat-activities').textContent = allData.activities.length;
@@ -537,6 +568,75 @@
 
         function closeLessonDetail() {
             document.getElementById('lesson-detail-panel').classList.add('hidden');
+        }
+
+        // ── 과정중심 활동 드롭다운 ────────────────────────────
+        const UNIT_NAMES_FULL = {
+            'I':'I. 컴퓨팅 시스템', 'II':'II. 데이터',
+            'III':'III. 알고리즘과 프로그래밍', 'IV':'IV. 인공지능', 'V':'V. 디지털 문화'
+        };
+
+        function onPerfChange() {
+            const unit = document.getElementById('perf-filter').value;
+            if (unit === 'all') { closePerfDetail(); return; }
+            showPerfDetail(unit);
+        }
+
+        function showPerfDetail(unit) {
+            const recs = (allData.performance || []).filter(r => r.unit === unit);
+            const title = UNIT_NAMES_FULL[unit] || ('단원 '+unit);
+            document.getElementById('perf-detail-title').textContent = title + ' · 과정 중심 활동';
+            document.getElementById('perf-detail-count').textContent = `총 ${recs.length}건`;
+            document.getElementById('perf-detail-panel').classList.remove('hidden');
+            document.getElementById('perf-detail-panel').scrollIntoView({ behavior:'smooth', block:'start' });
+
+            const list = document.getElementById('perf-records-list');
+            if (!recs.length) {
+                list.innerHTML = `<div class="py-10 text-center text-slate-400 text-sm font-medium">이 단원의 과정 중심 활동 기록이 없습니다.</div>`;
+                return;
+            }
+
+            list.innerHTML = `<div class="space-y-4">
+                ${recs.map(r => {
+                    let ansHtml = '';
+                    try {
+                        const ans = typeof r.answers === 'string' ? JSON.parse(r.answers) : (r.answers || {});
+                        const entries = Object.entries(ans).filter(([k,v]) => v && String(v).trim());
+                        ansHtml = entries.length
+                            ? entries.map(([k,v]) => {
+                                const isChecked = typeof v === 'boolean' || v === 'true' || v === true;
+                                if (isChecked) return `<div class="text-xs text-slate-600 flex items-center space-x-1"><i data-lucide="check" class="w-3 h-3 text-emerald-500"></i><span>${k.replace(/^cb_/,'')}</span></div>`;
+                                if (k.startsWith('cb_')) return '';
+                                if (k.startsWith('rating_')) return `<div class="flex items-center space-x-2 text-xs"><span class="text-slate-400 w-24 shrink-0">${k.replace('rating_','')}</span><span class="text-amber-500">${'★'.repeat(parseInt(v)||0)}${'☆'.repeat(5-(parseInt(v)||0))}</span></div>`;
+                                return `<div class="text-xs"><span class="text-slate-400 font-medium block mb-0.5">${k}</span><p class="text-slate-700 bg-slate-50 rounded-lg p-2 whitespace-pre-wrap">${String(v).substring(0,200)}</p></div>`;
+                              }).filter(Boolean).join('')
+                            : '<p class="text-xs text-slate-400">내용 없음</p>';
+                    } catch(e) { ansHtml = `<p class="text-xs text-slate-500">${r.answers||''}</p>`; }
+
+                    return `
+                    <div class="p-5 bg-orange-50/40 border border-orange-100 rounded-2xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-orange-100 text-orange-700 rounded-xl flex items-center justify-center font-black text-sm">
+                                    ${(r.userName||'익').charAt(0)}
+                                </div>
+                                <div>
+                                    <span class="font-black text-slate-800">${r.userName||'-'}</span>
+                                    ${r.studentId ? `<span class="text-xs text-slate-400 ml-2">(${r.studentId})</span>` : ''}
+                                </div>
+                            </div>
+                            <span class="text-xs text-slate-400 font-medium">${r.date ? String(r.date).substring(0,16) : '-'}</span>
+                        </div>
+                        <div class="space-y-2">${ansHtml}</div>
+                    </div>`;
+                }).join('')}
+            </div>`;
+            lucide.createIcons();
+        }
+
+        function closePerfDetail() {
+            document.getElementById('perf-detail-panel').classList.add('hidden');
+            document.getElementById('perf-filter').value = 'all';
         }
             document.getElementById('record-search').value = name;
             renderCurrentTab();

@@ -322,6 +322,27 @@ textarea:focus,input:focus{border-color:var(--u)}
 </div>
 
 <script>
+
+var PERF_GS_URL   = 'https://script.google.com/macros/s/AKfycbzaefIbAiOpeJ1nJwhGIQxij_XosrE5nZerUsGy3_31nX4WBCxdBKM2Jhyn4KUP-Vif/exec';
+var PERF_UNIT_KEY = 'I';
+
+function getUserNamePerf() {
+  return localStorage.getItem('curriculum_user_name') ||
+         localStorage.getItem('user_name') || '익명';
+}
+function getStudentIdPerf() {
+  return localStorage.getItem('curriculum_student_id') || '';
+}
+
+function postPerfToSheets(data) {
+  if (!PERF_GS_URL) return;
+  fetch(PERF_GS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  }).catch(function(){});
+}
+
 var SAVE_KEY = 'perf_u1';
 
 function toggleStep(id) {
@@ -357,6 +378,15 @@ function save() {
 
 function saveAll() {
   save();
+  // Google Sheets에 과정중심 활동 저장
+  postPerfToSheets({
+    type: 'perf',
+    userName:  getUserNamePerf(),
+    studentId: getStudentIdPerf(),
+    unit:      PERF_UNIT_KEY,
+    saveKey:   SAVE_KEY,
+    answers:   getData()
+  });
   var msg = document.getElementById('save-msg');
   msg.style.display = 'flex';
   setTimeout(function() { msg.style.display = 'none'; }, 2500);

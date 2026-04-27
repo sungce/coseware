@@ -10,7 +10,9 @@ const SHEET_ACTIVITY = 'Activities';   // 수행 활동 저장
 const SHEET_SELFCHECK = 'SelfChecks';  // 자기 평가 저장
 const SHEET_DONE     = 'Completed';    // 완료 표시 저장
 
-function doGet(e) {
+const SHEET_PERF     = 'Performance';  // 과정 중심 활동 저장
+
+
   var params = e.parameter;
   var cb     = params.callback || 'callback';
 
@@ -18,7 +20,7 @@ function doGet(e) {
   if (params.action === 'getRecords') {
     try {
       var ss   = SpreadsheetApp.openById(LEARNING_SPREADSHEET_ID);
-      var result = { activities: [], selfchecks: [], completed: [] };
+      var result = { activities: [], selfchecks: [], completed: [], performance: [] };
 
       var shA = ss.getSheetByName(SHEET_ACTIVITY);
       if (shA && shA.getLastRow() > 1) {
@@ -41,6 +43,14 @@ function doGet(e) {
         result.completed = shD.getRange(2, 1, shD.getLastRow()-1, shD.getLastColumn())
           .getValues().filter(r => r[0]).map(r => ({
             date: r[0], userName: r[1], studentId: r[2], unit: r[3], lessonNum: r[4], lessonName: r[5]
+          }));
+      }
+
+      var shP = ss.getSheetByName(SHEET_PERF);
+      if (shP && shP.getLastRow() > 1) {
+        result.performance = shP.getRange(2, 1, shP.getLastRow()-1, shP.getLastColumn())
+          .getValues().filter(r => r[0]).map(r => ({
+            date: r[0], userName: r[1], studentId: r[2], unit: r[3], saveKey: r[4], answers: r[5]
           }));
       }
 
@@ -92,6 +102,13 @@ function doPost(e) {
     var ss   = SpreadsheetApp.openById(LEARNING_SPREADSHEET_ID);
     var date = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
     var userName = data.userName || '익명';
+
+    // 과정 중심 활동 저장
+    if (data.type === 'perf') {
+      var sh = getOrCreateSheet(ss, SHEET_PERF, ['날짜','학생명','학번','대단원','저장키','활동내용']);
+      sh.appendRow([date, userName, data.studentId || '', data.unit || '',
+                    data.saveKey || '', JSON.stringify(data.answers || {})]);
+    }
 
     // 수행 활동 저장
     if (data.type === 'act') {

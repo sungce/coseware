@@ -405,6 +405,13 @@ textarea{min-height:88px}textarea:focus,input:focus{border-color:var(--uc)}
 </div>
 
 <script>
+
+var PERF_GS_URL   = 'https://script.google.com/macros/s/AKfycbzaefIbAiOpeJ1nJwhGIQxij_XosrE5nZerUsGy3_31nX4WBCxdBKM2Jhyn4KUP-Vif/exec';
+var PERF_UNIT_KEY = 'II';
+function getUserNamePerf(){return localStorage.getItem('curriculum_user_name')||localStorage.getItem('user_name')||'익명';}
+function getStudentIdPerf(){return localStorage.getItem('curriculum_student_id')||'';}
+function postPerfToSheets(d){if(!PERF_GS_URL)return;fetch(PERF_GS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).catch(function(){});}
+
 var SAVE_KEY='perf_u2';
 
 // ── 탭 전환 ──
@@ -487,12 +494,13 @@ function getData() {
   return d;
 }
 function save(){ try{ localStorage.setItem(SAVE_KEY,JSON.stringify(getData())); }catch(e){} }
-function saveAll(){
+function saveAll(){{
   save();
+  postPerfToSheets({{type:'perf',userName:getUserNamePerf(),studentId:getStudentIdPerf(),unit:PERF_UNIT_KEY,saveKey:SAVE_KEY,answers:getData()}});
   var msg=document.getElementById('save-msg');
   msg.style.display='flex';
-  setTimeout(function(){ msg.style.display='none'; },2500);
-}
+  setTimeout(function(){{ msg.style.display='none'; }},2500);
+}}
 function clearAll(){
   if(!confirm('입력 내용을 모두 초기화할까요?')) return;
   document.querySelectorAll('textarea,input[type=text],select').forEach(function(el){ el.value=''; });
