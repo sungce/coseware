@@ -198,6 +198,7 @@
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM",
@@ -212,6 +213,7 @@
 
         const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(app);
+        const db   = firebase.firestore(app);
 
         auth.onAuthStateChanged((user) => {
             if (!user || !ADMIN_EMAILS.includes(user.email)) {
@@ -363,14 +365,26 @@
 
         // ── 삭제 ─────────────────────────────────────────────
         async function deleteMember(idx, name, email) {
-            if (!confirm(`"${name}" (${email}) 학생을 삭제할까요?\n\n※ Google Sheets에서도 삭제됩니다.`)) return;
+            if (!confirm(`"${name}" (${email}) 학생을 삭제할까요?\n\n삭제 항목:\n• Google Sheets 회원 목록\n• Firestore 제출 내역`)) return;
+
             const m = allMembers[idx];
             try {
+                // 1. Google Sheets에서 삭제
                 await fetch(APPS_SCRIPT_URL, {
                     method: 'POST', mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify({ type: 'deleteMember', uid: m.uid, email: m.email })
                 });
+
+                // 2. Firestore Submissions 제출 내역 삭제 (이메일 기준)
+                try {
+                    const snap = await db.collection('submissions')
+                        .where('email', '==', m.email).get();
+                    const batch = db.batch();
+                    snap.docs.forEach(doc => batch.delete(doc.ref));
+                    if (!snap.empty) await batch.commit();
+                } catch(e) { console.warn('Firestore 제출 삭제 실패(무시):', e.message); }
+
                 allMembers.splice(idx, 1);
                 updateStats();
                 renderMembers(allMembers);

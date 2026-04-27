@@ -297,6 +297,17 @@ function doPost(e) {
           }
         }
       }
+
+      // Firebase Auth에서도 삭제 (UID가 있을 경우)
+      if (data.uid) {
+        try {
+          const FIREBASE_API_KEY = 'AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM';
+          // Admin SDK가 없으므로 Identity Toolkit API로 삭제 시도
+          const url = `https://identitytoolkit.googleapis.com/v1/projects/book-c2d05/accounts/${data.uid}?key=${FIREBASE_API_KEY}`;
+          UrlFetchApp.fetch(url, { method: 'delete', muteHttpExceptions: true });
+        } catch(e) { /* Firebase Auth 삭제 실패는 무시 (관리자 권한 필요) */ }
+      }
+
       return jsonResponse({ result: 'success' });
     }
 
