@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학습 현황 - 정보 클래스룸</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <style>
+        body { font-family:'Pretendard',sans-serif; -webkit-font-smoothing:antialiased; }
+        .fade-in { animation:fadeIn .45s cubic-bezier(.16,1,.3,1) forwards; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        .card { background:#fff; border-radius:1.5rem; border:1px solid #f1f5f9; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+        .tab-btn { transition: all .2s; }
+        .tab-btn.active { background: #0d9488; color: #fff; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen" style="background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:32px 32px;">
+
+    <div id="access-denied" class="fixed inset-0 z-[200] bg-white hidden flex-col items-center justify-center">
+        <i data-lucide="shield-off" class="w-10 h-10 text-rose-400 mb-4"></i>
+        <h2 class="text-xl font-black text-slate-900 mb-2">접근 권한 없음</h2>
+        <a href="index.html" class="mt-4 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold">메인으로</a>
+    </div>
+
+    <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center py-4">
+            <div class="flex items-center space-x-4">
+                <a href="admin.html" class="text-slate-400 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-br from-teal-500 to-emerald-600 text-white p-2.5 rounded-xl shadow-lg shadow-teal-500/30">
+                        <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+                    </div>
+                    <span class="font-black text-lg text-slate-900">학습 현황</span>
+                    <span class="text-xs bg-teal-100 text-teal-700 font-bold px-2 py-0.5 rounded-full">Admin</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="hidden sm:flex items-center space-x-2 bg-slate-100 px-4 py-2 rounded-xl">
+                    <i data-lucide="user-check" class="w-4 h-4 text-slate-500"></i>
+                    <span id="admin-name" class="text-sm font-bold text-slate-700"></span>
+                </div>
+                <button onclick="handleSignOut()" class="flex items-center space-x-1.5 text-slate-500 hover:text-rose-500 px-3 py-2 rounded-xl hover:bg-rose-50 text-sm font-bold transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i><span class="hidden sm:inline">로그아웃</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 pt-28 pb-24 fade-in">
+
+        <!-- Apps Script URL 설정 -->
+        <div id="setup-banner" class="card p-6 mb-8 border-amber-200 bg-amber-50">
+            <div class="flex items-start space-x-4">
+                <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-black text-slate-900 mb-1">학습 기록 Google Sheets 연동 설정</h3>
+                    <p class="text-sm text-slate-600 font-medium mb-3">새 Apps Script 배포 후 URL을 입력하세요. 아래 <strong>연동 방법</strong>을 참고하세요.</p>
+                    <div class="flex space-x-3">
+                        <input type="text" id="gs-url-input" placeholder="https://script.google.com/macros/s/.../exec"
+                            class="flex-1 bg-white border border-amber-300 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+                        <button onclick="saveGsUrl()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                            저장 & 로드
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 통계 카드 -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div class="card p-5">
+                <div class="w-9 h-9 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mb-3"><i data-lucide="users" class="w-4 h-4"></i></div>
+                <p class="text-2xl font-black text-slate-900" id="stat-students">-</p>
+                <p class="text-xs font-medium text-slate-400 mt-0.5">학습 학생 수</p>
+            </div>
+            <div class="card p-5">
+                <div class="w-9 h-9 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-3"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
+                <p class="text-2xl font-black text-slate-900" id="stat-completed">-</p>
+                <p class="text-xs font-medium text-slate-400 mt-0.5">완료 소단원</p>
+            </div>
+            <div class="card p-5">
+                <div class="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-3"><i data-lucide="edit" class="w-4 h-4"></i></div>
+                <p class="text-2xl font-black text-slate-900" id="stat-activities">-</p>
+                <p class="text-xs font-medium text-slate-400 mt-0.5">활동 저장</p>
+            </div>
+            <div class="card p-5">
+                <div class="w-9 h-9 bg-violet-50 text-violet-600 rounded-xl flex items-center justify-center mb-3"><i data-lucide="star" class="w-4 h-4"></i></div>
+                <p class="text-2xl font-black text-slate-900" id="stat-selfchecks">-</p>
+                <p class="text-xs font-medium text-slate-400 mt-0.5">자기 평가</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- 학생별 요약 -->
+            <div class="card p-6">
+                <div class="flex items-center justify-between mb-5">
+                    <h2 class="text-base font-black text-slate-900 flex items-center space-x-2">
+                        <i data-lucide="users" class="w-4 h-4 text-teal-500"></i><span>학생별 학습 요약</span>
+                    </h2>
+                    <button onclick="loadData()" class="text-xs font-bold text-slate-400 hover:text-teal-600 p-1.5 rounded-lg hover:bg-teal-50 transition-colors">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+                <div id="student-summary">
+                    <div class="py-8 flex flex-col items-center space-y-2 text-slate-400">
+                        <i data-lucide="loader" class="w-5 h-5 animate-spin text-teal-400"></i>
+                        <span class="text-xs">데이터 로드 중...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상세 기록 -->
+            <div class="lg:col-span-2 card p-6">
+                <div class="flex items-center justify-between mb-5">
+                    <h2 class="text-base font-black text-slate-900 flex items-center space-x-2">
+                        <i data-lucide="list" class="w-4 h-4 text-teal-500"></i><span>상세 학습 기록</span>
+                    </h2>
+                    <!-- 탭 -->
+                    <div class="flex gap-1.5 bg-slate-100 p-1 rounded-xl">
+                        <button onclick="switchTab('completed')" id="tab-completed"
+                            class="tab-btn active text-xs font-bold px-3 py-1.5 rounded-lg">완료</button>
+                        <button onclick="switchTab('activities')" id="tab-activities"
+                            class="tab-btn text-xs font-bold px-3 py-1.5 rounded-lg text-slate-500">활동</button>
+                        <button onclick="switchTab('selfchecks')" id="tab-selfchecks"
+                            class="tab-btn text-xs font-bold px-3 py-1.5 rounded-lg text-slate-500">평가</button>
+                    </div>
+                </div>
+
+                <!-- 검색 -->
+                <div class="relative mb-4">
+                    <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                    <input type="text" id="record-search" placeholder="학생명 검색..."
+                        oninput="renderCurrentTab()"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all">
+                </div>
+
+                <!-- 기록 테이블 -->
+                <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100" id="record-thead">
+                                <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">날짜</th>
+                                <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">학생명</th>
+                                <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">단원</th>
+                                <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">내용</th>
+                            </tr>
+                        </thead>
+                        <tbody id="record-tbody">
+                            <tr><td colspan="4" class="text-center py-10 text-slate-400 font-medium text-sm">데이터를 불러오는 중...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-slate-400 font-medium mt-2" id="record-count-label"></p>
+            </div>
+        </div>
+
+        <!-- 연동 방법 안내 -->
+        <div class="card p-8 mt-6">
+            <h2 class="text-lg font-black text-slate-900 mb-4 flex items-center space-x-2">
+                <i data-lucide="book-open" class="w-5 h-5 text-teal-500"></i>
+                <span>학습 기록 Google Sheets 연동 방법</span>
+            </h2>
+            <div class="space-y-4 text-sm text-slate-600 font-medium">
+                <div class="flex items-start space-x-3">
+                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">1</span>
+                    <div>
+                        <p class="font-bold text-slate-800">새 Google Sheets 생성</p>
+                        <p class="text-slate-500">Google Drive에서 새 스프레드시트 생성 → 이름: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">정보교과_학습기록</code></p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">2</span>
+                    <div>
+                        <p class="font-bold text-slate-800">시트 ID 복사</p>
+                        <p class="text-slate-500">URL에서 <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">/d/[이 부분]/edit</code> 복사</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">3</span>
+                    <div>
+                        <p class="font-bold text-slate-800">Apps Script 편집기 열기</p>
+                        <p class="text-slate-500">스프레드시트 → 확장 프로그램 → Apps Script → <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">learning_appscript.gs</code> 내용을 붙여넣기</p>
+                        <p class="text-slate-500 mt-1"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">LEARNING_SPREADSHEET_ID</code> 를 복사한 시트 ID로 교체</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">4</span>
+                    <div>
+                        <p class="font-bold text-slate-800">배포</p>
+                        <p class="text-slate-500">배포 → 새 배포 → 웹 앱 → 액세스 권한: <strong>모든 사용자</strong> → 배포 → URL 복사</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">5</span>
+                    <div>
+                        <p class="font-bold text-slate-800">URL 입력</p>
+                        <p class="text-slate-500">위 <strong>학습 기록 Google Sheets 연동 설정</strong> 란에 복사한 URL 입력 → <strong>저장 & 로드</strong></p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="w-7 h-7 bg-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shrink-0 mt-0.5">6</span>
+                    <div>
+                        <p class="font-bold text-slate-800">curriculum 파일 GS_URL 업데이트</p>
+                        <p class="text-slate-500">배포 URL을 관리자에게 알려주면 모든 curriculum 파일의 <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">GS_URL</code>을 자동으로 업데이트해 드립니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 토스트 -->
+    <div id="toast" class="fixed bottom-8 right-8 bg-slate-900/95 text-white px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-32 opacity-0 z-50 flex items-center space-x-3 border border-slate-700">
+        <div class="p-1.5 rounded-full bg-emerald-500/20"><i data-lucide="check" class="w-4 h-4 text-emerald-400" id="toast-icon"></i></div>
+        <span class="font-medium text-sm" id="toast-msg"></span>
+    </div>
+
+    <script>
+        const ADMIN_EMAILS = ['sungce27@gmail.com'];
+        const STORAGE_KEY  = 'learning_gs_url';
+        const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
+        const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(app);
+        let GS_URL = localStorage.getItem(STORAGE_KEY) || '';
+        let allData = { completed: [], activities: [], selfchecks: [] };
+        let currentTab = 'completed';
+
+        auth.onAuthStateChanged(user => {
+            if (!user || !ADMIN_EMAILS.includes(user.email)) {
+                document.getElementById('access-denied').classList.remove('hidden');
+                document.getElementById('access-denied').classList.add('flex');
+                lucide.createIcons(); return;
+            }
+            document.getElementById('admin-name').textContent = user.displayName || user.email.split('@')[0];
+            lucide.createIcons();
+            if (GS_URL) {
+                document.getElementById('gs-url-input').value = GS_URL;
+                loadData();
+            }
+        });
+
+        async function handleSignOut() { await auth.signOut(); window.location.href = 'index.html'; }
+
+        function saveGsUrl() {
+            const url = document.getElementById('gs-url-input').value.trim();
+            if (!url || !url.includes('script.google.com')) { showToast('올바른 Apps Script URL을 입력해주세요.', 'error'); return; }
+            GS_URL = url;
+            localStorage.setItem(STORAGE_KEY, url);
+            loadData();
+            showToast('URL이 저장되었습니다! 데이터를 불러옵니다.');
+        }
+
+        // ── 데이터 로드 ───────────────────────────────────────
+        function loadData() {
+            if (!GS_URL) {
+                document.getElementById('student-summary').innerHTML =
+                    `<p class="text-xs text-slate-400 text-center py-4">위에서 Apps Script URL을 먼저 입력해주세요.</p>`;
+                return;
+            }
+
+            // 학생 요약
+            const s1 = document.createElement('script');
+            s1.src = `${GS_URL}?action=getSummary&callback=__summaryCb&_=${Date.now()}`;
+            const old1 = document.getElementById('jsonp-summary'); if (old1) old1.remove();
+            s1.id = 'jsonp-summary';
+            document.body.appendChild(s1);
+
+            // 상세 기록
+            const s2 = document.createElement('script');
+            s2.src = `${GS_URL}?action=getRecords&callback=__recordsCb&_=${Date.now()}`;
+            const old2 = document.getElementById('jsonp-records'); if (old2) old2.remove();
+            s2.id = 'jsonp-records';
+            document.body.appendChild(s2);
+        }
+
+        window.__summaryCb = function(data) {
+            const el = document.getElementById('student-summary');
+            const list = data.summary || [];
+            document.getElementById('stat-students').textContent = list.length;
+            if (!list.length) {
+                el.innerHTML = `<div class="py-8 flex flex-col items-center space-y-2 text-slate-400"><i data-lucide="inbox" class="w-7 h-7 text-slate-300"></i><p class="text-xs font-medium">학습 기록이 없습니다.</p></div>`;
+                lucide.createIcons(); return;
+            }
+            el.innerHTML = `<div class="space-y-2">
+                ${list.map(s => `
+                <div class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-white border border-slate-100 hover:border-teal-100 rounded-2xl transition-all cursor-pointer"
+                    onclick="filterByStudent('${s.name.replace(/'/g,"\\'")}')">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center font-black text-xs">
+                            ${s.name.charAt(0)}
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">${s.name}</p>
+                            <p class="text-xs text-slate-400">최근: ${s.latest ? String(s.latest).substring(0,10) : '-'}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-black text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full">${s.count}완료</span>
+                </div>`).join('')}
+            </div>`;
+            lucide.createIcons();
+        };
+
+        window.__recordsCb = function(data) {
+            allData.activities  = (data.activities  || []).reverse();
+            allData.selfchecks  = (data.selfchecks  || []).reverse();
+            allData.completed   = (data.completed   || []).reverse();
+
+            document.getElementById('stat-completed').textContent  = allData.completed.length;
+            document.getElementById('stat-activities').textContent = allData.activities.length;
+            document.getElementById('stat-selfchecks').textContent = allData.selfchecks.length;
+
+            renderCurrentTab();
+        };
+
+        function switchTab(tab) {
+            currentTab = tab;
+            ['completed','activities','selfchecks'].forEach(t => {
+                const btn = document.getElementById('tab-'+t);
+                btn.className = t===tab
+                    ? 'tab-btn active text-xs font-bold px-3 py-1.5 rounded-lg'
+                    : 'tab-btn text-xs font-bold px-3 py-1.5 rounded-lg text-slate-500';
+            });
+            document.getElementById('record-search').value = '';
+            renderCurrentTab();
+        }
+
+        function filterByStudent(name) {
+            switchTab('completed');
+            document.getElementById('record-search').value = name;
+            renderCurrentTab();
+        }
+
+        function renderCurrentTab() {
+            const q = (document.getElementById('record-search').value || '').toLowerCase();
+            let rows = allData[currentTab] || [];
+            if (q) rows = rows.filter(r => (r.userName||'').toLowerCase().includes(q));
+
+            document.getElementById('record-count-label').textContent = `${rows.length}건`;
+
+            const tbody = document.getElementById('record-tbody');
+            if (!rows.length) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-10 text-slate-400 font-medium text-sm">${GS_URL ? '기록이 없습니다.' : 'Apps Script URL을 먼저 설정해주세요.'}</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = rows.map(r => {
+                let unit = '', content = '';
+                if (currentTab === 'completed') {
+                    unit    = `<span class="bg-teal-50 text-teal-700 text-xs font-bold px-2 py-0.5 rounded-lg">단원 ${r.unit || ''}</span>`;
+                    content = `소단원 ${r.lessonNum || ''} · ${r.lessonName || ''}`;
+                } else {
+                    unit    = `<span class="text-xs font-medium text-slate-500">${r.lessonKey || ''}</span>`;
+                    content = r.lessonName || '';
+                }
+                const dateStr = r.date ? String(r.date).substring(0,16) : '-';
+                return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3.5 text-xs text-slate-400 font-medium whitespace-nowrap">${dateStr}</td>
+                    <td class="px-4 py-3.5 font-bold text-slate-800 text-sm">${r.userName || '-'}</td>
+                    <td class="px-4 py-3.5">${unit}</td>
+                    <td class="px-4 py-3.5 text-slate-600 font-medium text-sm">${content}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ── 토스트 ─────────────────────────────────────────────
+        let toastTimeout;
+        function showToast(message, type='success') {
+            const toast=document.getElementById('toast'), icon=document.getElementById('toast-icon');
+            document.getElementById('toast-msg').textContent=message;
+            icon.className=type==='error'?'w-4 h-4 text-rose-400':'w-4 h-4 text-emerald-400';
+            icon.setAttribute('data-lucide',type==='error'?'alert-circle':'check'); lucide.createIcons();
+            clearTimeout(toastTimeout); toast.classList.remove('translate-y-32','opacity-0');
+            toastTimeout=setTimeout(()=>toast.classList.add('translate-y-32','opacity-0'),4000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+    </script>
+</body>
+</html>
