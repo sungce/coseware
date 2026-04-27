@@ -379,10 +379,15 @@
             // 오류 타임아웃
             const timer = setTimeout(() => {
                 document.getElementById('student-summary').innerHTML =
-                    `<div class="py-6 text-center text-rose-400 text-xs font-medium">⚠️ 데이터 로드 실패. 새로고침 해주세요.</div>`;
+                    `<div class="py-6 text-center text-amber-500 text-xs font-medium">⚠️ 데이터 없음 또는 연결 오류<br><span class="text-slate-400">아직 학생 학습 기록이 없거나 Google Sheets가 비어있습니다.</span></div>`;
                 document.getElementById('record-tbody').innerHTML =
-                    `<tr><td colspan="5" class="text-center py-8 text-rose-400 font-medium text-sm">⚠️ 데이터 로드 실패. 새로고침을 눌러주세요.</td></tr>`;
-            }, 10000);
+                    `<tr><td colspan="5" class="text-center py-8 text-slate-400 font-medium text-sm">학습 기록이 없거나 데이터 로드에 실패했습니다.</td></tr>`;
+                // 통계 0으로 초기화
+                ['stat-students','stat-completed','stat-activities','stat-selfchecks'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = '0';
+                });
+            }, 12000);
             window.__loadTimer = timer;
 
             // JSONP — 요약
@@ -421,7 +426,7 @@
                         </div>
                         <div>
                             <p class="text-sm font-bold text-slate-800">${s.name||'-'}</p>
-                            <p class="text-xs text-slate-400">최근: ${s.latest ? String(s.latest).substring(0,10) : '-'}</p>
+                            <p class="text-xs text-slate-400">${s.studentId ? s.studentId + ' · ' : ''}최근: ${s.latest ? String(s.latest).substring(0,10) : '-'}</p>
                         </div>
                     </div>
                     <span class="text-xs font-black text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full">${s.count}완료</span>
@@ -443,6 +448,13 @@
 
             renderCurrentTab();
         };
+
+        function filterByStudent(name) {
+            switchTab('completed');
+            const search = document.getElementById('record-search');
+            if (search) search.value = name;
+            renderCurrentTab();
+        }
 
         function switchTab(tab) {
             currentTab = tab;

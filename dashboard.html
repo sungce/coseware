@@ -306,7 +306,7 @@
             } catch(e) { console.error('과제 로드 실패:', e); }
         }
 
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 document.getElementById('need-login').classList.remove('hidden');
                 document.getElementById('need-login').classList.add('flex');

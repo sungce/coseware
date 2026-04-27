@@ -73,10 +73,11 @@ function doGet(e) {
       var shD = ss.getSheetByName(SHEET_DONE);
       var summary = {};
       if (shD && shD.getLastRow() > 1) {
-        var rows = shD.getRange(2,1,shD.getLastRow()-1,5).getValues().filter(r=>r[0]);
+        var rows = shD.getRange(2,1,shD.getLastRow()-1,6).getValues().filter(r=>r[0]);
         rows.forEach(r => {
           var name = r[1];
-          if (!summary[name]) summary[name] = { name, count: 0, latest: '' };
+          var sid  = r[2] || '';
+          if (!summary[name]) summary[name] = { name, studentId: sid, count: 0, latest: '' };
           summary[name].count++;
           if (!summary[name].latest || r[0] > summary[name].latest) summary[name].latest = r[0];
         });
