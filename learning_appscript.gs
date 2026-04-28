@@ -4,7 +4,7 @@
 //  - SPREADSHEET_ID 를 새 시트의 ID 로 교체하세요.
 // ============================================================
 
-const LEARNING_SPREADSHEET_ID = 'YOUR_NEW_SPREADSHEET_ID';  // ← 여기를 교체
+const LEARNING_SPREADSHEET_ID = '13rudHavb6-7M3A_VyXx8oLlhshPLyku2Nyvt-xFLcuY';  // ← 여기를 교체
 
 const SHEET_ACTIVITY = 'Activities';   // 수행 활동 저장
 const SHEET_SELFCHECK = 'SelfChecks';  // 자기 평가 저장
