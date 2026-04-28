@@ -251,109 +251,27 @@
 
     <script>
         const ADMIN_EMAILS = ['sungce27@gmail.com'];
-        const GS_URL = 'https://script.google.com/macros/s/AKfycbwtFKbSDysgz49kaBmMN_FsnW5fHM126tX3wr9bNVonop3fz-e7l5PWS0dPt462umhU/exec';
+        const GS_URL = 'https://script.google.com/macros/s/AKfycbxBfaaTJ6aHhegyfB1qDxHn-_QemVA0D5CkVPETCH1VtqBGUbVnISb3hvydkQJs4A/exec';
 
         const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
         const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(app);
 
-        let allData = { completed: [], activities: [], selfchecks: [], performance: [] };
+        let allData = { completed:[], activities:[], selfchecks:[], performance:[] };
         let currentTab = 'completed';
-        let currentUnitFilter   = 'all';
-        let currentLessonFilter = 'all';
+        let currentUnitFilter = 'all';
 
+        // ── 소단원 목록 ──────────────────────────────────────
         const UNIT_LESSONS = {
-            'I'  : [
-                '1. 컴퓨팅 시스템의 구성과 동작 원리',
-                '2. 피지컬 컴퓨팅 시스템의 이해',
-                '3. 운동 횟수 표시 장치 만들기',
-                '4. 수면 온도 알림이 장치 만들기',
-                '5. 소리에 반응하는 애니메이션 장치 만들기',
-                '6. 이심전심 게임 장치 만들기',
-            ],
-            'II' : [
-                '1. 디지털 형태의 데이터',
-                '2. 다양한 데이터의 디지털 표현',
-                '3. 데이터의 수집과 관리',
-                '4. 데이터의 구조화와 분석',
-                '5. 인기 공유 동영상 데이터 분석',
-                '6. 급식 잔반 데이터 분석',
-            ],
-            'III': [
-                '1. 문제의 상태와 구조화',
-                '2. 문제의 추상화',
-                '3. 알고리즘의 이해와 표현',
-                '4. 알고리즘의 분석과 설계',
-                '5. 프로그래밍 시작하기',
-                '6. 논리 연산 프로그래밍',
-                '7. 중첩 제어 구조 프로그래밍',
-                '8. 리스트와 프로그래밍',
-                '9. 함수와 디버깅',
-                '10. 실생활과 학문 분야 문제 해결',
-            ],
-            'IV' : [
-                '1. 인공지능의 개념과 특성',
-                '2. 데이터와 학습',
-                '3. 팔 이미지를 이용한 운동 도우미',
-                '4. 소리 데이터를 이용한 웃음 계수 시스템',
-                '5. 텍스트 데이터를 이용한 영화 평가 시스템',
-                '6. 인공지능의 윤리적 문제 해결',
-            ],
-            'V'  : [
-                '1. 디지털 사회와 정보 윤리',
-                '2. 개인 정보 보호와 사이버 보안',
-                '3. 저작권과 디지털 창작물',
-                '4. 사이버 폭력 예방과 대처',
-                '5. 미디어 리터러시와 정보 신뢰성',
-                '6. AI와 디지털 문화의 미래',
-            ],
+            'I'  : ['1. 컴퓨팅 시스템의 구성과 동작 원리','2. 피지컬 컴퓨팅 시스템의 이해','3. 운동 횟수 표시 장치 만들기','4. 수면 온도 알림이 장치 만들기','5. 소리에 반응하는 애니메이션 장치 만들기','6. 이심전심 게임 장치 만들기'],
+            'II' : ['1. 디지털 형태의 데이터','2. 다양한 데이터의 디지털 표현','3. 데이터의 수집과 관리','4. 데이터의 구조화와 분석','5. 인기 공유 동영상 데이터 분석','6. 급식 잔반 데이터 분석'],
+            'III': ['1. 문제의 상태와 구조화','2. 문제의 추상화','3. 알고리즘의 이해와 표현','4. 알고리즘의 분석과 설계','5. 프로그래밍 시작하기','6. 논리 연산 프로그래밍','7. 중첩 제어 구조 프로그래밍','8. 리스트와 프로그래밍','9. 함수와 디버깅','10. 실생활과 학문 분야 문제 해결'],
+            'IV' : ['1. 인공지능의 개념과 특성','2. 데이터와 학습','3. 팔 이미지를 이용한 운동 도우미','4. 소리 데이터를 이용한 웃음 계수 시스템','5. 텍스트 데이터를 이용한 영화 평가 시스템','6. 인공지능의 윤리적 문제 해결'],
+            'V'  : ['1. 디지털 사회와 정보 윤리','2. 개인 정보 보호와 사이버 보안','3. 저작권과 디지털 창작물','4. 사이버 폭력 예방과 대처','5. 미디어 리터러시와 정보 신뢰성','6. AI와 디지털 문화의 미래'],
         };
-        let currentUnitFilter   = 'all';
-        let currentLessonFilter = 'all';
+        const UNIT_NAMES = { 'I':'I. 컴퓨팅 시스템','II':'II. 데이터','III':'III. 알고리즘과 프로그래밍','IV':'IV. 인공지능','V':'V. 디지털 문화' };
 
-        function setUnitFilter(unit) {
-            currentUnitFilter   = unit;
-            currentLessonFilter = 'all';
-            // 버튼 스타일
-            ['all','I','II','III','IV','V'].forEach(u => {
-                const btn = document.getElementById('uf-'+u);
-                if (!btn) return;
-                btn.className = u===unit
-                    ? 'text-xs font-bold px-3 py-1.5 rounded-full bg-teal-500 text-white transition-all'
-                    : 'text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-teal-50 hover:text-teal-600 transition-all';
-            });
-            // 소단원 선택 표시/숨김
-            const wrap = document.getElementById('unit-lesson-filter-wrap');
-            const sel  = document.getElementById('lesson-filter');
-            if (unit !== 'all' && UNIT_LESSONS[unit]) {
-                sel.innerHTML = '<option value="all">전체 소단원</option>' +
-                    UNIT_LESSONS[unit].map((l,i) => `<option value="${i+1}">${l}</option>`).join('');
-                wrap.classList.remove('hidden'); wrap.classList.add('flex');
-            } else {
-                wrap.classList.add('hidden'); wrap.classList.remove('flex');
-            }
-            renderCurrentTab();
-        }
-
-        function getUnitFromRecord(r) {
-            // completed: unit 필드 직접
-            if (r.unit) return r.unit;
-            // activities/selfchecks: lessonKey 형식 'lXX' → 단원 추정
-            const key = (r.lessonKey || '').toLowerCase();
-            if (key.startsWith('l1')) return 'I';
-            if (key.startsWith('l2')) return 'II';
-            if (key.startsWith('l3')) return 'III';
-            if (key.startsWith('l4')) return 'IV';
-            if (key.startsWith('l5')) return 'V';
-            return '';
-        }
-
-        function getLessonNumFromRecord(r) {
-            if (r.lessonNum) return String(r.lessonNum);
-            const key = (r.lessonKey || '').replace(/[^0-9]/g,'');
-            return key ? String(parseInt(key.slice(-2)||key)) : '';
-        }
-
+        // ── Firebase 인증 ─────────────────────────────────────
         auth.onAuthStateChanged(user => {
             if (!user || !ADMIN_EMAILS.includes(user.email)) {
                 document.getElementById('access-denied').classList.remove('hidden');
@@ -364,368 +282,270 @@
             lucide.createIcons();
             loadData();
         });
-
         async function handleSignOut() { await auth.signOut(); window.location.href = 'index.html'; }
 
-        // ── 데이터 로드 ───────────────────────────────────────
+        // ── 데이터 로드 (순수 JSONP) ──────────────────────────
         function loadData() {
-            // 로딩 상태 표시
-            document.getElementById('student-summary').innerHTML =
-                `<div class="py-8 flex flex-col items-center space-y-2 text-slate-400">
-                    <svg class="w-5 h-5 animate-spin text-teal-400" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                    </svg>
-                    <span class="text-xs">불러오는 중...</span></div>`;
-            document.getElementById('record-tbody').innerHTML =
-                `<tr><td colspan="5" class="text-center py-10 text-slate-400 font-medium text-sm">
-                    <div class="flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4 animate-spin text-teal-400" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                        </svg>데이터를 불러오는 중...
-                    </div></td></tr>`;
+            setLoading(true);
+            let summaryDone = false, recordsDone = false;
 
-            const showErr = (msg) => {
-                document.getElementById('student-summary').innerHTML =
-                    `<div class="py-6 text-center text-xs font-medium space-y-1">
-                        <p class="text-amber-500 font-bold">⚠️ ${msg}</p>
-                        <p class="text-slate-400">아직 학습 기록이 없거나 연결에 실패했습니다.</p>
-                        <button onclick="loadData()" class="mt-2 text-xs font-bold text-teal-600 hover:underline">다시 시도</button>
-                    </div>`;
-                document.getElementById('record-tbody').innerHTML =
-                    `<tr><td colspan="5" class="text-center py-8 text-slate-400 text-sm font-medium">
-                        학습 기록이 없거나 데이터 로드에 실패했습니다.<br>
-                        <button onclick="loadData()" class="mt-2 text-xs font-bold text-teal-600 hover:underline">새로고침</button>
-                    </td></tr>`;
-                ['stat-students','stat-completed','stat-activities','stat-selfchecks'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = '0';
-                });
+            function checkDone() {
+                if (summaryDone && recordsDone) setLoading(false);
+            }
+
+            // 요약 JSONP
+            const old1 = document.getElementById('jsonp-summary'); if (old1) old1.remove();
+            window.__summaryCb = function(data) {
+                clearTimeout(window.__summaryTimer);
+                summaryDone = true;
+                renderSummary((data && data.summary) || []);
+                checkDone();
             };
+            window.__summaryTimer = setTimeout(() => {
+                summaryDone = true;
+                renderSummary([]);
+                checkDone();
+            }, 12000);
+            const s1 = document.createElement('script');
+            s1.id  = 'jsonp-summary';
+            s1.src = GS_URL + '?action=getSummary&callback=__summaryCb&_=' + Date.now();
+            s1.onerror = () => { clearTimeout(window.__summaryTimer); summaryDone=true; renderSummary([]); checkDone(); };
+            document.body.appendChild(s1);
 
-            // fetch + JSONP 병행 (fetch 우선)
-            Promise.all([
-                fetchData('getSummary'),
-                fetchData('getRecords')
-            ]).then(([sum, rec]) => {
-                if (sum) __summaryCb(sum);
-                else showErr('요약 데이터 없음');
-                if (rec) __recordsCb(rec);
-            }).catch(e => showErr('로드 실패: ' + e.message));
+            // 기록 JSONP
+            const old2 = document.getElementById('jsonp-records'); if (old2) old2.remove();
+            window.__recordsCb = function(data) {
+                clearTimeout(window.__recordsTimer);
+                recordsDone = true;
+                applyRecords(data || {});
+                checkDone();
+            };
+            window.__recordsTimer = setTimeout(() => {
+                recordsDone = true;
+                applyRecords({});
+                checkDone();
+            }, 12000);
+            const s2 = document.createElement('script');
+            s2.id  = 'jsonp-records';
+            s2.src = GS_URL + '?action=getRecords&callback=__recordsCb&_=' + Date.now();
+            s2.onerror = () => { clearTimeout(window.__recordsTimer); recordsDone=true; applyRecords({}); checkDone(); };
+            document.body.appendChild(s2);
         }
 
-        async function fetchData(action) {
-            try {
-                const url = `${GS_URL}?action=${action}&_=${Date.now()}`;
-                const res = await fetch(url);
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const text = await res.text();
-                // JSON 직접 파싱 (Apps Script가 JSON도 반환할 수 있음)
-                try { return JSON.parse(text); } catch(e) {}
-                // JSONP 형태면 콜백 내부 JSON 추출
-                const m = text.match(/\w+\(({.*})\)/s);
-                if (m) return JSON.parse(m[1]);
-                return null;
-            } catch(e) {
-                // fetch 실패 시 JSONP 폴백
-                return new Promise((resolve) => {
-                    const cbName = '__cb_' + action + '_' + Date.now();
-                    const old = document.getElementById('jsonp-' + action);
-                    if (old) old.remove();
-                    window[cbName] = function(data) {
-                        delete window[cbName];
-                        resolve(data);
-                    };
-                    const s = document.createElement('script');
-                    s.id = 'jsonp-' + action;
-                    s.src = `${GS_URL}?action=${action}&callback=${cbName}&_=${Date.now()}`;
-                    s.onerror = () => { delete window[cbName]; resolve(null); };
-                    setTimeout(() => { delete window[cbName]; resolve(null); }, 10000);
-                    document.body.appendChild(s);
-                });
+        function setLoading(on) {
+            const spinner = '<div class="flex flex-col items-center space-y-2 py-8 text-slate-400"><svg class=\"w-5 h-5 animate-spin text-teal-400\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle><path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8v8z\"></path></svg><span class=\"text-xs\">불러오는 중...</span></div>';
+            if (on) {
+                document.getElementById('student-summary').innerHTML = spinner;
+                document.getElementById('record-tbody').innerHTML = '<tr><td colspan="5" class="text-center py-10 text-slate-400 text-sm font-medium">데이터를 불러오는 중...</td></tr>';
             }
         }
 
-        function __summaryCb(data) {
-            const el = document.getElementById('student-summary');
-            const list = (data && data.summary) || [];
+        function renderSummary(list) {
             document.getElementById('stat-students').textContent = list.length;
+            const el = document.getElementById('student-summary');
             if (!list.length) {
-                el.innerHTML = `<div class="py-8 flex flex-col items-center space-y-2 text-slate-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-                    <p class="text-xs font-medium">학습 기록이 없습니다.</p></div>`;
-                return;
+                el.innerHTML = '<div class="py-10 flex flex-col items-center space-y-2 text-slate-400"><i data-lucide=\"inbox\" class=\"w-8 h-8 text-slate-300\"></i><p class=\"text-xs font-medium\">학습 기록이 없습니다.</p></div>';
+                lucide.createIcons(); return;
             }
-            el.innerHTML = `<div class="space-y-2">
-                ${list.map(s => `
+            el.innerHTML = '<div class="space-y-2">' + list.map(s => `
                 <div class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-white border border-slate-100 hover:border-teal-100 rounded-2xl transition-all cursor-pointer"
-                    onclick="filterByStudent('${(s.name||'').replace(/'/g,"\\'")}')">
+                     onclick="filterByStudent('${(s.name||'').replace(/'/g,"\\'")}')">
                     <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center font-black text-xs">
-                            ${(s.name||'?').charAt(0)}
-                        </div>
+                        <div class="w-8 h-8 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center font-black text-xs">${(s.name||'?').charAt(0)}</div>
                         <div>
                             <p class="text-sm font-bold text-slate-800">${s.name||'-'}</p>
-                            <p class="text-xs text-slate-400">${s.studentId ? s.studentId + ' · ' : ''}최근: ${s.latest ? String(s.latest).substring(0,10) : '-'}</p>
+                            <p class="text-xs text-slate-400">${s.studentId ? s.studentId+' · ' : ''}최근: ${s.latest ? String(s.latest).substring(0,10) : '-'}</p>
                         </div>
                     </div>
                     <span class="text-xs font-black text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full">${s.count}완료</span>
-                </div>`).join('')}
-            </div>`;
+                </div>`).join('') + '</div>';
+            lucide.createIcons();
         }
 
-        function __recordsCb(data) {
-            if (!data) return;
-            allData.activities   = (data.activities  || []).reverse();
-            allData.selfchecks   = (data.selfchecks  || []).reverse();
-            allData.completed    = (data.completed   || []).reverse();
-            allData.performance  = (data.performance || []).reverse();
-
+        function applyRecords(data) {
+            allData.activities  = (data.activities  || []).slice().reverse();
+            allData.selfchecks  = (data.selfchecks  || []).slice().reverse();
+            allData.completed   = (data.completed   || []).slice().reverse();
+            allData.performance = (data.performance || []).slice().reverse();
             document.getElementById('stat-completed').textContent  = allData.completed.length;
             document.getElementById('stat-activities').textContent = allData.activities.length;
             document.getElementById('stat-selfchecks').textContent = allData.selfchecks.length;
             renderCurrentTab();
         }
 
-        function filterByStudent(name) {
-            switchTab('completed');
-            const search = document.getElementById('record-search');
-            if (search) search.value = name;
+        // ── 단원 필터 ─────────────────────────────────────────
+        function setUnitFilter(unit) {
+            currentUnitFilter = unit;
+            ['all','I','II','III','IV','V'].forEach(u => {
+                const b = document.getElementById('uf-'+u);
+                if (b) b.className = u===unit
+                    ? 'text-xs font-bold px-3 py-1.5 rounded-full bg-teal-500 text-white transition-all'
+                    : 'text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-teal-50 hover:text-teal-600 transition-all';
+            });
+            const wrap = document.getElementById('unit-lesson-filter-wrap');
+            const sel  = document.getElementById('lesson-filter');
+            if (unit !== 'all' && UNIT_LESSONS[unit]) {
+                sel.innerHTML = '<option value="all">전체 소단원</option>' +
+                    UNIT_LESSONS[unit].map((l,i) => `<option value="${i+1}">${l}</option>`).join('');
+                wrap.classList.remove('hidden'); wrap.classList.add('flex');
+            } else {
+                wrap.classList.add('hidden'); wrap.classList.remove('flex');
+                closeLessonDetail();
+            }
             renderCurrentTab();
         }
 
+        function getUnitFromRecord(r) {
+            if (r.unit) return r.unit;
+            const key = (r.lessonKey || '').toUpperCase();
+            if (key.startsWith('L1')) return 'I';
+            if (key.startsWith('L2')) return 'II';
+            if (key.startsWith('L3')) return 'III';
+            if (key.startsWith('L4')) return 'IV';
+            if (key.startsWith('L5')) return 'V';
+            return '';
+        }
+        function getLessonNumFromRecord(r) {
+            if (r.lessonNum) return String(r.lessonNum);
+            const m = (r.lessonKey||'').match(/\d+$/);
+            return m ? String(parseInt(m[0])) : '';
+        }
+
+        // ── 탭 전환 ───────────────────────────────────────────
+        function filterByStudent(name) {
+            switchTab('completed');
+            const s = document.getElementById('record-search');
+            if (s) s.value = name;
+            renderCurrentTab();
+        }
         function switchTab(tab) {
             currentTab = tab;
             ['completed','activities','selfchecks'].forEach(t => {
-                const btn = document.getElementById('tab-'+t);
-                btn.className = t===tab
+                const b = document.getElementById('tab-'+t);
+                if (b) b.className = t===tab
                     ? 'tab-btn active text-xs font-bold px-3 py-1.5 rounded-lg'
                     : 'tab-btn text-xs font-bold px-3 py-1.5 rounded-lg text-slate-500';
             });
-            document.getElementById('record-search').value = '';
+            const s = document.getElementById('record-search');
+            if (s) s.value = '';
             renderCurrentTab();
         }
 
         function onLessonChange() {
             renderCurrentTab();
-            const val = (document.getElementById('lesson-filter') || {}).value || 'all';
-            if (val !== 'all' && currentUnitFilter !== 'all') {
-                showLessonDetail(currentUnitFilter, val);
-            } else {
-                closeLessonDetail();
-            }
+            const val = document.getElementById('lesson-filter').value;
+            if (val !== 'all' && currentUnitFilter !== 'all') showLessonDetail(currentUnitFilter, val);
+            else closeLessonDetail();
         }
-
-        function showLessonDetail(unit, lessonNum) {
-            const lessons = UNIT_LESSONS[unit] || [];
-            const lessonName = lessons[parseInt(lessonNum)-1] || `소단원 ${lessonNum}`;
-
-            document.getElementById('lesson-detail-title').textContent =
-                `단원 ${unit} · ${lessonName}`;
-            document.getElementById('lesson-detail-subtitle').textContent =
-                '수행활동 및 수행평가 저장 내역';
-            document.getElementById('lesson-detail-panel').classList.remove('hidden');
-            document.getElementById('lesson-detail-panel').scrollIntoView({ behavior:'smooth', block:'start' });
-
-            // 해당 소단원 기록 필터링
-            const lessonKey1 = `l${unit === 'I' ? '1' : unit === 'II' ? '2' : unit === 'III' ? '3' : unit === 'IV' ? '4' : '5'}${lessonNum.toString().padStart(2,'0')}`;
-            const lessonKeyAlt = `l${unit === 'I' ? '1' : unit === 'II' ? '2' : unit === 'III' ? '3' : unit === 'IV' ? '4' : '5'}${lessonNum}`;
-
-            const matchLesson = r => {
-                const lk = (r.lessonKey || '').toLowerCase();
-                const ln = getLessonNumFromRecord(r);
-                const ru = getUnitFromRecord(r);
-                return ru === unit && (ln === String(lessonNum) || lk === lessonKey1.toLowerCase() || lk === lessonKeyAlt.toLowerCase());
-            };
-
-            // 수행활동
-            const acts = allData.activities.filter(matchLesson);
-            document.getElementById('act-count').textContent = acts.length + '건';
-            const actEl = document.getElementById('lesson-activities');
-            if (!acts.length) {
-                actEl.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs font-medium">저장된 활동이 없습니다.</div>`;
-            } else {
-                actEl.innerHTML = acts.map(r => {
-                    let answerHtml = '';
-                    try {
-                        const ans = typeof r.answers === 'string' ? JSON.parse(r.answers) : r.answers;
-                        answerHtml = Object.entries(ans).map(([k,v]) =>
-                            `<div class="flex items-start space-x-2 text-xs"><span class="text-slate-400 font-bold shrink-0 w-12">${k}</span><span class="text-slate-700 font-medium">${v}</span></div>`
-                        ).join('');
-                    } catch(e) { answerHtml = `<span class="text-xs text-slate-500">${r.answers||''}</span>`; }
-                    return `
-                    <div class="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-sm font-black text-blue-700">${r.userName||'-'}</span>
-                                ${r.studentId ? `<span class="text-xs text-blue-400 font-medium">(${r.studentId})</span>` : ''}
-                            </div>
-                            <span class="text-xs text-slate-400">${r.date ? String(r.date).substring(0,16) : '-'}</span>
-                        </div>
-                        <div class="space-y-1">${answerHtml}</div>
-                    </div>`;
-                }).join('');
-            }
-
-            // 수행평가
-            const scs = allData.selfchecks.filter(matchLesson);
-            document.getElementById('sc-count').textContent = scs.length + '건';
-            const scEl = document.getElementById('lesson-selfchecks');
-            if (!scs.length) {
-                scEl.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs font-medium">저장된 평가가 없습니다.</div>`;
-            } else {
-                const SC_LABELS = { 'q0':'개념 이해', 'q1':'활동 참여', 'q2':'문제 해결' };
-                const SC_VALUES = { '1':'미흡', '2':'보통', '3':'잘함', '4':'매우잘함', '그렇다':'그렇다', '아니다':'아니다', '보통이다':'보통이다' };
-                scEl.innerHTML = scs.map(r => {
-                    let answerHtml = '';
-                    try {
-                        const ans = typeof r.answers === 'string' ? JSON.parse(r.answers) : r.answers;
-                        answerHtml = Object.entries(ans).map(([k,v]) => {
-                            const label = SC_LABELS[k] || k;
-                            const val   = SC_VALUES[v] || v;
-                            const color = v==='그렇다'||v==='3'||v==='4' ? 'bg-emerald-100 text-emerald-700' : v==='아니다'||v==='1' ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600';
-                            return `<div class="flex items-center justify-between text-xs"><span class="text-slate-500 font-medium">${label}</span><span class="font-bold px-2 py-0.5 rounded-full ${color}">${val}</span></div>`;
-                        }).join('');
-                    } catch(e) { answerHtml = `<span class="text-xs text-slate-500">${r.answers||''}</span>`; }
-                    return `
-                    <div class="p-4 bg-violet-50/50 border border-violet-100 rounded-2xl">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-sm font-black text-violet-700">${r.userName||'-'}</span>
-                                ${r.studentId ? `<span class="text-xs text-violet-400 font-medium">(${r.studentId})</span>` : ''}
-                            </div>
-                            <span class="text-xs text-slate-400">${r.date ? String(r.date).substring(0,16) : '-'}</span>
-                        </div>
-                        <div class="space-y-1">${answerHtml}</div>
-                    </div>`;
-                }).join('');
-            }
-            lucide.createIcons();
-        }
-
-        function closeLessonDetail() {
-            document.getElementById('lesson-detail-panel').classList.add('hidden');
-        }
-
-        // ── 과정중심 활동 드롭다운 ────────────────────────────
-        const UNIT_NAMES_FULL = {
-            'I':'I. 컴퓨팅 시스템', 'II':'II. 데이터',
-            'III':'III. 알고리즘과 프로그래밍', 'IV':'IV. 인공지능', 'V':'V. 디지털 문화'
-        };
-
         function onPerfChange() {
             const unit = document.getElementById('perf-filter').value;
             if (unit === 'all') { closePerfDetail(); return; }
             showPerfDetail(unit);
         }
 
-        function showPerfDetail(unit) {
-            const recs = (allData.performance || []).filter(r => r.unit === unit);
-            const title = UNIT_NAMES_FULL[unit] || ('단원 '+unit);
-            document.getElementById('perf-detail-title').textContent = title + ' · 과정 중심 활동';
-            document.getElementById('perf-detail-count').textContent = `총 ${recs.length}건`;
-            document.getElementById('perf-detail-panel').classList.remove('hidden');
-            document.getElementById('perf-detail-panel').scrollIntoView({ behavior:'smooth', block:'start' });
-
-            const list = document.getElementById('perf-records-list');
-            if (!recs.length) {
-                list.innerHTML = `<div class="py-10 text-center text-slate-400 text-sm font-medium">이 단원의 과정 중심 활동 기록이 없습니다.</div>`;
-                return;
-            }
-
-            list.innerHTML = `<div class="space-y-4">
-                ${recs.map(r => {
-                    let ansHtml = '';
-                    try {
-                        const ans = typeof r.answers === 'string' ? JSON.parse(r.answers) : (r.answers || {});
-                        const entries = Object.entries(ans).filter(([k,v]) => v && String(v).trim());
-                        ansHtml = entries.length
-                            ? entries.map(([k,v]) => {
-                                const isChecked = typeof v === 'boolean' || v === 'true' || v === true;
-                                if (isChecked) return `<div class="text-xs text-slate-600 flex items-center space-x-1"><i data-lucide="check" class="w-3 h-3 text-emerald-500"></i><span>${k.replace(/^cb_/,'')}</span></div>`;
-                                if (k.startsWith('cb_')) return '';
-                                if (k.startsWith('rating_')) return `<div class="flex items-center space-x-2 text-xs"><span class="text-slate-400 w-24 shrink-0">${k.replace('rating_','')}</span><span class="text-amber-500">${'★'.repeat(parseInt(v)||0)}${'☆'.repeat(5-(parseInt(v)||0))}</span></div>`;
-                                return `<div class="text-xs"><span class="text-slate-400 font-medium block mb-0.5">${k}</span><p class="text-slate-700 bg-slate-50 rounded-lg p-2 whitespace-pre-wrap">${String(v).substring(0,200)}</p></div>`;
-                              }).filter(Boolean).join('')
-                            : '<p class="text-xs text-slate-400">내용 없음</p>';
-                    } catch(e) { ansHtml = `<p class="text-xs text-slate-500">${r.answers||''}</p>`; }
-
-                    return `
-                    <div class="p-5 bg-orange-50/40 border border-orange-100 rounded-2xl">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-orange-100 text-orange-700 rounded-xl flex items-center justify-center font-black text-sm">
-                                    ${(r.userName||'익').charAt(0)}
-                                </div>
-                                <div>
-                                    <span class="font-black text-slate-800">${r.userName||'-'}</span>
-                                    ${r.studentId ? `<span class="text-xs text-slate-400 ml-2">(${r.studentId})</span>` : ''}
-                                </div>
-                            </div>
-                            <span class="text-xs text-slate-400 font-medium">${r.date ? String(r.date).substring(0,16) : '-'}</span>
-                        </div>
-                        <div class="space-y-2">${ansHtml}</div>
-                    </div>`;
-                }).join('')}
-            </div>`;
-            lucide.createIcons();
-        }
-
-        function closePerfDetail() {
-            document.getElementById('perf-detail-panel').classList.add('hidden');
-            document.getElementById('perf-filter').value = 'all';
-        }
-            document.getElementById('record-search').value = name;
-            renderCurrentTab();
-        }
-
+        // ── 기록 테이블 렌더링 ────────────────────────────────
         function renderCurrentTab() {
             const q       = (document.getElementById('record-search').value || '').toLowerCase();
             const lessonF = (document.getElementById('lesson-filter') || {}).value || 'all';
-            let rows = allData[currentTab] || [];
+            let rows = (allData[currentTab] || []).filter(r => {
+                const mq = !q || (r.userName||'').toLowerCase().includes(q);
+                const mu = currentUnitFilter === 'all' || getUnitFromRecord(r) === currentUnitFilter;
+                const ml = lessonF === 'all' || getLessonNumFromRecord(r) === lessonF;
+                return mq && mu && ml;
+            });
 
-            // 학생명 검색
-            if (q) rows = rows.filter(r => (r.userName||'').toLowerCase().includes(q));
-
-            // 대단원 필터
-            if (currentUnitFilter !== 'all') {
-                rows = rows.filter(r => getUnitFromRecord(r) === currentUnitFilter);
-            }
-
-            // 소단원 필터
-            if (lessonF !== 'all') {
-                rows = rows.filter(r => getLessonNumFromRecord(r) === lessonF);
-            }
-
-            document.getElementById('record-count-label').textContent = `${rows.length}건`;
-
+            document.getElementById('record-count-label').textContent = rows.length + '건';
             const tbody = document.getElementById('record-tbody');
             if (!rows.length) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-400 font-medium text-sm">${GS_URL ? '기록이 없습니다.' : 'Apps Script URL을 먼저 설정해주세요.'}</td></tr>`;
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-10 text-slate-400 font-medium text-sm">기록이 없습니다.</td></tr>';
                 return;
             }
-
             tbody.innerHTML = rows.map(r => {
-                const unit    = getUnitFromRecord(r);
-                const lessonN = getLessonNumFromRecord(r);
-                let unitBadge = '', content = '';
-                if (currentTab === 'completed') {
-                    unitBadge = `<span class="bg-teal-50 text-teal-700 text-xs font-bold px-2 py-0.5 rounded-lg">단원 ${unit}</span>`;
-                    content   = `소단원 ${r.lessonNum || lessonN} · ${r.lessonName || ''}`;
+                const unit = getUnitFromRecord(r);
+                const lnum = getLessonNumFromRecord(r);
+                let badge='', content='';
+                if (currentTab==='completed') {
+                    badge   = `<span class="bg-teal-50 text-teal-700 text-xs font-bold px-2 py-0.5 rounded-lg">단원 ${unit}</span>`;
+                    content = `소단원 ${r.lessonNum||lnum} · ${r.lessonName||''}`;
                 } else {
-                    unitBadge = unit ? `<span class="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-0.5 rounded-lg">단원 ${unit}</span>` : `<span class="text-xs font-medium text-slate-400">${r.lessonKey||''}</span>`;
-                    content   = r.lessonName || r.lessonKey || '-';
+                    badge   = unit ? `<span class="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-0.5 rounded-lg">단원 ${unit}</span>` : `<span class="text-xs text-slate-400">${r.lessonKey||'-'}</span>`;
+                    content = r.lessonName || r.lessonKey || '-';
                 }
                 const dateStr = r.date ? String(r.date).substring(0,16) : '-';
                 return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                     <td class="px-4 py-3.5 text-xs text-slate-400 font-medium whitespace-nowrap">${dateStr}</td>
-                    <td class="px-4 py-3.5 font-bold text-slate-800 text-sm whitespace-nowrap">${r.userName || '-'}</td>
-                    <td class="px-4 py-3.5 text-slate-500 font-medium text-sm whitespace-nowrap">${r.studentId || '-'}</td>
-                    <td class="px-4 py-3.5">${unitBadge}</td>
+                    <td class="px-4 py-3.5 font-bold text-slate-800 text-sm whitespace-nowrap">${r.userName||'-'}</td>
+                    <td class="px-4 py-3.5 text-slate-500 font-medium text-sm whitespace-nowrap">${r.studentId||'-'}</td>
+                    <td class="px-4 py-3.5">${badge}</td>
                     <td class="px-4 py-3.5 text-slate-600 font-medium text-sm">${content}</td>
                 </tr>`;
             }).join('');
+        }
+
+        // ── 소단원 상세 패널 ──────────────────────────────────
+        function showLessonDetail(unit, lessonNum) {
+            const lessons = UNIT_LESSONS[unit] || [];
+            const lessonName = lessons[parseInt(lessonNum)-1] || '소단원 '+lessonNum;
+            document.getElementById('lesson-detail-title').textContent = '단원 '+unit+' · '+lessonName;
+            document.getElementById('lesson-detail-subtitle').textContent = '수행활동 및 수행평가 저장 내역';
+            document.getElementById('lesson-detail-panel').classList.remove('hidden');
+            document.getElementById('lesson-detail-panel').scrollIntoView({behavior:'smooth',block:'start'});
+
+            const unitNum = {I:'1',II:'2',III:'3',IV:'4',V:'5'}[unit]||'';
+            const matchLesson = r => getUnitFromRecord(r)===unit && getLessonNumFromRecord(r)===String(lessonNum);
+
+            const acts = allData.activities.filter(matchLesson);
+            document.getElementById('act-count').textContent = acts.length+'건';
+            const actEl = document.getElementById('lesson-activities');
+            actEl.innerHTML = acts.length ? acts.map(r => renderRecord(r,'blue')).join('') :
+                '<div class="py-6 text-center text-slate-400 text-xs font-medium">저장된 활동이 없습니다.</div>';
+
+            const scs = allData.selfchecks.filter(matchLesson);
+            document.getElementById('sc-count').textContent = scs.length+'건';
+            const scEl = document.getElementById('lesson-selfchecks');
+            scEl.innerHTML = scs.length ? scs.map(r => renderRecord(r,'violet')).join('') :
+                '<div class="py-6 text-center text-slate-400 text-xs font-medium">저장된 평가가 없습니다.</div>';
+            lucide.createIcons();
+        }
+        function closeLessonDetail() {
+            const p = document.getElementById('lesson-detail-panel');
+            if (p) p.classList.add('hidden');
+        }
+
+        function renderRecord(r, color) {
+            let ansHtml = '';
+            try {
+                const ans = typeof r.answers==='string' ? JSON.parse(r.answers) : (r.answers||{});
+                ansHtml = Object.entries(ans).filter(([,v])=>v&&String(v).trim()).map(([k,v])=>`
+                    <div class="text-xs"><span class="text-slate-400 font-medium">${k}: </span><span class="text-slate-700">${String(v).substring(0,100)}</span></div>`).join('');
+            } catch(e) { ansHtml = `<span class="text-xs text-slate-500">${r.answers||''}</span>`; }
+            return `<div class="p-4 bg-${color}-50/50 border border-${color}-100 rounded-2xl mb-2">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-black text-${color}-700">${r.userName||'-'}</span>
+                    ${r.studentId?`<span class="text-xs text-slate-400">${r.studentId}</span>`:''}
+                    <span class="text-xs text-slate-400 ml-auto">${r.date?String(r.date).substring(0,16):'-'}</span>
+                </div>
+                <div class="space-y-1">${ansHtml||'<p class="text-xs text-slate-400">내용 없음</p>'}</div>
+            </div>`;
+        }
+
+        // ── 과정중심 패널 ─────────────────────────────────────
+        function showPerfDetail(unit) {
+            const recs = (allData.performance||[]).filter(r=>r.unit===unit);
+            document.getElementById('perf-detail-title').textContent = (UNIT_NAMES[unit]||unit)+' · 과정 중심 활동';
+            document.getElementById('perf-detail-count').textContent = '총 '+recs.length+'건';
+            document.getElementById('perf-detail-panel').classList.remove('hidden');
+            document.getElementById('perf-detail-panel').scrollIntoView({behavior:'smooth',block:'start'});
+            const list = document.getElementById('perf-records-list');
+            if (!recs.length) { list.innerHTML='<div class="py-10 text-center text-slate-400 text-sm font-medium">이 단원의 과정 중심 활동 기록이 없습니다.</div>'; return; }
+            list.innerHTML = '<div class="space-y-4">'+recs.map(r=>renderRecord(r,'orange')).join('')+'</div>';
+            lucide.createIcons();
+        }
+        function closePerfDetail() {
+            const p = document.getElementById('perf-detail-panel');
+            if (p) p.classList.add('hidden');
+            const s = document.getElementById('perf-filter');
+            if (s) s.value='all';
         }
 
         // ── 토스트 ─────────────────────────────────────────────
