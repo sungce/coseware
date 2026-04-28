@@ -188,23 +188,25 @@
             empty.classList.add('hidden');
 
             grid.innerHTML = filtered.map(p => `
-                <div onclick='openProjectModal(${p.id})'
+                <div onclick="openProjectModal('${p.id}')"
                     class="card-hover bg-white rounded-[1.75rem] overflow-hidden border border-slate-100 shadow-sm cursor-pointer group">
-                    <div class="h-44 bg-gradient-to-br ${p.imgColor} flex items-center justify-center p-5 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
-                        <h3 class="text-white font-black text-xl text-center z-10 drop-shadow-md leading-snug
-                                   transform group-hover:scale-105 transition-transform duration-500">${p.title}</h3>
+                    <div class="h-44 relative overflow-hidden ${p.thumbUrl ? '' : 'bg-gradient-to-br ' + p.imgColor}">
+                        ${p.thumbUrl
+                            ? `<img src="${p.thumbUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${p.title}">`
+                            : `<div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                               <h3 class="absolute inset-0 flex items-center justify-center text-white font-black text-xl text-center px-5 z-10 drop-shadow-md leading-snug transform group-hover:scale-105 transition-transform duration-500">${p.title}</h3>`}
                     </div>
                     <div class="p-5">
                         <div class="flex justify-between items-center mb-3">
-                            <span class="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1 rounded-lg">${p.team}</span>
-                            <span class="text-xs font-bold text-slate-300">${p.year}</span>
+                            <span class="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1 rounded-lg">${p.team||''}</span>
+                            <span class="text-xs font-bold text-slate-300">${p.year||''}</span>
                         </div>
-                        <p class="text-sm text-slate-500 font-medium leading-relaxed line-clamp-2">${p.desc}</p>
+                        <p class="text-sm font-black text-slate-800 mb-1">${p.thumbUrl ? p.title : ''}</p>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed line-clamp-2">${p.desc||''}</p>
                         <div class="flex items-center justify-between mt-4">
                             <div class="flex items-center space-x-1 text-xs font-bold text-slate-400">
                                 <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-400"></i>
-                                <span>${p.likes}</span>
+                                <span>${p.likes||0}</span>
                             </div>
                             <span class="text-xs text-amber-500 font-bold group-hover:underline">자세히 보기 →</span>
                         </div>
@@ -215,8 +217,8 @@
 
         function setYearFilter(year) {
             currentFilter.year = year;
-            ['all','2026','2025'].forEach(y => {
-                const btn = document.getElementById('year-' + y);
+            document.querySelectorAll('[id^="year-"]').forEach(btn => {
+                const y = btn.id.replace('year-','');
                 btn.className = y === year
                     ? 'px-4 py-3 rounded-2xl text-sm font-bold bg-amber-500 text-white transition-all shadow-sm'
                     : 'px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 transition-all';
@@ -231,26 +233,52 @@
 
         function openProjectModal(id) {
             const p = projects.find(x => x.id === id);
-            if (!p) return;
-            document.getElementById('modal-cover').className =
-                `h-52 rounded-t-[2rem] flex items-center justify-center relative overflow-hidden bg-gradient-to-br ${p.imgColor}`;
-            document.getElementById('modal-title-display').textContent = p.title;
-            document.getElementById('modal-team').textContent = p.team;
-            document.getElementById('modal-year').textContent = p.year + '년';
-            document.getElementById('modal-desc').textContent = p.desc;
-            document.getElementById('modal-likes').textContent = p.likes;
+            if (!p) { console.warn('Project not found:', id); return; }
+
+            // 모달 커버: 썸네일 or 그라데이션
+            const cover = document.getElementById('modal-cover');
+            if (p.thumbUrl) {
+                cover.className = 'h-52 rounded-t-[2rem] relative overflow-hidden bg-slate-100';
+                cover.innerHTML = `<img src="${p.thumbUrl}" class="w-full h-full object-cover" alt="${p.title}">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    <h2 class="absolute bottom-4 left-6 right-6 text-2xl font-black text-white drop-shadow-lg leading-snug" id="modal-title-display">${p.title}</h2>`;
+            } else {
+                cover.className = `h-52 rounded-t-[2rem] flex items-center justify-center relative overflow-hidden bg-gradient-to-br ${p.imgColor||'from-amber-400 to-orange-500'}`;
+                cover.innerHTML = `<h2 class="text-2xl font-black text-white text-center px-6 z-10 drop-shadow-lg" id="modal-title-display">${p.title}</h2>`;
+            }
+
+            document.getElementById('modal-team').textContent  = p.team  || '';
+            document.getElementById('modal-year').textContent  = (p.year || '') + '년';
+            document.getElementById('modal-desc').textContent  = p.desc  || '';
+            document.getElementById('modal-likes').textContent = p.likes || 0;
+
             const linkBtn = document.getElementById('modal-link');
             if (p.link) {
                 linkBtn.href = p.link;
-                linkBtn.classList.remove('hidden');
-                linkBtn.classList.add('flex');
+                linkBtn.classList.remove('hidden'); linkBtn.classList.add('flex');
             } else {
-                linkBtn.classList.add('hidden');
-                linkBtn.classList.remove('flex');
+                linkBtn.classList.add('hidden'); linkBtn.classList.remove('flex');
             }
+
+            // 첨부파일 버튼
+            let attachBtn = document.getElementById('modal-attach');
+            if (!attachBtn) {
+                attachBtn = document.createElement('a');
+                attachBtn.id = 'modal-attach';
+                attachBtn.target = '_blank';
+                attachBtn.className = 'hidden items-center space-x-2 bg-slate-100 text-slate-700 font-bold px-5 py-2.5 rounded-xl hover:bg-slate-200 transition-colors text-sm';
+                attachBtn.innerHTML = '<i data-lucide="paperclip" class="w-4 h-4"></i><span>첨부파일</span>';
+                linkBtn.parentNode.insertBefore(attachBtn, linkBtn);
+            }
+            if (p.attachUrl) {
+                attachBtn.href = p.attachUrl;
+                attachBtn.classList.remove('hidden'); attachBtn.classList.add('flex');
+            } else {
+                attachBtn.classList.add('hidden'); attachBtn.classList.remove('flex');
+            }
+
             const modal = document.getElementById('project-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
             lucide.createIcons();
         }
 
