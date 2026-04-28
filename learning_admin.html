@@ -397,18 +397,22 @@
 
         function getUnitFromRecord(r) {
             if (r.unit) return r.unit;
-            const key = (r.lessonKey || '').toUpperCase();
-            if (key.startsWith('L1')) return 'I';
-            if (key.startsWith('L2')) return 'II';
-            if (key.startsWith('L3')) return 'III';
-            if (key.startsWith('L4')) return 'IV';
-            if (key.startsWith('L5')) return 'V';
+            const key = (r.lessonKey || '').toLowerCase().replace(/\s/g,'');
+            if (/^l1/.test(key)) return 'I';
+            if (/^l2/.test(key)) return 'II';
+            if (/^l3/.test(key)) return 'III';
+            if (/^l4/.test(key)) return 'IV';
+            if (/^l5/.test(key)) return 'V';
             return '';
         }
         function getLessonNumFromRecord(r) {
             if (r.lessonNum) return String(r.lessonNum);
-            const m = (r.lessonKey||'').match(/\d+$/);
-            return m ? String(parseInt(m[0])) : '';
+            const key = (r.lessonKey || '').toLowerCase().replace(/\s/g,'');
+            // l11→1, l23→3, l310→10
+            const m = key.match(/^l\d(\d+)$/);
+            if (m) return String(parseInt(m[1]));
+            const m2 = key.match(/\d+$/);
+            return m2 ? String(parseInt(m2[0])) : '';
         }
 
         // ── 탭 전환 ───────────────────────────────────────────

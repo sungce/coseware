@@ -342,7 +342,7 @@ table{width:100%;border-collapse:collapse}
 <script>
 
   // ── Google Sheets 저장 ──────────────────────────────────
-  var GS_URL = 'https://script.google.com/macros/s/AKfycbwtFKbSDysgz49kaBmMN_FsnW5fHM126tX3wr9bNVonop3fz-e7l5PWS0dPt462umhU/exec';
+  var GS_URL = 'https://script.google.com/macros/s/AKfycbxBfaaTJ6aHhegyfB1qDxHn-_QemVA0D5CkVPETCH1VtqBGUbVnISb3hvydkQJs4A/exec';
 
   function getUserName() {
     return localStorage.getItem('curriculum_user_name') ||
@@ -378,7 +378,7 @@ function saveSC(key){
       userName: getUserName(),
       studentId: getStudentId(),
       lessonKey: 'l21',
-      lessonName: 'l21',
+      lessonName: '디지털 형태의 데이터',
       answers: d
     });
     toast('자기평가가 저장되었습니다 ✓');
@@ -397,7 +397,7 @@ function saveActivity(key){
       userName: getUserName(),
       studentId: getStudentId(),
       lessonKey: 'l21',
-      lessonName: 'l21',
+      lessonName: '디지털 형태의 데이터',
       answers: d
     });
     toast('✅ 수행 활동이 저장되었습니다!');
