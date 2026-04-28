@@ -42,7 +42,7 @@ function doGet(e) {
       const sheet = ss.getSheetByName(SHEET_NOTICES);
       let notices = [];
       if (sheet && sheet.getLastRow() > 1) {
-        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
+        const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 8).getValues();
         notices = rows.filter(r => r[2]).map((r, i) => ({
           id     : r[0] ? String(r[0]) : String(i + 1),
           type   : r[1] ? String(r[1]) : 'normal',
@@ -50,6 +50,8 @@ function doGet(e) {
           content: r[3] ? String(r[3]) : '',
           date   : r[4] ? String(r[4]) : '',
           author : r[5] ? String(r[5]) : '정보선생님',
+          fileUrl : r[6] ? String(r[6]) : '',
+          fileName: r[7] ? String(r[7]) : '',
         }));
         notices.reverse();
       }
@@ -199,7 +201,7 @@ function doPost(e) {
       const date = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul',
         year: 'numeric', month: '2-digit', day: '2-digit'
       }).replace(/\. /g, '.').replace(/\.$/, '');
-      sheet.appendRow([id, data.noticeType || 'normal', data.title, data.content || '', date, data.author || '정보선생님']);
+      sheet.appendRow([id, data.noticeType || 'normal', data.title, data.content || '', date, data.author || '정보선생님', data.fileUrl || '', data.fileName || '']);
       return jsonResponse({ result: 'success' });
     }
 
