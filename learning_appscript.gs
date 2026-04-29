@@ -110,6 +110,38 @@ function doPost(e) {
                     data.saveKey || '', JSON.stringify(data.answers || {})]);
     }
 
+    // 레코드 삭제
+    if (data.type === 'deleteRecord') {
+      var sheetName = data.sheetType === 'act' ? SHEET_ACTIVITY : (data.sheetType === 'sc' ? SHEET_SELFCHECK : SHEET_DONE);
+      var sh = ss.getSheetByName(sheetName);
+      if (sh && sh.getLastRow() > 1) {
+        var rows = sh.getRange(2, 1, sh.getLastRow()-1, sh.getLastColumn()).getValues();
+        for (var i = rows.length - 1; i >= 0; i--) {
+          if (String(rows[i][0]) === String(data.date) && String(rows[i][1]) === String(data.userName)) {
+            sh.deleteRow(i + 2);
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({result:'success'})).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 레코드 수정 (답변내용만)
+    if (data.type === 'updateRecord') {
+      var sheetName = data.sheetType === 'act' ? SHEET_ACTIVITY : SHEET_SELFCHECK;
+      var sh = ss.getSheetByName(sheetName);
+      if (sh && sh.getLastRow() > 1) {
+        var rows = sh.getRange(2, 1, sh.getLastRow()-1, sh.getLastColumn()).getValues();
+        for (var i = 0; i < rows.length; i++) {
+          if (String(rows[i][0]) === String(data.date) && String(rows[i][1]) === String(data.userName)) {
+            sh.getRange(i + 2, 6).setValue(data.answers || '');
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({result:'success'})).setMimeType(ContentService.MimeType.JSON);
+    }
+
     // 수행 활동 저장
     if (data.type === 'act') {
       var sh = getOrCreateSheet(ss, SHEET_ACTIVITY, ['날짜','학생명','학번','소단원키','소단원명','답변내용']);

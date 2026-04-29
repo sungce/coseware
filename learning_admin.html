@@ -260,6 +260,36 @@
 
     </main>
 
+    <!-- 레코드 수정 모달 -->
+    <div id="record-edit-modal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+        onclick="if(event.target===this) closeRecordEdit()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="pencil" class="w-5 h-5 text-teal-500"></i>
+                    <span id="record-edit-title">기록 수정</span>
+                </h3>
+                <button onclick="closeRecordEdit()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-8 py-6 space-y-3">
+                <input type="hidden" id="edit-record-date">
+                <input type="hidden" id="edit-record-user">
+                <input type="hidden" id="edit-record-type">
+                <p class="text-xs font-bold text-slate-400">학생명: <span id="edit-record-user-label" class="text-slate-700"></span> · <span id="edit-record-date-label" class="text-slate-500"></span></p>
+                <div id="edit-answers-container" class="space-y-3 max-h-[50vh] overflow-y-auto pr-1"></div>
+            </div>
+            <div class="px-8 pb-8 flex space-x-3">
+                <button onclick="closeRecordEdit()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-200 transition-colors">취소</button>
+                <button onclick="saveRecordEdit()" id="record-save-btn"
+                    class="flex-1 bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-bold py-3.5 rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="save" class="w-4 h-4"></i><span>저장</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 토스트 -->
     <div id="toast" class="fixed bottom-8 right-8 bg-slate-900/95 text-white px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-32 opacity-0 z-50 flex items-center space-x-3 border border-slate-700">
         <div class="p-1.5 rounded-full bg-emerald-500/20"><i data-lucide="check" class="w-4 h-4 text-emerald-400" id="toast-icon"></i></div>
@@ -533,13 +563,13 @@
             const acts = allData.activities.filter(matchLesson);
             document.getElementById('act-count').textContent = acts.length+'건';
             const actEl = document.getElementById('lesson-activities');
-            actEl.innerHTML = acts.length ? acts.map(r => renderRecord(r,'blue')).join('') :
+            actEl.innerHTML = acts.length ? acts.map(r => renderRecord(r,'blue','act')).join('') :
                 '<div class="py-6 text-center text-slate-400 text-xs font-medium">저장된 활동이 없습니다.</div>';
 
             const scs = allData.selfchecks.filter(matchLesson);
             document.getElementById('sc-count').textContent = scs.length+'건';
             const scEl = document.getElementById('lesson-selfchecks');
-            scEl.innerHTML = scs.length ? scs.map(r => renderRecord(r,'violet')).join('') :
+            scEl.innerHTML = scs.length ? scs.map(r => renderRecord(r,'violet','sc')).join('') :
                 '<div class="py-6 text-center text-slate-400 text-xs font-medium">저장된 평가가 없습니다.</div>';
             lucide.createIcons();
         }
@@ -548,21 +578,132 @@
             if (p) p.classList.add('hidden');
         }
 
-        function renderRecord(r, color) {
-            let ansHtml = '';
+        function renderRecord(r, color, sheetType) {
+            let ansHtml = '', editBtns = '';
+            let ansObj = {};
             try {
-                const ans = typeof r.answers==='string' ? JSON.parse(r.answers) : (r.answers||{});
-                ansHtml = Object.entries(ans).filter(([,v])=>v&&String(v).trim()).map(([k,v])=>`
-                    <div class="text-xs"><span class="text-slate-400 font-medium">${k}: </span><span class="text-slate-700">${String(v).substring(0,100)}</span></div>`).join('');
+                ansObj = typeof r.answers==='string' ? JSON.parse(r.answers) : (r.answers||{});
+                ansHtml = Object.entries(ansObj).filter(([,v])=>v&&String(v).trim()).map(([k,v])=>`
+                    <div class="text-xs"><span class="text-slate-400 font-medium">${k}: </span><span class="text-slate-700">${String(v).substring(0,120)}</span></div>`).join('');
             } catch(e) { ansHtml = `<span class="text-xs text-slate-500">${r.answers||''}</span>`; }
+
+            const dateEnc = encodeURIComponent(String(r.date||''));
+            const userEnc = encodeURIComponent(r.userName||'');
+            const canEdit = (sheetType === 'act' || sheetType === 'sc');
+
+            const btnClass = `p-1.5 rounded-lg transition-colors text-xs font-bold flex items-center space-x-1`;
+            const editBtn  = canEdit ? `<button onclick="openRecordEdit('${dateEnc}','${userEnc}','${sheetType}',this)" class="${btnClass} text-slate-400 hover:text-blue-600 hover:bg-blue-50"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>` : '';
+            const delBtn   = `<button onclick="deleteRecord('${dateEnc}','${userEnc}','${sheetType||'act'}')" class="${btnClass} text-slate-400 hover:text-rose-600 hover:bg-rose-50"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>`;
+
             return `<div class="p-4 bg-${color}-50/50 border border-${color}-100 rounded-2xl mb-2">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-black text-${color}-700">${r.userName||'-'}</span>
-                    ${r.studentId?`<span class="text-xs text-slate-400">${r.studentId}</span>`:''}
-                    <span class="text-xs text-slate-400 ml-auto">${r.date?String(r.date).substring(0,16):'-'}</span>
+                <div class="flex items-start justify-between mb-2 gap-2">
+                    <div class="flex items-center space-x-2 min-w-0">
+                        <span class="text-sm font-black text-${color}-700">${r.userName||'-'}</span>
+                        ${r.studentId?`<span class="text-xs text-slate-400">(${r.studentId})</span>`:''}
+                    </div>
+                    <div class="flex items-center space-x-1 shrink-0">
+                        <span class="text-xs text-slate-400 mr-1">${r.date?String(r.date).substring(0,16):'-'}</span>
+                        ${editBtn}${delBtn}
+                    </div>
                 </div>
                 <div class="space-y-1">${ansHtml||'<p class="text-xs text-slate-400">내용 없음</p>'}</div>
             </div>`;
+        }
+
+        // ── 수정 모달 ─────────────────────────────────────────
+        let _editAnswers = {};
+        function openRecordEdit(dateEnc, userEnc, sheetType, btn) {
+            const date = decodeURIComponent(dateEnc);
+            const user = decodeURIComponent(userEnc);
+            const src  = sheetType === 'act' ? allData.activities : allData.selfchecks;
+            const rec  = src.find(r => String(r.date)===date && r.userName===user);
+            if (!rec) { showToast('기록을 찾을 수 없습니다.', 'error'); return; }
+
+            document.getElementById('edit-record-date').value  = date;
+            document.getElementById('edit-record-user').value  = user;
+            document.getElementById('edit-record-type').value  = sheetType;
+            document.getElementById('edit-record-user-label').textContent = user;
+            document.getElementById('edit-record-date-label').textContent = String(date).substring(0,16);
+            document.getElementById('record-edit-title').textContent = sheetType==='act' ? '수행활동 수정' : '수행평가 수정';
+
+            try { _editAnswers = typeof rec.answers==='string' ? JSON.parse(rec.answers) : (rec.answers||{}); }
+            catch(e) { _editAnswers = {}; }
+
+            const container = document.getElementById('edit-answers-container');
+            container.innerHTML = Object.entries(_editAnswers).map(([k,v]) => `
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500">${k}</label>
+                    <textarea data-key="${k}" rows="2"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all resize-none">${v||''}</textarea>
+                </div>`).join('');
+
+            const modal = document.getElementById('record-edit-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeRecordEdit() {
+            document.getElementById('record-edit-modal').classList.add('hidden');
+            document.getElementById('record-edit-modal').classList.remove('flex');
+        }
+
+        async function saveRecordEdit() {
+            const date      = document.getElementById('edit-record-date').value;
+            const userName  = document.getElementById('edit-record-user').value;
+            const sheetType = document.getElementById('edit-record-type').value;
+
+            const newAnswers = {};
+            document.querySelectorAll('#edit-answers-container textarea').forEach(ta => {
+                newAnswers[ta.dataset.key] = ta.value;
+            });
+
+            const btn = document.getElementById('record-save-btn');
+            btn.disabled = true; btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>저장 중...</span>';
+            lucide.createIcons();
+
+            try {
+                await fetch(GS_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type:'updateRecord', sheetType, date, userName, answers: JSON.stringify(newAnswers) })
+                });
+                // 로컬 allData 업데이트
+                const src = sheetType==='act' ? allData.activities : allData.selfchecks;
+                const rec = src.find(r => String(r.date)===date && r.userName===userName);
+                if (rec) rec.answers = newAnswers;
+                closeRecordEdit();
+                showToast('기록이 수정되었습니다! ✅');
+                // 패널 새로고침
+                const unit    = currentUnitFilter;
+                const lessonF = document.getElementById('lesson-filter').value;
+                if (unit !== 'all' && lessonF !== 'all') showLessonDetail(unit, lessonF);
+            } catch(e) { showToast('수정 오류: ' + e.message, 'error'); }
+            finally { btn.disabled=false; btn.innerHTML='<i data-lucide="save" class="w-4 h-4"></i><span>저장</span>'; lucide.createIcons(); }
+        }
+
+        // ── 삭제 ──────────────────────────────────────────────
+        async function deleteRecord(dateEnc, userEnc, sheetType) {
+            const date = decodeURIComponent(dateEnc);
+            const user = decodeURIComponent(userEnc);
+            if (!confirm(`${user} 학생의 기록을 삭제할까요?`)) return;
+            try {
+                await fetch(GS_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type:'deleteRecord', sheetType, date, userName: user })
+                });
+                // 로컬 allData에서 제거
+                if (sheetType==='act') allData.activities = allData.activities.filter(r => !(String(r.date)===date && r.userName===user));
+                else if (sheetType==='sc') allData.selfchecks = allData.selfchecks.filter(r => !(String(r.date)===date && r.userName===user));
+                else if (sheetType==='done') allData.completed = allData.completed.filter(r => !(String(r.date)===date && r.userName===user));
+
+                showToast('기록이 삭제되었습니다.');
+                // 패널 새로고침
+                const unit    = currentUnitFilter;
+                const lessonF = (document.getElementById('lesson-filter')||{}).value || 'all';
+                if (unit !== 'all' && lessonF !== 'all') showLessonDetail(unit, lessonF);
+                renderCurrentTab();
+            } catch(e) { showToast('삭제 오류: ' + e.message, 'error'); }
         }
 
         // ── 과정중심 패널 ─────────────────────────────────────
@@ -574,7 +715,7 @@
             document.getElementById('perf-detail-panel').scrollIntoView({behavior:'smooth',block:'start'});
             const list = document.getElementById('perf-records-list');
             if (!recs.length) { list.innerHTML='<div class="py-10 text-center text-slate-400 text-sm font-medium">이 단원의 과정 중심 활동 기록이 없습니다.</div>'; return; }
-            list.innerHTML = '<div class="space-y-4">'+recs.map(r=>renderRecord(r,'orange')).join('')+'</div>';
+            list.innerHTML = '<div class="space-y-4">'+recs.map(r=>renderRecord(r,'orange','perf')).join('')+'</div>';
             lucide.createIcons();
         }
         function closePerfDetail() {
