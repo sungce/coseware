@@ -98,7 +98,9 @@ function doGet(e) {
 
 function doPost(e) {
   try {
-    var data = JSON.parse(e.postData.contents);
+    // text/plain 또는 application/json 모두 지원
+    var raw = e.postData.contents || '{}';
+    var data = JSON.parse(raw);
     var ss   = SpreadsheetApp.openById(LEARNING_SPREADSHEET_ID);
     var date = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
     var userName = data.userName || '익명';

@@ -338,7 +338,7 @@ function postPerfToSheets(data) {
   if (!PERF_GS_URL) return;
   fetch(PERF_GS_URL, {
     method: 'POST', mode: 'no-cors',
-    headers: {'Content-Type': 'application/json'},
+    headers: {'Content-Type': 'text/plain'},
     body: JSON.stringify(data)
   }).catch(function(){});
 }

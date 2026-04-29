@@ -650,8 +650,9 @@
 
             try {
                 await fetch(GS_URL, {
-                    method: 'POST', mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },  // ← text/plain 필수
                     body: JSON.stringify({ type:'updateRecord', sheetType, date, userName, answers: JSON.stringify(newAnswers) })
                 });
                 // 로컬 allData 업데이트
@@ -673,24 +674,31 @@
             const date = decodeURIComponent(dateEnc);
             const user = decodeURIComponent(userEnc);
             if (!confirm(`${user} 학생의 기록을 삭제할까요?`)) return;
+
+            const btn = event.currentTarget;
+            btn.disabled = true;
             try {
                 await fetch(GS_URL, {
-                    method: 'POST', mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },  // ← text/plain 필수
                     body: JSON.stringify({ type:'deleteRecord', sheetType, date, userName: user })
                 });
-                // 로컬 allData에서 제거
-                if (sheetType==='act') allData.activities = allData.activities.filter(r => !(String(r.date)===date && r.userName===user));
-                else if (sheetType==='sc') allData.selfchecks = allData.selfchecks.filter(r => !(String(r.date)===date && r.userName===user));
-                else if (sheetType==='done') allData.completed = allData.completed.filter(r => !(String(r.date)===date && r.userName===user));
+
+                // 로컬 allData에서 즉시 제거
+                const match = r => !(String(r.date)===date && r.userName===user);
+                if      (sheetType==='act')  allData.activities = allData.activities.filter(match);
+                else if (sheetType==='sc')   allData.selfchecks = allData.selfchecks.filter(match);
+                else if (sheetType==='done') allData.completed  = allData.completed.filter(match);
+                else if (sheetType==='perf') allData.performance = allData.performance.filter(match);
 
                 showToast('기록이 삭제되었습니다.');
-                // 패널 새로고침
                 const unit    = currentUnitFilter;
                 const lessonF = (document.getElementById('lesson-filter')||{}).value || 'all';
                 if (unit !== 'all' && lessonF !== 'all') showLessonDetail(unit, lessonF);
-                renderCurrentTab();
+                else renderCurrentTab();
             } catch(e) { showToast('삭제 오류: ' + e.message, 'error'); }
+            finally { btn.disabled = false; }
         }
 
         // ── 과정중심 패널 ─────────────────────────────────────
