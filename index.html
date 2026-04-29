@@ -1368,6 +1368,13 @@
             });
 
             lucide.createIcons();
+
+            // dashboard.html 등에서 goto_section으로 이동 요청 처리
+            const gotoSection = localStorage.getItem('goto_section');
+            if (gotoSection) {
+                localStorage.removeItem('goto_section');
+                setTimeout(() => showSection(gotoSection), 400);
+            }
         });
 
         // ==================== 수행평가 폼 제출 ====================
