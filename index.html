@@ -1185,21 +1185,49 @@
             list.innerHTML = notices.map((n, i) => {
                 const isImportant = n.type === 'important';
                 const badge = isImportant
-                    ? `<span class="bg-rose-100 text-rose-600 px-3 py-1 rounded-full text-xs font-black tracking-wide mr-4">중요</span>`
-                    : `<span class="bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-xs font-bold tracking-wide mr-4">일반</span>`;
+                    ? `<span class="shrink-0 bg-rose-100 text-rose-600 px-2.5 py-1 rounded-full text-xs font-black tracking-wide">중요</span>`
+                    : `<span class="shrink-0 bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full text-xs font-bold tracking-wide">일반</span>`;
+
+                const hasDetail = n.content || n.fileUrl;
                 const border = i !== notices.length - 1 ? 'border-b border-slate-100' : '';
+
                 return `
-                    <div class="flex items-center justify-between p-6 hover:bg-slate-50 transition-colors cursor-pointer group ${border}">
-                        <div class="flex items-center">
+                <div class="${border}">
+                    <div class="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors ${hasDetail ? 'cursor-pointer' : ''} group"
+                         onclick="${hasDetail ? `toggleNotice('n${i}')` : ''}">
+                        <div class="flex items-center space-x-3 min-w-0">
                             ${badge}
-                            <h4 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${n.title}</h4>
+                            <h4 class="text-base font-bold text-slate-800 group-hover:text-blue-600 transition-colors truncate">${n.title}</h4>
                         </div>
-                        <div class="hidden sm:flex items-center space-x-6 text-sm font-medium text-slate-400">
-                            <span>${n.author || '정보선생님'}</span>
-                            <span>${n.date || ''}</span>
+                        <div class="flex items-center space-x-4 shrink-0 ml-3">
+                            <span class="hidden sm:block text-sm font-medium text-slate-400">${n.date || ''}</span>
+                            ${hasDetail ? `<i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform duration-200" id="chevron-n${i}"></i>` : ''}
                         </div>
-                    </div>`;
+                    </div>
+                    ${hasDetail ? `
+                    <div id="notice-detail-n${i}" class="hidden px-5 pb-5">
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                            ${n.content ? `<p class="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-wrap">${n.content}</p>` : ''}
+                            ${n.fileUrl ? `
+                            <a href="${n.fileUrl}" target="_blank"
+                               class="inline-flex items-center space-x-2 mt-3 bg-white border border-slate-200 text-blue-600 hover:bg-blue-50 hover:border-blue-200 font-bold text-sm px-4 py-2 rounded-xl transition-all">
+                                <i data-lucide="paperclip" class="w-4 h-4"></i>
+                                <span>${n.fileName || '첨부파일 다운로드'}</span>
+                            </a>` : ''}
+                        </div>
+                    </div>` : ''}
+                </div>`;
             }).join('');
+            lucide.createIcons();
+        }
+
+        function toggleNotice(id) {
+            const detail  = document.getElementById('notice-detail-' + id);
+            const chevron = document.getElementById('chevron-' + id);
+            if (!detail) return;
+            const isHidden = detail.classList.contains('hidden');
+            detail.classList.toggle('hidden', !isHidden);
+            if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : '';
             lucide.createIcons();
         }
 
