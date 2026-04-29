@@ -218,13 +218,13 @@
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">이름</th>
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">과제명</th>
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">제출물</th>
-                                <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">제출일</th>
+                                <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">첨부파일</th>
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">관리</th>
                             </tr>
                         </thead>
                         <tbody id="submit-tbody">
                             <tr>
-                                <td colspan="6" class="text-center py-12 text-slate-400">
+                                <td colspan="7" class="text-center py-12 text-slate-400">
                                     <div class="flex flex-col items-center space-y-2">
                                         <i data-lucide="loader" class="w-5 h-5 animate-spin text-emerald-400"></i>
                                         <span class="text-sm font-medium">불러오는 중...</span>
@@ -491,7 +491,7 @@
 
         function loadSubmissions() {
             const tbody = document.getElementById('submit-tbody');
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-slate-400">
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400">
                 <div class="flex flex-col items-center space-y-2">
                     <i data-lucide="loader" class="w-5 h-5 animate-spin text-emerald-400"></i>
                     <span class="text-sm font-medium">불러오는 중...</span>
@@ -502,7 +502,7 @@
             if (old) old.remove();
 
             const timer = setTimeout(() => {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400 font-medium text-sm">데이터를 불러오지 못했습니다.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400 font-medium text-sm">데이터를 불러오지 못했습니다.</td></tr>`;
             }, 8000);
 
             window.__submitsCallback = function(data) {
@@ -568,7 +568,23 @@
                         <span class="bg-violet-50 text-violet-700 text-xs font-bold px-2 py-0.5 rounded-lg">${s.assignment || '-'}</span>
                     </td>
                     <td class="px-4 py-3.5 max-w-[180px]">${linkHtml}</td>
-                    <td class="px-4 py-3.5 text-slate-400 text-xs font-medium whitespace-nowrap">${s.date ? s.date.substring(0,16) : '-'}</td>
+                    <td class="px-4 py-3.5">
+                        ${(() => {
+                            // link에 cloudinary/파일 URL이 포함된 경우 파일로 표시
+                            const raw = (s.link || '').trim();
+                            const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+                            const fileUrl = lines.find(l => l.startsWith('http') && (l.includes('cloudinary') || l.includes('res.cloud') || /\.(pdf|ppt|pptx|hwp|hwpx|zip|doc|docx|png|jpg|jpeg|mp4)(\?|$)/i.test(l)));
+                            if (fileUrl) {
+                                const ext = (fileUrl.match(/\.([a-z0-9]+)(\?|$)/i)||[])[1]||'파일';
+                                return `<a href="${fileUrl}" target="_blank" rel="noopener"
+                                    class="inline-flex items-center space-x-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold text-xs px-3 py-1.5 rounded-xl transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                                    <span>${ext.toUpperCase()}</span>
+                                </a>`;
+                            }
+                            return '<span class="text-slate-300 text-xs">-</span>';
+                        })()}
+                    </td>
                     <td class="px-4 py-3.5">
                         <div class="flex items-center space-x-1">
                             <button onclick="openSubmitEdit(${globalIdx})"
