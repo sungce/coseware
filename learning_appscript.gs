@@ -114,7 +114,13 @@ function doPost(e) {
 
     // 레코드 삭제
     if (data.type === 'deleteRecord') {
-      var sheetName = data.sheetType === 'act' ? SHEET_ACTIVITY : (data.sheetType === 'sc' ? SHEET_SELFCHECK : SHEET_DONE);
+      var sheetMap = {
+        'act':  SHEET_ACTIVITY,
+        'sc':   SHEET_SELFCHECK,
+        'done': SHEET_DONE,
+        'perf': SHEET_PERF
+      };
+      var sheetName = sheetMap[data.sheetType] || SHEET_DONE;
       var sh = ss.getSheetByName(sheetName);
       if (sh && sh.getLastRow() > 1) {
         var rows = sh.getRange(2, 1, sh.getLastRow()-1, sh.getLastColumn()).getValues();
