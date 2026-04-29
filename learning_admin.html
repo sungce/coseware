@@ -65,18 +65,32 @@
 
     <main class="max-w-7xl mx-auto px-6 pt-28 pb-24 fade-in">
 
-        <!-- 스프레드시트 ID 설정 배너 (ID가 없을 때만 표시) -->
-        <div id="config-banner" class="card p-5 mb-6 border-blue-200 bg-blue-50 hidden">
-            <div class="flex items-start space-x-3">
-                <i data-lucide="alert-circle" class="w-5 h-5 text-blue-500 mt-0.5 shrink-0"></i>
-                <div class="flex-1">
-                    <p class="text-sm font-bold text-slate-800 mb-1">Google Apps Script의 스프레드시트 ID를 확인해주세요</p>
-                    <p class="text-xs text-slate-500 mb-2">Apps Script 편집기에서 <code class="bg-white px-1 rounded">LEARNING_SPREADSHEET_ID</code>가 실제 시트 ID로 설정되어 있어야 합니다.</p>
-                    <a href="https://script.google.com" target="_blank" class="text-xs font-bold text-blue-600 hover:underline">Apps Script 열기 →</a>
+        <!-- Apps Script 연동 상태 배너 -->
+        <div id="config-banner" class="card p-5 mb-6 border-amber-200 bg-amber-50 hidden">
+            <div class="flex items-start justify-between">
+                <div class="flex items-start space-x-3 flex-1">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-500 mt-0.5 shrink-0"></i>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800 mb-1">⚠️ Google Sheets 연동 오류</p>
+                        <p class="text-xs text-slate-600 mb-2">Apps Script가 응답하지 않습니다. 아래 사항을 확인해주세요:</p>
+                        <ol class="text-xs text-slate-600 space-y-1 list-decimal list-inside mb-3">
+                            <li><strong>Apps Script 배포 설정</strong> → 액세스: <strong>"모든 사용자"</strong> 로 재배포</li>
+                            <li><code class="bg-white px-1 rounded">LEARNING_SPREADSHEET_ID</code> 가 실제 시트 ID인지 확인</li>
+                            <li>재배포 후 새 URL을 이 페이지 GS_URL에 업데이트</li>
+                        </ol>
+                        <div class="flex space-x-3">
+                            <a href="https://script.google.com" target="_blank"
+                                class="text-xs font-bold text-amber-700 hover:underline bg-amber-100 px-3 py-1.5 rounded-lg">Apps Script 열기 →</a>
+                            <button onclick="loadData()"
+                                class="text-xs font-bold text-slate-600 hover:text-teal-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg transition-colors">다시 시도</button>
+                        </div>
+                    </div>
                 </div>
+                <button onclick="this.closest('#config-banner').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
             </div>
         </div>
-
 
         <!-- 단원/소단원 필터 -->
         <div class="card p-5 mb-6">
@@ -338,10 +352,11 @@
             };
             window.__summaryTimer = setTimeout(() => {
                 summaryDone = true;
+                document.getElementById('config-banner').classList.remove('hidden');
                 document.getElementById('student-summary').innerHTML =
                     `<div class="py-6 text-center text-xs font-medium text-amber-600">⚠️ 응답 없음 — Apps Script 재배포 후 확인하세요</div>`;
                 checkDone();
-            }, 15000);
+            }, 5000);
             const s1 = document.createElement('script');
             s1.id  = 'jsonp-summary';
             s1.src = GS_URL + '?action=getSummary&callback=__summaryCb&_=' + Date.now();
@@ -364,11 +379,12 @@
             };
             window.__recordsTimer = setTimeout(() => {
                 recordsDone = true;
+                document.getElementById('config-banner').classList.remove('hidden');
                 document.getElementById('record-tbody').innerHTML =
                     `<tr><td colspan="5" class="text-center py-8 text-amber-500 font-medium text-sm">⚠️ 응답 없음 — Apps Script URL·스프레드시트 ID·배포 권한을 확인해주세요.</td></tr>`;
                 applyRecords({});
                 checkDone();
-            }, 15000);
+            }, 5000);
             const s2 = document.createElement('script');
             s2.id  = 'jsonp-records';
             s2.src = GS_URL + '?action=getRecords&callback=__recordsCb&_=' + Date.now();
