@@ -51,6 +51,11 @@
                         <i data-lucide="home" class="w-4 h-4"></i>
                         <span>메인으로</span>
                     </a>
+                    <a href="https://docs.google.com/spreadsheets/d/13rudHavb6-7M3A_VyXx8oLlhshPLyku2Nyvt-xFLcuY/edit" target="_blank"
+                        class="hidden sm:flex items-center space-x-2 text-slate-600 hover:text-emerald-600 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 px-3 py-2 rounded-xl text-sm font-bold transition-all">
+                        <i data-lucide="table" class="w-4 h-4"></i>
+                        <span>Google Sheets</span>
+                    </a>
                 <button onclick="handleSignOut()" class="flex items-center space-x-1.5 text-slate-500 hover:text-rose-500 px-3 py-2 rounded-xl hover:bg-rose-50 text-sm font-bold transition-colors">
                     <i data-lucide="log-out" class="w-4 h-4"></i><span class="hidden sm:inline">로그아웃</span>
                 </button>
@@ -72,29 +77,6 @@
             </div>
         </div>
 
-        <!-- 통계 카드 -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div class="card p-5">
-                <div class="w-9 h-9 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mb-3"><i data-lucide="users" class="w-4 h-4"></i></div>
-                <p class="text-2xl font-black text-slate-900" id="stat-students">-</p>
-                <p class="text-xs font-medium text-slate-400 mt-0.5">학습 학생 수</p>
-            </div>
-            <div class="card p-5">
-                <div class="w-9 h-9 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-3"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
-                <p class="text-2xl font-black text-slate-900" id="stat-completed">-</p>
-                <p class="text-xs font-medium text-slate-400 mt-0.5">완료 소단원</p>
-            </div>
-            <div class="card p-5">
-                <div class="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-3"><i data-lucide="edit" class="w-4 h-4"></i></div>
-                <p class="text-2xl font-black text-slate-900" id="stat-activities">-</p>
-                <p class="text-xs font-medium text-slate-400 mt-0.5">활동 저장</p>
-            </div>
-            <div class="card p-5">
-                <div class="w-9 h-9 bg-violet-50 text-violet-600 rounded-xl flex items-center justify-center mb-3"><i data-lucide="star" class="w-4 h-4"></i></div>
-                <p class="text-2xl font-black text-slate-900" id="stat-selfchecks">-</p>
-                <p class="text-xs font-medium text-slate-400 mt-0.5">자기 평가</p>
-            </div>
-        </div>
 
         <!-- 단원/소단원 필터 -->
         <div class="card p-5 mb-6">
