@@ -1,1 +1,872 @@
 
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>시험지 인수·인계 확인서 생성기</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+:root {
+  --ink:    #0e1b2e;
+  --navy:   #162f55;
+  --blue:   #1d4a8a;
+  --sky:    #2d6fc4;
+  --pale:   #e8f0fb;
+  --light:  #f4f7fc;
+  --border: #cdd8ed;
+  --muted:  #6b7fa3;
+  --white:  #ffffff;
+  --gold:   #e8a020;
+  --green:  #1a5c3a;
+}
+
+body {
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  background:var(--light);
+  min-height:100vh;
+  color:var(--ink);
+}
+
+/* ── 헤더 ──────────────────────────────── */
+.hd {
+  background:linear-gradient(148deg,#0e1b2e 0%,#162f55 52%,#1d4a8a 100%);
+  position:relative; overflow:hidden;
+}
+.hd::after {
+  content:'';position:absolute;right:-70px;top:-70px;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(45,111,196,.15) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hd-inner {
+  position:relative;z-index:1;
+  display:flex;align-items:center;gap:16px;
+  max-width:860px;margin:0 auto;padding:20px;
+}
+.hd-icon {
+  width:48px;height:48px;border-radius:13px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  display:grid;place-items:center;font-size:22px;flex-shrink:0;
+}
+.hd-text h1 { color:#fff;font-size:18px;font-weight:700;letter-spacing:-.3px; }
+.hd-text p  { color:rgba(255,255,255,.5);font-size:11.5px;margin-top:3px;font-weight:300; }
+.hd-dots { margin-left:auto;display:flex;gap:5px; }
+.dot { width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .3s; }
+.dot.on   { background:var(--gold); }
+.dot.done { background:rgba(255,255,255,.55); }
+
+/* ── 레이아웃 ──────────────────────────── */
+.wrap { max-width:860px;margin:0 auto;padding:26px 18px 52px; }
+
+/* ── 카드 ──────────────────────────────── */
+.card {
+  background:var(--white);border-radius:14px;
+  border:1px solid var(--border);
+  box-shadow:0 2px 14px rgba(14,27,46,.06);
+  margin-bottom:18px;overflow:hidden;
+}
+.card-hd {
+  display:flex;align-items:center;gap:10px;
+  padding:13px 22px;background:var(--navy);
+  color:#fff;font-size:13px;font-weight:700;
+}
+.card-hd .tag {
+  margin-left:auto;background:rgba(255,255,255,.13);
+  border-radius:20px;padding:2px 10px;font-size:11px;font-weight:400;
+}
+.card-bd { padding:22px; }
+
+/* ── 드롭존 ────────────────────────────── */
+.dz {
+  border:2px dashed var(--border);border-radius:12px;
+  padding:36px 20px;text-align:center;cursor:pointer;
+  background:#fafbfd;transition:all .22s;
+}
+.dz:hover,.dz.over { border-color:var(--sky);background:var(--pale); }
+.dz input { display:none; }
+.dz-ico { font-size:44px;display:block;margin-bottom:10px; }
+.dz-ttl { font-size:15px;font-weight:700;color:var(--navy); }
+.dz-sub { font-size:12px;color:var(--muted);margin-top:4px; }
+.dz-pick {
+  display:inline-block;margin-top:14px;
+  background:var(--navy);color:#fff;border:none;border-radius:8px;
+  padding:8px 22px;font-size:12px;font-family:inherit;cursor:pointer;transition:background .2s;
+}
+.dz-pick:hover { background:var(--blue); }
+
+/* ── 파일 칩 ───────────────────────────── */
+.chip {
+  display:flex;align-items:center;gap:12px;
+  background:#f0fdf8;border:1px solid #6ee7b7;
+  border-radius:10px;padding:12px 16px;margin-top:14px;
+  animation:slideUp .28s ease;
+}
+.chip-ico { font-size:28px; }
+.chip-nm  { font-size:13px;font-weight:700;color:var(--green); }
+.chip-sz  { font-size:11px;color:var(--muted);margin-top:2px; }
+.chip-del {
+  margin-left:auto;background:none;border:none;cursor:pointer;
+  color:var(--muted);font-size:16px;padding:4px 8px;
+  border-radius:6px;transition:all .15s;
+}
+.chip-del:hover { background:#fee2e2;color:#dc2626; }
+
+/* ── 인식 결과 ─────────────────────────── */
+.result-area { margin-top:20px;animation:slideUp .35s ease; }
+.rt-lbl { font-size:12.5px;font-weight:700;color:var(--blue);margin-bottom:10px; }
+.date-grid {
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:11px;
+}
+.dc { border:1px solid var(--border);border-radius:10px;overflow:hidden;animation:pop .28s ease; }
+.dc-hd {
+  background:var(--navy);color:#fff;
+  padding:9px 14px;font-size:12.5px;font-weight:700;
+}
+.dc-bd { padding:8px 14px; }
+.gr-row {
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:5px 0;border-bottom:1px solid #f0f4fb;
+}
+.gr-row:last-child { border-bottom:none; }
+.gr-nm { font-size:12px;font-weight:700;color:var(--ink); }
+.tags  { display:flex;flex-wrap:wrap;gap:3px;justify-content:flex-end;max-width:160px; }
+.tag-s {
+  background:var(--pale);color:var(--blue);
+  border-radius:8px;padding:1px 7px;font-size:10.5px;font-weight:500;
+}
+
+/* ── 인쇄 정보 ─────────────────────────── */
+.print-info {
+  margin-top:13px;padding:10px 14px;
+  background:#fffbeb;border-left:3px solid var(--gold);
+  border-radius:6px;font-size:11.5px;color:#78350f;line-height:1.8;
+}
+.pbadges { display:flex;flex-wrap:wrap;gap:6px;margin-top:8px; }
+.pbadge {
+  display:flex;align-items:center;gap:5px;
+  background:var(--pale);border:1px solid var(--border);
+  border-radius:8px;padding:4px 10px;font-size:11px;color:var(--navy);
+}
+.pbadge .cdot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
+
+/* ── 버튼 ──────────────────────────────── */
+.btn-area { display:flex;justify-content:center;padding:22px 22px 18px; }
+.gen-btn {
+  display:inline-flex;align-items:center;gap:10px;padding:14px 44px;
+  background:linear-gradient(135deg,var(--navy),var(--sky));
+  color:#fff;border:none;border-radius:10px;
+  font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;
+  box-shadow:0 5px 18px rgba(22,47,85,.28);transition:all .22s;
+  position:relative;overflow:hidden;
+}
+.gen-btn:hover:not(:disabled) { transform:translateY(-2px);box-shadow:0 9px 26px rgba(22,47,85,.34); }
+.gen-btn:disabled { opacity:.35;cursor:not-allowed;transform:none;box-shadow:none; }
+
+/* ── 상태 ──────────────────────────────── */
+.status { padding:0 22px 20px; }
+.smsg {
+  border-radius:8px;padding:10px 15px;
+  font-size:13px;display:flex;align-items:center;gap:8px;
+}
+.si  { background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe; }
+.sok { background:#f0fdf8;color:var(--green);border:1px solid #6ee7b7; }
+.ser { background:#fef2f2;color:#991b1b;border:1px solid #fca5a5; }
+.pb  { height:4px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px; }
+.pbf { height:100%;width:0%;background:linear-gradient(90deg,var(--navy),var(--sky));border-radius:3px;transition:width .5s ease; }
+
+/* ── 완료 ──────────────────────────────── */
+.done-card {
+  background:linear-gradient(135deg,#f0fdf8,#ecfdf5);
+  border:1px solid #6ee7b7;border-radius:12px;
+  display:flex;align-items:center;gap:14px;padding:16px 18px;
+}
+.done-ico { font-size:34px; }
+.done-ttl { font-size:15px;font-weight:700;color:var(--green); }
+.done-sub { font-size:12px;color:var(--muted);margin-top:3px; }
+
+/* ── 안내박스 ──────────────────────────── */
+.hint {
+  background:#fffbeb;border-left:3px solid var(--gold);
+  border-radius:6px;padding:10px 14px;
+  font-size:12px;color:#78350f;line-height:1.75;margin-top:14px;
+}
+
+/* ── 애니메이션 ─────────────────────────── */
+@keyframes slideUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pop     { from{opacity:0;transform:scale(.95)}      to{opacity:1;transform:scale(1)} }
+.spin { display:inline-block;animation:spin .9s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd-inner">
+    <div class="hd-icon">📋</div>
+    <div class="hd-text">
+      <h1>시험지 인수·인계 확인서 생성기</h1>
+      <p>지필평가 감독시간표 (.hwpx) → 일자별 시트 · 학년별 페이지 엑셀 자동 생성</p>
+    </div>
+    <div class="hd-dots">
+      <div class="dot on" id="d1"></div>
+      <div class="dot"    id="d2"></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- STEP 1: 파일 첨부 -->
+  <div class="card">
+    <div class="card-hd">
+      <span>📂</span> STEP 1. 파일 첨부
+      <span class="tag">감독시간표 .hwpx</span>
+    </div>
+    <div class="card-bd">
+
+      <div class="dz" id="dz" onclick="document.getElementById('fi').click()">
+        <input type="file" id="fi" accept=".hwpx,.hwp">
+        <span class="dz-ico">📎</span>
+        <div class="dz-ttl">클릭하거나 파일을 드래그하여 첨부</div>
+        <div class="dz-sub">지필평가 감독시간표가 포함된 .hwpx 파일을 선택하세요</div>
+        <button class="dz-pick" type="button">파일 선택</button>
+      </div>
+
+      <div id="chip-wrap" style="display:none"></div>
+
+
+      <div id="result-area" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- STEP 2: 생성 -->
+  <div class="card">
+    <div class="card-hd">
+      <span>📊</span> STEP 2. 엑셀 생성
+    </div>
+    <div class="btn-area">
+      <button class="gen-btn" id="genBtn" disabled onclick="generate()">
+        <span id="bIco">📥</span>
+        <span id="bTxt">인수·인계 확인서 엑셀 생성</span>
+      </button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   상수 · 색상 팔레트
+══════════════════════════════════════════ */
+// 제외할 교시 키워드 (교과수업, 스포츠 모두 제외)
+const EXCLUDE = ['교과', '교과_스포츠', '스포츠'];
+
+// 학년별 색상 (argb 8자리 완전표기)
+const CLR = {
+  2: {
+    hd:     'FF2E75B6',   // 대제목 배경  (밝은 파랑)
+    mid:    'FF9DC3E6',   // 학년+날짜 배경 (연파랑)
+    sub:    'FF4472C4',   // 교시헤더 배경  (중간 파랑)
+    pale:   'FFDEEAF1',   // 짝수행 배경
+    sig:    'FFF0F6FF',   // 확인란 배경
+    txt:    'FF1F3864',   // 반 번호 텍스트
+    hdFg:   'FFFFFFFF',   // 대제목 글자
+    midFg:  'FF1F3864',   // 학년+날짜 글자 (어두운 색 — 배경이 밝으므로)
+    subFg:  'FFFFFFFF',   // 교시헤더 글자
+  },
+  3: {
+    hd:     'FF548235',   // 대제목 배경  (밝은 녹색)
+    mid:    'FFA9D18E',   // 학년+날짜 배경 (연녹색)
+    sub:    'FF70AD47',   // 교시헤더 배경  (중간 녹색)
+    pale:   'FFE2EFDA',
+    sig:    'FFF0FDF4',
+    txt:    'FF375623',
+    hdFg:   'FFFFFFFF',
+    midFg:  'FF1C3A0E',
+    subFg:  'FFFFFFFF',
+  },
+};
+const CLR_DEF = { hd:'FF5B5B5B', mid:'FFABABAB', sub:'FF8C8C8C', pale:'FFF2F2F2', sig:'FFFAFAFA', txt:'FF1A1A1A', hdFg:'FFFFFFFF', midFg:'FF1A1A1A', subFg:'FFFFFFFF' };
+
+/* ══════════════════════════════════════════
+   전역 상태
+══════════════════════════════════════════ */
+let PARSED     = null;   // 파싱 결과
+let SHEET_META = [];     // [{ idx, breakRows:[] }]
+
+/* ══════════════════════════════════════════
+   파일 입력 / 드래그앤드롭
+══════════════════════════════════════════ */
+const dz = document.getElementById('dz');
+const fi = document.getElementById('fi');
+
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', ()  => dz.classList.remove('over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('over');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fi.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+
+async function handleFile(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (!['hwpx','hwp'].includes(ext)) {
+    setMsg('❌ .hwpx 파일만 지원합니다.', 'er'); return;
+  }
+  // 칩 표시
+  const cw = document.getElementById('chip-wrap');
+  cw.style.display = 'block';
+  cw.innerHTML = `
+    <div class="chip">
+      <div class="chip-ico">📄</div>
+      <div>
+        <div class="chip-nm">${file.name}</div>
+        <div class="chip-sz">${(file.size/1024).toFixed(1)} KB</div>
+      </div>
+      <button class="chip-del" onclick="resetAll()">✕</button>
+    </div>`;
+
+  document.getElementById('result-area').style.display = 'none';
+  document.getElementById('genBtn').disabled = true;
+  PARSED = null; SHEET_META = [];
+  setMsg('<span class="spin">🔍</span> 파일 분석 중…', 'i', 20);
+
+  try {
+    PARSED = await parseHWPX(file);
+    showResult(PARSED);
+    document.getElementById('genBtn').disabled = false;
+    document.getElementById('d2').classList.add('on');
+    setMsg(`✅ [${PARSED.docTitle}] ${PARSED.dates.length}일치 평가 일정 인식 완료 — 아래 버튼으로 엑셀을 생성하세요.`, 'ok', 100);
+  } catch(err) {
+    console.error(err);
+    setMsg('❌ 파일 분석 실패: ' + err.message, 'er');
+  }
+}
+
+function resetAll() {
+  document.getElementById('chip-wrap').style.display = 'none';
+  document.getElementById('chip-wrap').innerHTML = '';
+  document.getElementById('result-area').style.display = 'none';
+  document.getElementById('status').innerHTML = '';
+  document.getElementById('genBtn').disabled = true;
+  document.getElementById('d1').className = 'dot on';
+  document.getElementById('d2').className = 'dot';
+  fi.value = ''; PARSED = null; SHEET_META = [];
+}
+
+/* ══════════════════════════════════════════
+   HWPX 파싱
+══════════════════════════════════════════ */
+async function parseHWPX(file) {
+  const zip  = await JSZip.loadAsync(await file.arrayBuffer());
+  const xf   = zip.file('Contents/section0.xml');
+  if (!xf) throw new Error('section0.xml 파일을 찾을 수 없습니다.');
+  const doc  = new DOMParser().parseFromString(await xf.async('text'), 'text/xml');
+
+  // ── 문서 제목 추출 (PrvText.txt 첫 줄 → "감독시간표" 접미어 제거) ──
+  let docTitle = '2025학년도 1학기 2차 지필고사';   // fallback
+  const prvF = zip.file('Preview/PrvText.txt');
+  if (prvF) {
+    const prvText = await prvF.async('text');
+    const firstLine = prvText.trim().split(/\r?\n/)[0].trim();
+    // "감독시간표", "시간표" 등 접미어 제거 → 연도+학기+차수 부분만 추출
+    const titleMatch = firstLine.match(/^(\d{4}학년도\s+\d+학기\s+\d+차\s+지필[고사]*)/);
+    if (titleMatch) {
+      docTitle = titleMatch[1].replace(/\s+/g, ' ').trim();
+    } else {
+      // 접미어("감독시간표" 등) 제거
+      docTitle = firstLine.replace(/\s*(감독)?시간표.*$/, '').trim() || docTitle;
+    }
+  }
+
+  // 모든 tbl 요소 수집
+  const allTbls = [];
+  for (const el of doc.getElementsByTagName('*'))
+    if (el.localName === 'tbl') allTbls.push(tblToArray(el));
+
+  // 학년별 테이블만 필터
+  const gradeTbls = allTbls.filter(t =>
+    t.length > 0 && t[0].length > 0 && /\d+학년/.test(t[0][0])
+  );
+
+  // 날짜별 그룹화
+  const dateMap = {};
+  for (const tbl of gradeTbls) {
+    const gm = tbl[0][0].match(/(\d+)학년/);
+    if (!gm) continue;
+    const grade   = parseInt(gm[1]);
+    const dateRaw = tbl[0][1] || '';
+    const dateKey = normDate(dateRaw);
+    const dateStr = fmtDate(dateRaw);
+
+    if (!dateMap[dateKey]) dateMap[dateKey] = { dateKey, dateStr, grades: [] };
+
+    const testPeriods = [];
+    const headers = tbl[1] || [];
+    headers.forEach((ph, colIdx) => {
+      const parsed = parseSubject(ph);
+      if (parsed.valid) {
+        testPeriods.push({ colIdx, pNo: parsed.pNo, subj: parsed.subj });
+      }
+    });
+
+    const classRows = tbl.slice(2).filter(r => r[0] && r[0].includes('반'));
+    dateMap[dateKey].grades.push({ grade, testPeriods, classRows });
+  }
+
+  const dates = Object.values(dateMap).sort((a, b) => a.dateKey.localeCompare(b.dateKey));
+  if (dates.length === 0) throw new Error('감독시간표 데이터를 찾을 수 없습니다.');
+  return { dates, docTitle };
+}
+
+// tbl 요소 → 2차원 배열
+function tblToArray(tbl) {
+  const rows = [];
+  for (const tr of tbl.children) {
+    if (tr.localName !== 'tr') continue;
+    const row = [];
+    for (const tc of tr.children) {
+      if (tc.localName !== 'tc') continue;
+      const parts = [];
+      for (const el of tc.getElementsByTagName('*'))
+        if (el.localName === 't' && el.textContent) parts.push(el.textContent);
+      row.push(parts.join(' ').trim());
+    }
+    rows.push(row);
+  }
+  return rows;
+}
+
+// 교시 헤더 파싱 → 평가 교시만 valid:true
+function parseSubject(ph) {
+  const m = ph.match(/(\d)교시\s*\(([^)]+)\)/);
+  if (!m) return { valid: false };
+
+  const pNo  = parseInt(m[1]);
+  // 괄호 안 내용에서 첫 단어(교과명)만 추출
+  const raw  = m[2].trim().split(/[\s,]/)[0].trim();
+
+  // ▶ 제외 목록: 교과 수업 + 스포츠 계열 모두 제외
+  const exclude = ['교과', '교과_스포츠', '스포츠', '체육'];
+  if (exclude.includes(raw)) return { valid: false };
+
+  // 추가로 "교과"가 포함된 모든 케이스 제외
+  if (raw.includes('교과')) return { valid: false };
+
+  return { valid: true, pNo, subj: raw };
+}
+
+// 날짜 정규화 / 포매팅
+function normDate(r) {
+  const m = r.match(/(\d+)\s*\.\s*(\d+)\.\s*\((.)\)/);
+  return m ? `${m[1]}.${m[2].padStart(2,'0')}.(${m[3]})` : r.trim();
+}
+function fmtDate(r) {
+  const m = r.match(/(\d+)\s*\.\s*(\d+)\.\s*\((.)\)/);
+  return m ? `${m[1]}월 ${parseInt(m[2])}일 (${m[3]})` : r.trim();
+}
+function toSheetName(k) {
+  const m = k.match(/(\d+)\.(\d+)\.\((.)\)/);
+  return m ? `${m[1]}월${parseInt(m[2])}일(${m[3]})` : k;
+}
+function classNo(raw) {
+  const m = raw.match(/(\d+)학년\s*(\d+)반/);
+  return m ? `${m[1]}-${m[2]}` : raw;
+}
+function cleanTeacher(raw) {
+  return raw.replace(/\s*\([^)]*\)/g, '').trim();
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+/* ══════════════════════════════════════════
+   인식 결과 미리보기
+══════════════════════════════════════════ */
+const G_DOT_CLR = { 2:'#1f3864', 3:'#375623', default:'#374151' };
+
+function showResult(data) {
+  const cards = data.dates.map(d => {
+    const grRows = [...d.grades].sort((a,b)=>a.grade-b.grade).map(g => {
+      const tags = g.testPeriods.map(p =>
+        `<span class="tag-s">${p.pNo}교시·${p.subj}</span>`).join('');
+      return `<div class="gr-row">
+        <span class="gr-nm">${g.grade}학년</span>
+        <div class="tags">${tags || '<span style="color:#9ca3af;font-size:11px">평가 없음</span>'}</div>
+      </div>`;
+    }).join('');
+    return `<div class="dc">
+      <div class="dc-hd">📅 ${d.dateStr}</div>
+      <div class="dc-bd">${grRows}</div>
+    </div>`;
+  }).join('');
+
+  const badges = data.dates.flatMap(d =>
+    [...d.grades].sort((a,b)=>a.grade-b.grade).map(g => {
+      const maxP = Math.max(...d.grades.map(x => x.testPeriods.length), 1);
+      const land = maxP >= 3;
+      const dot  = G_DOT_CLR[g.grade] || G_DOT_CLR.default;
+      return `<div class="pbadge">
+        <div class="cdot" style="background:${dot}"></div>
+        ${d.dateStr} ${g.grade}학년 · ${g.testPeriods.length}개 과목 · A4 ${land?'가로':'세로'}
+      </div>`;
+    })
+  ).join('');
+
+  const ra = document.getElementById('result-area');
+  ra.style.display = 'block';
+  ra.innerHTML = `
+    <div class="result-area">
+      <div class="rt-lbl">✅ 인식된 평가 일정 <span style="color:var(--muted);font-weight:400">(교과수업·스포츠 제외)</span></div>
+      <div class="date-grid">${cards}</div>
+      <div class="print-info">
+        🖨️ <strong>인쇄 페이지 구성</strong><br>
+        <div class="pbadges">${badges}</div>
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════
+   엑셀 생성
+══════════════════════════════════════════ */
+async function generate() {
+  if (!PARSED) return;
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  document.getElementById('bIco').textContent = '⏳';
+  document.getElementById('bTxt').textContent = '생성 중…';
+  setMsg('<span class="spin">⚙️</span> 엑셀 파일 생성 중…', 'i', 15);
+
+  try {
+    const wb = new ExcelJS.Workbook();
+    wb.creator = '인수인계확인서 생성기';
+    wb.created = new Date();
+    SHEET_META = [];
+
+    const { dates } = PARSED;
+    for (let i = 0; i < dates.length; i++) {
+      const meta = buildSheet(wb, dates[i], i, PARSED.docTitle);
+      SHEET_META.push(meta);
+      setMsg('<span class="spin">⚙️</span> 시트 작성 중…', 'i',
+             15 + Math.round((i+1)/dates.length * 55));
+    }
+
+    setMsg('<span class="spin">💾</span> 페이지 나누기 처리 중…', 'i', 75);
+    const rawBuf   = await wb.xlsx.writeBuffer();
+    const finalBuf = await injectPageBreaks(rawBuf, SHEET_META);
+
+    setMsg('<span class="spin">💾</span> 다운로드 준비 중…', 'i', 95);
+    const blob = new Blob([finalBuf], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const url = URL.createObjectURL(blob);
+    const a   = document.createElement('a');
+    const now = new Date();
+    a.href     = url;
+    a.download = `시험지_인수인계확인_${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}.xlsx`;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+
+    document.getElementById('d2').classList.remove('on');
+    document.getElementById('d2').classList.add('done');
+    document.getElementById('status').innerHTML = `
+      <div class="done-card">
+        <div class="done-ico">📥</div>
+        <div>
+          <div class="done-ttl">엑셀 파일 다운로드 완료!</div>
+          <div class="done-sub">
+            ${dates.length}개 시트 (${dates.map(d=>d.dateStr).join(' / ')}) ·
+            학년별 페이지 나누기 적용
+          </div>
+        </div>
+      </div>`;
+  } catch(err) {
+    console.error(err);
+    setMsg('❌ 생성 오류: ' + err.message, 'er');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('bIco').textContent = '📥';
+    document.getElementById('bTxt').textContent = '인수·인계 확인서 엑셀 생성';
+  }
+}
+
+/* ══════════════════════════════════════════
+   시트 빌드
+══════════════════════════════════════════ */
+function buildSheet(wb, dayData, sheetIdx, docTitle) {
+  // docTitle: "2025학년도 1학기 2차 지필고사" 등 (파일에서 자동 추출)
+  const titleLine1 = docTitle || '2025학년도 1학기 2차 지필고사';
+  const titleLine2 = '문제지 및 답안지 인수·인계 확인';
+
+  const sname      = toSheetName(dayData.dateKey);
+  const ws         = wb.addWorksheet(sname);
+  ws.views         = [{ showGridLines: false }];
+
+  const grades     = [...dayData.grades].sort((a, b) => a.grade - b.grade);
+  const maxP       = Math.max(...grades.map(g => g.testPeriods.length), 1);
+  const TOTAL_COLS = 1 + maxP * 2;   // A(반) + [감독+확인] × maxP
+
+  // ── 열 너비 ──────────────────────────────────────────────────────
+  ws.getColumn(1).width = 7.5;
+  const colW = maxP <= 2 ? 26 : maxP === 3 ? 17 : 13;
+  for (let p = 0; p < maxP; p++) {
+    ws.getColumn(2 + p * 2).width = colW;
+    ws.getColumn(3 + p * 2).width = colW;
+  }
+
+  // ── 인쇄 설정 ────────────────────────────────────────────────────
+  // fitToWidth:1(가로 1페이지) + fitToHeight:0(세로 스케일 없음)
+  // 행 높이를 학년별로 정확히 계산 → rowBreaks 로 학년 경계 페이지 나누기
+  ws.pageSetup = {
+    paperSize:          9,          // A4
+    orientation:        'portrait',
+    fitToPage:          true,
+    fitToWidth:         1,
+    fitToHeight:        0,
+    horizontalCentered: true,
+    margins: { left:0.3, right:0.3, top:0.4, bottom:0.4, header:0.1, footer:0.1 },
+  };
+
+  // ── A4 세로 사용가능 높이 계산 ───────────────────────────────────
+  // A4 = 841.89pt,  마진합 = (0.4+0.4+0.1+0.1)×72 = 72pt
+  // 사용가능 = 841.89 - 72 = 769.89pt
+  const USABLE  = 769.89;
+  const H_TITLE = 65;   // 대제목 (2줄 wrap)
+  const H_SUB   = 50;   // 학년+날짜 부제목
+  const H_HDR1  = 65;   // 교시 헤더 행
+  const H_HDR2  = 45;   // 감독/확인 서브헤더 행
+  const H_FIXED = H_TITLE + H_SUB + H_HDR1 + H_HDR2;  // 225pt
+
+  let curRow    = 1;
+  const breakRows = [];
+
+  /* ── 학년별 블록 ─────────────────────────────────────────────── */
+  for (let gi = 0; gi < grades.length; gi++) {
+    const gd    = grades[gi];
+    const clr   = CLR[gd.grade] || CLR_DEF;
+    const nP    = gd.testPeriods.length;
+    const nR    = gd.classRows.length;   // 실제 반 수
+
+    // ── 반 수별 고정 데이터행 높이 ─────────────────────────────
+    // 10반: 60pt / 11반: 55pt / 그 외: 비례 계산
+    const H_DATA   = nR <= 10 ? 65 : nR === 11 ? 60 : Math.floor((USABLE - H_FIXED - 14) / nR);
+    // 푸터가 나머지 높이를 흡수 (합계 ≈ USABLE)
+    const H_FOOTER = Math.max(14, Math.round(USABLE - H_FIXED - H_DATA * nR));
+
+    // ┌─ 1. 대제목 ──────────────────────────────────────────────┐
+    mc(ws, curRow, 1, curRow, TOTAL_COLS);
+    sc(ws, curRow, 1, {
+      v:    titleLine1 + '\n' + titleLine2,
+      bold: true, sz: 16,
+      fg:   clr.hdFg, bg: clr.hd, ha: 'center', wrap: true,
+    });
+    ws.getRow(curRow).height = H_TITLE;
+    curRow++;
+
+    // ┌─ 2. 학년 + 날짜 ─────────────────────────────────────────┐
+    mc(ws, curRow, 1, curRow, TOTAL_COLS);
+    sc(ws, curRow, 1, {
+      v:    `${gd.grade}학년          ${dayData.dateStr}`,
+      bold: true, sz: 14,
+      fg:   clr.midFg, bg: clr.mid, ha: 'center',
+    });
+    ws.getRow(curRow).height = H_SUB;
+    curRow++;
+
+    // ┌─ 3. 교시 헤더 (H_HDR1 높이, 2행 병합) ────────────────────┐
+    mc(ws, curRow, 1, curRow + 1, 1);
+    sc(ws, curRow, 1, {
+      v: '반', bold:true, sz:14, fg: clr.subFg, bg: clr.sub, ha: 'center',
+    });
+    for (let pi = 0; pi < nP; pi++) {
+      const tp = gd.testPeriods[pi];
+      const cs = 2 + pi * 2;
+      mc(ws, curRow, cs, curRow, cs + 1);
+      sc(ws, curRow, cs, {
+        v: `${tp.pNo}교시  (${tp.subj})`,
+        bold: true, sz: 14,
+        fg: clr.subFg, bg: clr.sub, ha: 'center', wrap: true,
+      });
+    }
+    if (nP < maxP) {
+      mc(ws, curRow, 2 + nP * 2, curRow + 1, TOTAL_COLS);
+      sc(ws, curRow, 2 + nP * 2, { v:'', bg:'FFF0F2F5', border:false });
+    }
+    ws.getRow(curRow).height = H_HDR1;
+    curRow++;
+
+    // ┌─ 4. 감독/확인 서브헤더 (H_HDR2 높이) ─────────────────────┐
+    for (let pi = 0; pi < nP; pi++) {
+      const cs = 2 + pi * 2;
+      sc(ws, curRow, cs,     { v:'감  독', bold:true, sz:13, fg:clr.subFg, bg:clr.sub, ha:'center' });
+      sc(ws, curRow, cs + 1, { v:'확  인', bold:true, sz:13, fg:clr.subFg, bg:clr.sub, ha:'center' });
+    }
+    ws.getRow(curRow).height = H_HDR2;
+    curRow++;
+
+    // ┌─ 5. 반별 데이터 (H_DATA 높이 × nR행) ─────────────────────┐
+    for (let ri = 0; ri < nR; ri++) {
+      const rw  = gd.classRows[ri];
+      const bg  = ri % 2 === 0 ? clr.pale : 'FFFFFFFF';
+      ws.getRow(curRow).height = H_DATA;
+
+      sc(ws, curRow, 1, {
+        v: classNo(rw[0]), bold:true, sz:13, fg: clr.txt, bg, ha:'center',
+      });
+      for (let pi = 0; pi < nP; pi++) {
+        const tp     = gd.testPeriods[pi];
+        const rawVal = (tp.colIdx + 1) < rw.length ? rw[tp.colIdx + 1] : '';
+        const name   = cleanTeacher(rawVal);
+        const cs     = 2 + pi * 2;
+        sc(ws, curRow, cs,     { v: name, sz:13, fg:'FF1A1A1A', bg, ha:'center' });
+        sc(ws, curRow, cs + 1, { v: '',   sz:13, fg:'FF1A1A1A', bg: clr.sig, ha:'center' });
+      }
+      if (nP < maxP) {
+        for (let ec = 2 + nP * 2; ec <= TOTAL_COLS; ec++)
+          sc(ws, curRow, ec, { v:'', bg:'FFF0F2F5', border:false });
+      }
+      curRow++;
+    }
+
+    // ┌─ 6. 푸터 (H_FOOTER 높이 — 나머지를 흡수해 합계 = USABLE) ─┐
+    mc(ws, curRow, 1, curRow, TOTAL_COLS);
+    sc(ws, curRow, 1, {
+      v:  '※ 시험 시작 전 인수 서명(감독란) → 시험 종료 후 교무실 제출 · 인계 서명(확인란)',
+      sz: 10, fg: 'FF5B6A7A', bg: 'FFF5F7FA', ha: 'left',
+    });
+    ws.getRow(curRow).height = H_FOOTER;
+
+    // ── 페이지 나누기 기록 (마지막 학년 블록 제외) ──────────────
+    if (gi < grades.length - 1) {
+      breakRows.push(curRow);   // 이 행 뒤에서 새 페이지 시작
+      curRow++;
+      ws.getRow(curRow).height = 2;   // 시각 구분용 미세 빈 행
+    }
+    curRow++;
+  }
+
+  return { sheetIdx, breakRows };
+}
+
+/* ══════════════════════════════════════════
+   ExcelJS 헬퍼
+══════════════════════════════════════════ */
+
+// 셀 병합 (range string 방식)
+function mc(ws, r1, c1, r2, c2) {
+  try { ws.mergeCells(`${col(c1)}${r1}:${col(c2)}${r2}`); } catch(e) {}
+}
+
+// 셀 스타일 적용
+function sc(ws, r, c, o = {}) {
+  const { v='', bold=false, sz=9, fg='FF111827', bg=null,
+          ha='center', wrap=false, border=true } = o;
+  const cell = ws.getCell(r, c);
+  cell.value     = v;
+  cell.font      = { name:'맑은 고딕', bold, size:sz, color:{ argb:fg } };
+  cell.alignment = { horizontal:ha, vertical:'middle', wrapText:wrap };
+
+  if (bg) {
+    // bg는 항상 8자리 argb로 전달
+    cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:bg } };
+  }
+  if (border) {
+    const s = { style:'thin', color:{ argb:'FFCCD5E0' } };
+    cell.border = { top:s, left:s, bottom:s, right:s };
+  }
+  return cell;
+}
+
+// 열 번호 → Excel 열 문자 (1→A, 26→Z, 27→AA …)
+function col(n) {
+  let s = '';
+  while (n > 0) {
+    s = String.fromCharCode(64 + (n % 26 || 26)) + s;
+    n = Math.floor((n - 1) / 26);
+  }
+  return s;
+}
+
+/* ══════════════════════════════════════════
+   페이지 나누기 주입
+   ──────────────────────────────────────────
+   OOXML 스키마 올바른 순서:
+     sheetData → mergeCells → pageMargins
+     → pageSetup → [rowBreaks] → </worksheet>
+   ∴ rowBreaks 는 pageSetup/pageMargins 의 "뒤"에 삽입해야 함.
+   앞에 삽입하면 Excel 이 "XML 오류 행2 열0" 복구 경고를 낸다.
+══════════════════════════════════════════ */
+async function injectPageBreaks(buffer, sheetMeta) {
+  const zip = await JSZip.loadAsync(buffer);
+
+  for (const { sheetIdx, breakRows } of sheetMeta) {
+    if (!breakRows.length) continue;
+
+    const path = `xl/worksheets/sheet${sheetIdx + 1}.xml`;
+    const xf   = zip.file(path);
+    if (!xf) continue;
+
+    let xml = await xf.async('text');
+
+    // 기존 rowBreaks 제거
+    xml = xml.replace(/<rowBreaks[^>]*\/>/g, '');
+    xml = xml.replace(/<rowBreaks[\s\S]*?<\/rowBreaks>/g, '');
+
+    // 새 rowBreaks XML 조각 생성
+    const brkXml =
+      '<rowBreaks count="' + breakRows.length +
+      '" manualBreakCount="' + breakRows.length + '">' +
+      breakRows.map(id => '<brk id="' + id + '" max="16383" man="1"/>').join('') +
+      '</rowBreaks>';
+
+    // ── OOXML 스키마 준수 ──────────────────────────────────────────────────
+    // 올바른 삽입 위치: pageSetup 또는 pageMargins 자기닫힘 태그 바로 뒤
+    // (앞에 넣으면 "XML 오류 행2 열0" 발생 — 스키마 순서 위반)
+    //
+    // 정규식으로 마지막 pageSetup/pageMargins 태그 끝 위치를 찾는다.
+    const re = /<pageSetup[^>]*\/?>|<pageMargins[^>]*\/>/g;
+    let lastMatch = null;
+    let m2;
+    while ((m2 = re.exec(xml)) !== null) lastMatch = m2;
+
+    if (lastMatch) {
+      const pos = lastMatch.index + lastMatch[0].length;
+      xml = xml.slice(0, pos) + brkXml + xml.slice(pos);
+    } else {
+      // fallback: </worksheet> 바로 앞
+      const wi = xml.lastIndexOf('</worksheet>');
+      xml = xml.slice(0, wi) + brkXml + xml.slice(wi);
+    }
+
+    zip.file(path, xml);
+  }
+
+  return zip.generateAsync({
+    type: 'arraybuffer',
+    compression: 'DEFLATE',
+    compressionOptions: { level: 6 },
+  });
+}
+
+/* ══════════════════════════════════════════
+   상태 메시지
+══════════════════════════════════════════ */
+function setMsg(html, type, pct = null) {
+  const cls = { i:'si', ok:'sok', er:'ser' }[type] || 'si';
+  const pb  = pct != null
+    ? `<div class="pb"><div class="pbf" style="width:${pct}%"></div></div>` : '';
+  document.getElementById('status').innerHTML =
+    `<div class="smsg ${cls}">${html}</div>${pb}`;
+}
+</script>
+<footer style="text-align:center;padding:22px 0 28px;font-family:'Noto Sans KR','Malgun Gothic',sans-serif;font-size:12px;color:#9ca3af;letter-spacing:.4px;">
+  Copyright 2026. Sungce. All rights reserved.
+</footer>
+</body>
+</html>
