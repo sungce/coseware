@@ -158,6 +158,52 @@
         </div>
     </main>
 
+    <!-- 작품 수정 모달 -->
+    <div id="edit-work-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+        onclick="if(event.target===this) closeEditWork()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="pencil" class="w-5 h-5 text-orange-500"></i><span>작품 수정</span>
+                </h3>
+                <button onclick="closeEditWork()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-8 py-6 space-y-4">
+                <input type="hidden" id="edit-work-id">
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">년도</label>
+                    <input type="number" id="edit-work-year" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"></div>
+                    <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">팀명</label>
+                    <input type="text" id="edit-work-team" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"></div>
+                </div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">작품명</label>
+                <input type="text" id="edit-work-title" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">설명</label>
+                <textarea id="edit-work-desc" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all resize-none"></textarea></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">링크</label>
+                <input type="url" id="edit-work-link" placeholder="https://..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">카드 색상</label>
+                <select id="edit-work-color" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all">
+                    <option value="from-blue-400 to-indigo-500">파란색</option>
+                    <option value="from-emerald-400 to-teal-500">초록색</option>
+                    <option value="from-orange-400 to-rose-400">주황색</option>
+                    <option value="from-purple-400 to-pink-500">보라색</option>
+                    <option value="from-cyan-400 to-blue-500">하늘색</option>
+                    <option value="from-amber-400 to-orange-500">황금색</option>
+                </select></div>
+            </div>
+            <div class="px-8 pb-8 flex space-x-3">
+                <button onclick="closeEditWork()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-200 transition-colors">취소</button>
+                <button onclick="saveEditWork()" id="edit-work-save-btn"
+                    class="flex-1 bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold py-3.5 rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="save" class="w-4 h-4"></i><span>저장</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="fixed bottom-8 right-8 bg-slate-900/95 text-white px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-32 opacity-0 z-50 flex items-center space-x-3 border border-slate-700">
         <div class="p-1.5 rounded-full bg-emerald-500/20"><i data-lucide="check" class="w-4 h-4 text-emerald-400" id="toast-icon"></i></div>
         <span class="font-medium text-sm" id="toast-msg"></span>
@@ -328,6 +374,43 @@
                 loadWorks();
             } catch(e) { showToast('오류: ' + e.message, 'error'); }
             finally { btn.disabled=false; btn.innerHTML='<i data-lucide="plus" class="w-4 h-4"></i><span>작품 등록</span>'; lucide.createIcons(); }
+        }
+
+        function openEditWork(id) {
+            const w = allWorks.find(x=>x.id===id); if(!w) return;
+            document.getElementById('edit-work-id').value    = id;
+            document.getElementById('edit-work-year').value  = w.year  || '';
+            document.getElementById('edit-work-team').value  = w.team  || '';
+            document.getElementById('edit-work-title').value = w.title || '';
+            document.getElementById('edit-work-desc').value  = w.desc  || '';
+            document.getElementById('edit-work-link').value  = w.link  || '';
+            document.getElementById('edit-work-color').value = w.imgColor || 'from-orange-400 to-rose-400';
+            const modal = document.getElementById('edit-work-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            lucide.createIcons();
+        }
+        function closeEditWork() {
+            document.getElementById('edit-work-modal').classList.add('hidden');
+            document.getElementById('edit-work-modal').classList.remove('flex');
+        }
+        async function saveEditWork() {
+            const id    = document.getElementById('edit-work-id').value;
+            const year  = parseInt(document.getElementById('edit-work-year').value);
+            const team  = document.getElementById('edit-work-team').value.trim();
+            const title = document.getElementById('edit-work-title').value.trim();
+            const desc  = document.getElementById('edit-work-desc').value.trim();
+            const link  = document.getElementById('edit-work-link').value.trim();
+            const imgColor = document.getElementById('edit-work-color').value;
+            if (!title||!team) { showToast('팀명과 작품명을 입력해주세요.','error'); return; }
+            const btn = document.getElementById('edit-work-save-btn');
+            btn.disabled=true; btn.innerHTML='<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>저장 중...</span>'; lucide.createIcons();
+            try {
+                await db.collection('student_works').doc(id).update({ year, team, title, desc, link, imgColor });
+                const idx = allWorks.findIndex(w=>w.id===id);
+                if (idx!==-1) Object.assign(allWorks[idx], { year, team, title, desc, link, imgColor });
+                renderWorks(); closeEditWork(); showToast('"'+title+'" 작품이 수정되었습니다! ✅');
+            } catch(e) { showToast('수정 오류: '+e.message,'error'); }
+            finally { btn.disabled=false; btn.innerHTML='<i data-lucide="save" class="w-4 h-4"></i><span>저장</span>'; lucide.createIcons(); }
         }
 
         async function deleteWork(id, title) {
