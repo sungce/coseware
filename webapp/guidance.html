@@ -1,1 +1,1721 @@
 
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학생 생활지도 일지</title>
+<style>
+/* ════════════════════════════════════════
+   SUNGCE · 학생 생활지도 일지
+   Design System v2.0
+   Primary  : #1a2744  (Deep Navy)
+   Accent   : #e63946  (Crimson)
+   Support  : #3a7ebf  (Steel Blue)
+   BG       : #f0f4fa  (Cool White)
+════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap');
+
+:root{
+  --navy:   #2563eb;
+  --navy2:  #3b82f6;
+  --red:    #e63946;
+  --red-lt: #fff0f1;
+  --red-bd: #fbc4c7;
+  --blue:   #3a7ebf;
+  --green:  #0d9e6e;
+  --amber:  #d08c00;
+  --orange: #c2410c;
+  --bg:     #f5f7fb;
+  --surface:#ffffff;
+  --surf2:  #f8fafc;
+  --border: #e2e8f0;
+  --t1:     #1e293b;
+  --t2:     #556080;
+  --t3:     #a0abc4;
+  --r:      14px;
+  --r-sm:   8px;
+  --sh:     0 1px 4px rgba(26,39,68,.07),0 1px 2px rgba(26,39,68,.04);
+  --sh-md:  0 4px 16px rgba(26,39,68,.09),0 1px 4px rgba(26,39,68,.05);
+  --sh-lg:  0 16px 40px rgba(26,39,68,.13),0 4px 12px rgba(26,39,68,.06);
+  --trans:  .2s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="dark"]{
+  --bg:     #0d1220;
+  --surface:#141c30;
+  --surf2:  #1c2540;
+  --border: #2a3555;
+  --t1:     #e8edf8;
+  --t2:     #8a97b8;
+  --t3:     #3d4d6e;
+  --red-lt: #2d1016;
+  --red-bd: #5a1a22;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;font-size:14px;line-height:1.65;transition:background var(--trans),color var(--trans);-webkit-font-smoothing:antialiased}
+
+/* ════ SCROLLBAR ════ */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ════ LOGIN ════ */
+#login-page{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:20px;
+  background: linear-gradient(135deg,#1e40af 0%,#2563eb 40%,#3b82f6 70%,#60a5fa 100%);
+  position:relative;overflow:hidden;
+}
+#login-page::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 60% 40%,rgba(58,126,191,.25) 0%,transparent 70%),
+             radial-gradient(ellipse 50% 40% at 20% 80%,rgba(230,57,70,.15) 0%,transparent 60%);
+}
+#login-page::after{
+  content:'';position:absolute;top:-200px;right:-200px;
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(58,126,191,.12) 0%,transparent 65%);
+  animation:pulse 6s ease-in-out infinite;
+}
+.login-card{
+  position:relative;z-index:1;
+  background:rgba(255,255,255,.97);
+  backdrop-filter:blur(20px);
+  border-radius:24px;padding:52px 48px;width:100%;max-width:400px;
+  box-shadow:0 32px 80px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.2);
+  text-align:center;
+  animation:slideUp .5s cubic-bezier(.34,1.56,.64,1);
+}
+[data-theme="dark"] .login-card{background:rgba(20,28,48,.96)}
+.login-logo{
+  width:68px;height:68px;
+  background:linear-gradient(135deg,var(--red),#ff6b7a);
+  border-radius:20px;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;font-size:30px;
+  box-shadow:0 8px 24px rgba(230,57,70,.4);
+}
+.login-school{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--blue);text-transform:uppercase;margin-bottom:6px}
+.login-title{font-size:22px;font-weight:800;letter-spacing:-.6px;color:var(--t1);margin-bottom:4px;line-height:1.3}
+.login-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:600;
+  background:linear-gradient(135deg,#e8f5e9,#f0fdf4);
+  color:#166534;border:1px solid #bbf7d0;
+  border-radius:20px;padding:4px 12px;margin-bottom:28px;
+}
+[data-theme="dark"] .login-badge{background:#052e16;color:#86efac;border-color:#14532d}
+.f-input{
+  width:100%;padding:13px 16px;
+  border:2px solid var(--border);border-radius:12px;
+  font-family:inherit;font-size:14px;color:var(--t1);
+  background:var(--bg);outline:none;
+  transition:border-color var(--trans),box-shadow var(--trans);
+  margin-bottom:10px;
+}
+.f-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,126,191,.12)}
+.btn-login{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
+  color:#fff;border:none;border-radius:12px;
+  font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
+  transition:all var(--trans);letter-spacing:.3px;
+  box-shadow:0 4px 16px rgba(26,39,68,.3);
+}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,39,68,.4)}
+.btn-login:active{transform:translateY(0)}
+.login-info{font-size:11px;color:var(--t3);margin-top:16px;line-height:1.7}
+.login-err{color:var(--red);font-size:12px;min-height:18px;margin-top:10px;font-weight:500}
+.btn-forgot{
+  width:100%;padding:10px;margin-top:10px;
+  background:transparent;border:1.5px dashed var(--border);
+  border-radius:10px;font-family:inherit;font-size:13px;
+  color:var(--t2);cursor:pointer;transition:all var(--trans);
+}
+.btn-forgot:hover{background:var(--surf2);border-color:var(--blue);color:var(--blue)}
+.reset-step{display:none}
+.reset-step.active{display:block}
+.step-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:700;
+  background:rgba(37,99,235,.08);color:var(--blue);
+  border:1px solid rgba(37,99,235,.2);
+  border-radius:20px;padding:3px 10px;margin-bottom:14px;
+}
+.info-box{
+  background:var(--surf2);border:1px solid var(--border);
+  border-radius:10px;padding:14px;font-size:12px;
+  color:var(--t2);line-height:1.8;margin-bottom:16px;
+}
+.info-box.warn{background:#fff8f0;border-color:#fed7aa;color:#92400e}
+.info-box.success{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+
+/* ════ APP WRAPPER ════ */
+#app{max-width:1400px;margin:0 auto}
+
+/* ════ TOP BAR ════ */
+.topbar{
+  background:linear-gradient(135deg,#1d4ed8,#2563eb);
+  padding:0 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  min-height:72px;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 16px rgba(0,0,0,.18);
+}
+[data-theme="dark"] .topbar{background:#0f172a}
+.tb-brand{display:flex;align-items:center;gap:14px}
+.tb-logo{
+  width:42px;height:42px;background:linear-gradient(135deg,var(--red),#ff6b7a);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;box-shadow:0 3px 10px rgba(230,57,70,.4);
+}
+.tb-title{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.4px;line-height:1.2}
+.tb-greeting{
+  display:flex;align-items:center;gap:8px;margin-top:3px;
+}
+.tb-avatar{
+  width:22px;height:22px;border-radius:50%;
+  background:rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:11px;flex-shrink:0;
+}
+.tb-greet-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.95)}
+.tb-greet-msg{font-size:12px;color:rgba(255,255,255,.6)}
+
+.tb-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tb-chip{
+  height:30px;padding:0 12px;
+  background:rgba(255,255,255,.15);color:#fff;
+  border:1.5px solid rgba(255,255,255,.25);
+  border-radius:20px;font-size:11px;font-weight:700;
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+}
+.tb-btn{
+  height:32px;padding:0 14px;
+  border:1.5px solid rgba(255,255,255,.25);border-radius:20px;
+  background:rgba(255,255,255,.1);color:#fff;
+  font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+  transition:all var(--trans);
+}
+.tb-btn:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.4)}
+.tb-ico{
+  width:32px;height:32px;
+  border:1.5px solid rgba(255,255,255,.25);border-radius:20px;
+  background:rgba(255,255,255,.1);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;transition:all var(--trans);color:#fff;
+}
+.tb-ico:hover{background:rgba(255,255,255,.22)}
+.tb-cta{
+  height:34px;padding:0 18px;
+  background:linear-gradient(135deg,var(--red),#ff4d5e);
+  color:#fff;border:none;border-radius:20px;
+  font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+  transition:all var(--trans);
+  box-shadow:0 2px 10px rgba(230,57,70,.45);
+}
+.tb-cta:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(230,57,70,.55)}
+
+/* ════ CONTENT WRAP ════ */
+.content{padding:28px 40px}
+
+/* ════ ALERT CARDS ════ */
+.alert-card{
+  border-radius:var(--r);padding:18px 22px;margin-bottom:16px;
+  display:none;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1);
+  box-shadow:var(--sh-md);
+}
+.alert-card.red{
+  background:linear-gradient(135deg,#fff0f1,#fff5f6);
+  border:1px solid var(--red-bd);
+}
+.alert-card.orange{
+  background:linear-gradient(135deg,#fff8f0,#fffbf5);
+  border:1px solid #fed7aa;
+}
+[data-theme="dark"] .alert-card.red{background:linear-gradient(135deg,#2d1016,#3d1520)}
+[data-theme="dark"] .alert-card.orange{background:linear-gradient(135deg,#2d1a06,#3d2010)}
+.al-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.al-icon{
+  width:38px;height:38px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px;
+}
+.alert-card.red .al-icon{background:#fee2e2}
+.alert-card.orange .al-icon{background:#ffedd5}
+.al-title{font-size:14px;font-weight:700}
+.alert-card.red .al-title{color:var(--red)}
+.alert-card.orange .al-title{color:var(--orange)}
+.al-desc{font-size:12px;margin-top:1px;opacity:.7}
+.alert-card.red .al-desc{color:var(--red)}
+.alert-card.orange .al-desc{color:var(--orange)}
+.al-badges{display:flex;flex-wrap:wrap;gap:8px}
+.al-badge{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 14px;background:var(--surface);
+  border-radius:20px;font-size:13px;font-weight:600;
+  box-shadow:var(--sh);
+}
+.alert-card.red .al-badge{border:1.5px solid var(--red-bd)}
+.alert-card.orange .al-badge{border:1.5px solid #fed7aa}
+.al-bname{font-weight:700}
+.al-bcnt{
+  font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;
+}
+.alert-card.red .al-bcnt{background:#fee2e2;color:var(--red)}
+.alert-card.orange .al-bcnt{background:#ffedd5;color:var(--orange)}
+
+/* ════ STATS CARDS ════ */
+.stats-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;margin-bottom:24px;
+}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px 20px;
+  display:flex;align-items:center;gap:14px;
+  box-shadow:var(--sh);transition:transform var(--trans),box-shadow var(--trans);
+  cursor:default;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md)}
+.stat-icon{
+  width:42px;height:42px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+}
+.stat-icon.navy{background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(59,130,246,.08))}
+.stat-icon.red{background:linear-gradient(135deg,rgba(230,57,70,.1),rgba(230,57,70,.05))}
+.stat-icon.blue{background:linear-gradient(135deg,rgba(58,126,191,.1),rgba(58,126,191,.05))}
+.stat-icon.green{background:linear-gradient(135deg,rgba(13,158,110,.1),rgba(13,158,110,.05))}
+.stat-icon.orange{background:linear-gradient(135deg,rgba(194,65,12,.1),rgba(194,65,12,.05))}
+.stat-label{font-size:11px;color:var(--t2);font-weight:500;margin-bottom:2px}
+.stat-value{font-size:22px;font-weight:800;color:var(--t1);line-height:1.1}
+.stat-unit{font-size:12px;font-weight:500;color:var(--t2);margin-left:2px}
+.stat-card.warn{border-color:#fed7aa;background:linear-gradient(135deg,#fff8f0,#fffbf5)}
+[data-theme="dark"] .stat-card.warn{border-color:#5a3010;background:linear-gradient(135deg,#2d1a06,#3d2010)}
+
+/* ════ SEARCH / FILTER ════ */
+.sf-row{display:flex;gap:10px;margin-bottom:14px;align-items:center}
+.search-wrap{flex:1;position:relative}
+.search-ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;font-size:14px}
+.search-inp{
+  width:100%;padding:12px 18px 12px 46px;
+  border:2px solid var(--border);border-radius:40px;
+  font-family:inherit;font-size:14px;color:var(--t1);
+  background:var(--surface);outline:none;
+  transition:border-color var(--trans),box-shadow var(--trans);
+  box-shadow:var(--sh);
+}
+.search-inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,126,191,.1)}
+.search-inp::placeholder{color:var(--t3)}
+.btn-filter{
+  height:46px;padding:0 20px;
+  border:2px solid var(--border);border-radius:40px;
+  background:var(--surface);color:var(--t1);
+  font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+  transition:all var(--trans);box-shadow:var(--sh);
+}
+.btn-filter:hover{background:var(--surf2);border-color:var(--blue)}
+.btn-filter.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* ════ FILTER PANEL ════ */
+#fp{
+  background:var(--surface);border:2px solid var(--border);
+  border-radius:var(--r);padding:22px;margin-bottom:16px;
+  display:none;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;
+  box-shadow:var(--sh-md);animation:slideDown .2s ease;
+}
+#fp.open{display:grid}
+.fg label{
+  display:block;font-size:10px;font-weight:700;color:var(--t2);
+  margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px;
+}
+.fg input,.fg select{
+  width:100%;padding:9px 12px;
+  border:1.5px solid var(--border);border-radius:8px;
+  font-family:inherit;font-size:13px;color:var(--t1);
+  background:var(--bg);outline:none;
+  transition:border-color var(--trans);
+}
+.fg input:focus,.fg select:focus{border-color:var(--blue)}
+.f-acts{display:flex;align-items:flex-end;gap:8px}
+.btn-sm{
+  padding:9px 16px;border-radius:8px;
+  font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  border:1.5px solid var(--border);background:var(--surface);color:var(--t1);
+  transition:all var(--trans);
+}
+.btn-sm:hover{background:var(--surf2)}
+.btn-sm.red{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 2px 8px rgba(230,57,70,.3)}
+.btn-sm.red:hover{opacity:.88;transform:translateY(-1px)}
+
+/* ════ TABLE ════ */
+.tw{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-md);
+}
+table{width:100%;border-collapse:collapse}
+thead{background:linear-gradient(135deg,#1d4ed8,#3b82f6)}
+thead th{
+  padding:14px 18px;text-align:left;
+  font-size:12px;font-weight:700;color:rgba(255,255,255,.75);
+  letter-spacing:.5px;white-space:nowrap;border:none;
+}
+[data-theme="dark"] thead{background:linear-gradient(135deg,#0f1729,#1c2540)}
+tbody tr{border-bottom:1px solid var(--border);transition:background var(--trans)}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:linear-gradient(135deg,rgba(58,126,191,.04),rgba(26,39,68,.03))}
+tbody td{padding:15px 18px;font-size:14px;vertical-align:middle;color:var(--t1)}
+.sname{font-weight:700;font-size:14px}
+.td-content{max-width:260px;font-size:14px;color:var(--t2)}
+.sid{
+  display:inline-block;font-size:10px;font-weight:600;
+  color:var(--blue);background:rgba(58,126,191,.08);
+  padding:1px 6px;border-radius:4px;margin-top:3px;
+}
+.badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:30px;height:30px;border-radius:50%;font-size:13px;font-weight:800;
+}
+.badge.low{background:rgba(58,126,191,.12);color:var(--blue)}
+.badge.mid{background:rgba(208,140,0,.15);color:var(--amber)}
+.badge.high{
+  background:linear-gradient(135deg,var(--red),#ff4d5e);
+  color:#fff;box-shadow:0 2px 8px rgba(230,57,70,.35);
+}
+.res-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;
+}
+.res-pill.c-green{background:rgba(13,158,110,.1);color:#0d9e6e}
+.res-pill.c-blue{background:rgba(58,126,191,.1);color:var(--blue)}
+.res-pill.c-red{background:rgba(230,57,70,.1);color:var(--red)}
+.res-pill.c-orange{background:rgba(194,65,12,.1);color:var(--orange)}
+.res-pill.c-navy{background:rgba(26,39,68,.08);color:var(--navy)}
+.res-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.act-btns{display:flex;gap:6px}
+.btn-t{
+  padding:5px 12px;border-radius:6px;
+  font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  border:1.5px solid var(--border);background:transparent;
+  color:var(--t2);transition:all var(--trans);
+}
+.btn-t:hover{background:var(--surf2);color:var(--t1);border-color:var(--t2)}
+.btn-t.del:hover{
+  background:var(--red);color:#fff;border-color:var(--red);
+  box-shadow:0 2px 8px rgba(230,57,70,.3);
+}
+.empty{
+  text-align:center;padding:72px 24px;color:var(--t3);
+}
+.empty .ei{font-size:52px;margin-bottom:14px;opacity:.6}
+.empty p{font-size:15px;font-weight:500;color:var(--t2);margin-bottom:6px}
+.empty small{font-size:12px}
+
+/* ════ PAGINATION ════ */
+.pager{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-top:1px solid var(--border);
+  background:var(--surf2);font-size:12px;color:var(--t2);
+}
+.pg-btns{display:flex;gap:4px}
+.pg-btn{
+  width:30px;height:30px;border:1.5px solid var(--border);border-radius:7px;
+  background:var(--surface);font-family:inherit;font-size:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:var(--t2);
+  transition:all var(--trans);
+}
+.pg-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pg-btn.on{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
+.pg-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* ════ MODALS ════ */
+.moverlay{
+  position:fixed;inset:0;background:rgba(10,15,30,.6);
+  backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;padding:20px;opacity:0;pointer-events:none;transition:opacity var(--trans);
+}
+.moverlay.open{opacity:1;pointer-events:all}
+.mcard{
+  background:var(--surface);border-radius:20px;padding:32px;
+  width:100%;max-width:540px;
+  box-shadow:var(--sh-lg);
+  transform:translateY(24px) scale(.97);
+  transition:transform .3s cubic-bezier(.34,1.2,.64,1);
+  max-height:90vh;overflow-y:auto;
+  border:1px solid var(--border);
+}
+.moverlay.open .mcard{transform:translateY(0) scale(1)}
+.mcard.sm{max-width:420px}
+.mhdr{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--border);
+}
+.mtitle{font-size:18px;font-weight:800;letter-spacing:-.4px}
+.btn-x{
+  width:32px;height:32px;border:none;background:var(--surf2);
+  border-radius:8px;cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--trans);color:var(--t1);
+}
+.btn-x:hover{background:var(--border)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg2{margin-bottom:16px}
+.fg2 label{
+  display:block;font-size:10px;font-weight:700;color:var(--t2);
+  margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px;
+}
+.fg2 input,.fg2 select,.fg2 textarea{
+  width:100%;padding:11px 14px;
+  border:2px solid var(--border);border-radius:10px;
+  font-family:inherit;font-size:14px;color:var(--t1);
+  background:var(--bg);outline:none;
+  transition:border-color var(--trans),box-shadow var(--trans);
+}
+.fg2 input:focus,.fg2 select:focus,.fg2 textarea:focus{
+  border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,126,191,.1);
+}
+.fg2 textarea{resize:vertical;min-height:90px}
+.mfooter{display:flex;gap:10px;justify-content:center;margin-top:8px;padding-top:16px;border-top:1px solid var(--border)}
+.btn-cancel{
+  padding:10px 22px;border:2px solid var(--border);border-radius:10px;
+  background:transparent;color:var(--t2);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+  transition:all var(--trans);
+}
+.btn-cancel:hover{background:var(--surf2);border-color:var(--t2);color:var(--t1)}
+.btn-save{
+  padding:10px 24px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+  color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;
+  transition:all var(--trans);box-shadow:0 3px 12px rgba(26,39,68,.25);
+}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(26,39,68,.35)}
+.btn-save.red{background:linear-gradient(135deg,var(--red),#ff4d5e);box-shadow:0 3px 12px rgba(230,57,70,.3)}
+.btn-save.red:hover{box-shadow:0 5px 16px rgba(230,57,70,.45)}
+.confirm-body{font-size:14px;color:var(--t2);line-height:1.75;margin-bottom:22px}
+
+/* ════ SLIDER ════ */
+.slider-wrap{display:flex;align-items:center;gap:12px;margin-top:6px}
+.slider-wrap input[type=range]{
+  flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:3px;
+  background:linear-gradient(to right,var(--red) 0%,var(--red) var(--pct,30%),var(--border) var(--pct,30%));
+  outline:none;cursor:pointer;
+}
+.slider-wrap input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--navy);border:3px solid #fff;
+  box-shadow:0 2px 6px rgba(26,39,68,.3);cursor:pointer;
+}
+.slider-wrap input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;background:var(--navy);
+  border:3px solid #fff;box-shadow:0 2px 6px rgba(26,39,68,.3);cursor:pointer;
+}
+.slider-val{
+  min-width:40px;text-align:center;font-size:16px;font-weight:800;
+  color:var(--red);background:var(--red-lt);border-radius:8px;padding:3px 8px;
+}
+
+/* ════ DATA MANAGE ════ */
+.dm-row{display:flex;gap:8px;flex-wrap:nowrap;margin-bottom:12px;align-items:center;justify-content:center}
+.btn-danger{
+  padding:8px 16px;border:1.5px solid var(--red-bd);border-radius:8px;
+  background:var(--red-lt);color:var(--red);font-family:inherit;font-size:13px;
+  font-weight:600;cursor:pointer;transition:all var(--trans);
+}
+.btn-danger:hover{background:#fee2e2;transform:translateY(-1px)}
+.dm-info{
+  font-size:11px;color:var(--t2);line-height:1.8;
+  border:1px solid var(--border);border-radius:10px;
+  padding:12px 16px;background:var(--surf2);
+}
+
+/* ════ TOAST ════ */
+#toast{
+  position:fixed;bottom:28px;right:28px;
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+  color:#fff;padding:12px 20px;border-radius:12px;
+  font-size:13px;font-weight:600;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+  transform:translateY(70px) scale(.9);opacity:0;
+  transition:all .3s cubic-bezier(.34,1.2,.64,1);
+  z-index:2000;pointer-events:none;max-width:340px;
+  border:1px solid rgba(255,255,255,.1);
+}
+#toast.show{transform:translateY(0) scale(1);opacity:1}
+
+/* ════ FOOTER ════ */
+.app-footer{
+  background:linear-gradient(135deg,#1d4ed8,#2563eb);
+  padding:20px 40px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+[data-theme="dark"] .app-footer{background:#0f172a}
+.footer-brand{display:flex;align-items:center;gap:10px}
+.footer-logo{
+  width:28px;height:28px;background:linear-gradient(135deg,var(--red),#ff6b7a);
+  border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.footer-name{font-size:13px;font-weight:700;color:#fff}
+.footer-sub{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px}
+.footer-copy{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.5px}
+
+/* ════ ANIMATIONS ════ */
+@keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ════ RESPONSIVE ════ */
+@media(max-width:1024px){
+  .content{padding:22px 28px}
+  .topbar{padding-left:28px;padding-right:28px}
+  .app-footer{padding:16px 28px}
+  .stats-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+}
+@media(max-width:768px){
+  .content{padding:16px 16px}
+  .topbar{padding:0 16px;min-height:62px}
+  .hero{padding:24px 16px}
+  .hero-h1{font-size:20px}
+  
+  .app-footer{padding:14px 16px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  table{font-size:13px}
+  tbody td,thead th{padding:11px 12px}
+  .frow{grid-template-columns:1fr}
+  .tb-btn{display:none}
+  .tb-greet-msg{display:none}
+}
+@media(max-width:480px){
+  .hero-badges{display:none}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .stat-card{padding:12px 14px}
+  .stat-value{font-size:18px}
+  .tb-chip{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ LOGIN ════════════════ -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-logo">📋</div>
+    <div class="login-title">학생<br>생활지도 일지</div>
+    <div class="login-badge">💾 로컬 저장 버전</div>
+    <input type="text" id="l-name" class="f-input" placeholder="교사 이름을 입력하세요" onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="password" id="l-pw" class="f-input" placeholder="비밀번호 (최초 설정 시 자유 입력)" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">시작하기</button>
+    <div class="login-err" id="l-err"></div>
+    <button class="btn-forgot" onclick="showModal('m-forgot')">🔑 비밀번호를 잊으셨나요?</button>
+    <div class="login-info">
+      ⚠️ 데이터는 이 기기의 브라우저에만 저장됩니다.<br>
+      다른 기기에서는 공유되지 않습니다.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ APP ════════════════ -->
+<div id="app" style="display:none">
+  <!-- TOPBAR (통합) -->
+  <div class="topbar">
+    <div class="tb-brand">
+      <div class="tb-logo">📋</div>
+      <div>
+        <div class="tb-title">학생 생활지도 일지</div>
+        <div class="tb-greeting">
+          <div class="tb-avatar" id="tb-avatar">?</div>
+          <span class="tb-greet-name" id="tb-greet-name">선생님, 환영합니다.</span>
+          <span class="tb-greet-msg">오늘도 학생들의 성장을 함께 기록해요 📝</span>
+        </div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-chip">💾 로컬</div>
+      <button class="tb-btn" onclick="showModal('m-settings')">⚙ 설정</button>
+      <button class="tb-btn" onclick="exportCSV()">⬇ 내보내기</button>
+      <button class="tb-ico" id="dm-btn" onclick="toggleDark()" title="다크모드">🌙</button>
+      <button class="tb-ico" onclick="doLogout()" title="로그아웃">↪</button>
+      <button class="tb-cta" onclick="openNew()">✚ 새 일지 작성</button>
+    </div>
+  </div>
+
+  <div class="content">
+  <!-- 훈계처분 알림 -->
+  <div id="hoon-alert-box" class="alert-card orange">
+    <div class="al-head">
+      <div class="al-icon">⚖️</div>
+      <div>
+        <div class="al-title">훈계처분서 3건 이상 학생 알림</div>
+        <div class="al-desc">훈계처분서 작성이 3회 이상인 학생들입니다.</div>
+      </div>
+    </div>
+    <div class="al-badges" id="hoon-al-badges"></div>
+  </div>
+
+  <!-- 누적 알림 -->
+  <div id="alert-box" class="alert-card red">
+    <div class="al-head">
+      <div class="al-icon">⚠️</div>
+      <div>
+        <div class="al-title">누적 횟수 초과 학생 알림</div>
+        <div class="al-desc" id="al-desc"></div>
+      </div>
+    </div>
+    <div class="al-badges" id="al-badges"></div>
+  </div>
+
+  <!-- 통계 -->
+  <div class="stats-grid" id="stats-row"></div>
+
+  <!-- 검색 + 필터 -->
+  <div class="sf-row">
+    <div class="search-wrap">
+      <span class="search-ico">🔍</span>
+      <input type="text" id="s-inp" class="search-inp" placeholder="학생 성명, 학번, 또는 지도 내용 검색..." oninput="applyFilter()">
+    </div>
+    <button class="btn-filter" id="fp-btn" onclick="toggleFP()">🔽 필터</button>
+  </div>
+
+  <!-- 필터 패널 -->
+  <div id="fp">
+    <div class="fg"><label>시작 날짜</label><input type="date" id="f-from"></div>
+    <div class="fg"><label>종료 날짜</label><input type="date" id="f-to"></div>
+    <div class="fg">
+      <label>조치 결과</label>
+      <select id="f-result">
+        <option value="">전체</option>
+        <option>상담 및 지도</option>
+        <option>학부모 상담</option>
+        <option>훈계처분서 작성</option>
+        <option>생활교육위원회 개최</option>
+        <option>학교폭력</option>
+        <option>기타</option>
+      </select>
+    </div>
+    <div class="fg"><label>학생 이름</label><input type="text" id="f-name" placeholder="학생 이름"></div>
+    <div class="fg"><label>담임 및 지도교사</label><input type="text" id="f-teacher" placeholder="담임 및 지도교사 이름"></div>
+    <div class="f-acts">
+      <button class="btn-sm red" onclick="applyFilter()">적용</button>
+      <button class="btn-sm" onclick="clearFilter()">초기화</button>
+    </div>
+  </div>
+
+  <!-- 테이블 -->
+  <div class="tw">
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th>일 시</th>
+          <th>성명 (학번)</th>
+          <th>지도 내용</th>
+          <th>누적</th>
+          <th>조치 결과</th>
+          <th>담임 및 지도교사</th>
+          <th>관리</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">
+      <div class="ei">📄</div>
+      <p>등록된 생활지도 일지가 없습니다.<br>
+      <small style="font-size:12px">+ 새 일지 작성 버튼으로 첫 기록을 남겨보세요.</small></p>
+    </div>
+    <div class="pager" id="pager" style="display:none">
+      <span id="pinfo"></span>
+      <div class="pg-btns" id="pg-btns"></div>
+    </div>
+  </div>
+  <div style="height:32px"></div>
+  </div><!-- /content -->
+</div>
+
+<!-- FOOTER -->
+<footer class="app-footer">
+  <div class="footer-brand">
+    <div class="footer-logo">📋</div>
+    <div>
+      <div class="footer-name">학생 생활지도 일지</div>
+      <div class="footer-sub">생활지도 기록 관리 시스템</div>
+    </div>
+  </div>
+  <div class="footer-copy">SUNGCE &nbsp;·&nbsp; © 2026</div>
+</footer>
+
+<!-- ════════ MODAL: NEW ════════ -->
+<div class="moverlay" id="m-new">
+  <div class="mcard">
+    <div class="mhdr"><div class="mtitle">새 생활지도 일지 작성</div><button class="btn-x" onclick="hideModal('m-new')">✕</button></div>
+    <div class="frow">
+      <div class="fg2"><label>성명 *</label><input type="text" id="n-name" placeholder="학생 이름"></div>
+      <div class="fg2"><label>학번 *</label><input type="text" id="n-sid" placeholder="예: 10101"></div>
+    </div>
+    <div class="fg2"><label>일시 *</label><input type="datetime-local" id="n-dt"></div>
+    <div class="fg2"><label>지도 내용 *</label><textarea id="n-cont" placeholder="지도 내용을 입력하세요…"></textarea></div>
+    <div class="fg2">
+      <label>조치 결과</label>
+      <select id="n-res">
+        <option>상담 및 지도</option><option>학부모 상담</option>
+        <option>훈계처분서 작성</option><option>생활교육위원회 개최</option>
+        <option>학교폭력</option><option>기타</option>
+      </select>
+    </div>
+    <div class="fg2"><label>담임 및 지도교사</label><input type="text" id="n-ht" placeholder="담임 및 지도교사 이름"></div>
+    <div class="mfooter">
+      <button class="btn-cancel" onclick="hideModal('m-new')">취소</button>
+      <button class="btn-save" onclick="submitNew()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODAL: EDIT ════════ -->
+<div class="moverlay" id="m-edit">
+  <div class="mcard">
+    <div class="mhdr"><div class="mtitle">생활지도 일지 수정</div><button class="btn-x" onclick="hideModal('m-edit')">✕</button></div>
+    <input type="hidden" id="e-id">
+    <div class="frow">
+      <div class="fg2"><label>성명</label><input type="text" id="e-name"></div>
+      <div class="fg2"><label>학번</label><input type="text" id="e-sid"></div>
+    </div>
+    <div class="fg2"><label>일시</label><input type="datetime-local" id="e-dt"></div>
+    <div class="fg2"><label>지도 내용</label><textarea id="e-cont"></textarea></div>
+    <div class="fg2">
+      <label>조치 결과</label>
+      <select id="e-res">
+        <option>상담 및 지도</option><option>학부모 상담</option>
+        <option>훈계처분서 작성</option><option>생활교육위원회 개최</option>
+        <option>학교폭력</option><option>기타</option>
+      </select>
+    </div>
+    <div class="fg2"><label>담임 및 지도교사</label><input type="text" id="e-ht"></div>
+    <div class="mfooter">
+      <button class="btn-cancel" onclick="hideModal('m-edit')">취소</button>
+      <button class="btn-save" onclick="submitEdit()">수정 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODAL: SETTINGS ════════ -->
+<div class="moverlay" id="m-settings">
+  <div class="mcard sm">
+    <div class="mhdr"><div class="mtitle">⚙️ 설정 관리</div><button class="btn-x" onclick="hideModal('m-settings')">✕</button></div>
+    <div class="fg2">
+      <label>누적 횟수 알림 기준</label>
+      <div class="slider-wrap">
+        <input type="range" id="s-thresh" min="1" max="20" value="3"
+          oninput="syncSlider(this)">
+        <span class="slider-val" id="s-thresh-val">3</span>
+        <span style="font-size:12px;color:var(--text2)">회</span>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">이 횟수 이상 지도된 학생은 상단 알림에 표시됩니다.</div>
+    </div>
+    <div class="fg2">
+      <label>교사 이름 변경</label>
+      <input type="text" id="s-tname" placeholder="표시될 이름">
+    </div>
+    <div class="fg2">
+      <label>비밀번호 변경</label>
+      <input type="password" id="s-pw1" placeholder="새 비밀번호">
+    </div>
+    <div class="fg2">
+      <label>비밀번호 확인</label>
+      <input type="password" id="s-pw2" placeholder="새 비밀번호 재입력">
+    </div>
+    <hr style="border:none;border-top:1px solid var(--border);margin:14px 0">
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">데이터 관리</div>
+    <div class="fg2" style="margin-bottom:8px">
+      <label>자동 저장 파일</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+        <button class="btn-sm red" onclick="pickSaveFile()" style="white-space:nowrap">📁 파일 선택</button>
+        <span id="save-status" style="font-size:12px;color:var(--text2)">미설정</span>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:5px">Chrome에서 파일을 지정하면 일지 저장 시 자동으로 덮어씁니다.</div>
+    </div>
+    <div class="dm-row">
+      <button class="btn-danger" onclick="importJSON()">📂 불러오기</button>
+      <button class="btn-danger" onclick="backupJSON()">💾 백업</button>
+      <button class="btn-danger" onclick="askReset()">🗑️ 전체 초기화</button>
+    </div>
+    <div class="dm-info">
+      ✅ <strong>파일 선택</strong> 후 일지 저장 시 지정 파일에 자동 저장됩니다.<br>
+      📌 브라우저를 닫고 다시 열어도 파일 설정이 유지됩니다.<br>
+      💾 백업으로 언제든 수동 저장도 가능합니다.
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
+    <div class="mfooter">
+      <button class="btn-cancel" onclick="hideModal('m-settings')">취소</button>
+      <button class="btn-save" onclick="saveSettings()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODAL: CONFIRM DELETE ════════ -->
+<div class="moverlay" id="m-del">
+  <div class="mcard sm">
+    <div class="mhdr"><div class="mtitle">일지 삭제</div><button class="btn-x" onclick="hideModal('m-del')">✕</button></div>
+    <div class="confirm-body">이 생활지도 일지를 삭제하시겠습니까?<br>삭제된 데이터는 복구할 수 없습니다.</div>
+    <input type="hidden" id="del-id">
+    <div class="mfooter">
+      <button class="btn-cancel" onclick="hideModal('m-del')">취소</button>
+      <button class="btn-save red" onclick="confirmDel()">삭제</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODAL: CONFIRM RESET ════════ -->
+<div class="moverlay" id="m-reset">
+  <div class="mcard sm">
+    <div class="mhdr"><div class="mtitle">⚠️ 전체 초기화</div><button class="btn-x" onclick="hideModal('m-reset')">✕</button></div>
+    <div class="confirm-body" style="color:var(--red)">
+      <strong>모든 생활지도 일지 데이터가 삭제됩니다.</strong><br><br>
+      이 작업은 되돌릴 수 없습니다.<br>
+      계속하려면 아래에 <strong>"초기화"</strong> 를 입력하세요.
+    </div>
+    <div class="fg2"><input type="text" id="reset-confirm" placeholder='초기화 입력 후 확인 클릭'></div>
+    <div class="mfooter">
+      <button class="btn-cancel" onclick="hideModal('m-reset')">취소</button>
+      <button class="btn-save red" onclick="confirmReset()">전체 초기화</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODAL: 비밀번호 찾기 ════════ -->
+<div class="moverlay" id="m-forgot">
+  <div class="mcard sm">
+    <div class="mhdr">
+      <div class="mtitle">🔑 비밀번호 찾기 / 재설정</div>
+      <button class="btn-x" onclick="hideModal('m-forgot');resetForgotFlow()">✕</button>
+    </div>
+
+    <!-- STEP 1: 방법 선택 -->
+    <div class="reset-step active" id="fstep-1">
+      <div class="step-badge">STEP 1 · 방법 선택</div>
+      <div class="info-box">
+        로컬 저장 방식이므로 본인 확인 후<br>
+        비밀번호를 재설정할 수 있습니다.<br>
+        <strong>📌 일지 데이터는 삭제되지 않습니다.</strong>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn-save" style="justify-content:center" onclick="goForgotStep(2)">
+          📋 이름으로 본인 확인 후 재설정
+        </button>
+        <button class="btn-cancel" style="text-align:center" onclick="goForgotStep(3)">
+          🗂 데이터 백업 코드로 복구
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: 이름 본인 확인 -->
+    <div class="reset-step" id="fstep-2">
+      <div class="step-badge">STEP 2 · 이름 확인</div>
+      <div class="info-box">
+        처음 등록한 교사 이름을 입력하세요.
+      </div>
+      <div class="fg2">
+        <label>등록된 교사 이름</label>
+        <input type="text" id="f-verify-name" placeholder="이름 입력">
+      </div>
+      <div class="login-err" id="f-err-2" style="margin-bottom:12px"></div>
+      <div class="mfooter" style="padding-top:0;border:none;margin-top:0">
+        <button class="btn-cancel" onclick="goForgotStep(1)">← 이전</button>
+        <button class="btn-save" onclick="verifyName()">확인</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: 백업 코드 복구 -->
+    <div class="reset-step" id="fstep-3">
+      <div class="step-badge">STEP 3 · 백업 코드</div>
+      <div class="info-box warn">
+        설정 관리에서 저장한 <strong>데이터 백업(JSON)</strong> 파일이 필요합니다.<br>
+        파일을 불러오면 데이터와 비밀번호가 함께 복원됩니다.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn-save" onclick="document.getElementById('f-backup-file').click()">
+          📂 백업 파일 선택
+        </button>
+        <input type="file" id="f-backup-file" accept=".json" style="display:none" onchange="restoreFromBackup(event)">
+      </div>
+      <div class="mfooter" style="padding-top:14px;margin-top:14px">
+        <button class="btn-cancel" onclick="goForgotStep(1)">← 이전</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: 새 비밀번호 설정 -->
+    <div class="reset-step" id="fstep-4">
+      <div class="step-badge">STEP 4 · 새 비밀번호</div>
+      <div class="info-box success">
+        ✅ 본인 확인 완료! 새 비밀번호를 설정하세요.
+      </div>
+      <div class="fg2">
+        <label>새 비밀번호</label>
+        <input type="password" id="f-new-pw1" placeholder="새 비밀번호 (4자 이상)">
+      </div>
+      <div class="fg2">
+        <label>비밀번호 확인</label>
+        <input type="password" id="f-new-pw2" placeholder="새 비밀번호 재입력">
+      </div>
+      <div class="login-err" id="f-err-4" style="margin-bottom:12px"></div>
+      <div class="mfooter" style="padding-top:0;border:none;margin-top:0">
+        <button class="btn-cancel" onclick="goForgotStep(1)">취소</button>
+        <button class="btn-save" onclick="resetPassword()">비밀번호 재설정</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+//  LOCAL STORAGE KEYS
+// ═══════════════════════════════════════
+const KEY_LOGS = 'sj_logs';
+const KEY_CFG  = 'sj_cfg';
+const KEY_AUTH = 'sj_auth';
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let me       = null;   // { name }
+let allLogs  = [];
+let viewLogs = [];
+let cfg      = { threshold: 3, teacherName: '' };
+let darkMode = false;
+let fpOpen   = false;
+let page     = 1;
+const PER    = 20;
+
+// ═══════════════════════════════════════
+//  STORAGE HELPERS
+// ═══════════════════════════════════════
+function loadLogs() {
+  try { return JSON.parse(localStorage.getItem(KEY_LOGS) || '[]'); }
+  catch { return []; }
+}
+function saveLogs(logs) {
+  localStorage.setItem(KEY_LOGS, JSON.stringify(logs));
+}
+function loadCfg() {
+  try { return { ...cfg, ...JSON.parse(localStorage.getItem(KEY_CFG) || '{}') }; }
+  catch { return { ...cfg }; }
+}
+function saveCfg(c) {
+  localStorage.setItem(KEY_CFG, JSON.stringify(c));
+}
+// 간이 인증: { name, pwHash } 저장
+function getAuthStore() {
+  try { return JSON.parse(localStorage.getItem(KEY_AUTH) || '{}'); }
+  catch { return {}; }
+}
+function setAuthStore(obj) {
+  localStorage.setItem(KEY_AUTH, JSON.stringify(obj));
+}
+function simpleHash(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+  return String(h);
+}
+
+// ═══════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════
+// 앱 로드 시 저장된 세션 확인
+window.addEventListener('DOMContentLoaded', () => {
+  cfg = loadCfg();
+  const sess = sessionStorage.getItem('sj_session');
+  if (sess) {
+    me = JSON.parse(sess);
+    bootApp();
+  }
+  // 다크모드 복원
+  if (localStorage.getItem('sj_dark') === '1') {
+    darkMode = true;
+    document.documentElement.setAttribute('data-theme','dark');
+    document.getElementById('dm-btn').textContent = '☀️';
+  }
+});
+
+// ═══ 비밀번호 찾기 플로우 ═══
+function goForgotStep(n) {
+  document.querySelectorAll('.reset-step').forEach(el => el.classList.remove('active'));
+  document.getElementById('fstep-' + n).classList.add('active');
+  ['f-err-2','f-err-4'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=''; });
+}
+function resetForgotFlow() {
+  goForgotStep(1);
+  ['f-verify-name','f-new-pw1','f-new-pw2'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+}
+
+function verifyName() {
+  const input = document.getElementById('f-verify-name').value.trim();
+  const store  = getAuthStore();
+  // 저장된 이름과 비교 (대소문자 무시)
+  if (!store.name) {
+    document.getElementById('f-err-2').textContent = '등록된 정보가 없습니다.'; return;
+  }
+  if (store.name.trim() !== input) {
+    document.getElementById('f-err-2').textContent = '이름이 일치하지 않습니다.'; return;
+  }
+  goForgotStep(4);
+}
+
+function resetPassword() {
+  const pw1 = document.getElementById('f-new-pw1').value;
+  const pw2 = document.getElementById('f-new-pw2').value;
+  const errEl = document.getElementById('f-err-4');
+  if (pw1.length < 4) { errEl.textContent = '비밀번호는 4자 이상이어야 합니다.'; return; }
+  if (pw1 !== pw2)    { errEl.textContent = '비밀번호가 일치하지 않습니다.'; return; }
+  const store = getAuthStore();
+  setAuthStore({ ...store, pwHash: simpleHash(pw1) });
+  hideModal('m-forgot');
+  resetForgotFlow();
+  toast('✅ 비밀번호가 재설정되었습니다. 새 비밀번호로 로그인하세요.');
+}
+
+function restoreFromBackup(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const logs = data.logs || (Array.isArray(data) ? data : null);
+      if (!logs) { toast('⚠️ 올바른 백업 파일이 아닙니다.'); return; }
+      // 데이터 복원
+      allLogs = logs.sort((a,b)=>(b.datetime||'').localeCompare(a.datetime||''));
+      if (data.cfg) { cfg = { ...cfg, ...data.cfg }; saveCfg(cfg); }
+      saveLogs(allLogs);
+      // 인증 초기화 (이름 유지, 비밀번호 삭제 → 재설정 유도)
+      const store = getAuthStore();
+      setAuthStore({ name: cfg.teacherName || store.name || '', pwHash: '' });
+      hideModal('m-forgot');
+      resetForgotFlow();
+      toast('✅ 백업 데이터 복원 완료! 이름 확인 후 새 비밀번호를 설정하세요.');
+      goForgotStep(2);
+      setTimeout(()=>showModal('m-forgot'),300);
+    } catch { toast('⚠️ 파일을 읽을 수 없습니다.'); }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function doLogin() {
+  const name = document.getElementById('l-name').value.trim();
+  const pw   = document.getElementById('l-pw').value;
+  if (!name) { setErr('이름을 입력하세요.'); return; }
+  if (!pw)   { setErr('비밀번호를 입력하세요.'); return; }
+
+  const store = getAuthStore();
+  const hash  = simpleHash(pw);
+
+  if (!store.pwHash) {
+    // 최초 가입: 비밀번호 등록
+    setAuthStore({ name, pwHash: hash });
+    me = { name };
+    cfg.teacherName = name;
+    saveCfg(cfg);
+    sessionStorage.setItem('sj_session', JSON.stringify(me));
+    bootApp();
+  } else {
+    // 이미 등록된 경우
+    if (store.pwHash !== hash) { setErr('비밀번호가 올바르지 않습니다.'); return; }
+    me = { name: store.name || name };
+    sessionStorage.setItem('sj_session', JSON.stringify(me));
+    bootApp();
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('sj_session');
+  me = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('l-pw').value = '';
+  document.getElementById('l-err').textContent = '';
+}
+
+function bootApp() {
+  cfg = loadCfg();
+  allLogs = loadLogs().sort((a,b) => (b.datetime||'').localeCompare(a.datetime||''));
+  viewLogs = [...allLogs];
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  updateUserUI();
+  renderAll();
+  initFsHandle(); // 저장된 파일 핸들 복원
+}
+
+function updateUserUI() {
+  // 이름 우선순위: cfg.teacherName > me.name > '선생님'
+  const name = (cfg.teacherName && cfg.teacherName.trim()) ? cfg.teacherName.trim()
+             : (me && me.name && me.name.trim()) ? me.name.trim()
+             : '선생님';
+
+  // topbar 통합 환영 메시지
+  const tbn  = document.getElementById('tb-greet-name');
+  const tbav = document.getElementById('tb-avatar');
+  if(tbn)  tbn.textContent  = `${name} 선생님, 환영합니다.`;
+  if(tbav) tbav.textContent = name.charAt(0);
+
+  // 설정 모달 이름 필드
+  const snEl = document.getElementById('s-tname');
+  if(snEl) snEl.value = name;
+}
+
+function setErr(msg) { document.getElementById('l-err').textContent = msg; }
+
+// ═══════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════
+function saveSettings() {
+  const th    = parseInt(document.getElementById('s-thresh').value) || 3;
+  const tname = document.getElementById('s-tname').value.trim();
+  const pw1   = document.getElementById('s-pw1').value;
+  const pw2   = document.getElementById('s-pw2').value;
+
+  if (pw1 || pw2) {
+    if (pw1 !== pw2) { toast('⚠️ 비밀번호가 일치하지 않습니다.'); return; }
+    if (pw1.length < 4) { toast('⚠️ 비밀번호는 4자 이상이어야 합니다.'); return; }
+    const store = getAuthStore();
+    setAuthStore({ ...store, pwHash: simpleHash(pw1) });
+    document.getElementById('s-pw1').value = '';
+    document.getElementById('s-pw2').value = '';
+  }
+
+  cfg.threshold = th;
+  if (tname) { cfg.teacherName = tname; me.name = tname; sessionStorage.setItem('sj_session', JSON.stringify(me)); }
+  saveCfg(cfg);
+  hideModal('m-settings');
+  updateUserUI();
+  renderAll();
+  toast('✅ 설정이 저장되었습니다.');
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function renderAll() {
+  const counts = getCounts();
+  const seqMap = getSeqMap();
+  renderAlert(counts);
+  renderHoonAlert();
+  renderStats();
+  renderTable(counts, seqMap);
+}
+
+function getCounts() {
+  // 전체 누적 수 (studentId -> total count)
+  const c = {};
+  allLogs.forEach(l => { if (l.studentId) c[l.studentId] = (c[l.studentId]||0) + 1; });
+  return c;
+}
+
+function getSeqMap() {
+  // 각 log.id -> 해당 학생에서 몇 번째 지도인지 (datetime 오름차순)
+  const sorted = [...allLogs].sort((a,b) => (a.datetime||'').localeCompare(b.datetime||''));
+  const seq = {};
+  const sidSeq = {};
+  sorted.forEach(l => {
+    if (l.studentId) {
+      sidSeq[l.studentId] = (sidSeq[l.studentId]||0) + 1;
+      seq[l.id] = sidSeq[l.studentId];
+    }
+  });
+  return seq;
+}
+
+function getHoonOver() {
+  // 학생별 훈계처분 횟수 집계
+  const hc = {};
+  allLogs.forEach(l => {
+    if ((l.result||'').includes('훈계처분')) {
+      const key = l.studentId;
+      if (key) hc[key] = (hc[key]||0) + 1;
+    }
+  });
+  const over = [];
+  Object.entries(hc).forEach(([sid, cnt]) => {
+    if (cnt >= 3) {
+      const log = allLogs.find(l => l.studentId === sid);
+      if (log) over.push({ name: log.studentName, cnt });
+    }
+  });
+  return over.sort((a,b) => b.cnt - a.cnt);
+}
+
+function renderHoonAlert() {
+  const over = getHoonOver();
+  const box  = document.getElementById('hoon-alert-box');
+  if (!over.length) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  document.getElementById('hoon-al-badges').innerHTML = over
+    .map(s => `<div class="al-badge">
+      <span class="al-bname">${esc(s.name)}</span>
+      <span class="al-bcnt">${s.cnt}회</span>
+    </div>`).join('');
+}
+
+function renderAlert(counts) {
+  const thr = cfg.threshold || 3;
+  document.getElementById('al-desc').textContent = `현재 설정된 임계값(${thr}회) 이상 지도된 학생들입니다.`;
+  const over = [];
+  Object.entries(counts).forEach(([sid, cnt]) => {
+    if (cnt >= thr) {
+      const log = allLogs.find(l => l.studentId === sid);
+      if (log) over.push({ name: log.studentName, cnt });
+    }
+  });
+  const box = document.getElementById('alert-box');
+  if (!over.length) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  document.getElementById('al-badges').innerHTML = over
+    .sort((a,b) => b.cnt - a.cnt)
+    .map(s => `<div class="al-badge"><span class="al-bname">${esc(s.name)}</span><span class="al-bcnt">${s.cnt}회</span></div>`)
+    .join('');
+}
+
+function renderStats() {
+  const total    = allLogs.length;
+  const uniStu   = new Set(allLogs.map(l => l.studentId)).size;
+  const _now = new Date();
+  const today = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`;
+  const todayCnt = allLogs.filter(l => (l.datetime||'').startsWith(today)).length;
+  const hoonCnt = allLogs.filter(l => (l.result||'').includes('훈계처분')).length;
+  const hoonOver = getHoonOver();
+  const hoonWarn = hoonOver.length ? ' warn' : '';
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon navy">📋</div>
+      <div><div class="stat-label">전체</div><div class="stat-value">${total}<span class="stat-unit">건</span></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">👥</div>
+      <div><div class="stat-label">지도 학생</div><div class="stat-value">${uniStu}<span class="stat-unit">명</span></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">📅</div>
+      <div><div class="stat-label">오늘</div><div class="stat-value">${todayCnt}<span class="stat-unit">건</span></div></div>
+    </div>
+    <div class="stat-card${hoonWarn}">
+      <div class="stat-icon orange">⚖️</div>
+      <div><div class="stat-label">훈계처분${hoonOver.length ? ' ⚠️' : ''}</div><div class="stat-value">${hoonCnt}<span class="stat-unit">건</span></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">🔔</div>
+      <div><div class="stat-label">누적횟수 기준</div><div class="stat-value">${cfg.threshold||3}<span class="stat-unit">회</span></div></div>
+    </div>
+  `;
+
+}
+
+
+function renderTable(counts, seqMap={}) {
+  const total  = viewLogs.length;
+  const pages  = Math.ceil(total / PER) || 1;
+  if (page > pages) page = pages;
+  const items  = viewLogs.slice((page-1)*PER, page*PER);
+  const tbody  = document.getElementById('tbody');
+  const emEl   = document.getElementById('empty');
+  const tbl    = document.getElementById('tbl');
+  const pager  = document.getElementById('pager');
+
+  if (!total) {
+    emEl.style.display  = 'block';
+    tbl.style.display   = 'none';
+    pager.style.display = 'none';
+    return;
+  }
+  emEl.style.display = 'none';
+  tbl.style.display  = 'table';
+
+  tbody.innerHTML = items.map(log => {
+    const cnt  = seqMap[log.id] || counts[log.studentId] || 1;
+    const thr  = cfg.threshold || 3;
+    const bCls = cnt >= thr ? 'high' : cnt >= Math.ceil(thr/2) ? 'mid' : 'low';
+    const resCls = (r=>{
+      if(!r) return 'c-navy';
+      if(r.includes('상담 및')) return 'c-green';
+      if(r.includes('학부모')) return 'c-blue';
+      if(r.includes('훈계')) return 'c-orange';
+      if(r.includes('위원회')) return 'c-red';
+      if(r.includes('학교폭력')) return 'c-red';
+      return 'c-navy';
+    })(log.result);
+    return `<tr>
+      <td style="white-space:nowrap;font-size:13px;color:var(--t2)">${fmtDT(log.datetime)}</td>
+      <td><div class="sname">${esc(log.studentName||'')}</div><div class="sid">${esc(log.studentId||'')}</div></td>
+      <td class="td-content">${esc(log.content||'')}</td>
+      <td><span class="badge ${bCls}">${cnt}</span></td>
+      <td><div class="res-pill ${resCls}"><span class="res-dot"></span>${esc(log.result||'')}</div></td>
+      <td style="font-weight:600">${esc(log.homeTeacher||'')}</td>
+      <td><div class="act-btns">
+        <button class="btn-t" onclick="openEdit('${log.id}')">수정</button>
+        <button class="btn-t del" onclick="openDel('${log.id}')">삭제</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  if (pages <= 1) { pager.style.display='none'; return; }
+  pager.style.display='flex';
+  document.getElementById('pinfo').textContent =
+    `${(page-1)*PER+1}–${Math.min(page*PER,total)} / 전체 ${total}건`;
+  let btns = `<button class="pg-btn" onclick="goPage(${page-1})" ${page===1?'disabled':''}>‹</button>`;
+  for (let i=1; i<=pages; i++) {
+    if (i===1||i===pages||Math.abs(i-page)<=1)
+      btns += `<button class="pg-btn${i===page?' on':''}" onclick="goPage(${i})">${i}</button>`;
+    else if (Math.abs(i-page)===2)
+      btns += `<span style="padding:0 3px;color:var(--text3);display:inline-flex;align-items:center">…</span>`;
+  }
+  btns += `<button class="pg-btn" onclick="goPage(${page+1})" ${page===pages?'disabled':''}>›</button>`;
+  document.getElementById('pg-btns').innerHTML = btns;
+}
+
+function goPage(p) {
+  const total = Math.ceil(viewLogs.length/PER) || 1;
+  if (p<1||p>total) return;
+  page = p;
+  renderTable(getCounts(), getSeqMap());
+  document.querySelector('.tw').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════
+//  SEARCH / FILTER
+// ═══════════════════════════════════════
+function toggleFP() {
+  fpOpen = !fpOpen;
+  document.getElementById('fp').classList.toggle('open', fpOpen);
+  document.getElementById('fp-btn').textContent = fpOpen ? '🔼 필터 닫기' : '🔽 필터';
+  document.getElementById('fp-btn').classList.toggle('active', fpOpen);
+}
+function applyFilter() {
+  const q   = document.getElementById('s-inp').value.toLowerCase();
+  const fr  = document.getElementById('f-from').value;
+  const to  = document.getElementById('f-to').value;
+  const res = document.getElementById('f-result').value;
+  const tch = document.getElementById('f-teacher').value.toLowerCase();
+  const fnm = document.getElementById('f-name').value.toLowerCase();
+  viewLogs = allLogs.filter(l => {
+    if (q && ![(l.studentName||'').toLowerCase(),(l.studentId||''),(l.content||'').toLowerCase()].some(v=>v.includes(q))) return false;
+    if (fr && (l.datetime||'') < fr) return false;
+    if (to && (l.datetime||'') > to+'T23:59') return false;
+    if (res && l.result !== res) return false;
+    if (tch && !(l.homeTeacher||'').toLowerCase().includes(tch)) return false;
+    if (fnm && !(l.studentName||'').toLowerCase().includes(fnm)) return false;
+    return true;
+  });
+  page = 1;
+  renderStats();
+  renderTable(getCounts(), getSeqMap());
+}
+function clearFilter() {
+  ['f-from','f-to','f-result','f-teacher','f-name','s-inp'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.tagName==='SELECT'?el.selectedIndex=0:(el.value='');
+  });
+  viewLogs=[...allLogs]; page=1;
+  renderStats();
+  renderTable(getCounts(), getSeqMap());
+}
+
+// ═══════════════════════════════════════
+//  CRUD
+// ═══════════════════════════════════════
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function openNew() {
+  const now = new Date();
+  document.getElementById('n-dt').value = toLocalISO(now);
+  ['n-name','n-sid','n-cont','n-ht'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('n-res').selectedIndex=0;
+  showModal('m-new');
+}
+function submitNew() {
+  const name = document.getElementById('n-name').value.trim();
+  const sid  = document.getElementById('n-sid').value.trim();
+  const dt   = document.getElementById('n-dt').value;
+  const cont = document.getElementById('n-cont').value.trim();
+  if (!name||!sid||!dt||!cont) { toast('⚠️ 성명, 학번, 일시, 지도내용은 필수입니다.'); return; }
+  const log = {
+    id: genId(),
+    studentName: name, studentId: sid,
+    datetime: dt, content: cont,
+    result: document.getElementById('n-res').value,
+    homeTeacher: document.getElementById('n-ht').value.trim(),
+    recordTeacher: cfg.teacherName || me?.name || '',
+    createdAt: new Date().toISOString()
+  };
+  allLogs.unshift(log);
+  saveLogs(allLogs);
+  autoBackup();
+  viewLogs = [...allLogs];
+  page = 1;
+  renderAll();
+  hideModal('m-new');
+  toast('✅ 일지가 저장되었습니다.');
+}
+
+function openEdit(id) {
+  const l = allLogs.find(x=>x.id===id); if(!l) return;
+  document.getElementById('e-id').value   = id;
+  document.getElementById('e-name').value = l.studentName||'';
+  document.getElementById('e-sid').value  = l.studentId||'';
+  document.getElementById('e-dt').value   = l.datetime||'';
+  document.getElementById('e-cont').value = l.content||'';
+  document.getElementById('e-res').value  = l.result||'상담 및 지도';
+  document.getElementById('e-ht').value   = l.homeTeacher||'';
+  showModal('m-edit');
+}
+function submitEdit() {
+  const id   = document.getElementById('e-id').value;
+  const name = document.getElementById('e-name').value.trim();
+  const sid  = document.getElementById('e-sid').value.trim();
+  const dt   = document.getElementById('e-dt').value;
+  const cont = document.getElementById('e-cont').value.trim();
+  if (!name||!sid||!dt||!cont) { toast('⚠️ 필수 항목을 모두 입력하세요.'); return; }
+  const idx = allLogs.findIndex(x=>x.id===id);
+  if (idx < 0) { toast('항목을 찾을 수 없습니다.'); return; }
+  allLogs[idx] = { ...allLogs[idx], studentName:name, studentId:sid, datetime:dt,
+    content:cont, result:document.getElementById('e-res').value,
+    homeTeacher:document.getElementById('e-ht').value.trim(),
+    updatedAt: new Date().toISOString() };
+  saveLogs(allLogs);
+  autoBackup();
+  viewLogs = [...allLogs];
+  renderAll();
+  hideModal('m-edit');
+  toast('✅ 수정되었습니다.');
+}
+
+function openDel(id) { document.getElementById('del-id').value=id; showModal('m-del'); }
+function confirmDel() {
+  const id = document.getElementById('del-id').value;
+  allLogs = allLogs.filter(x=>x.id!==id);
+  saveLogs(allLogs);
+  viewLogs = viewLogs.filter(x=>x.id!==id);
+  renderAll();
+  hideModal('m-del');
+  toast('🗑️ 삭제되었습니다.');
+}
+
+// ═══════════════════════════════════════
+//  DATA MANAGEMENT
+// ═══════════════════════════════════════
+// ─── File System Access API 자동저장 ───
+let fsHandle = null; // FileSystemFileHandle (단일 파일)
+
+// IndexedDB: 파일 핸들 영속 저장
+function openHandleDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('sj_fs_db', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('handles');
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = () => rej(req.error);
+  });
+}
+async function saveHandleToDB(handle) {
+  try {
+    const db = await openHandleDB();
+    await new Promise((res,rej) => {
+      const tx = db.transaction('handles','readwrite');
+      tx.objectStore('handles').put(handle, 'backup');
+      tx.oncomplete = res; tx.onerror = rej;
+    });
+  } catch(e) {}
+}
+async function loadHandleFromDB() {
+  try {
+    const db = await openHandleDB();
+    return await new Promise((res,rej) => {
+      const tx = db.transaction('handles','readonly');
+      const req = tx.objectStore('handles').get('backup');
+      req.onsuccess = () => res(req.result);
+      req.onerror   = () => res(null);
+    });
+  } catch(e) { return null; }
+}
+
+async function initFsHandle() {
+  const stored = await loadHandleFromDB();
+  if (!stored) return;
+  try {
+    const perm = await stored.queryPermission({ mode: 'readwrite' });
+    if (perm === 'granted') { fsHandle = stored; updateSaveStatus('연결됨'); return; }
+    // 권한 재요청은 사용자 제스처 필요 → 상태만 표시
+    fsHandle = stored;
+    updateSaveStatus('권한 필요 (저장 시 자동 요청)');
+  } catch(e) { fsHandle = null; }
+}
+
+async function pickSaveFile() {
+  if (!window.showSaveFilePicker) {
+    toast('⚠️ 이 브라우저는 파일 자동저장을 지원하지 않습니다. (Chrome 권장)');
+    return;
+  }
+  try {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: '생활지도일지_백업.json',
+      types: [{ description: 'JSON 파일', accept: {'application/json': ['.json']} }]
+    });
+    fsHandle = handle;
+    await saveHandleToDB(handle);
+    updateSaveStatus('연결됨');
+    toast('✅ 저장 파일이 설정되었습니다. 이후 자동 저장됩니다.');
+    await writeToFile();
+  } catch(e) { if (e.name !== 'AbortError') toast('파일 선택 취소됨'); }
+}
+
+function updateSaveStatus(msg) {
+  const el = document.getElementById('save-status');
+  if (el) el.textContent = msg || '';
+}
+
+async function writeToFile() {
+  if (!fsHandle) return false;
+  try {
+    const perm = await fsHandle.queryPermission({ mode: 'readwrite' });
+    if (perm !== 'granted') {
+      const req = await fsHandle.requestPermission({ mode: 'readwrite' });
+      if (req !== 'granted') return false;
+    }
+    const data = { version: 1, savedAt: new Date().toISOString(), cfg, logs: allLogs };
+    const writable = await fsHandle.createWritable();
+    await writable.write(JSON.stringify(data, null, 2));
+    await writable.close();
+    updateSaveStatus('저장됨 ' + new Date().toLocaleTimeString('ko-KR'));
+    return true;
+  } catch(e) {
+    console.warn('파일 저장 실패:', e);
+    return false;
+  }
+}
+
+async function autoBackup() {
+  const ok = await writeToFile();
+  if (!ok && fsHandle) toast('⚠️ 파일 저장 권한이 필요합니다. 설정 관리에서 파일을 다시 선택해 주세요.');
+}
+
+function backupJSON() {
+  const data = { version: 1, exportedAt: new Date().toISOString(), cfg, logs: allLogs };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement('a'),{href:url,download:`생활지도일지_백업_${new Date().toISOString().slice(0,10)}.json`});
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('💾 JSON 백업 완료');
+}
+
+function importJSON() { document.getElementById('import-file').click(); }
+
+function handleImport(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const logs = data.logs || (Array.isArray(data) ? data : null);
+      if (!logs) { toast('⚠️ 올바른 형식의 파일이 아닙니다.'); return; }
+      // ID 충돌 방지: 기존 ID 유지, 없으면 새로 생성
+      const existing = new Set(allLogs.map(x=>x.id));
+      let added = 0;
+      logs.forEach(l => {
+        if (!existing.has(l.id)) { allLogs.push(l); added++; }
+      });
+      allLogs.sort((a,b)=>(b.datetime||'').localeCompare(a.datetime||''));
+      saveLogs(allLogs);
+      viewLogs = [...allLogs];
+      renderAll();
+      toast(`📂 ${added}건 가져왔습니다. (중복 제외)`);
+    } catch { toast('⚠️ JSON 파일을 읽을 수 없습니다.'); }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function exportCSV() {
+  const counts = getCounts();
+  const hdr = ['일시','성명','학번','지도내용','누적횟수','조치결과','담임교사','기록교사'];
+  const rows = viewLogs.map(l => [
+    l.datetime||'', l.studentName||'', l.studentId||'',
+    (l.content||'').replace(/"/g,'""'),
+    counts[l.studentId]||1, l.result||'',
+    l.homeTeacher||'', l.recordTeacher||''
+  ]);
+  const csv = [hdr,...rows].map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url  = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement('a'),{href:url,download:`생활지도일지_${new Date().toISOString().slice(0,10)}.csv`});
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('⬇️ CSV 다운로드 완료');
+}
+
+function askReset() { showModal('m-reset'); }
+function confirmReset() {
+  if (document.getElementById('reset-confirm').value !== '초기화') {
+    toast('⚠️ "초기화" 를 정확히 입력하세요.'); return;
+  }
+  allLogs = []; viewLogs = [];
+  saveLogs([]);
+  document.getElementById('reset-confirm').value = '';
+  hideModal('m-reset');
+  hideModal('m-settings');
+  renderAll();
+  toast('🗑️ 모든 데이터가 초기화되었습니다.');
+}
+
+// ═══════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════
+function syncSlider(el) {
+  const min = parseInt(el.min)||1;
+  const max = parseInt(el.max)||20;
+  const val = parseInt(el.value)||3;
+  const pct = ((val - min) / (max - min) * 100).toFixed(1) + '%';
+  el.style.setProperty('--pct', pct);
+  const valEl = document.getElementById(el.id + '-val');
+  if (valEl) valEl.textContent = val;
+}
+
+function toggleDark() {
+  darkMode = !darkMode;
+  document.documentElement.setAttribute('data-theme', darkMode?'dark':'');
+  document.getElementById('dm-btn').textContent = darkMode ? '☀️' : '🌙';
+  localStorage.setItem('sj_dark', darkMode?'1':'0');
+}
+function showModal(id) { document.getElementById(id).classList.add('open'); }
+function hideModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.moverlay').forEach(el =>
+  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); })
+);
+
+let tTimer = null;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  if(tTimer) clearTimeout(tTimer);
+  tTimer = setTimeout(()=>el.classList.remove('show'), 3200);
+}
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function toLocalISO(d) {
+  return new Date(d - d.getTimezoneOffset()*60000).toISOString().slice(0,16);
+}
+function fmtDT(dt) {
+  if (!dt) return '';
+  try {
+    const d = new Date(dt);
+    const p = n => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  } catch { return dt; }
+}
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+</script>
+</body>
+</html>
