@@ -389,9 +389,11 @@
                     </div>
                     <h3 class="text-2xl font-bold text-slate-900 mb-2">공지사항</h3>
                     <p class="text-slate-500 font-medium mb-4">수업 일정 변경 및 중요 안내사항을 확인하세요.</p>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-between">
-                        <span class="text-sm font-bold text-slate-700 truncate">[필독] 1학기 정보 교과 수행평가 안내</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                    <div id="home-notice-preview">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-between">
+                            <span class="text-sm font-medium text-slate-400">불러오는 중...</span>
+                            <i data-lucide="loader" class="w-4 h-4 text-slate-300 animate-spin"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -1369,7 +1371,35 @@
 
             lucide.createIcons();
 
-            // dashboard.html 등에서 goto_section으로 이동 요청 처리
+            // 홈 공지사항 미리보기 로드
+            (function loadHomeNoticePreview() {
+                const preview = document.getElementById('home-notice-preview');
+                if (!preview) return;
+                const NOTICE_URL = 'https://script.google.com/macros/s/AKfycbwCyznG-WST1S7hIoMFXIVzQv3Qmub1nSdr43tDiaQVTEp2W9vdnUpqgmjSb1o-X5er/exec';
+                const old = document.getElementById('jsonp-home-notice'); if (old) old.remove();
+                window.__homeNoticeCb = function(data) {
+                    const notices = (data && data.notices) || [];
+                    if (!notices.length) {
+                        preview.innerHTML = `<div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm text-slate-400 font-medium">등록된 공지가 없습니다.</div>`;
+                        return;
+                    }
+                    preview.innerHTML = notices.slice(0, 3).map(n => {
+                        const isImp = n.type === 'important';
+                        return `<div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-between mb-2 last:mb-0 cursor-pointer hover:bg-rose-50 hover:border-rose-100 transition-colors"
+                            onclick="showSection('notices')">
+                            ${isImp ? '<span class="text-xs font-black text-rose-500 bg-rose-100 px-2 py-0.5 rounded-full mr-2 shrink-0">중요</span>' : ''}
+                            <span class="text-sm font-bold text-slate-700 truncate flex-1">${n.title}</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0 ml-2"></i>
+                        </div>`;
+                    }).join('');
+                    lucide.createIcons();
+                };
+                const s = document.createElement('script');
+                s.id = 'jsonp-home-notice';
+                s.src = NOTICE_URL + '?action=getNotices&callback=__homeNoticeCb&_=' + Date.now();
+                s.onerror = () => { preview.innerHTML = `<div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm text-slate-400">공지사항을 불러올 수 없습니다.</div>`; };
+                document.body.appendChild(s);
+            })();
             const gotoSection = localStorage.getItem('goto_section');
             if (gotoSection) {
                 localStorage.removeItem('goto_section');
