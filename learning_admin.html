@@ -597,16 +597,21 @@
 
             return `<div class="p-4 bg-${color}-50/50 border border-${color}-100 rounded-2xl mb-2">
                 <div class="flex items-start justify-between mb-2 gap-2">
-                    <div class="flex items-center space-x-2 min-w-0">
-                        <span class="text-sm font-black text-${color}-700">${r.userName||'-'}</span>
-                        ${r.studentId?`<span class="text-xs text-slate-400">(${r.studentId})</span>`:''}
+                    <div class="flex items-center space-x-2.5 min-w-0">
+                        <div class="w-8 h-8 rounded-xl bg-${color}-100 text-${color}-700 flex items-center justify-center font-black text-sm shrink-0">
+                            ${(r.userName||'?').charAt(0)}
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-black text-${color}-700 leading-tight">${r.userName||'-'}</p>
+                            <p class="text-xs text-slate-400 font-medium">${r.studentId ? '학번 ' + r.studentId : '학번 없음'}</p>
+                        </div>
                     </div>
                     <div class="flex items-center space-x-1 shrink-0">
                         <span class="text-xs text-slate-400 mr-1">${r.date?String(r.date).substring(0,16):'-'}</span>
                         ${editBtn}${delBtn}
                     </div>
                 </div>
-                <div class="space-y-1">${ansHtml||'<p class="text-xs text-slate-400">내용 없음</p>'}</div>
+                <div class="space-y-1 mt-3 pt-3 border-t border-${color}-100">${ansHtml||'<p class="text-xs text-slate-400">내용 없음</p>'}</div>
             </div>`;
         }
 
