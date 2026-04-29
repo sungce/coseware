@@ -206,6 +206,7 @@
 
         function openProjectModal(id) {
             const p=projects.find(x=>x.id===id); if(!p) return;
+            currentModalId = id;
             const cover = document.getElementById('modal-cover');
             if (p.thumbUrl) {
                 cover.className='h-52 rounded-t-[2rem] relative overflow-hidden bg-slate-100';

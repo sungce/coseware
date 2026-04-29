@@ -204,10 +204,12 @@
                         <p class="text-sm font-black text-slate-800 mb-1">${p.thumbUrl ? p.title : ''}</p>
                         <p class="text-sm text-slate-500 font-medium leading-relaxed line-clamp-2">${p.desc||''}</p>
                         <div class="flex items-center justify-between mt-4">
-                            <div class="flex items-center space-x-1 text-xs font-bold text-slate-400">
-                                <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-400"></i>
-                                <span>${p.likes||0}</span>
-                            </div>
+                            <button onclick="event.stopPropagation(); toggleLike('${p.id}', this)" 
+                                class="flex items-center space-x-1 text-xs font-bold text-slate-400 hover:text-rose-500 transition-colors"
+                                data-liked="${localStorage.getItem('liked_${p.id}')?'true':'false'}">
+                                <i data-lucide="heart" class="w-3.5 h-3.5 ${localStorage.getItem('liked_'+p.id)?'text-rose-500 fill-rose-500':'text-rose-300'}"></i>
+                                <span class="like-count">${p.likes||0}</span>
+                            </button>
                             <span class="text-xs text-amber-500 font-bold group-hover:underline">자세히 보기 →</span>
                         </div>
                     </div>
@@ -280,6 +282,54 @@
             const modal = document.getElementById('project-modal');
             modal.classList.remove('hidden'); modal.classList.add('flex');
             lucide.createIcons();
+        }
+
+        let currentModalId = null;
+
+        async function toggleLike(id, cardBtn) {
+            if (!id) return;
+            const p = projects.find(x => x.id === id);
+            if (!p) return;
+
+            const likedKey = 'liked_' + id;
+            const isLiked  = !!localStorage.getItem(likedKey);
+            const newLikes = isLiked ? Math.max(0, (p.likes||0)-1) : (p.likes||0)+1;
+
+            // Optimistic UI
+            p.likes = newLikes;
+            if (isLiked) localStorage.removeItem(likedKey);
+            else         localStorage.setItem(likedKey, '1');
+
+            // Update card button
+            if (cardBtn) {
+                const icon  = cardBtn.querySelector('[data-lucide="heart"]');
+                const count = cardBtn.querySelector('.like-count');
+                if (count) count.textContent = newLikes;
+                if (icon)  {
+                    icon.className = isLiked
+                        ? 'w-3.5 h-3.5 text-rose-300'
+                        : 'w-3.5 h-3.5 text-rose-500 fill-rose-500';
+                    lucide.createIcons();
+                }
+            }
+
+            // Update modal if open
+            const modalLikes = document.getElementById('modal-likes');
+            const modalIcon  = document.getElementById('modal-heart-icon');
+            if (modalLikes) modalLikes.textContent = newLikes;
+            if (modalIcon)  {
+                modalIcon.className = (!isLiked)
+                    ? 'w-5 h-5 text-rose-500 fill-rose-500'
+                    : 'w-5 h-5 text-rose-400';
+                lucide.createIcons();
+            }
+
+            // Firestore update
+            try {
+                await db.collection('gallery_projects').doc(id).update({
+                    likes: firebase.firestore.FieldValue.increment(isLiked ? -1 : 1)
+                });
+            } catch(e) { console.warn('좋아요 저장 실패:', e); }
         }
 
         function closeProjectModal() {
