@@ -282,6 +282,10 @@
                 // 3. Google Sheets 저장
                 await sendToSheet(name, studentId, email, userCredential.user.uid);
 
+                // 4. localStorage에 학번 저장 (curriculum에서 즉시 사용)
+                localStorage.setItem('studentId_' + userCredential.user.uid, studentId);
+                localStorage.setItem('curriculum_student_id', studentId);
+
                 showToast(`${name} 학생, 가입을 환영합니다! 🎉`);
                 setTimeout(() => { window.location.href = 'index.html'; }, 2000);
 

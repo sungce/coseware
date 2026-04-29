@@ -1056,7 +1056,27 @@
             if (user) {
                 const name = user.displayName || user.email.split('@')[0];
                 try { localStorage.setItem('curriculum_user_name', name); } catch(e) {}
-                sendUserNameToFrame();
+
+                // 학번이 localStorage에 없으면 Google Sheets에서 로드
+                const cachedId = localStorage.getItem('studentId_' + user.uid);
+                if (!cachedId) {
+                    const script = document.createElement('script');
+                    script.src = APPS_SCRIPT_URL + '?action=getMemberByEmail&email=' + encodeURIComponent(user.email) + '&callback=__memberCb&_=' + Date.now();
+                    window.__memberCb = function(data) {
+                        if (data && data.studentId) {
+                            try {
+                                localStorage.setItem('studentId_' + user.uid, data.studentId);
+                                localStorage.setItem('curriculum_student_id', data.studentId);
+                            } catch(e) {}
+                        }
+                        sendUserNameToFrame();
+                        script.remove();
+                    };
+                    document.body.appendChild(script);
+                } else {
+                    try { localStorage.setItem('curriculum_student_id', cachedId); } catch(e) {}
+                    sendUserNameToFrame();
+                }
             }
         });
 

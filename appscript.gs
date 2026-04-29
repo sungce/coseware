@@ -59,7 +59,25 @@ function doGet(e) {
     } catch (err) { result = { notices: [], error: err.message }; }
   }
 
-  // 학습자료 목록 (단원별)
+  // 이메일로 회원 학번 조회
+  else if (action === 'getMemberByEmail') {
+    try {
+      const ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName(SHEET_MEMBERS);
+      let studentId = '';
+      if (sheet && sheet.getLastRow() > 1) {
+        const rows = sheet.getRange(2, 1, sheet.getLastRow()-1, 5).getValues();
+        const emailParam = params.email || '';
+        for (let r of rows) {
+          if (String(r[3]).toLowerCase() === emailParam.toLowerCase()) {
+            studentId = String(r[2] || '');
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(cb+'('+JSON.stringify({ studentId })+')').setMimeType(ContentService.MimeType.JAVASCRIPT);
+    } catch(err) { return ContentService.createTextOutput(cb+'('+JSON.stringify({ studentId:'', error:err.message })+')').setMimeType(ContentService.MimeType.JAVASCRIPT); }
+  }
   else if (action === 'getMaterials') {
     try {
       const ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
