@@ -41,7 +41,7 @@
             </div>
             
             <div class="flex items-center space-x-3">
-                <!-- 추가된 수업 PPT 자료 버튼 (네비게이션) -->
+                <!-- 상단: 수업 PPT 자료 버튼 -->
                 <button onclick="openBook()" 
                         class="flex items-center space-x-2 bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200 px-3 py-2 rounded-xl text-sm font-bold transition-all">
                     <i data-lucide="presentation" class="w-4 h-4"></i>
@@ -64,7 +64,7 @@
 
             <!-- 자료 추가 폼 -->
             <div class="lg:col-span-2 space-y-6">
-                <!-- 추가된 퀵 링크 카드 -->
+                <!-- 메인 화면: 퀵 링크 카드 -->
                 <div class="card p-6 border-l-4 border-l-amber-400 bg-amber-50/30">
                     <div class="flex items-center justify-between">
                         <div>
@@ -82,7 +82,7 @@
                         <i data-lucide="folder-plus" class="w-5 h-5 text-emerald-500"></i>
                         <span>학습자료 추가</span>
                     </h2>
-                    <!-- ... (기존 자료 추가 폼 내용 동일) ... -->
+                    
                     <div class="space-y-4">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">단원명</label>
@@ -140,7 +140,7 @@
                         <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span>새로고침</span>
                     </button>
                 </div>
-                <!-- ... (기존 목록 필터 및 리스트 내용 동일) ... -->
+                
                 <div class="flex flex-wrap gap-2 mb-5" id="unit-filter-btns">
                     <button onclick="filterByUnit('all')" id="filter-all" class="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500 text-white transition-all">전체</button>
                     <button onclick="filterByUnit('I')"   id="filter-I"   class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all">I. 컴퓨팅</button>
@@ -159,16 +159,66 @@
         </div>
     </main>
 
-    <!-- 수정 모달 및 기타 UI (기존 내용 동일) -->
-    <!-- ... (수정 모달, 토스트 HTML 생략) ... -->
+    <!-- 수정 모달 -->
+    <div id="edit-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4" onclick="if(event.target===this) closeEditModal()">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="pencil" class="w-5 h-5 text-blue-500"></i><span>학습자료 수정</span>
+                </h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-8 py-6 space-y-4">
+                <input type="hidden" id="edit-doc-id">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">단원명</label>
+                    <select id="edit-unit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="I">I. 컴퓨팅 시스템</option><option value="II">II. 데이터</option>
+                        <option value="III">III. 알고리즘과 프로그래밍</option><option value="IV">IV. 인공지능</option><option value="V">V. 디지털 문화</option>
+                    </select>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">제목</label>
+                    <input type="text" id="edit-title" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">내용</label>
+                    <textarea id="edit-content" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"></textarea>
+                </div>
+            </div>
+            <div class="px-8 pb-8 flex space-x-3">
+                <button onclick="closeEditModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-200 transition-colors">취소</button>
+                <button onclick="saveMaterialEdit()" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="save" class="w-4 h-4"></i><span>저장</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div id="toast" class="fixed bottom-8 right-8 bg-slate-900/95 text-white px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-y-32 opacity-0 z-50 flex items-center space-x-3 border border-slate-700">
+        <div class="p-1.5 rounded-full bg-emerald-500/20"><i data-lucide="check" class="w-4 h-4 text-emerald-400" id="toast-icon"></i></div>
+        <span class="font-medium text-sm" id="toast-msg"></span>
+    </div>
 
     <script>
-        // 교과서 연결 스크립트
+        // --------------------------------------------------------
+        // 교과서 연결 스크립트 (전체화면 팝업 연결)
+        // --------------------------------------------------------
         function openBook() {
-            window.open('https://ibook.vivasam.com/CBS_iBook/4987/contents/index.html?skin=basic03', '_blank');
+            // 현재 사용 중인 기기(모니터)의 실제 너비와 높이를 가져옵니다.
+            const screenWidth = screen.availWidth;
+            const screenHeight = screen.availHeight;
+            
+            // 크롬, 엣지 등에서 허용하는 최대 크기의 팝업창으로 열기
+            const windowFeatures = `width=${screenWidth},height=${screenHeight},left=0,top=0,fullscreen=yes,scrollbars=yes`;
+            
+            window.open('https://ibook.vivasam.com/CBS_iBook/4987/contents/index.html?skin=basic03', 'VivasamBook', windowFeatures);
         }
 
-        // Firebase 및 기존 로직 (동일)
+        // Firebase 설정 및 기존 로직
         const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
         const ADMIN_EMAILS = ['sungce27@gmail.com'];
         const CLOUDINARY_CLOUD_NAME = 'dudh0etdr', CLOUDINARY_UPLOAD_PRESET = 'school_materials';
@@ -176,7 +226,171 @@
         const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(app), db = firebase.firestore(app);
 
-        // ... (이하 모든 기존 JavaScript 함수들은 그대로 유지) ...
+        auth.onAuthStateChanged(user => {
+            if (!user || !ADMIN_EMAILS.includes(user.email)) {
+                document.getElementById('access-denied').classList.remove('hidden');
+                document.getElementById('access-denied').classList.add('flex');
+                lucide.createIcons(); return;
+            }
+            document.getElementById('admin-name').textContent = user.displayName || user.email.split('@')[0];
+            lucide.createIcons();
+            loadMaterialsList();
+        });
+
+        async function handleSignOut() { await auth.signOut(); window.location.href = 'index.html'; }
+
+        // 파일 선택 UI 변경
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            document.getElementById('mat-file').addEventListener('change', () => {
+                const file = document.getElementById('mat-file').files[0];
+                if (file) {
+                    document.getElementById('file-label').textContent = `${file.name} (${(file.size/1024/1024).toFixed(1)}MB)`;
+                    document.getElementById('file-label').classList.add('text-emerald-600');
+                    document.getElementById('file-upload-icon').setAttribute('data-lucide','file-check');
+                    document.getElementById('file-upload-icon').classList.remove('text-slate-300');
+                    document.getElementById('file-upload-icon').classList.add('text-emerald-500');
+                    lucide.createIcons();
+                }
+            });
+        });
+
+        // 자료 추가
+        async function addMaterial() {
+            const unit = document.getElementById('mat-unit').value;
+            const title = document.getElementById('mat-title').value.trim();
+            const content = document.getElementById('mat-content').value.trim();
+            const file = document.getElementById('mat-file').files[0];
+            if (!title || !content) { showToast('제목과 내용을 입력해주세요.', 'error'); return; }
+
+            const btn = document.getElementById('mat-add-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>등록 중...</span>';
+            lucide.createIcons();
+
+            try {
+                let fileUrl = '', fileName = '';
+                if (file) {
+                    if (file.size > 10*1024*1024) { showToast('파일 크기는 10MB 이하여야 합니다.', 'error'); return; }
+                    document.getElementById('upload-progress-wrap').classList.remove('hidden');
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+                    formData.append('folder', `materials/${unit}`);
+                    fileUrl = await new Promise((resolve, reject) => {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`);
+                        xhr.upload.onprogress = e => {
+                            if (e.lengthComputable) {
+                                const pct = Math.round(e.loaded/e.total*100);
+                                document.getElementById('upload-bar').style.width = pct+'%';
+                                document.getElementById('upload-percent').textContent = pct+'%';
+                            }
+                        };
+                        xhr.onload = () => xhr.status===200 ? resolve(JSON.parse(xhr.responseText).secure_url) : reject(new Error(xhr.responseText));
+                        xhr.onerror = () => reject(new Error('네트워크 오류'));
+                        xhr.send(formData);
+                    });
+                    fileName = file.name;
+                    document.getElementById('upload-progress-text').textContent = '업로드 완료!';
+                }
+
+                await db.collection('materials').add({ unit, title, content, fileName, fileUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+
+                document.getElementById('mat-title').value = '';
+                document.getElementById('mat-content').value = '';
+                document.getElementById('mat-file').value = '';
+                document.getElementById('file-label').textContent = '클릭 또는 드래그';
+                document.getElementById('file-label').classList.remove('text-emerald-600');
+                document.getElementById('file-upload-icon').setAttribute('data-lucide','upload-cloud');
+                document.getElementById('file-upload-icon').classList.remove('text-emerald-500');
+                document.getElementById('file-upload-icon').classList.add('text-slate-300');
+                document.getElementById('upload-progress-wrap').classList.add('hidden');
+                document.getElementById('upload-bar').style.width = '0%';
+                lucide.createIcons();
+                showToast(`[단원 ${unit}] ${title} 자료가 등록되었습니다! 📚`);
+                loadMaterialsList();
+            } catch(e) {
+                showToast('오류: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="upload" class="w-4 h-4"></i><span>자료 등록</span>';
+                lucide.createIcons();
+            }
+        }
+
+        // 목록 불러오기
+        let allMaterialsDocs = [], currentUnitFilter = 'all';
+        const UNIT_COLOR = { 'I':'bg-indigo-50 text-indigo-600','II':'bg-emerald-50 text-emerald-600','III':'bg-rose-50 text-rose-600','IV':'bg-blue-50 text-blue-600','V':'bg-amber-50 text-amber-600' };
+
+        async function loadMaterialsList() {
+            const c = document.getElementById('materials-list-admin');
+            c.innerHTML = `<div class="py-8 flex flex-col items-center space-y-2 text-slate-400"><i data-lucide="loader" class="w-5 h-5 animate-spin text-emerald-400"></i><span class="text-sm">불러오는 중...</span></div>`;
+            lucide.createIcons();
+            try {
+                const snap = await db.collection('materials').orderBy('createdAt','desc').get();
+                allMaterialsDocs = snap.docs.map(doc => { const d=doc.data(), ts=d.createdAt, date=ts?ts.toDate().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\. /g,'.').replace(/\.$/,''):''; return {id:doc.id,unit:d.unit,title:d.title,content:d.content||'',fileName:d.fileName||'',fileUrl:d.fileUrl||'',date}; });
+                renderMaterialsList();
+            } catch(e) { c.innerHTML = `<p class="text-center text-sm text-slate-400 py-8">오류: ${e.message}</p>`; }
+        }
+
+        function renderMaterialsList() {
+            const c = document.getElementById('materials-list-admin');
+            const filtered = currentUnitFilter==='all' ? allMaterialsDocs : allMaterialsDocs.filter(m=>m.unit===currentUnitFilter);
+            if (!filtered.length) { c.innerHTML=`<div class="py-10 flex flex-col items-center space-y-2 text-slate-400"><i data-lucide="inbox" class="w-8 h-8 text-slate-300"></i><p class="text-sm font-medium">등록된 자료가 없습니다.</p></div>`; lucide.createIcons(); return; }
+            c.innerHTML = `<div class="space-y-2">${filtered.map(m=>`<div class="flex items-center justify-between p-4 bg-slate-50 hover:bg-white border border-slate-100 hover:border-slate-200 rounded-2xl transition-all"><div class="flex items-center space-x-3 min-w-0"><span class="text-xs font-black px-2 py-1 rounded-lg shrink-0 ${UNIT_COLOR[m.unit]||'bg-slate-100 text-slate-500'}">단원 ${m.unit}</span><div class="min-w-0"><p class="text-sm font-bold text-slate-800 truncate">${m.title}</p><p class="text-xs text-slate-400 font-medium">${m.date}${m.fileName?' · 📎 '+m.fileName:''}</p></div></div><div class="flex items-center space-x-1 ml-3 shrink-0"><button onclick="openEditModal('${m.id}')" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"><i data-lucide="pencil" class="w-4 h-4"></i></button><button onclick="deleteMaterial('${m.id}','${m.title.replace(/'/g,"\\'")}') " class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`).join('')}</div>`;
+            lucide.createIcons();
+        }
+
+        function filterByUnit(unit) {
+            currentUnitFilter = unit;
+            ['all','I','II','III','IV','V'].forEach(u => {
+                const btn = document.getElementById('filter-'+u);
+                if (!btn) return;
+                btn.className = u===unit ? 'text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500 text-white transition-all' : 'text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all';
+            });
+            renderMaterialsList();
+        }
+
+        // 수정 및 삭제
+        function openEditModal(docId) {
+            const m = allMaterialsDocs.find(d=>d.id===docId); if(!m) return;
+            document.getElementById('edit-doc-id').value = m.id;
+            document.getElementById('edit-unit').value = m.unit;
+            document.getElementById('edit-title').value = m.title;
+            document.getElementById('edit-content').value = m.content;
+            const modal = document.getElementById('edit-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            lucide.createIcons();
+        }
+        function closeEditModal() { const m=document.getElementById('edit-modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
+        
+        async function saveMaterialEdit() {
+            const docId=document.getElementById('edit-doc-id').value, unit=document.getElementById('edit-unit').value, title=document.getElementById('edit-title').value.trim(), content=document.getElementById('edit-content').value.trim();
+            if(!title||!content){showToast('제목과 내용을 입력해주세요.','error');return;}
+            try { await db.collection('materials').doc(docId).update({unit,title,content}); const idx=allMaterialsDocs.findIndex(d=>d.id===docId); if(idx!==-1) Object.assign(allMaterialsDocs[idx],{unit,title,content}); renderMaterialsList(); closeEditModal(); showToast('자료가 수정되었습니다! ✅'); } catch(e){showToast('수정 오류: '+e.message,'error');}
+        }
+        
+        async function deleteMaterial(docId,title) {
+            if(!confirm(`"${title}" 자료를 삭제할까요?`))return;
+            await db.collection('materials').doc(docId).delete();
+            allMaterialsDocs = allMaterialsDocs.filter(d=>d.id!==docId);
+            renderMaterialsList();
+            showToast('자료가 삭제되었습니다.');
+        }
+
+        // 토스트 알림 표시
+        let toastTimeout;
+        function showToast(message, type='success') {
+            const toast=document.getElementById('toast'), icon=document.getElementById('toast-icon');
+            document.getElementById('toast-msg').textContent=message;
+            icon.className = type==='error' ? 'w-4 h-4 text-rose-400' : 'w-4 h-4 text-emerald-400';
+            icon.setAttribute('data-lucide', type==='error'?'alert-circle':'check');
+            lucide.createIcons();
+            clearTimeout(toastTimeout);
+            toast.classList.remove('translate-y-32','opacity-0');
+            toastTimeout=setTimeout(()=>toast.classList.add('translate-y-32','opacity-0'),4000);
+        }
     </script>
 </body>
 </html>
