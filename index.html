@@ -258,7 +258,6 @@
                         </button>
                     </div>
                 </div>
-                </div>
             </div>
         </div>
     </nav>
@@ -348,8 +347,9 @@
                         <p class="text-slate-400 text-lg md:text-xl font-light leading-relaxed mb-8">
                             단순한 소비자가 아닌 창조자가 되는 곳.<br class="hidden md:block"> 여러분의 혁신적인 아이디어를 소프트웨어로 구현해 보세요.
                         </p>
-                        <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                            <!-- 외부 링크로 변경 -->
+                        
+                        <!-- ⭐ 수정된 버튼 영역 -->
+                        <div class="flex flex-wrap justify-center md:justify-start items-center gap-4">
                             <button onclick="showSection('classes')"
                                 class="px-8 py-4 bg-white text-slate-900 font-bold rounded-2xl hover:scale-105 transition-transform duration-300 shadow-xl shadow-white/10 flex items-center">
                                 수업 참여하기 <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
@@ -358,6 +358,18 @@
                                 class="px-8 py-4 bg-white/10 text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 flex items-center backdrop-blur-md">
                                 <i data-lucide="sparkles" class="w-5 h-5 mr-2"></i>
                                 My Project Gallery
+                            </button>
+                            
+                            <!-- 새로 추가된 Quick Link (교과서 연결) -->
+                            <button onclick="openBook()" 
+                                class="flex items-center justify-between px-6 py-3.5 bg-[#fefdf9] border-l-4 border-[#ffb11b] rounded-2xl shadow-md hover:bg-yellow-50 hover:scale-105 transition-all duration-300">
+                                <div>
+                                    <p class="text-[10px] font-black text-[#e88100] tracking-widest text-left mb-0.5">QUICK LINK</p>
+                                    <p class="text-sm font-black text-slate-800">교과서 멀티미디어 자료</p>
+                                </div>
+                                <div class="w-8 h-8 ml-4 rounded-xl border border-[#ffb11b] flex items-center justify-center">
+                                    <i data-lucide="external-link" class="w-4 h-4 text-[#e88100]"></i>
+                                </div>
                             </button>
                         </div>
                     </div>
@@ -679,7 +691,9 @@
                     </div>
                 </div>
             </div>
-        </section> -->
+        </section>
+
+        <!-- ==================== 6. 프로젝트 갤러리 섹션 ==================== -->
         <section id="gallery" class="fade-in hidden">
             <div class="text-center mb-12">
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-amber-50 text-amber-500 mb-6 shadow-sm">
@@ -720,11 +734,20 @@
 
     <script>
         // ==========================================
+        // 추가된 교과서 팝업 연결 함수
+        // ==========================================
+        function openBook() {
+            // 브라우저가 허용하는 최대 화면 크기로 팝업을 엽니다.
+            const screenWidth = screen.availWidth;
+            const screenHeight = screen.availHeight;
+            const windowFeatures = `width=${screenWidth},height=${screenHeight},left=0,top=0,fullscreen=yes,scrollbars=yes`;
+            
+            window.open('https://ibook.vivasam.com/CBS_iBook/4987/contents/index.html?skin=basic03', 'VivasamBook', windowFeatures);
+        }
+
+        // ==========================================
         // 1. Firebase 초기화 및 인증 로직
         // ==========================================
-
-        // 🔥 선생님! 아래 firebaseConfig를 Firebase 콘솔에서 복사한 실제 값으로 교체해 주세요.
-        // Firebase 콘솔(https://console.firebase.google.com) → 프로젝트 설정 → 내 앱 → SDK 설정
         const firebaseConfig = {
             apiKey: "AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM",
             authDomain: "book-c2d05.firebaseapp.com",
@@ -746,7 +769,6 @@
                 const snap = await db.collection('assignments').orderBy('createdAt','asc').get();
                 const docs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                // 드롭다운 업데이트
                 sel.innerHTML = '<option value="" disabled selected>제출할 과제를 선택해 주세요</option>';
                 docs.forEach(d => {
                     const opt = document.createElement('option');
@@ -755,7 +777,6 @@
                     sel.appendChild(opt);
                 });
 
-                // 과제 목록 카드 렌더링
                 const listEl = document.getElementById('assignments-public-list');
                 if (!listEl) return;
                 if (!docs.length) {
@@ -970,7 +991,7 @@
             }
         }
 
-        // ✅ 관리자 이메일 목록 (선생님 이메일로 변경해주세요)
+        // 관리자 확인
         const ADMIN_EMAILS = ['sungce27@gmail.com'];
 
         function isAdmin(user) {
@@ -992,13 +1013,11 @@
                 const name  = currentUser.displayName || currentUser.email.split('@')[0];
                 const admin = isAdmin(currentUser);
 
-                // 데스크탑 유저 정보
                 desktopBtn.classList.add('hidden');
                 desktopUserInfo.classList.remove('hidden');
                 desktopUserInfo.classList.add('flex');
                 desktopUserName.textContent = name;
 
-                // 관리자 배지 & 버튼
                 if (admin) {
                     desktopRoleBadge.textContent = '관리자';
                     desktopRoleBadge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-600';
@@ -1010,7 +1029,6 @@
                     adminPageBtn.classList.add('hidden');
                 }
 
-                // 모바일 유저 정보
                 mobileBtn.classList.add('hidden');
                 mobileUserInfo.classList.remove('hidden');
                 mobileUserName.textContent = name;
@@ -1033,16 +1051,13 @@
             const content = document.getElementById('login-modal-content');
 
             if (modal.classList.contains('hidden')) {
-                // 열기
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
-                // 애니메이션 적용을 위해 약간의 지연 시간
                 setTimeout(() => {
                     modal.classList.remove('opacity-0');
                     content.classList.remove('scale-95');
                 }, 10);
             } else {
-                // 닫기
                 modal.classList.add('opacity-0');
                 content.classList.add('scale-95');
                 setTimeout(() => {
@@ -1059,7 +1074,6 @@
 
         lucide.createIcons();
 
-        // Scroll effect for Navbar
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
             if (window.scrollY > 20) {
@@ -1071,7 +1085,6 @@
             }
         });
 
-        // Mobile Menu Toggle
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         mobileMenuBtn.addEventListener('click', () => {
@@ -1087,7 +1100,6 @@
                 : '';
             if (!name) return;
             const studentId = user ? (localStorage.getItem('studentId_' + user.uid) || '') : '';
-            // localStorage에도 저장해 iframe이 바로 읽을 수 있게
             try { localStorage.setItem('curriculum_user_name', name); } catch(e) {}
             try { localStorage.setItem('curriculum_student_id', studentId); } catch(e) {}
             try {
@@ -1095,20 +1107,17 @@
             } catch(e) {}
         }
 
-        // iframe이 ready 신호를 보내면 이름 전달
         window.addEventListener('message', function(e) {
             if (e.data && e.data.type === 'CURRICULUM_READY') {
                 sendUserNameToFrame();
             }
         });
 
-        // Firebase 로그인 완료 시에도 전달
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
                 const name = user.displayName || user.email.split('@')[0];
                 try { localStorage.setItem('curriculum_user_name', name); } catch(e) {}
 
-                // 학번이 localStorage에 없으면 Google Sheets에서 로드
                 const cachedId = localStorage.getItem('studentId_' + user.uid);
                 if (!cachedId) {
                     const script = document.createElement('script');
@@ -1145,7 +1154,6 @@
                 targetSection.classList.add('block');
             }
 
-            // 활성 메뉴 스타일
             ['home','notices','classes','materials','assignments','gallery'].forEach(id => {
                 const navEl = document.getElementById('nav-' + id);
                 if (navEl) navEl.classList.remove('active');
@@ -1157,7 +1165,6 @@
             if (sectionId === 'materials')   loadInlineMaterials();
             if (sectionId === 'assignments') {
                 loadAssignmentOptions();
-                // 파일 선택 UI
                 const fi = document.getElementById('submit-file');
                 if (fi && !fi.dataset.bound) {
                     fi.dataset.bound = '1';
@@ -1172,7 +1179,6 @@
                 }
             }
             if (sectionId === 'classes') {
-                // iframe이 아직 로드 안 됐으면 src 세팅, 됐으면 이름만 전달
                 const frame = document.getElementById('curriculum-frame');
                 if (frame && !frame.dataset.loaded) {
                     frame.dataset.loaded = '1';
@@ -1187,13 +1193,10 @@
         }
 
         // ==================== Data Rendering ====================
-
-        // 공지사항 - Google Sheets에서 JSONP로 로드
         const NOTICE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCyznG-WST1S7hIoMFXIVzQv3Qmub1nSdr43tDiaQVTEp2W9vdnUpqgmjSb1o-X5er/exec';
         let noticesLoaded = false;
 
         function loadNotices() {
-            // 이미 로드된 경우 재로드 안 함
             if (noticesLoaded) return;
 
             const old = document.getElementById('jsonp-notices');
@@ -1304,69 +1307,71 @@
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. 교과수업(커리큘럼) 렌더링
             const classesGrid = document.getElementById('classes-grid');
-            classesData.forEach(cls => {
-                classesGrid.innerHTML += `
-                    <div class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="w-14 h-14 ${cls.bg} ${cls.color} rounded-2xl flex items-center justify-center">
-                                <i data-lucide="${cls.icon}" class="w-7 h-7"></i>
+            if(classesGrid) {
+                classesData.forEach(cls => {
+                    classesGrid.innerHTML += `
+                        <div class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="w-14 h-14 ${cls.bg} ${cls.color} rounded-2xl flex items-center justify-center">
+                                    <i data-lucide="${cls.icon}" class="w-7 h-7"></i>
+                                </div>
+                                <span class="text-xs font-bold text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">${cls.step}</span>
                             </div>
-                            <span class="text-xs font-bold text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">${cls.step}</span>
+                            <h3 class="text-2xl font-bold text-slate-900 mb-3">${cls.title}</h3>
+                            <p class="text-slate-500 font-medium leading-relaxed">${cls.desc}</p>
                         </div>
-                        <h3 class="text-2xl font-bold text-slate-900 mb-3">${cls.title}</h3>
-                        <p class="text-slate-500 font-medium leading-relaxed">${cls.desc}</p>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
 
-            // 3. 학습자료실 렌더링
             const materialsList = document.getElementById('materials-list');
-            materialsData.forEach(mat => {
-                const badge = mat.isNew ? `<div class="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white"></div>` : '';
-                materialsList.innerHTML += `
-                    <div class="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all cursor-pointer flex items-center justify-between relative">
-                        ${badge}
-                        <div class="flex items-center space-x-6">
-                            <div class="text-3xl font-black text-slate-100 group-hover:text-blue-100 transition-colors">${mat.id}</div>
-                            <div>
-                                <div class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-1">${mat.category}</div>
-                                <h4 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${mat.title}</h4>
-                            </div>
-                        </div>
-                        <div class="bg-slate-50 px-4 py-2 rounded-xl text-sm font-bold text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors flex items-center">
-                            ${mat.type} <i data-lucide="download" class="w-4 h-4 ml-2"></i>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // 4. 갤러리 렌더링
-            const galleryGrid = document.getElementById('gallery-grid');
-            galleryData.forEach(proj => {
-                galleryGrid.innerHTML += `
-                    <div class="group bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
-                        <div class="h-48 bg-gradient-to-br ${proj.imgColor} flex items-center justify-center p-6 relative overflow-hidden">
-                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
-                            <h3 class="text-white font-black text-2xl text-center z-10 drop-shadow-md leading-snug transform group-hover:scale-105 transition-transform duration-500">${proj.title}</h3>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-lg">${proj.team}</span>
-                                <div class="flex items-center text-xs font-bold text-slate-500 hover:text-rose-500 transition-colors cursor-pointer">
-                                    <i data-lucide="heart" class="w-4 h-4 mr-1 text-rose-500"></i> ${proj.likes}
+            if(materialsList) {
+                materialsData.forEach(mat => {
+                    const badge = mat.isNew ? `<div class="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white"></div>` : '';
+                    materialsList.innerHTML += `
+                        <div class="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all cursor-pointer flex items-center justify-between relative">
+                            ${badge}
+                            <div class="flex items-center space-x-6">
+                                <div class="text-3xl font-black text-slate-100 group-hover:text-blue-100 transition-colors">${mat.id}</div>
+                                <div>
+                                    <div class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-1">${mat.category}</div>
+                                    <h4 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${mat.title}</h4>
                                 </div>
                             </div>
-                            <p class="text-sm text-slate-600 font-medium leading-relaxed">${proj.desc}</p>
+                            <div class="bg-slate-50 px-4 py-2 rounded-xl text-sm font-bold text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors flex items-center">
+                                ${mat.type} <i data-lucide="download" class="w-4 h-4 ml-2"></i>
+                            </div>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
+
+            const galleryGrid = document.getElementById('gallery-grid');
+            if(galleryGrid) {
+                galleryData.forEach(proj => {
+                    galleryGrid.innerHTML += `
+                        <div class="group bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <div class="h-48 bg-gradient-to-br ${proj.imgColor} flex items-center justify-center p-6 relative overflow-hidden">
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                                <h3 class="text-white font-black text-2xl text-center z-10 drop-shadow-md leading-snug transform group-hover:scale-105 transition-transform duration-500">${proj.title}</h3>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-lg">${proj.team}</span>
+                                    <div class="flex items-center text-xs font-bold text-slate-500 hover:text-rose-500 transition-colors cursor-pointer">
+                                        <i data-lucide="heart" class="w-4 h-4 mr-1 text-rose-500"></i> ${proj.likes}
+                                    </div>
+                                </div>
+                                <p class="text-sm text-slate-600 font-medium leading-relaxed">${proj.desc}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
 
             lucide.createIcons();
 
-            // 홈 공지사항 미리보기 로드
             (function loadHomeNoticePreview() {
                 const preview = document.getElementById('home-notice-preview');
                 if (!preview) return;
@@ -1428,7 +1433,6 @@
             try {
                 let link = linkVal;
 
-                // 파일 첨부 시 Cloudinary 업로드
                 if (file) {
                     if (file.size > 10*1024*1024) {
                         showToast('파일 크기는 10MB 이하여야 합니다.', 'error');
@@ -1472,7 +1476,6 @@
                 });
                 showToast(`${name} 학생의 과제가 제출되었습니다! 🎉`);
                 document.getElementById('assignment-submit-form').reset();
-                // 파일 UI 초기화
                 document.getElementById('submit-file-label').textContent = '클릭 또는 파일을 드래그하세요';
                 document.getElementById('submit-file-icon').setAttribute('data-lucide','upload-cloud');
                 document.getElementById('submit-upload-wrap').classList.add('hidden');
@@ -1486,7 +1489,6 @@
             }
         }
 
-        // ==================== 공통 알림창(Toast) 함수 ====================
         let toastTimeout;
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
@@ -1495,7 +1497,6 @@
 
             toast.querySelector('span').textContent = message;
 
-            // 성공/에러 상태에 따라 색상과 아이콘 변경
             if (type === 'error') {
                 iconWrap.className = 'bg-rose-500/20 p-1.5 rounded-full';
                 icon.setAttribute('data-lucide', 'alert-circle');
