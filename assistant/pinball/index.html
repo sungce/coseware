@@ -1,1 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>발표 도우미 핀볼</title>
+    <!-- 1. 물리 엔진 라이브러리 불러오기 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    
+    <style>
+        /* 2. CSS: 화면 레이아웃 설정 */
+        body { margin: 0; background: #333; display: flex; flex-direction: column; align-items: center; }
+        #canvas-container { margin-top: 20px; border: 5px solid #555; }
+        #ui-panel { 
+            background: white; padding: 20px; border-radius: 15px; 
+            margin-top: 20px; display: flex; gap: 10px; 
+        }
+        textarea { width: 300px; height: 80px; border-radius: 5px; padding: 10px; }
+        button { background: #7b68ee; color: white; border: none; padding: 10px 30px; border-radius: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
 
+    <!-- 3. HTML: 게임이 그려질 곳과 입력창 -->
+    <div id="canvas-container"></div>
+
+    <div id="ui-panel">
+        <textarea id="student-list" placeholder="학생 이름을 쉼표로 구분해서 입력하세요 (예: 홍길동, 김철수, 이영희)"></textarea>
+        <button onclick="startPinball()">시작</button>
+    </div>
+
+    <script>
+        // 4. JavaScript: 아까 배운 로직을 여기에 넣습니다.
+        const { Engine, Render, Runner, Bodies, Composite, Events } = Matter;
+
+        let engine, render, runner;
+        let studentBalls = []; // 생성된 공들을 담아둘 배열
+
+        function initGame() {
+            engine = Engine.create();
+            render = Render.create({
+                element: document.getElementById('canvas-container'),
+                engine: engine,
+                options: { width: 800, height: 500, wireframes: false, background: '#4b4b5a' }
+            });
+
+            // 바닥과 벽 생성
+            const ground = Bodies.rectangle(400, 490, 810, 60, { isStatic: true, render: { fillStyle: '#666' } });
+            const leftWall = Bodies.rectangle(5, 250, 10, 500, { isStatic: true });
+            const rightWall = Bodies.rectangle(795, 250, 10, 500, { isStatic: true });
+
+            // 핀볼 못(장애물) 자동 생성
+            const pins = [];
+            for (let l = 0; l < 4; l++) {
+                for (let c = 0; c < 8; c++) {
+                    pins.push(Bodies.circle(100 + c * 85, 150 + l * 80, 5, { isStatic: true, render: { fillStyle: '#fff' } }));
+                }
+            }
+
+            Composite.add(engine.world, [ground, leftWall, rightWall, ...pins]);
+            Render.run(render);
+            runner = Runner.create();
+            Runner.run(runner, engine);
+
+            // 실시간 이름 그리기 (이 부분이 핵심!)
+            Events.on(render, 'afterRender', () => {
+                const context = render.context;
+                context.font = "bold 15px sans-serif";
+                context.textAlign = "center";
+                context.fillStyle = "white";
+
+                studentBalls.forEach(ball => {
+                    const { x, y } = ball.position;
+                    // ball에 저장해둔 이름을 공 좌표에 맞춰 출력
+                    context.fillText(ball.studentName, x, y - 25);
+                });
+            });
+        }
+
+        function startPinball() {
+            const input = document.getElementById('student-list').value;
+            const names = input.split(',').map(n => n.trim()).filter(n => n !== "");
+
+            names.forEach((name, i) => {
+                const ball = Bodies.circle(100 + (Math.random() * 600), 50, 18, {
+                    restitution: 0.6,
+                    render: { fillStyle: '#ff4d8d' }
+                });
+                
+                // 공 객체에 직접 이름 속성 추가 (데이터 연동)
+                ball.studentName = name; 
+                
+                studentBalls.push(ball);
+                Composite.add(engine.world, ball);
+            });
+        }
+
+        // 페이지 로드 시 게임 초기화
+        initGame();
+    </script>
+</body>
+</html>
