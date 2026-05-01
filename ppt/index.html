@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>정보 교과서 수업 도구</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Pretendard', -apple-system, sans-serif;
+        }
+        /* 상단 바 설정 */
+        .header {
+            height: 50px;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+        }
+        .header h1 {
+            font-size: 16px;
+            margin: 0;
+        }
+        /* 웹앱 프레임 */
+        iframe {
+            width: 100%;
+            height: calc(100% - 50px);
+            border: none;
+        }
+        .btn-refresh {
+            background: #34495e;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
 
+    <div class="header">
+        <h1>중학교 정보 교과서 바로가기</h1>
+        <button class="btn-refresh" onclick="location.reload()">새로고침</button>
+    </div>
+
+    <!-- 교과서 사이트 연결 -->
+    <iframe src="https://ibook.vivasam.com/CBS_iBook/4987/contents/index.html?skin=basic03" 
+            allowfullscreen>
+    </iframe>
+
+</body>
+</html>
