@@ -3,21 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vibe-Room — Sungce AI-ON</title>
+<title>Vibe Room — Sungce AI-ON</title>
+<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
+<!-- Pretendard Font -->
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<!-- Lucide Icons -->
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
-  body { font-family: 'Pretendard', -apple-system, sans-serif; background: #f8fafc; }
-  .card { background: white; border-radius: 1.5rem; border: 1px solid #e2e8f0; }
+  body { 
+    font-family: 'Pretendard', -apple-system, sans-serif; 
+    background: #f8fafc; 
+    margin: 0; 
+    /* 웹앱처럼 화면 스크롤 고정 */
+    overflow: hidden; 
+  }
+  
+  /* 스크롤바 커스텀 */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 </style>
 </head>
-<body class="min-h-screen">
-  <!-- 네비게이션 바 (1줄 레이아웃으로 변경) -->
-  <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+<body class="h-screen flex flex-col">
+  
+  <!-- 1. 네비게이션 바 (독립 접속 시 표시, iframe 내부에서는 부모 스크립트에 의해 숨겨짐) -->
+  <nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
     <div class="max-w-[1400px] mx-auto px-4 md:px-6">
       <div class="flex justify-between items-center h-16 lg:h-20">
-        <!-- 1. 로고 (좌측) -->
-        <a href="index.html" class="flex items-center space-x-2 shrink-0">
+        <!-- 로고 -->
+        <a href="index.html" class="flex items-center space-x-2 shrink-0 outline-none focus:outline-none">
           <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
           <div>
             <div class="text-[15px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
@@ -25,19 +41,15 @@
           </div>
         </a>
 
-        <!-- 2. 우측 영역 (메뉴 + 버튼) -->
+        <!-- 메뉴 영역 -->
         <div class="flex items-center space-x-6 lg:space-x-8">
-          
-          <!-- iframe 제어 메뉴 링크 -->
           <div class="hidden md:flex items-center space-x-6 xl:space-x-8 text-[14px] font-bold text-slate-600">
-            <a href="#" onclick="loadInIframe(event, 'curriculum/index.html', this)" class="nav-menu hover:text-blue-600 transition-colors">교과 수업</a>
-            <a href="#" onclick="loadInIframe(event, 'code_play.html', this)" class="nav-menu hover:text-blue-600 transition-colors">코드 놀이터</a>
-            <a href="#" onclick="loadDataLab(event, 'data_play.html' this)" class="nav-menu hover:text-blue-600 transition-colors">데이터 실습실</a>
-             <a href="#" onclick="showInIframe(event, ,this)" class="nav-menu text-blue-600 border-b-2 border-blue-600 pb-1">Vibe Room</a>
+            <a href="curriculum/index.html" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">교과 수업</a>
+            <a href="code_play.html" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">코드 놀이터</a>
+            <a href="data_play.html" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">데이터 실습실</a>
+            <span class="nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1">Vibe Room</span>
           </div>
-
-          <!-- 메인으로 버튼 -->
-          <a href="index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl transition-colors shrink-0">
+          <a href="index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl transition-colors shrink-0 outline-none focus:outline-none">
             <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
           </a>
         </div>
@@ -45,3 +57,289 @@
     </div>
   </nav>
 
+  <!-- 2. 웹앱 메인 레이아웃 (남은 화면 높이를 모두 채움) -->
+  <main class="flex-1 flex overflow-hidden max-w-[1400px] w-full mx-auto bg-white md:border-x md:border-slate-200 shadow-sm">
+    
+    <!-- 2-1. 사이드바 (채널 및 유저 목록) -->
+    <aside class="w-64 bg-slate-50 border-r border-slate-200 flex-col hidden md:flex shrink-0 h-full">
+      
+      <!-- 방 제목 -->
+      <div class="p-5 border-b border-slate-200 bg-slate-100/50">
+        <h2 class="text-lg font-black text-slate-800 flex items-center">
+          <i data-lucide="headphones" class="w-5 h-5 mr-2 text-indigo-500"></i>Vibe Room
+        </h2>
+        <p class="text-xs text-slate-500 font-medium mt-1">함께 코딩하며 소통하는 공간</p>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-6">
+        <!-- 채널 목록 -->
+        <div>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Channels</p>
+          <ul class="space-y-1">
+            <li>
+              <button class="w-full flex items-center space-x-2 px-2 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-bold transition-colors outline-none">
+                <i data-lucide="hash" class="w-4 h-4"></i><span>자유_수다방</span>
+              </button>
+            </li>
+            <li>
+              <button class="w-full flex items-center space-x-2 px-2 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg text-sm font-medium transition-colors outline-none">
+                <i data-lucide="hash" class="w-4 h-4"></i><span>질문_및_답변</span>
+              </button>
+            </li>
+            <li>
+              <button class="w-full flex items-center space-x-2 px-2 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg text-sm font-medium transition-colors outline-none">
+                <i data-lucide="hash" class="w-4 h-4"></i><span>프로젝트_팀빌딩</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 접속자 목록 -->
+        <div>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-2 flex justify-between">
+            <span>Online</span>
+            <span class="bg-emerald-100 text-emerald-600 px-1.5 rounded-full">3</span>
+          </p>
+          <ul class="space-y-1">
+            <li class="flex items-center space-x-2 px-2 py-1.5">
+              <div class="relative">
+                <div class="w-7 h-7 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs">나</div>
+                <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-50 rounded-full"></div>
+              </div>
+              <span class="text-sm font-bold text-slate-700">나 (학생)</span>
+            </li>
+            <li class="flex items-center space-x-2 px-2 py-1.5 cursor-pointer hover:bg-slate-200/50 rounded-lg transition-colors">
+              <div class="relative">
+                <div class="w-7 h-7 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xs">AI</div>
+                <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-50 rounded-full"></div>
+              </div>
+              <span class="text-sm font-bold text-slate-700">Sungce 봇</span>
+            </li>
+            <li class="flex items-center space-x-2 px-2 py-1.5 cursor-pointer hover:bg-slate-200/50 rounded-lg transition-colors">
+              <div class="relative">
+                <div class="w-7 h-7 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center font-bold text-xs">선생</div>
+                <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-50 rounded-full"></div>
+              </div>
+              <span class="text-sm font-bold text-slate-700">성광식 선생님</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 미니 플레이어 (Vibe 감성) -->
+      <div class="p-4 border-t border-slate-200 bg-white">
+        <div class="flex items-center space-x-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+          <div class="w-10 h-10 bg-gradient-to-br from-pink-400 to-orange-400 rounded-lg flex items-center justify-center animate-pulse">
+            <i data-lucide="music" class="w-5 h-5 text-white"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-slate-800 truncate">Lofi Coding Chill</p>
+            <p class="text-[10px] text-slate-500 truncate">Sungce Playlist</p>
+          </div>
+          <button class="text-slate-400 hover:text-indigo-500 transition-colors outline-none focus:outline-none">
+            <i data-lucide="play-circle" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2-2. 메인 채팅 영역 -->
+    <section class="flex-1 flex flex-col h-full relative bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-slate-50">
+      
+      <!-- 채팅방 헤더 (모바일에서는 햄버거 메뉴 포함) -->
+      <header class="h-14 bg-white/90 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0 z-10">
+        <div class="flex items-center space-x-3">
+          <i data-lucide="hash" class="w-5 h-5 text-slate-400"></i>
+          <h2 class="text-base font-black text-slate-800">자유_수다방</h2>
+        </div>
+        <div class="flex items-center space-x-4 text-slate-400">
+          <button class="hover:text-indigo-500 transition-colors outline-none focus:outline-none"><i data-lucide="search" class="w-5 h-5"></i></button>
+          <button class="hover:text-indigo-500 transition-colors outline-none focus:outline-none md:hidden"><i data-lucide="users" class="w-5 h-5"></i></button>
+        </div>
+      </header>
+
+      <!-- 메시지 리스트 영역 -->
+      <div id="chat-messages" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+        
+        <!-- 날짜 구분선 -->
+        <div class="flex justify-center">
+          <span class="text-xs font-bold text-slate-400 bg-slate-200/50 px-3 py-1 rounded-full">오늘</span>
+        </div>
+
+        <!-- 수신 메시지 (AI 봇) -->
+        <div class="flex items-start space-x-3">
+          <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center font-bold shrink-0">AI</div>
+          <div class="flex flex-col items-start">
+            <div class="flex items-baseline space-x-2 mb-1">
+              <span class="text-sm font-bold text-slate-700">Sungce 봇</span>
+              <span class="text-xs font-medium text-slate-400">오전 09:00</span>
+            </div>
+            <div class="bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed max-w-[85%] sm:max-w-md">
+              안녕하세요! Vibe Room에 오신 것을 환영합니다. 👋 <br>
+              이곳에서는 친구들과 대화하거나 저에게 코딩 관련 질문을 할 수 있어요. 무엇을 도와드릴까요?
+            </div>
+          </div>
+        </div>
+
+        <!-- 수신 메시지 (선생님) -->
+        <div class="flex items-start space-x-3">
+          <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center font-bold shrink-0">선생</div>
+          <div class="flex flex-col items-start">
+            <div class="flex items-baseline space-x-2 mb-1">
+              <span class="text-sm font-bold text-slate-700">성광식 선생님</span>
+              <span class="text-xs font-medium text-slate-400">오전 09:05</span>
+            </div>
+            <div class="bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed max-w-[85%] sm:max-w-md">
+              다들 이번 주 수행평가 과제 잊지 말고 '수행평가 제출' 메뉴에서 업로드 해주세요! 기한은 금요일까지입니다. 화이팅! 🚀
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 메시지 입력 영역 -->
+      <footer class="p-4 bg-white border-t border-slate-200 shrink-0">
+        <form id="chat-form" onsubmit="sendMessage(event)" class="flex items-end space-x-2 bg-slate-50 border border-slate-200 rounded-2xl p-2 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-shadow">
+          
+          <button type="button" class="p-2 text-slate-400 hover:text-indigo-500 transition-colors outline-none focus:outline-none shrink-0">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+          </button>
+          
+          <textarea id="chat-input" rows="1" class="flex-1 bg-transparent border-none focus:ring-0 resize-none text-sm font-medium text-slate-700 py-2 outline-none max-h-32" placeholder="메시지를 입력하세요... (Enter로 전송, Shift+Enter로 줄바꿈)"></textarea>
+          
+          <div class="flex items-center space-x-1 shrink-0 pb-1">
+            <button type="button" class="p-2 text-slate-400 hover:text-amber-500 transition-colors outline-none focus:outline-none hidden sm:block">
+              <i data-lucide="smile" class="w-5 h-5"></i>
+            </button>
+            <button type="submit" class="bg-indigo-600 text-white p-2 rounded-xl hover:bg-indigo-700 transition-colors outline-none focus:outline-none shadow-md shadow-indigo-500/30 flex items-center justify-center">
+              <i data-lucide="send" class="w-4 h-4 ml-0.5"></i>
+            </button>
+          </div>
+        </form>
+      </footer>
+
+    </section>
+  </main>
+
+  <script>
+    // 아이콘 렌더링
+    lucide.createIcons();
+
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatForm = document.getElementById('chat-form');
+
+    // 스크롤 맨 아래로 이동 함수
+    function scrollToBottom() {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // 현재 시간 구하기 (예: 오후 2:30)
+    function getCurrentTime() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      const ampm = hours >= 12 ? '오후' : '오전';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // 0시는 12시로 표시
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      return `${ampm} ${hours}:${minutes}`;
+    }
+
+    // 내가 보낸 메시지 HTML 생성
+    function createMyMessage(text) {
+      const time = getCurrentTime();
+      // 텍스트 줄바꿈 처리
+      const formattedText = text.replace(/\n/g, '<br>');
+      
+      return `
+        <div class="flex items-start justify-end space-x-3 animate-[fadeIn_0.3s_ease-out]">
+          <div class="flex flex-col items-end">
+            <div class="flex items-baseline space-x-2 mb-1">
+              <span class="text-xs font-medium text-slate-400">${time}</span>
+              <span class="text-sm font-bold text-slate-700">나</span>
+            </div>
+            <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed max-w-[85%] sm:max-w-md text-left break-words">
+              ${formattedText}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 봇(AI) 메시지 HTML 생성
+    function createBotMessage(text) {
+      const time = getCurrentTime();
+      const formattedText = text.replace(/\n/g, '<br>');
+
+      return `
+        <div class="flex items-start space-x-3 animate-[fadeIn_0.3s_ease-out]">
+          <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center font-bold shrink-0">AI</div>
+          <div class="flex flex-col items-start">
+            <div class="flex items-baseline space-x-2 mb-1">
+              <span class="text-sm font-bold text-slate-700">Sungce 봇</span>
+              <span class="text-xs font-medium text-slate-400">${time}</span>
+            </div>
+            <div class="bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed max-w-[85%] sm:max-w-md break-words">
+              ${formattedText}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 메시지 전송 로직
+    function sendMessage(e) {
+      if (e) e.preventDefault();
+      
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      // 1. 내 메시지 화면에 추가
+      chatMessages.insertAdjacentHTML('beforeend', createMyMessage(text));
+      chatInput.value = '';
+      chatInput.style.height = 'auto'; // 높이 초기화
+      scrollToBottom();
+
+      // 2. 가상의 봇 답장 시뮬레이션 (1초 후)
+      setTimeout(() => {
+        let reply = '';
+        if (text.includes('안녕') || text.includes('하이')) {
+          reply = '안녕하세요! 오늘도 즐거운 코딩 하세요 😊';
+        } else if (text.includes('오류') || text.includes('에러')) {
+          reply = '에러가 발생했군요! 어떤 에러 메시지가 뜨는지 "질문있어요" 게시판에 코드를 올려주시면 자세히 도와드릴게요.';
+        } else if (text.includes('파이썬')) {
+          reply = '파이썬은 정말 멋진 언어죠! 코드 놀이터에서 직접 코드를 실행해볼 수 있답니다.';
+        } else {
+          reply = '네, 확인했습니다! 다른 궁금한 점이 있으면 언제든 말씀해 주세요.';
+        }
+        
+        chatMessages.insertAdjacentHTML('beforeend', createBotMessage(reply));
+        scrollToBottom();
+      }, 1000);
+    }
+
+    // Textarea 엔터키 전송 (Shift+Enter는 줄바꿈)
+    chatInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Textarea 내용에 따라 높이 자동 조절
+    chatInput.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+      if (this.scrollHeight > 128) {
+        this.style.overflowY = 'auto';
+      } else {
+        this.style.overflowY = 'hidden';
+      }
+    });
+
+    // 페이지 로드 시 맨 아래로 스크롤 맞춤
+    window.onload = scrollToBottom;
+  </script>
+</body>
+</html>
