@@ -106,7 +106,7 @@
             position: absolute;
             width: 0;
             height: 2px;
-            bottom: -4px;
+            bottom: -6px;
             left: 0;
             background-color: #3b82f6;
             transition: width 0.3s ease;
@@ -129,96 +129,99 @@
 
 <body>
 
-    <!-- 네비게이션 바 -->
+    <!-- 네비게이션 바 (1줄 레이아웃으로 변경) -->
     <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50 transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-6">
-
-            <!-- 1행: 로고 + 사용자 정보 -->
-            <div class="flex justify-between items-center h-14 border-b border-slate-100">
-                <!-- 로고 -->
-                <div class="flex items-center space-x-2 cursor-pointer" onclick="showSection('home')">
-                    <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shadow-md shadow-blue-500/30 flex-shrink-0">AI</div>
+        <div class="max-w-[1400px] mx-auto px-4 md:px-6">
+            <div class="flex justify-between items-center h-16 lg:h-20">
+                
+                <!-- 1. 로고 (좌측) -->
+                <div class="flex items-center space-x-2 cursor-pointer shrink-0" onclick="showSection('home')">
+                    <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center text-xs md:text-sm font-bold shadow-md shadow-blue-500/30 flex-shrink-0">AI</div>
                     <div>
-                        <div class="text-[15px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
-                        <div class="text-[12px] font-medium text-slate-500 leading-tight">정보 교과 클래스룸</div>
+                        <div class="text-[15px] md:text-[16px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
+                        <div class="text-[11px] md:text-[12px] font-medium text-slate-500 leading-tight">정보 교과 클래스룸</div>
                     </div>
                 </div>
 
-                <!-- 우측: 사용자 정보 -->
-                <div class="flex items-center space-x-2">
-                    <!-- 내 대시보드 버튼 -->
-                    <a href="dashboard.html" class="hidden lg:flex items-center space-x-1.5 text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-xl text-sm font-bold hover:bg-blue-100 transition-colors">
-                        <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
-                        <span>내 대시보드</span>
-                    </a>
+                <!-- 우측 영역 (데스크탑 메뉴 + 사용자 버튼) -->
+                <div class="flex items-center lg:space-x-8">
+                    
+                    <!-- 2. 데스크탑 메뉴 링크 -->
+                    <div class="hidden lg:flex items-center space-x-5 xl:space-x-8 text-[13.5px] xl:text-[14.5px] font-bold text-slate-600">
+                        <a href="#" onclick="showSection('home')" class="nav-link hover:text-blue-600 transition-colors" id="nav-home">홈</a>
+                        <a href="#" onclick="showSection('notices')" class="nav-link hover:text-blue-600 transition-colors" id="nav-notices">공지사항</a>
 
-                    <!-- 비로그인 -->
-                    <button id="desktop-auth-btn" onclick="toggleLoginModal()"
-                        class="bg-slate-900 text-white px-4 py-1.5 rounded-xl hover:bg-slate-800 transition-all flex items-center text-sm font-bold">
-                        <i data-lucide="log-in" class="w-4 h-4 mr-1.5" id="desktop-auth-icon"></i>
-                        <span id="desktop-auth-text">로그인</span>
-                    </button>
-
-                    <!-- 로그인 상태 -->
-                    <div id="desktop-user-info" class="hidden items-center space-x-2">
-                        <div class="flex items-center space-x-2 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-xl">
-                            <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="user" class="w-3.5 h-3.5 text-white"></i>
+                        <!-- 인터렉티브 수업실 드롭다운 -->
+                        <div class="relative group h-full flex items-center py-4">
+                            <a href="#" onclick="showSection('classes'); return false;"
+                                class="nav-link hover:text-blue-600 transition-colors flex items-center space-x-1" id="nav-classes">
+                                <span>인터렉티브 수업실</span>
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors"></i>
+                            </a>
+                            <div class="absolute top-full left-1/2 -translate-x-1/2 mt-0 bg-white border border-slate-100 rounded-2xl shadow-xl shadow-slate-200/60 min-w-[150px] overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+                                <a href="#" onclick="showSection('classes'); return false;" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                    <i data-lucide="book-open" class="w-4 h-4"></i><span>교과수업</span>
+                                </a>
+                                <a href="code_play.html" target="_blank" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
+                                    <i data-lucide="code-2" class="w-4 h-4"></i><span>코드 놀이터</span>
+                                </a>
+                                <a href="data_play.html" target="_blank" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
+                                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i><span>데이터 실습실</span>
+                                </a>
+                                <a href="chatting.html" target="_blank" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
+                                    <i data-lucide="headphones" class="w-4 h-4"></i><span>Vibe Room</span>
+                                </a>
                             </div>
-                            <span id="desktop-user-name" class="text-sm font-bold text-slate-800"></span>
-                            <span id="desktop-role-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-500">학생</span>
                         </div>
-                        <a id="admin-page-btn" href="admin.html" class="hidden items-center space-x-1 bg-amber-500 text-white px-3 py-1.5 rounded-xl hover:bg-amber-600 transition-all text-sm font-bold">
-                            <i data-lucide="shield" class="w-4 h-4"></i>
-                            <span>관리자</span>
+
+                        <a href="#" onclick="showSection('materials')" class="nav-link hover:text-blue-600 transition-colors" id="nav-materials">학습자료실</a>
+                        <a href="#" onclick="showSection('assignments')" class="nav-link hover:text-blue-600 transition-colors" id="nav-assignments">수행평가 제출</a>
+                        <a href="#" onclick="showSection('gallery')" class="nav-link hover:text-blue-600 transition-colors" id="nav-gallery">학생 작품</a>
+                        <a href="question.html" target="_blank" class="nav-link hover:text-blue-600 transition-colors flex items-center space-x-1" id="nav-question">
+                            <span>질문있어요</span>
+                            <span class="text-[10px] bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-full font-black">NEW</span>
                         </a>
-                        <button onclick="handleSignOut()" class="text-slate-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50" title="로그아웃">
-                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </div>
+
+                    <!-- 3. 우측 버튼 그룹 (사용자 정보 등) -->
+                    <div class="flex items-center space-x-2 shrink-0">
+                        <!-- 내 대시보드 버튼 -->
+                        <a href="dashboard.html" class="hidden lg:flex items-center space-x-1.5 text-blue-600 bg-blue-50 border border-blue-100 px-3.5 py-2 rounded-xl text-sm font-bold hover:bg-blue-100 transition-colors">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                            <span>내 대시보드</span>
+                        </a>
+
+                        <!-- 비로그인 -->
+                        <button id="desktop-auth-btn" onclick="toggleLoginModal()"
+                            class="bg-slate-900 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-all flex items-center text-sm font-bold">
+                            <i data-lucide="log-in" class="w-4 h-4 mr-1.5" id="desktop-auth-icon"></i>
+                            <span id="desktop-auth-text">로그인</span>
+                        </button>
+
+                        <!-- 로그인 상태 -->
+                        <div id="desktop-user-info" class="hidden items-center space-x-2">
+                            <div class="flex items-center space-x-2 bg-blue-50 border border-blue-100 px-3.5 py-2 rounded-xl">
+                                <div class="w-5 h-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-md flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="user" class="w-3 h-3 text-white"></i>
+                                </div>
+                                <span id="desktop-user-name" class="text-sm font-bold text-slate-800"></span>
+                                <span id="desktop-role-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-500">학생</span>
+                            </div>
+                            <a id="admin-page-btn" href="admin.html" class="hidden items-center space-x-1.5 bg-amber-500 text-white px-3.5 py-2 rounded-xl hover:bg-amber-600 transition-all text-sm font-bold">
+                                <i data-lucide="shield" class="w-4 h-4"></i>
+                                <span>관리자</span>
+                            </a>
+                            <button onclick="handleSignOut()" class="text-slate-400 hover:text-rose-500 transition-colors p-2 rounded-lg hover:bg-rose-50" title="로그아웃">
+                                <i data-lucide="log-out" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+
+                        <!-- 모바일 메뉴 버튼 -->
+                        <button id="mobile-menu-btn" class="lg:hidden text-slate-600 hover:text-blue-600 p-1.5">
+                            <i data-lucide="align-right" class="w-6 h-6"></i>
                         </button>
                     </div>
-
-                    <!-- 모바일 메뉴 버튼 -->
-                    <button id="mobile-menu-btn" class="lg:hidden text-slate-600 hover:text-blue-600 p-1">
-                        <i data-lucide="align-right" class="w-6 h-6"></i>
-                    </button>
                 </div>
-            </div>
-
-            <!-- 2행: 메뉴 링크 (데스크탑) -->
-            <div class="hidden lg:flex items-center justify-end h-11 space-x-7 text-[13px] font-bold text-slate-600">
-                <a href="#" onclick="showSection('home')" class="nav-link hover:text-blue-600 transition-colors" id="nav-home">홈</a>
-                <a href="#" onclick="showSection('notices')" class="nav-link hover:text-blue-600 transition-colors" id="nav-notices">공지사항</a>
-
-                <!-- 인터렉티브 수업실 드롭다운 -->
-                <div class="relative group">
-                    <a href="#" onclick="showSection('classes'); return false;"
-                        class="nav-link hover:text-blue-600 transition-colors flex items-center space-x-1" id="nav-classes">
-                        <span>인터렉티브 수업실</span>
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors"></i>
-                    </a>
-                    <div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl shadow-slate-200/60 min-w-[140px] overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
-                        <a href="#" onclick="showSection('classes'); return false;" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                            <i data-lucide="book-open" class="w-4 h-4"></i><span>교과수업</span>
-                        </a>
-                        <a href="code_play.html" target="_blank" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
-                            <i data-lucide="code-2" class="w-4 h-4"></i><span>코드 놀이터</span>
-                        </a>
-                        <a href="data_play.html" target="_blank" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
-                            <i data-lucide="bar-chart-2" class="w-4 h-4"></i><span>데이터 실습실</span>
-                        </a>
-                        <a href="chatting.html" target="_blank" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
-                            <i data-lucide="headphones" class="w-4 h-4"></i><span>Vibe Room</span>
-                        </a>
-                    </div>
-                </div>
-
-                <a href="#" onclick="showSection('materials')" class="nav-link hover:text-blue-600 transition-colors" id="nav-materials">학습자료실</a>
-                <a href="#" onclick="showSection('assignments')" class="nav-link hover:text-blue-600 transition-colors" id="nav-assignments">수행평가 제출</a>
-                <a href="#" onclick="showSection('gallery')" class="nav-link hover:text-blue-600 transition-colors" id="nav-gallery">학생 작품</a>
-                <a href="question.html" target="_blank" class="nav-link hover:text-blue-600 transition-colors flex items-center space-x-1" id="nav-question">
-                    <span>질문있어요</span>
-                    <span class="text-[10px] bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-full font-black">NEW</span>
-                </a>
             </div>
         </div>
 
@@ -325,8 +328,8 @@
         <span class="font-medium tracking-tight text-sm">메시지 내용</span>
     </div>
 
-    <!-- 메인 콘텐츠 영역 -->
-    <main class="max-w-7xl mx-auto px-6 pt-32 pb-24">
+    <!-- 메인 콘텐츠 영역 (상단 여백 pt-28로 수정) -->
+    <main class="max-w-7xl mx-auto px-6 pt-28 pb-24">
 
         <!-- ==================== 1. 홈 섹션 ==================== -->
         <section id="home" class="fade-in block space-y-8">
@@ -366,13 +369,13 @@
                                 <i data-lucide="book-open" class="w-4 h-4"></i>
                                 <span>수업 참여하기</span>
                             </button>
-                            <!-- 2. 교과서 멀티미디어 (순서 변경) -->
+                            <!-- 2. 교과서 멀티미디어 -->
                             <button onclick="openBook()"
                                 class="flex items-center space-x-2 px-6 py-3.5 bg-white/10 text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 backdrop-blur-md">
                                 <i data-lucide="external-link" class="w-4 h-4"></i>
                                 <span>교과서 멀티미디어 자료</span>
                             </button>
-                            <!-- 3. My Project Gallery (순서 변경) -->
+                            <!-- 3. My Project Gallery -->
                             <button onclick="window.location.href='gallery.html'"
                                 class="flex items-center space-x-2 px-6 py-3.5 bg-white/10 text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 backdrop-blur-md">
                                 <i data-lucide="sparkles" class="w-4 h-4"></i>
@@ -403,8 +406,7 @@
                             class="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                             <i data-lucide="bell" class="w-6 h-6"></i>
                         </div>
-                        <span class="text-xs font-bold bg-rose-100 text-rose-600 px-3 py-1 rounded-full">New
-                            Update</span>
+                        <span class="text-xs font-bold bg-rose-100 text-rose-600 px-3 py-1 rounded-full">New Update</span>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-900 mb-2">공지사항</h3>
                     <p class="text-slate-500 font-medium mb-4">수업 일정 변경 및 중요 안내사항을 확인하세요.</p>
@@ -1147,7 +1149,7 @@
             }
         });
 
-        // SPA Navigation (수정됨: 새 창으로 여는 메뉴는 section 제어 로직에서 제외)
+        // SPA Navigation
         function showSection(sectionId) {
             const sections = ['home', 'notices', 'classes', 'materials', 'assignments', 'gallery'];
             sections.forEach(id => {
