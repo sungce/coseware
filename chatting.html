@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe-Room — Sungce AI-ON</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  body { font-family: 'Pretendard', -apple-system, sans-serif; background: #f8fafc; }
+  .card { background: white; border-radius: 1.5rem; border: 1px solid #e2e8f0; }
+</style>
+</head>
+<body class="min-h-screen">
+  <!-- 네비게이션 바 (1줄 레이아웃으로 변경) -->
+  <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+    <div class="max-w-[1400px] mx-auto px-4 md:px-6">
+      <div class="flex justify-between items-center h-16 lg:h-20">
+        <!-- 1. 로고 (좌측) -->
+        <a href="index.html" class="flex items-center space-x-2 shrink-0">
+          <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
+          <div>
+            <div class="text-[15px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
+            <div class="text-[12px] font-medium text-slate-500 leading-tight">정보 교과 클래스룸</div>
+          </div>
+        </a>
+
+        <!-- 2. 우측 영역 (메뉴 + 버튼) -->
+        <div class="flex items-center space-x-6 lg:space-x-8">
+          
+          <!-- iframe 제어 메뉴 링크 -->
+          <div class="hidden md:flex items-center space-x-6 xl:space-x-8 text-[14px] font-bold text-slate-600">
+            <a href="#" onclick="loadInIframe(event, 'curriculum/index.html', this)" class="nav-menu hover:text-blue-600 transition-colors">교과 수업</a>
+            <a href="#" onclick="loadInIframe(event, 'code_play.html', this)" class="nav-menu hover:text-blue-600 transition-colors">코드 놀이터</a>
+            <a href="#" onclick="loadDataLab(event, this)" class="nav-menu text-blue-600 border-b-2 border-blue-600 pb-1">데이터 실습실</a>
+             <a href="#" onclick="showInIframe(event, 'chatting.html',this)" class="nav-menu text-blue-600 border-b-2 border-blue-600 pb-1">Vibe Room</a>
+          </div>
+
+          <!-- 메인으로 버튼 -->
+          <a href="index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl transition-colors shrink-0">
+            <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
 
