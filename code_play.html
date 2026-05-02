@@ -12,11 +12,11 @@
 </style>
 </head>
 <body class="min-h-screen flex flex-col">
-  <!-- 네비게이션 바 (1줄 레이아웃) -->
+  <!-- 네비게이션 바 -->
   <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
     <div class="max-w-[1400px] mx-auto px-4 md:px-6">
       <div class="flex justify-between items-center h-16 lg:h-20">
-        <!-- 1. 로고 (좌측) -->
+        <!-- 1. 로고 -->
         <a href="index.html" class="flex items-center space-x-2 shrink-0 outline-none focus:outline-none">
           <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
           <div>
@@ -25,18 +25,14 @@
           </div>
         </a>
 
-        <!-- 2. 우측 영역 (메뉴 + 버튼) -->
+        <!-- 2. 우측 메뉴 영역 -->
         <div class="flex items-center space-x-6 lg:space-x-8">
-          
-          <!-- iframe 제어 메뉴 링크 -->
           <div class="hidden md:flex items-center space-x-6 xl:space-x-8 text-[14px] font-bold text-slate-600">
             <a href="#" onclick="loadInIframe(event, 'curriculum/index.html', this)" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">교과 수업</a>
             <a href="#" onclick="showCodePlay(event, this)" class="nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1">코드 놀이터</a>
             <a href="#" onclick="loadInIframe(event, 'data_play.html', this)" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">데이터 실습실</a>
-             <a href="#" onclick="loadInIframe(event, 'chatting.html', this)" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">Vibe Room</a>
+            <a href="#" onclick="loadInIframe(event, 'chatting.html', this)" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">Vibe Room</a>
           </div>
-
-          <!-- 메인으로 버튼 -->
           <a href="index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl transition-colors shrink-0 outline-none focus:outline-none">
             <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
           </a>
@@ -47,7 +43,6 @@
 
   <!-- 1. 네이티브 콘텐츠 영역 (코드 놀이터 원본 화면) -->
   <main id="native-content" class="max-w-5xl mx-auto px-6 pt-28 pb-16 w-full flex-1 block">
-    <!-- 헤더 -->
     <div class="mb-10">
       <div class="inline-flex items-center space-x-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-green-100">
         <i data-lucide="code-2" class="w-3.5 h-3.5"></i><span>인터렉티브 수업실</span>
@@ -56,7 +51,6 @@
       <p class="text-lg text-slate-500 font-medium">직접 코드를 작성하고 결과를 바로 확인해보세요.</p>
     </div>
 
-    <!-- 에디터 영역 -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
       <div class="card p-6">
         <div class="flex items-center justify-between mb-4">
@@ -69,7 +63,7 @@
         </div>
         <textarea id="code-input" rows="16"
           class="w-full bg-slate-900 text-green-400 font-mono text-sm p-4 rounded-xl resize-none outline-none focus:outline-none focus:ring-2 focus:ring-green-500 leading-relaxed"
-          placeholder="# Python 코드를 입력하세요&#10;&#10;print('안녕하세요!')&#10;&#10;for i in range(5):&#10;    print(f'{i+1}번째 출력')">print('안녕하세요, 코드 놀이터!')
+          placeholder="# Python 코드를 입력하세요&#10;&#10;print('안녕하세요!')">print('안녕하세요, 코드 놀이터!')
 
 for i in range(5):
     print(f'{i+1}번째: {"⭐" * (i+1)}')</textarea>
@@ -84,7 +78,6 @@ for i in range(5):
       </div>
     </div>
 
-    <!-- 예제 카드 -->
     <h2 class="text-lg font-black text-slate-800 mb-4">🧩 예제 코드 모음</h2>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <button onclick="loadExample('hello')" class="card p-5 text-left hover:border-green-200 hover:bg-green-50/40 transition-all group outline-none focus:outline-none">
@@ -105,67 +98,62 @@ for i in range(5):
     </div>
   </main>
 
-  <!-- 2. Iframe 콘텐츠 영역 (교과수업, 데이터실습실 등 로드) -->
-  <section id="iframe-section" class="hidden pt-16 lg:pt-20 w-full flex-1">
-    <iframe id="content-frame" onload="hideIframeNav()" class="w-full h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] border-0 bg-slate-50" src=""></iframe>
+  <!-- 2. Iframe 콘텐츠 영역 (너비 제한 적용!) -->
+  <section id="iframe-section" class="hidden pt-16 lg:pt-20 w-full flex-1 bg-slate-100/50">
+    <!-- max-w-5xl을 주어 다른 페이지와 동일한 너비로 제한하고, 가운데 정렬(mx-auto) 및 문서 느낌의 배경(bg-white) 추가 -->
+    <div class="max-w-5xl mx-auto w-full h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] bg-white shadow-sm border-x border-slate-200 overflow-hidden">
+      <iframe id="content-frame" onload="hideIframeNav()" class="w-full h-full border-0 bg-transparent" src=""></iframe>
+    </div>
   </section>
 
   <script>
     lucide.createIcons();
 
-    // ======== Iframe 메뉴 전환 스크립트 ========
     function loadInIframe(event, url, element) {
       event.preventDefault();
       
-      // 메뉴 스타일 초기화 및 선택된 메뉴 강조
       document.querySelectorAll('.nav-menu').forEach(el => {
         el.className = 'nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors';
       });
       element.className = 'nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1';
 
-      // 네이티브 코드 놀이터 숨기고 iframe 보이기
       document.getElementById('native-content').classList.replace('block', 'hidden');
       document.getElementById('iframe-section').classList.replace('hidden', 'block');
-      
-      // iframe 주소 변경
       document.getElementById('content-frame').src = url;
     }
 
     function showCodePlay(event, element) {
       event.preventDefault();
       
-      // 메뉴 스타일 초기화 및 선택된 메뉴 강조
       document.querySelectorAll('.nav-menu').forEach(el => {
         el.className = 'nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors';
       });
       element.className = 'nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1';
 
-      // iframe 숨기고 네이티브 코드 놀이터 보이기
       document.getElementById('iframe-section').classList.replace('block', 'hidden');
       document.getElementById('native-content').classList.replace('hidden', 'block');
-      
-      // 불필요한 iframe 메모리 비우기
       document.getElementById('content-frame').src = '';
     }
 
-    // iframe 안에서 로드된 페이지의 네비게이션 숨기기 (메뉴 2중 중복 방지)
     function hideIframeNav() {
       try {
         const iframe = document.getElementById('content-frame');
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
         
-        // iframe 내부의 <nav> 요소 찾아서 숨김 처리
+        // iframe 내부 <nav> 숨김
         const nav = iframeDoc.querySelector('nav');
         if (nav) nav.style.display = 'none';
         
-        // 상단 네비게이션이 사라졌으므로 main 영역의 padding-top 조정
+        // iframe 내부 main 여백 조절
         const main = iframeDoc.querySelector('main');
-        if (main) main.style.paddingTop = '2rem';
+        if (main) {
+          main.style.paddingTop = '2rem';
+          main.style.paddingBottom = '3rem';
+        }
       } catch (error) {
-        // 보안(CORS) 이유로 로컬 환경에서는 에러가 날 수 있으나 서버 환경에선 정상 작동합니다.
+        // 로컬 환경에서는 브라우저 보안 정책(CORS)으로 에러가 날 수 있으나 무시합니다.
       }
     }
-    // ============================================
 
     // ======== 코드 놀이터 스크립트 ========
     const examples = {
@@ -179,7 +167,6 @@ for i in range(5):
     }
 
     function runCode() {
-      const code = document.getElementById('code-input').value;
       const out  = document.getElementById('output');
       out.innerHTML = '<span class="text-yellow-400">⚡ Python 실행 환경은 서버 연동이 필요합니다.</span>\n\n<span class="text-slate-400">▶ 아래 온라인 환경을 활용해보세요:</span>\n\n<a href="https://colab.research.google.com" target="_blank" class="text-blue-400 underline outline-none focus:outline-none">Google Colab 열기 →</a>\n<a href="https://replit.com" target="_blank" class="text-green-400 underline outline-none focus:outline-none">Replit 열기 →</a>';
     }
