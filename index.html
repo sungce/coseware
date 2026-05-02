@@ -200,10 +200,10 @@
                         <a href="#" onclick="showSection('classes'); return false;" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
                             <i data-lucide="book-open" class="w-4 h-4"></i><span>교과수업</span>
                         </a>
-                        <a href="code_play.html" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
+                        <a href="#" onclick="showSection('code-play'); return false;" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
                             <i data-lucide="code-2" class="w-4 h-4"></i><span>코드 놀이터</span>
                         </a>
-                        <a href="data_play.html" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
+                        <a href="#" onclick="showSection('data-play'); return false;" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
                             <i data-lucide="bar-chart-2" class="w-4 h-4"></i><span>데이터 실습실</span>
                         </a>
                     </div>
@@ -212,7 +212,7 @@
                 <a href="#" onclick="showSection('materials')" class="nav-link hover:text-blue-600 transition-colors" id="nav-materials">학습자료실</a>
                 <a href="#" onclick="showSection('assignments')" class="nav-link hover:text-blue-600 transition-colors" id="nav-assignments">수행평가 제출</a>
                 <a href="#" onclick="showSection('gallery')" class="nav-link hover:text-blue-600 transition-colors" id="nav-gallery">학생 작품</a>
-                <a href="question.html" class="nav-link hover:text-blue-600 transition-colors flex items-center space-x-1">
+                <a href="#" onclick="showSection('question'); return false;" class="nav-link hover:text-blue-600 transition-colors flex items-center space-x-1" id="nav-question">
                     <span>질문있어요</span>
                     <span class="text-[10px] bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-full font-black">NEW</span>
                 </a>
@@ -715,6 +715,27 @@
             </div>
         </section>
 
+        <!-- ==================== 코드 놀이터 ==================== -->
+        <section id="code-play" class="fade-in hidden max-w-7xl mx-auto w-full">
+            <iframe src="code_play.html" id="code-play-frame"
+                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
+                style="min-height:86vh; height:86vh;" frameborder="0"></iframe>
+        </section>
+
+        <!-- ==================== 데이터 실습실 ==================== -->
+        <section id="data-play" class="fade-in hidden max-w-7xl mx-auto w-full">
+            <iframe src="data_play.html" id="data-play-frame"
+                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
+                style="min-height:86vh; height:86vh;" frameborder="0"></iframe>
+        </section>
+
+        <!-- ==================== 질문있어요 ==================== -->
+        <section id="question" class="fade-in hidden max-w-7xl mx-auto w-full">
+            <iframe src="question.html" id="question-frame"
+                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
+                style="min-height:86vh; height:86vh;" frameborder="0"></iframe>
+        </section>
+
     </main>
 
     <!-- 푸터 -->
@@ -1145,7 +1166,7 @@
 
         // SPA Navigation
         function showSection(sectionId) {
-            const sections = ['home', 'notices', 'classes', 'materials', 'assignments', 'gallery'];
+            const sections = ['home', 'notices', 'classes', 'materials', 'assignments', 'gallery', 'code-play', 'data-play', 'question'];
             sections.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) { el.classList.add('hidden'); el.classList.remove('block'); }
