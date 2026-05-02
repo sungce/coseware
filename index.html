@@ -354,28 +354,25 @@
                             단순한 소비자가 아닌 창조자가 되는 곳.<br class="hidden md:block"> 여러분의 혁신적인 아이디어를 소프트웨어로 구현해 보세요.
                         </p>
                         
-                        <!-- ⭐ 수정된 버튼 영역 -->
-                        <div class="flex flex-wrap justify-center md:justify-start items-center gap-4">
+                        <!-- 버튼 영역 -->
+                        <div class="flex flex-wrap justify-center md:justify-start items-center gap-3">
+                            <!-- 1. 수업 참여하기 -->
                             <button onclick="showSection('classes')"
-                                class="px-8 py-4 bg-white text-slate-900 font-bold rounded-2xl hover:scale-105 transition-transform duration-300 shadow-xl shadow-white/10 flex items-center">
-                                수업 참여하기 <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+                                class="flex items-center space-x-2 px-6 py-3.5 bg-white text-slate-900 font-bold rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl shadow-white/10">
+                                <i data-lucide="book-open" class="w-4 h-4"></i>
+                                <span>수업 참여하기</span>
                             </button>
+                            <!-- 2. 교과서 멀티미디어 (순서 변경) -->
+                            <button onclick="openBook()"
+                                class="flex items-center space-x-2 px-6 py-3.5 bg-white/10 text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 backdrop-blur-md">
+                                <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span>교과서 멀티미디어 자료</span>
+                            </button>
+                            <!-- 3. My Project Gallery (순서 변경) -->
                             <button onclick="window.location.href='gallery.html'"
-                                class="px-8 py-4 bg-white/10 text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 flex items-center backdrop-blur-md">
-                                <i data-lucide="sparkles" class="w-5 h-5 mr-2"></i>
-                                My Project Gallery
-                            </button>
-                            
-                            <!-- 새로 추가된 Quick Link (교과서 연결) -->
-                            <button onclick="openBook()" 
-                                class="flex items-center justify-between px-6 py-3.5 bg-[#fefdf9] border-l-4 border-[#ffb11b] rounded-2xl shadow-md hover:bg-yellow-50 hover:scale-105 transition-all duration-300">
-                                <div>
-                                    <p class="text-[10px] font-black text-[#e88100] tracking-widest text-left mb-0.5">QUICK LINK</p>
-                                    <p class="text-sm font-black text-slate-800">교과서 멀티미디어 자료</p>
-                                </div>
-                                <div class="w-8 h-8 ml-4 rounded-xl border border-[#ffb11b] flex items-center justify-center">
-                                    <i data-lucide="external-link" class="w-4 h-4 text-[#e88100]"></i>
-                                </div>
+                                class="flex items-center space-x-2 px-6 py-3.5 bg-white/10 text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 backdrop-blur-md">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                <span>My Project Gallery</span>
                             </button>
                         </div>
                     </div>
