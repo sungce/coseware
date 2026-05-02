@@ -18,7 +18,7 @@
     <div class="max-w-[1400px] mx-auto px-4 md:px-6">
       <div class="flex justify-between items-center h-16 lg:h-20">
         <!-- 로고 -->
-        <a href="index.html" class="flex items-center space-x-2 shrink-0">
+        <a href="index.html" class="flex items-center space-x-2 shrink-0 outline-none focus:outline-none">
           <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
           <div>
             <div class="text-[15px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
@@ -29,16 +29,16 @@
         <!-- 우측 메뉴 영역 -->
         <div class="flex items-center space-x-6 lg:space-x-8">
           
-          <!-- iframe 제어 메뉴 링크 -->
+          <!-- iframe 제어 메뉴 링크 (outline-none 추가로 검은 테두리 방지) -->
           <div class="hidden md:flex items-center space-x-6 xl:space-x-8 text-[14px] font-bold text-slate-600">
-            <a href="#" onclick="loadInIframe(event, 'curriculum/index.html', this)" class="nav-menu hover:text-blue-600 transition-colors">교과 수업</a>
-            <a href="#" onclick="loadInIframe(event, 'code_play.html', this)" class="nav-menu hover:text-blue-600 transition-colors">코드 놀이터</a>
-            <a href="#" onclick="showDataLab(event, this)" class="nav-menu text-blue-600 border-b-2 border-blue-600 pb-1">데이터 실습실</a>
-             <a href="#" onclick="loadInIframe(event, 'chatting.html', this)" class="nav-menu hover:text-blue-600 transition-colors">Vibe Room</a>
+            <a href="#" onclick="loadInIframe(event, 'curriculum/index.html', this)" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">교과 수업</a>
+            <a href="#" onclick="loadInIframe(event, 'code_play.html', this)" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">코드 놀이터</a>
+            <a href="#" onclick="showDataLab(event, this)" class="nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1">데이터 실습실</a>
+             <a href="#" onclick="loadInIframe(event, 'chatting.html', this)" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">Vibe Room</a>
           </div>
 
           <!-- 메인으로 버튼 -->
-          <a href="index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl transition-colors shrink-0">
+          <a href="index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl transition-colors shrink-0 outline-none focus:outline-none">
             <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
           </a>
         </div>
@@ -63,22 +63,22 @@
           <i data-lucide="table" class="w-5 h-5 text-orange-500"></i><span>데이터 입력</span>
         </h2>
         <div id="data-rows" class="space-y-2 mb-4">
-          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="월요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="23" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"></div>
-          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="화요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="45" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"></div>
-          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="수요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="31" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"></div>
-          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="목요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="58" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"></div>
-          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="금요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="42" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"></div>
+          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="월요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="23" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"></div>
+          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="화요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="45" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"></div>
+          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="수요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="31" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"></div>
+          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="목요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="58" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"></div>
+          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="금요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="42" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"></div>
         </div>
         <div class="flex space-x-2 mb-4">
-          <button onclick="addRow()" class="flex-1 border border-slate-200 text-slate-600 text-sm font-bold py-2 rounded-xl hover:bg-slate-50 transition-colors">+ 행 추가</button>
-          <button onclick="drawChart()" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold py-2 rounded-xl transition-colors">차트 그리기</button>
+          <button onclick="addRow()" class="flex-1 border border-slate-200 text-slate-600 text-sm font-bold py-2 rounded-xl hover:bg-slate-50 transition-colors outline-none focus:outline-none">+ 행 추가</button>
+          <button onclick="drawChart()" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold py-2 rounded-xl transition-colors outline-none focus:outline-none">차트 그리기</button>
         </div>
         <div class="space-y-2">
           <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">차트 종류</p>
           <div class="grid grid-cols-3 gap-2" id="chart-types">
-            <button onclick="setType('bar')" class="chart-type-btn active text-xs font-bold py-2 rounded-xl border transition-colors">막대</button>
-            <button onclick="setType('line')" class="chart-type-btn text-xs font-bold py-2 rounded-xl border transition-colors">꺾은선</button>
-            <button onclick="setType('pie')" class="chart-type-btn text-xs font-bold py-2 rounded-xl border transition-colors">원형</button>
+            <button onclick="setType('bar')" class="chart-type-btn active text-xs font-bold py-2 rounded-xl border transition-colors outline-none focus:outline-none">막대</button>
+            <button onclick="setType('line')" class="chart-type-btn text-xs font-bold py-2 rounded-xl border transition-colors outline-none focus:outline-none">꺾은선</button>
+            <button onclick="setType('pie')" class="chart-type-btn text-xs font-bold py-2 rounded-xl border transition-colors outline-none focus:outline-none">원형</button>
           </div>
         </div>
       </div>
@@ -94,7 +94,7 @@
 
   <!-- 2. Iframe 콘텐츠 영역 (교과수업, 코드놀이터 등 로드) -->
   <section id="iframe-section" class="hidden pt-16 lg:pt-20 w-full flex-1">
-    <iframe id="content-frame" class="w-full h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] border-0 bg-slate-50" src=""></iframe>
+    <iframe id="content-frame" onload="hideIframeNav()" class="w-full h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] border-0 bg-slate-50" src=""></iframe>
   </section>
 
   <script>
@@ -104,11 +104,11 @@
     function loadInIframe(event, url, element) {
       event.preventDefault();
       
-      // 메뉴 스타일 초기화 및 선택된 메뉴 강조
+      // 메뉴 스타일 초기화 및 선택된 메뉴 강조 (검은색 박스 방지를 위해 outline-none 포함)
       document.querySelectorAll('.nav-menu').forEach(el => {
-        el.className = 'nav-menu hover:text-blue-600 transition-colors';
+        el.className = 'nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors';
       });
-      element.className = 'nav-menu text-blue-600 border-b-2 border-blue-600 pb-1';
+      element.className = 'nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1';
 
       // 네이티브 데이터 실습실 숨기고 iframe 보이기
       document.getElementById('native-content').classList.replace('block', 'hidden');
@@ -123,9 +123,9 @@
       
       // 메뉴 스타일 초기화 및 선택된 메뉴 강조
       document.querySelectorAll('.nav-menu').forEach(el => {
-        el.className = 'nav-menu hover:text-blue-600 transition-colors';
+        el.className = 'nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors';
       });
-      element.className = 'nav-menu text-blue-600 border-b-2 border-blue-600 pb-1';
+      element.className = 'nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1';
 
       // iframe 숨기고 네이티브 데이터 실습실 보이기
       document.getElementById('iframe-section').classList.replace('block', 'hidden');
@@ -133,6 +133,24 @@
       
       // 불필요한 iframe 메모리 비우기
       document.getElementById('content-frame').src = '';
+    }
+
+    // iframe 안에서 로드된 페이지의 네비게이션 숨기기 (메뉴 2중 중복 방지)
+    function hideIframeNav() {
+      try {
+        const iframe = document.getElementById('content-frame');
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        
+        // iframe 내부의 <nav> 요소 찾아서 숨김 처리
+        const nav = iframeDoc.querySelector('nav');
+        if (nav) nav.style.display = 'none';
+        
+        // 상단 네비게이션이 사라졌으므로 main 영역의 padding-top 조정
+        const main = iframeDoc.querySelector('main');
+        if (main) main.style.paddingTop = '2rem';
+      } catch (error) {
+        // 보안(CORS) 이유로 로컬 파일 환경 등에서는 접근이 거부될 수 있습니다. (서버 환경에선 정상 작동)
+      }
     }
     // ============================================
 
@@ -146,8 +164,8 @@
       document.querySelectorAll('.chart-type-btn').forEach(b => {
         b.classList.toggle('active', b.textContent.trim() === {bar:'막대',line:'꺾은선',pie:'원형'}[t]);
         b.className = b.classList.contains('active')
-          ? 'chart-type-btn active text-xs font-bold py-2 rounded-xl border border-orange-400 bg-orange-50 text-orange-600 transition-colors'
-          : 'chart-type-btn text-xs font-bold py-2 rounded-xl border border-slate-200 text-slate-500 hover:border-orange-300 transition-colors';
+          ? 'chart-type-btn active outline-none focus:outline-none text-xs font-bold py-2 rounded-xl border border-orange-400 bg-orange-50 text-orange-600 transition-colors'
+          : 'chart-type-btn outline-none focus:outline-none text-xs font-bold py-2 rounded-xl border border-slate-200 text-slate-500 hover:border-orange-300 transition-colors';
       });
       drawChart();
     }
@@ -155,7 +173,7 @@
     function addRow() {
       const div = document.createElement('div');
       div.className = 'flex space-x-2';
-      div.innerHTML = `<input type="text" placeholder="항목명" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400">`;
+      div.innerHTML = `<input type="text" placeholder="항목명" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400">`;
       document.getElementById('data-rows').appendChild(div);
     }
 
