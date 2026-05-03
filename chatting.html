@@ -88,11 +88,12 @@
         <div>
           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2">채널</p>
           <div id="channel-list" class="space-y-0.5">
-            <button class="channel-btn active" data-room="general" onclick="switchRoom('general','자유 수다방',this)"><i data-lucide="hash" class="w-3.5 h-3.5"></i>자유 수다방</button>
+            <button class="channel-btn active" data-room="team1" onclick="switchRoom('team1','모둠1 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠1 수다방</button>
+            <button class="channel-btn" data-room="team2" onclick="switchRoom('team2','모둠2 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠2 수다방</button>
+            <button class="channel-btn" data-room="team3" onclick="switchRoom('team3','모둠3 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠3 수다방</button>
+            <button class="channel-btn" data-room="team4" onclick="switchRoom('team4','모둠4 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠4 수다방</button>
+            <button class="channel-btn" data-room="general" onclick="switchRoom('general','자유 수다방',this)"><i data-lucide="hash" class="w-3.5 h-3.5"></i>자유 수다방</button>
             <button class="channel-btn" data-room="qna" onclick="switchRoom('qna','질문 및 답변',this)"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i>질문 및 답변</button>
-            <button class="channel-btn" data-room="unit1" onclick="switchRoom('unit1','단원1 컴퓨팅',this)"><i data-lucide="cpu" class="w-3.5 h-3.5"></i>단원1 컴퓨팅</button>
-            <button class="channel-btn" data-room="unit2" onclick="switchRoom('unit2','단원2 데이터',this)"><i data-lucide="database" class="w-3.5 h-3.5"></i>단원2 데이터</button>
-            <button class="channel-btn" data-room="unit3" onclick="switchRoom('unit3','단원3 알고리즘',this)"><i data-lucide="code-2" class="w-3.5 h-3.5"></i>단원3 알고리즘</button>
           </div>
         </div>
         <div>
@@ -127,23 +128,23 @@
       </header>
 
       <!-- 메시지 목록 (핵심: flex-1 으로 남은 공간 모두 사용) -->
-      <div id="chat-messages" class="flex-1 overflow-y-auto px-8 py-6 space-y-5 bg-slate-50/40">
+      <div id="chat-messages" class="flex-1 overflow-y-auto px-8 py-6 space-y-5 bg-white">
         <div id="msgs-loading" class="flex justify-center py-16">
           <p class="text-sm text-slate-400 font-medium">메시지 불러오는 중...</p>
         </div>
       </div>
 
       <!-- 입력창 -->
-      <div class="shrink-0 bg-white border-t border-slate-200 px-6 py-4">
-        <div class="flex items-end gap-3 bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 focus-within:border-indigo-300 focus-within:bg-white focus-within:shadow-sm transition-all">
-          <div id="input-avatar" class="avatar w-8 h-8 rounded-xl text-[11px] shrink-0 mb-0.5"></div>
+      <div class="shrink-0 bg-white border-t border-slate-200 px-6 py-5">
+        <div class="flex items-end gap-4 bg-slate-50 border-2 border-slate-200 rounded-2xl px-5 py-4 focus-within:border-indigo-400 focus-within:bg-white focus-within:shadow-md transition-all">
+          <div id="input-avatar" class="avatar w-9 h-9 rounded-xl text-[12px] shrink-0 mb-0.5"></div>
           <textarea id="chat-input"
-            class="flex-1 bg-transparent text-sm text-slate-800 placeholder-slate-400 outline-none font-medium leading-relaxed"
+            class="flex-1 bg-transparent text-base text-slate-800 placeholder-slate-400 outline-none font-medium leading-relaxed"
             placeholder="메시지를 입력하세요… (Enter: 전송 / Shift+Enter: 줄바꿈)"
-            rows="1"></textarea>
+            rows="2"></textarea>
           <button onclick="sendMessage()" id="send-btn"
-            class="w-9 h-9 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl flex items-center justify-center transition-all shrink-0 outline-none mb-0.5">
-            <i data-lucide="send" class="w-4 h-4"></i>
+            class="w-11 h-11 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl flex items-center justify-center transition-all shrink-0 outline-none mb-0.5 shadow-sm">
+            <i data-lucide="send" class="w-5 h-5"></i>
           </button>
         </div>
         <p class="text-[11px] text-slate-400 font-medium mt-2 pl-1">Enter로 전송 · Shift+Enter로 줄바꿈</p>
@@ -332,27 +333,27 @@
     const text = (d.text||'').replace(/\n/g,'<br>').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/&lt;br&gt;/g,'<br>');
 
     if (isMine) {
-      return `<div class="flex items-end justify-end gap-2">
+      return `<div class="flex items-end justify-end gap-3">
         <div class="flex flex-col items-end">
-          <div class="flex items-baseline gap-2 mb-1">
-            <span class="text-[11px] text-slate-400">${time}</span>
-            <span class="text-xs font-black text-slate-700">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
+          <div class="flex items-baseline gap-2 mb-1.5">
+            <span class="text-[12px] text-slate-400">${time}</span>
+            <span class="text-sm font-black text-slate-700">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
           </div>
-          <div class="bg-indigo-600 text-white px-4 py-2.5 rounded-2xl rounded-br-sm text-sm leading-relaxed max-w-sm break-words shadow-sm">
+          <div class="bg-indigo-600 text-white px-5 py-3 rounded-2xl rounded-br-sm text-[15px] leading-relaxed max-w-lg break-words shadow-sm">
             ${text}
           </div>
         </div>
-        <div class="avatar ${bg} ${tc} mb-1">${(d.userName||'?').charAt(0)}</div>
+        <div class="avatar ${bg} ${tc} mb-1 w-10 h-10 rounded-xl text-[13px]">${(d.userName||'?').charAt(0)}</div>
       </div>`;
     } else {
-      return `<div class="flex items-end gap-2">
-        <div class="avatar ${bg} ${tc} mb-1">${(d.userName||'?').charAt(0)}</div>
+      return `<div class="flex items-end gap-3">
+        <div class="avatar ${bg} ${tc} mb-1 w-10 h-10 rounded-xl text-[13px]">${(d.userName||'?').charAt(0)}</div>
         <div class="flex flex-col">
-          <div class="flex items-baseline gap-2 mb-1">
-            <span class="text-xs font-black text-slate-700">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
-            <span class="text-[11px] text-slate-400">${time}</span>
+          <div class="flex items-baseline gap-2 mb-1.5">
+            <span class="text-sm font-black text-slate-700">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
+            <span class="text-[12px] text-slate-400">${time}</span>
           </div>
-          <div class="bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-2xl rounded-bl-sm text-sm leading-relaxed max-w-sm break-words shadow-sm">
+          <div class="bg-white border border-slate-200 text-slate-800 px-5 py-3 rounded-2xl rounded-bl-sm text-[15px] leading-relaxed max-w-lg break-words shadow-sm">
             ${text}
           </div>
         </div>
