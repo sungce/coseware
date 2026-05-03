@@ -91,22 +91,46 @@
       <p class="text-sm text-slate-500 font-medium">활동 시간을 측정하고 알림을 설정합니다.</p>
     </div>
 
-    <!-- 랜덤 발표자 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('random-pick')">
+    <!-- 스톱워치 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('stopwatch')">
+      <div class="w-12 h-12 bg-cyan-50 text-cyan-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="watch" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">스톱워치</h3>
+      <p class="text-sm text-slate-500 font-medium">시간을 측정하고 랩 기록을 저장합니다.</p>
+    </div>
+
+    <!-- 사다리타기 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('ladder')">
+      <div class="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="align-justify" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">사다리타기</h3>
+      <p class="text-sm text-slate-500 font-medium">참여자를 입력하고 사다리로 결과를 정합니다.</p>
+    </div>
+
+    <!-- 판서하기 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('whiteboard')">
+      <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="pen-tool" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">판서하기</h3>
+      <p class="text-sm text-slate-500 font-medium">자유롭게 그리고 판서할 수 있는 화이트보드입니다.</p>
+    </div>
+
+    <!-- 핀볼게임 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('pinball')">
+      <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="circle-dot" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">핀볼 게임</h3>
+      <p class="text-sm text-slate-500 font-medium">수업 쉬는시간에 즐기는 핀볼 미니게임입니다.</p>
+    </div>
       <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-4">
         <i data-lucide="user-round-check" class="w-6 h-6"></i>
       </div>
       <h3 class="text-base font-black text-slate-900 mb-1">랜덤 발표자 선택</h3>
       <p class="text-sm text-slate-500 font-medium">무작위로 발표할 학생을 선택합니다.</p>
-    </div>
-
-    <!-- 공지 알림 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('notice-send')">
-      <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="bell" class="w-6 h-6"></i>
-      </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">공지 빠른 등록</h3>
-      <p class="text-sm text-slate-500 font-medium">공지사항을 빠르게 작성하고 게시합니다.</p>
     </div>
 
     <!-- QR 생성기 -->
@@ -116,15 +140,6 @@
       </div>
       <h3 class="text-base font-black text-slate-900 mb-1">QR 코드 생성기</h3>
       <p class="text-sm text-slate-500 font-medium">수업 자료 URL의 QR 코드를 생성합니다.</p>
-    </div>
-
-    <!-- 출석 체크 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('attendance')">
-      <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="clipboard-check" class="w-6 h-6"></i>
-      </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">출석 체크</h3>
-      <p class="text-sm text-slate-500 font-medium">수업 출석 현황을 빠르게 확인합니다.</p>
     </div>
 
   </div>
@@ -177,7 +192,146 @@
     auth.signOut().then(() => window.location.href = 'index.html');
   }
 
-  // ── 도구 영역 ──────────────────────────────────────────
+  // ── 스톱워치 ─────────────────────────────────────────
+  let swRunning=false, swMs=0, swInterval=null, swLapCount=0;
+  function swFmt(ms){ const m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),d=Math.floor((ms%1000)/100); return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${d}`; }
+  function swStart(){
+    if(swRunning){ clearInterval(swInterval);swRunning=false;document.getElementById('sw-start').innerHTML='<i data-lucide="play" class="w-5 h-5"></i>계속';lucide.createIcons();return;}
+    swRunning=true; document.getElementById('sw-start').innerHTML='<i data-lucide="pause" class="w-5 h-5"></i>일시정지'; lucide.createIcons();
+    const start=Date.now()-swMs;
+    swInterval=setInterval(()=>{ swMs=Date.now()-start; const el=document.getElementById('sw-display'); if(el)el.textContent=swFmt(swMs); },50);
+  }
+  function swLap(){ if(!swRunning)return; swLapCount++; const el=document.getElementById('sw-laps'); if(el)el.innerHTML=`<div class="flex justify-between bg-slate-50 rounded-xl px-4 py-2 text-sm font-bold"><span class="text-slate-400">Lap ${swLapCount}</span><span class="text-slate-800">${swFmt(swMs)}</span></div>`+el.innerHTML; }
+  function swReset(){ clearInterval(swInterval);swRunning=false;swMs=0;swLapCount=0; const d=document.getElementById('sw-display');if(d)d.textContent='00:00.0'; const l=document.getElementById('sw-laps');if(l)l.innerHTML=''; const b=document.getElementById('sw-start');if(b){b.innerHTML='<i data-lucide="play" class="w-5 h-5"></i>시작';lucide.createIcons();} }
+
+  // ── 사다리타기 ────────────────────────────────────────
+  function drawLadder(){
+    const names=(document.getElementById('ladder-names').value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    const results=(document.getElementById('ladder-results').value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    if(names.length<2){alert('참여자를 2명 이상 입력해주세요.');return;}
+    const n=names.length;
+    const res=[...results];
+    while(res.length<n) res.push(`${res.length+1}번`);
+    const shuffled=[...res].sort(()=>Math.random()-.5);
+    const c=document.getElementById('ladder-canvas'); if(!c)return;
+    const ctx=c.getContext('2d'); const W=c.offsetWidth||600; c.width=W; c.height=320;
+    const colW=W/(n+1), rows=8, rowH=220/rows;
+    ctx.clearRect(0,0,W,320);
+    ctx.font='bold 13px Pretendard,sans-serif'; ctx.textAlign='center';
+    // 이름
+    names.forEach((name,i)=>{ ctx.fillStyle='#4f46e5'; ctx.fillText(name,(i+1)*colW,30); });
+    // 세로선
+    ctx.strokeStyle='#94a3b8'; ctx.lineWidth=2;
+    names.forEach((_,i)=>{ ctx.beginPath();ctx.moveTo((i+1)*colW,40);ctx.lineTo((i+1)*colW,260);ctx.stroke(); });
+    // 가로선 랜덤
+    const rungs=[];
+    for(let r=0;r<rows;r++){
+      const used=new Set();
+      for(let i=0;i<n-1;i++){
+        if(used.has(i)||used.has(i+1))continue;
+        if(Math.random()>.45){
+          rungs.push({r,i});used.add(i);used.add(i+1);
+        }
+      }
+    }
+    ctx.strokeStyle='#6366f1'; ctx.lineWidth=3;
+    rungs.forEach(({r,i})=>{ const y=40+r*rowH+rowH/2; ctx.beginPath();ctx.moveTo((i+1)*colW,y);ctx.lineTo((i+2)*colW,y);ctx.stroke(); });
+    // 결과 계산
+    const positions=names.map((_,i)=>i);
+    const finalPos=positions.map(col=>{
+      let c2=col;
+      for(let r=0;r<rows;r++){
+        const rung=rungs.find(rg=>rg.r===r&&rg.i===c2);
+        if(rung)c2++;
+        else{ const rungL=rungs.find(rg=>rg.r===r&&rg.i===c2-1); if(rungL)c2--; }
+      }
+      return c2;
+    });
+    // 결과 표시
+    finalPos.forEach((fp,i)=>{ ctx.fillStyle='#10b981'; ctx.fillText(shuffled[fp],(i+1)*colW,290); });
+    // 결과 텍스트
+    const resultEl=document.getElementById('ladder-result');
+    if(resultEl) resultEl.innerHTML=names.map((name,i)=>`<div class="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-bold"><span class="text-slate-700">${name}</span><span class="text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">${shuffled[finalPos[i]]}</span></div>`).join('');
+  }
+
+  // ── 판서하기 ──────────────────────────────────────────
+  let wbColor='#1e293b', wbEraser=false, wbDrawing=false, wbCtx=null;
+  function initWhiteboard(){
+    const c=document.getElementById('wb-canvas'); if(!c)return;
+    c.width=c.offsetWidth||800; wbCtx=c.getContext('2d');
+    wbCtx.fillStyle='white'; wbCtx.fillRect(0,0,c.width,c.height);
+    c.onmousedown=e=>{wbDrawing=true;wbCtx.beginPath();wbCtx.moveTo(e.offsetX,e.offsetY);};
+    c.onmousemove=e=>{if(!wbDrawing)return; wbCtx.lineTo(e.offsetX,e.offsetY); wbCtx.strokeStyle=wbEraser?'#ffffff':wbColor; wbCtx.lineWidth=parseInt(document.getElementById('brush-size')?.value||5); wbCtx.lineCap='round'; wbCtx.stroke();};
+    c.onmouseup=c.onmouseleave=()=>wbDrawing=false;
+    c.ontouchstart=e=>{e.preventDefault();const t=e.touches[0],r=c.getBoundingClientRect();wbDrawing=true;wbCtx.beginPath();wbCtx.moveTo(t.clientX-r.left,t.clientY-r.top);};
+    c.ontouchmove=e=>{e.preventDefault();if(!wbDrawing)return;const t=e.touches[0],r=c.getBoundingClientRect();wbCtx.lineTo(t.clientX-r.left,t.clientY-r.top);wbCtx.strokeStyle=wbEraser?'#ffffff':wbColor;wbCtx.lineWidth=parseInt(document.getElementById('brush-size')?.value||5);wbCtx.lineCap='round';wbCtx.stroke();};
+    c.ontouchend=()=>wbDrawing=false;
+  }
+  function setColor(c){wbColor=c;wbEraser=false;const b=document.getElementById('eraser-btn');if(b)b.classList.remove('bg-indigo-100','text-indigo-700');}
+  function toggleEraser(){wbEraser=!wbEraser;const b=document.getElementById('eraser-btn');if(b){b.className=wbEraser?'bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-xl text-sm flex items-center gap-1.5':'bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm flex items-center gap-1.5';}}
+  function clearCanvas(){if(wbCtx){const c=document.getElementById('wb-canvas');wbCtx.fillStyle='white';wbCtx.fillRect(0,0,c.width,c.height);}}
+
+  // ── 핀볼 게임 ─────────────────────────────────────────
+  let pbScore=0,pbLives=3,pbRunning=false,pbRaf=null;
+  let ball={x:240,y:300,vx:3,vy:-4,r:10};
+  let paddle={x:190,w:100,y:455,h:12};
+  let bricks=[];
+  const COLS=8,ROWS=5,BW=50,BH=18,PAD=4;
+  const pbColors=['#ef4444','#f97316','#eab308','#22c55e','#3b82f6'];
+
+  function pbInit(){
+    bricks=[];
+    for(let r=0;r<ROWS;r++) for(let c2=0;c2<COLS;c2++)
+      bricks.push({x:c2*(BW+PAD)+15,y:r*(BH+PAD)+50,alive:true,color:pbColors[r%pbColors.length]});
+    ball={x:240,y:300,vx:3*(Math.random()>.5?1:-1),vy:-4,r:10};
+    paddle={x:190,w:100,y:455,h:12};
+  }
+
+  function pbDraw(){
+    const c=document.getElementById('pb-canvas'); if(!c)return;
+    const ctx=c.getContext('2d'); ctx.clearRect(0,0,480,480);
+    // bg
+    ctx.fillStyle='#0f172a'; ctx.fillRect(0,0,480,480);
+    // bricks
+    bricks.forEach(b=>{if(!b.alive)return; ctx.fillStyle=b.color; ctx.beginPath(); ctx.roundRect(b.x,b.y,BW,BH,4); ctx.fill();});
+    // paddle
+    const pg=ctx.createLinearGradient(paddle.x,0,paddle.x+paddle.w,0);
+    pg.addColorStop(0,'#4f46e5'); pg.addColorStop(1,'#7c3aed');
+    ctx.fillStyle=pg; ctx.beginPath(); ctx.roundRect(paddle.x,paddle.y,paddle.w,paddle.h,6); ctx.fill();
+    // ball
+    const bg=ctx.createRadialGradient(ball.x-2,ball.y-2,1,ball.x,ball.y,ball.r);
+    bg.addColorStop(0,'#ffffff'); bg.addColorStop(1,'#93c5fd');
+    ctx.fillStyle=bg; ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2); ctx.fill();
+  }
+
+  function pbLoop(){
+    if(!pbRunning)return;
+    ball.x+=ball.vx; ball.y+=ball.vy;
+    if(ball.x<=ball.r||ball.x>=480-ball.r)ball.vx*=-1;
+    if(ball.y<=ball.r)ball.vy*=-1;
+    if(ball.y>=480){pbLives--;document.getElementById('pb-lives').textContent=pbLives; if(pbLives<=0){pbRunning=false;alert('게임 오버! 점수: '+pbScore);pbScore=0;pbLives=3;pbInit();}else{ball.x=240;ball.y=300;ball.vx=3*(Math.random()>.5?1:-1);ball.vy=-4;} }
+    if(ball.y+ball.r>=paddle.y&&ball.y+ball.r<=paddle.y+paddle.h+ball.vy&&ball.x>=paddle.x&&ball.x<=paddle.x+paddle.w){
+      ball.vy=Math.abs(ball.vy)*-1; ball.vx+=(ball.x-(paddle.x+paddle.w/2))*0.05;
+    }
+    bricks.forEach(b=>{
+      if(!b.alive)return;
+      if(ball.x+ball.r>b.x&&ball.x-ball.r<b.x+BW&&ball.y+ball.r>b.y&&ball.y-ball.r<b.y+BH){
+        b.alive=false; ball.vy*=-1; pbScore+=10;
+        document.getElementById('pb-score').textContent=pbScore;
+      }
+    });
+    if(bricks.every(b=>!b.alive)){alert('클리어! 점수: '+pbScore);pbInit();}
+    pbDraw();
+    pbRaf=requestAnimationFrame(pbLoop);
+  }
+
+  function pbStart(){
+    if(pbRunning)return; pbRunning=true; pbLoop();
+    document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')paddle.x=Math.max(0,paddle.x-20);if(e.key==='ArrowRight')paddle.x=Math.min(480-paddle.w,paddle.x+20);});
+    const c=document.getElementById('pb-canvas');
+    if(c) c.onmousemove=e=>{const r=c.getBoundingClientRect();paddle.x=Math.min(480-paddle.w,Math.max(0,e.clientX-r.left-paddle.w/2));};
+  }
+
   const tools = {
     'timer': {
       title: '⏱️ 수업 타이머',
@@ -258,24 +412,93 @@
           <div id="group-result"></div>
         </div>`
     },
+    'stopwatch': {
+      title: '⏱️ 스톱워치',
+      html: `
+        <div class="text-center">
+          <div id="sw-display" class="text-7xl font-black text-slate-900 mb-4 tabular-nums tracking-tight">00:00.0</div>
+          <div class="flex justify-center gap-3 mb-6">
+            <button onclick="swStart()" id="sw-start" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-2xl flex items-center gap-2 transition-colors">
+              <i data-lucide="play" class="w-5 h-5"></i>시작
+            </button>
+            <button onclick="swLap()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 py-3 rounded-2xl flex items-center gap-2 transition-colors">
+              <i data-lucide="flag" class="w-5 h-5"></i>랩
+            </button>
+            <button onclick="swReset()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-3 rounded-2xl flex items-center gap-2 transition-colors">
+              <i data-lucide="rotate-ccw" class="w-5 h-5"></i>초기화
+            </button>
+          </div>
+          <div id="sw-laps" class="max-h-40 overflow-y-auto space-y-1.5"></div>
+        </div>`
+    },
+    'ladder': {
+      title: '🪜 사다리타기',
+      html: `
+        <div>
+          <div class="grid grid-cols-2 gap-6 mb-6">
+            <div>
+              <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">참여자 (줄바꿈 구분)</label>
+              <textarea id="ladder-names" rows="6" placeholder="홍길동&#10;김철수&#10;이영희&#10;박민준" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">결과 (줄바꿈 구분)</label>
+              <textarea id="ladder-results" rows="6" placeholder="1번 발표&#10;2번 발표&#10;면제&#10;꽝!" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
+            </div>
+          </div>
+          <button onclick="drawLadder()" class="bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-3 rounded-2xl flex items-center gap-2 mx-auto mb-6 transition-colors">
+            <i data-lucide="play" class="w-5 h-5"></i>사다리 시작!
+          </button>
+          <canvas id="ladder-canvas" class="w-full rounded-2xl border border-slate-200 bg-white block" height="300"></canvas>
+          <div id="ladder-result" class="mt-4 space-y-2"></div>
+        </div>`
+    },
+    'whiteboard': {
+      title: '✏️ 판서하기',
+      html: `
+        <div>
+          <div class="flex items-center gap-3 mb-3 flex-wrap">
+            <div class="flex gap-2">
+              ${['#1e293b','#ef4444','#3b82f6','#22c55e','#f59e0b','#8b5cf6','#ec4899','#ffffff'].map(col=>
+                `<button onclick="setColor('${col}')" style="background:${col};width:28px;height:28px;border-radius:8px;border:2px solid #e2e8f0;cursor:pointer;" title="${col}"></button>`
+              ).join('')}
+            </div>
+            <input type="range" id="brush-size" min="2" max="30" value="5" class="w-24 accent-indigo-500">
+            <span class="text-xs text-slate-500 font-medium">굵기</span>
+            <button onclick="toggleEraser()" id="eraser-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm transition-colors flex items-center gap-1.5">
+              <i data-lucide="eraser" class="w-4 h-4"></i>지우개
+            </button>
+            <button onclick="clearCanvas()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-4 py-2 rounded-xl text-sm transition-colors flex items-center gap-1.5">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>전체 지우기
+            </button>
+          </div>
+          <canvas id="wb-canvas" class="w-full rounded-2xl border-2 border-slate-200 bg-white cursor-crosshair block" height="400"
+            style="touch-action:none;"></canvas>
+        </div>`
+    },
+    'pinball': {
+      title: '🎮 핀볼 게임',
+      html: `
+        <div class="text-center">
+          <div class="flex justify-center gap-6 mb-3 text-sm font-bold text-slate-600">
+            <span>점수: <span id="pb-score" class="text-blue-600">0</span></span>
+            <span>생명: <span id="pb-lives" class="text-rose-600">3</span> ❤️</span>
+          </div>
+          <canvas id="pb-canvas" class="rounded-2xl border-2 border-slate-200 bg-slate-900 block mx-auto" width="480" height="480"
+            style="touch-action:none;"></canvas>
+          <p class="text-xs text-slate-400 mt-3 font-medium">← → 방향키 또는 마우스로 패들을 조종하세요</p>
+        </div>`
+    },
     'notice-send': {
       title: '📢 공지 빠른 등록',
-      html: `<div class="max-w-lg mx-auto text-center py-8">
-        <p class="text-slate-500 font-medium mb-4">공지사항 관리 페이지로 이동합니다.</p>
-        <a href="notices_admin.html" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-2xl transition-colors inline-flex items-center gap-2">
-          <i data-lucide="external-link" class="w-5 h-5"></i>공지사항 관리 열기
-        </a></div>`
+      html: `<div class="text-center py-8"><a href="notices_admin.html" class="bg-emerald-600 text-white font-bold px-8 py-3 rounded-2xl inline-flex items-center gap-2">공지사항 관리 열기</a></div>`
     },
     'attendance': {
       title: '✅ 출석 체크',
-      html: `<div class="max-w-lg mx-auto text-center py-8">
-        <p class="text-slate-500 font-medium mb-4">가입 학생 페이지에서 출석을 관리하세요.</p>
-        <a href="members.html" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-2xl transition-colors inline-flex items-center gap-2">
-          <i data-lucide="external-link" class="w-5 h-5"></i>가입 학생 열기
-        </a></div>`
+      html: `<div class="text-center py-8"><a href="members.html" class="bg-amber-500 text-white font-bold px-8 py-3 rounded-2xl inline-flex items-center gap-2">가입 학생 열기</a></div>`
     },
   };
 
+  // ── 도구 영역 ──────────────────────────────────────────
   function openTool(id) {
     const t = tools[id]; if (!t) return;
     document.getElementById('tool-title').textContent = t.title;
@@ -283,6 +506,9 @@
     document.getElementById('tool-area').classList.remove('hidden');
     document.getElementById('tool-area').scrollIntoView({ behavior:'smooth', block:'start' });
     lucide.createIcons();
+    // 도구별 초기화
+    if (id === 'whiteboard') setTimeout(initWhiteboard, 50);
+    if (id === 'pinball') { pbInit(); pbDraw(); setTimeout(pbStart, 100); }
   }
 
   function closeTool() {
