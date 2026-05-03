@@ -99,9 +99,8 @@ for i in range(5):
     </div>
   </main>
 
-  <!-- 2. Iframe 콘텐츠 영역 (상단 메뉴 너비와 완벽히 동일하게 수정) -->
-  <section id="iframe-section" class="hidden fixed top-14 left-0 right-0 bottom-0 overflow-hidden">
-    <!-- max-w-[1400px] 적용 -->
+  <!-- 2. Iframe 콘텐츠 영역 -->
+  <section id="iframe-section" class="hidden fixed left-0 right-0 bottom-0 overflow-hidden" style="top:56px;">
     <div class="max-w-[1400px] mx-auto w-full h-full bg-white shadow-sm border-x border-slate-200 overflow-hidden">
       <iframe id="content-frame" onload="hideIframeNav()" class="w-full h-full border-0 bg-transparent" src=""></iframe>
     </div>
@@ -118,11 +117,8 @@ for i in range(5):
       });
       element.className = 'nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1';
 
-      const navH = document.querySelector('nav').offsetHeight;
-      const sec = document.getElementById('iframe-section');
-      sec.style.top = navH + 'px';
       document.getElementById('native-content').classList.add('hidden');
-      sec.classList.remove('hidden');
+      document.getElementById('iframe-section').classList.remove('hidden');
       document.getElementById('content-frame').src = url;
     }
 
