@@ -28,7 +28,6 @@
 
 <!-- ══ 네비게이션 1줄 ══════════════════════════════════════ -->
 <nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50" style="margin-top:0;padding-top:0;">
-  <!-- 네비게이션 너비 확장: max-w-7xl 제거, px-5 md:px-8 통일 -->
   <div class="w-full px-5 md:px-8">
     <div class="flex justify-between items-center h-14">
       <!-- 로고 -->
@@ -73,9 +72,9 @@
   </div>
 </div>
 
-<!-- 메인 채팅 레이아웃 (너비 확장: max-w-7xl 제거) -->
+<!-- 메인 채팅 레이아웃 (제한 없이 너비 100% 사용) -->
 <main id="chat-app" class="hidden flex-1 overflow-hidden w-full bg-white">
-  <div class="flex h-full">
+  <div class="flex h-full w-full">
 
     <!-- 사이드바 -->
     <aside class="w-64 bg-slate-50 border-r border-slate-200 flex-col hidden md:flex shrink-0 h-full">
@@ -89,7 +88,6 @@
         <div>
           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2">채널</p>
           <div id="channel-list" class="space-y-0.5">
-
             <!-- 모둠별 수다방 드롭다운 -->
             <div>
               <button onclick="toggleTeamDropdown()"
@@ -132,7 +130,6 @@
             <button class="channel-btn" data-room="qna" onclick="switchRoom('qna','질문 및 답변',this)"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i>질문 및 답변</button>
           </div>
 
-          <!-- 관리자: 모둠 설정 버튼 -->
           <button id="group-mgmt-btn" onclick="openGroupMgmt()"
             class="hidden w-full mt-3 flex items-center justify-center gap-2 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-2 rounded-xl transition-colors">
             <i data-lucide="settings" class="w-3.5 h-3.5"></i>모둠 회원 설정
@@ -156,11 +153,11 @@
       </div>
     </aside>
 
-    <!-- 채팅 영역 -->
-    <section class="flex-1 flex flex-col h-full min-w-0">
+    <!-- 채팅 영역 (w-full 추가하여 오른쪽 전체 채움) -->
+    <section class="flex-1 flex flex-col h-full w-full min-w-0 bg-white">
       
-      <!-- 헤더 (좌우 여백: px-5 md:px-8 통일) -->
-      <header class="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-5 md:px-8 shrink-0">
+      <!-- 헤더 -->
+      <header class="h-12 w-full bg-white border-b border-slate-200 flex items-center justify-between px-6 md:px-10 shrink-0">
         <div class="flex items-center gap-2">
           <i data-lucide="hash" class="w-4 h-4 text-slate-400"></i>
           <h2 id="room-title" class="text-sm font-black text-slate-800">자유 수다방</h2>
@@ -171,15 +168,15 @@
         </button>
       </header>
 
-      <!-- 메시지 목록 (좌우 여백: px-5 md:px-8 통일) -->
-      <div id="chat-messages" class="flex-1 overflow-y-auto px-5 md:px-8 py-7 space-y-6 bg-white">
+      <!-- 메시지 목록 -->
+      <div id="chat-messages" class="flex-1 w-full overflow-y-auto px-6 md:px-10 py-7 space-y-6 bg-white">
         <div id="msgs-loading" class="flex justify-center py-16">
           <p class="text-sm text-slate-400 font-medium">메시지 불러오는 중...</p>
         </div>
       </div>
 
-      <!-- 입력창 (좌우 여백: px-5 md:px-8 통일) -->
-      <div class="shrink-0 bg-white border-t border-slate-200 px-5 md:px-8 py-5">
+      <!-- 입력창 -->
+      <div class="shrink-0 w-full bg-white border-t border-slate-200 px-6 md:px-10 py-5">
         <div class="flex items-end gap-4 bg-slate-50 border-2 border-slate-200 rounded-2xl px-6 py-4 focus-within:border-indigo-400 focus-within:bg-white focus-within:shadow-md transition-all">
           <div id="input-avatar" class="avatar w-10 h-10 rounded-xl text-[13px] shrink-0 mb-0.5"></div>
           <textarea id="chat-input"
@@ -225,7 +222,6 @@
   const TEAMS = ['team1','team2','team3','team4','team5','team6'];
   const TEAM_LABELS = { team1:'모둠1', team2:'모둠2', team3:'모둠3', team4:'모둠4', team5:'모둠5', team6:'모둠6' };
 
-  // ── 드롭다운 토글 ─────────────────────────────────────
   function toggleTeamDropdown() {
     const dd   = document.getElementById('team-dropdown');
     const chev = document.getElementById('team-chevron');
@@ -237,13 +233,11 @@
 
   lucide.createIcons();
 
-  // iframe 안에서 열렸을 때 nav 자동 숨김
   if (window.self !== window.top) {
     const nav = document.querySelector('nav');
     if (nav) { nav.style.display = 'none'; nav.style.height = '0'; }
   }
 
-  // Firebase 초기화
   const cfg = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
   const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg);
   const auth = firebase.auth(app);
@@ -272,7 +266,6 @@
     return `${bg} ${text}`;
   }
 
-  // ── 인증 ──────────────────────────────────────────────
   auth.onAuthStateChanged(async user => {
     if (!user) {
       document.getElementById('login-wall').classList.replace('hidden','flex');
@@ -308,7 +301,6 @@
     switchRoom('general', '자유 수다방');
   });
 
-  // ── 접속자 관리 ───────────────────────────────────────
   async function registerPresence() {
     try {
       const ref = await db.collection('chat_presence').add({
@@ -351,7 +343,6 @@
     });
   }
 
-  // ── 내 모둠 배지 ──────────────────────────────────────
   async function loadMyTeam() {
     try {
       const snap = await db.collection('chat_groups').where('uid','==', currentUser.uid).limit(1).get();
@@ -367,7 +358,6 @@
     } catch(e) {}
   }
 
-  // ── 모둠 관리 모달 ─────────────────────────────────────
   function openGroupMgmt() {
     document.getElementById('group-mgmt-modal').classList.remove('hidden');
     document.getElementById('group-mgmt-modal').classList.add('flex');
@@ -483,7 +473,6 @@
     } catch(e) { alert('제거 오류: ' + e.message); }
   }
 
-  // ── 채팅방 전환 ───────────────────────────────────────
   function switchRoom(room, title, btn) {
     currentRoom = room;
     document.getElementById('room-title').textContent = title.replace('# ','');
@@ -494,7 +483,6 @@
     lucide.createIcons();
   }
 
-  // ── 메시지 실시간 구독 ────────────────────────────────
   function listenMessages(room) {
     if (unsubscribeMessages) unsubscribeMessages();
     document.getElementById('chat-messages').innerHTML = '<div id="msgs-loading" class="flex justify-center py-8"><div class="text-sm text-slate-400 font-medium">불러오는 중...</div></div>';
@@ -533,7 +521,7 @@
       });
   }
 
-  // 말풍선 최대 너비 확장 (max-w-lg -> max-w-2xl xl:max-w-3xl)
+  // ★ 말풍선 최대 너비를 85%까지 사용할 수 있도록 변경하여 넓은 화면을 꽉 채웁니다.
   function renderMessage(d, mid, isMine) {
     const [bg, tc] = getColor(d.userName||'?');
     const time = d.createdAt ? formatTime(d.createdAt.toDate()) : '';
@@ -541,12 +529,12 @@
 
     if (isMine) {
       return `<div class="flex items-end justify-end gap-3">
-        <div class="flex flex-col items-end">
+        <div class="flex flex-col items-end max-w-[85%]">
           <div class="flex items-baseline gap-2 mb-1.5">
             <span class="text-[12px] text-slate-400">${time}</span>
             <span class="text-sm font-black text-slate-700">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
           </div>
-          <div class="bg-indigo-600 text-white px-5 py-3 rounded-2xl rounded-br-sm text-[15px] leading-relaxed max-w-2xl xl:max-w-3xl break-words shadow-sm">
+          <div class="bg-indigo-600 text-white px-5 py-3 rounded-2xl rounded-br-sm text-[15px] leading-relaxed break-words shadow-sm w-fit">
             ${text}
           </div>
         </div>
@@ -555,12 +543,12 @@
     } else {
       return `<div class="flex items-end gap-3">
         <div class="avatar ${bg} ${tc} mb-1 w-10 h-10 rounded-xl text-[13px]">${(d.userName||'?').charAt(0)}</div>
-        <div class="flex flex-col">
+        <div class="flex flex-col max-w-[85%]">
           <div class="flex items-baseline gap-2 mb-1.5">
             <span class="text-sm font-black text-slate-700">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
             <span class="text-[12px] text-slate-400">${time}</span>
           </div>
-          <div class="bg-white border border-slate-200 text-slate-800 px-5 py-3 rounded-2xl rounded-bl-sm text-[15px] leading-relaxed max-w-2xl xl:max-w-3xl break-words shadow-sm">
+          <div class="bg-white border border-slate-200 text-slate-800 px-5 py-3 rounded-2xl rounded-bl-sm text-[15px] leading-relaxed break-words shadow-sm w-fit">
             ${text}
           </div>
         </div>
@@ -575,7 +563,6 @@
     return `${ap} ${h}:${m.toString().padStart(2,'0')}`;
   }
 
-  // ── 메시지 전송 ───────────────────────────────────────
   async function sendMessage() {
     const input = document.getElementById('chat-input');
     const text  = input.value.trim();
