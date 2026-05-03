@@ -11,7 +11,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <style>
-  body { font-family:'Pretendard',-apple-system,sans-serif; background:#f8fafc; margin:0; overflow:hidden; }
+  body { font-family:'Pretendard',-apple-system,sans-serif; background:#f8fafc; margin:0; padding:0; overflow:hidden; }
   ::-webkit-scrollbar { width:5px; }
   ::-webkit-scrollbar-track { background:transparent; }
   ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
@@ -24,10 +24,10 @@
   .avatar { width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0; }
 </style>
 </head>
-<body class="h-screen flex flex-col">
+<body class="h-screen flex flex-col overflow-hidden">
 
 <!-- ══ 네비게이션 1줄 ══════════════════════════════════════ -->
-<nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+<nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50" style="margin-top:0;padding-top:0;">
   <div class="max-w-[1400px] mx-auto px-4 md:px-6">
     <div class="flex justify-between items-center h-14">
       <!-- 로고 -->
