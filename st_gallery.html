@@ -12,6 +12,16 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <style>
         body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
+        
+        /* 스크롤바 숨기기 (스크롤 기능은 유지됨) */
+        html, body {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        ::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
         .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
         .card-hover { transition: all 0.3s cubic-bezier(0.16,1,0.3,1); }
@@ -20,7 +30,6 @@
 </head>
 <body class="bg-slate-50 min-h-screen" style="background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:32px 32px;">
 
-    <!-- pt-28(상단 여백)을 pt-10으로 줄여서 상단 메뉴 삭제 후 빈 공간을 없앴습니다 -->
     <main class="max-w-7xl mx-auto px-6 pt-10 pb-24 fade-in">
 
         <!-- 헤더 배너 -->
