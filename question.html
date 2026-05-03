@@ -134,6 +134,14 @@
           const catColors = { '수업 내용':'bg-violet-100 text-violet-700', '과제':'bg-blue-100 text-blue-700', '코딩':'bg-green-100 text-green-700', '데이터':'bg-orange-100 text-orange-700', 'AI':'bg-pink-100 text-pink-700', '기타':'bg-slate-100 text-slate-600' };
           const cc = catColors[d.category] || 'bg-slate-100 text-slate-600';
           const date = d.createdAt ? d.createdAt.toDate().toLocaleDateString('ko-KR') : '';
+          const answerHtml = d.answer ? `
+            <div class="mt-4 bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xs font-black text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">✅ 선생님 답변</span>
+                <span class="text-xs text-slate-400">${d.answeredAt ? new Date(d.answeredAt.seconds*1000).toLocaleDateString('ko-KR') : ''}</span>
+              </div>
+              <p class="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-wrap">${d.answer}</p>
+            </div>` : '';
           return `<div class="card p-5 mb-3" id="q-card-${id}">
             <div class="flex items-start justify-between mb-2">
               <div class="flex items-center space-x-2 flex-wrap gap-1">
@@ -142,6 +150,11 @@
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xs text-slate-400 font-medium">${date}</span>
+                ${isAdmin ? `
+                <button onclick="openAnswerModal('${id}','${(d.answer||'').replace(/'/g,"\\'").replace(/\n/g,'\\n')}')"
+                  class="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="답변">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                </button>` : ''}
                 ${canEdit ? `
                 <button onclick="openEditQuestion('${id}','${(d.title||'').replace(/'/g,"\\'")}','${(d.content||'').replace(/'/g,"\\'").replace(/\n/g,'\\n')}','${d.category||'기타'}')"
                   class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="수정">
@@ -154,11 +167,42 @@
               </div>
             </div>
             <h3 class="text-sm font-black text-slate-800 mb-1">${d.title}</h3>
-            <p class="text-xs text-slate-500 font-medium">${(d.content||'').replace(/\n/g,'<br>')}</p>
+            <p class="text-xs text-slate-500 font-medium leading-relaxed">${(d.content||'').replace(/\n/g,'<br>')}</p>
             <p class="text-xs text-slate-400 font-medium mt-2">— ${d.userName}${d.studentId?' ('+d.studentId+')':''}</p>
+            ${answerHtml}
           </div>`;
         }).join('');
       } catch(e) { list.innerHTML = '<div class="card p-8 text-center text-slate-400 text-sm font-medium">불러오기 실패. 로그인 후 다시 시도해주세요.</div>'; }
+    }
+
+    // ── 답변 모달 ──────────────────────────────────────
+    let answeringId = null;
+    function openAnswerModal(id, existingAnswer) {
+      answeringId = id;
+      document.getElementById('answer-content').value = (existingAnswer||'').replace(/\\n/g,'\n');
+      document.getElementById('answer-modal').classList.remove('hidden');
+      document.getElementById('answer-modal').classList.add('flex');
+    }
+    function closeAnswerModal() {
+      document.getElementById('answer-modal').classList.add('hidden');
+      document.getElementById('answer-modal').classList.remove('flex');
+      answeringId = null;
+    }
+    async function saveAnswer() {
+      if (!answeringId) return;
+      const answer = document.getElementById('answer-content').value.trim();
+      if (!answer) { alert('답변 내용을 입력해주세요.'); return; }
+      const btn = document.getElementById('answer-save-btn');
+      btn.disabled = true; btn.textContent = '저장 중...';
+      try {
+        await db.collection('questions').doc(answeringId).update({
+          answer, answered: true,
+          answeredAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        closeAnswerModal();
+        loadQuestions();
+      } catch(e) { alert('답변 저장 오류: ' + e.message); }
+      finally { btn.disabled = false; btn.textContent = '답변 등록'; }
     }
 
     // 수정
@@ -204,6 +248,34 @@
 
     loadQuestions();
   </script>
+  <!-- 답변 모달 (관리자 전용) -->
+  <div id="answer-modal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
+    onclick="if(event.target===this) closeAnswerModal()">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg">
+      <div class="flex items-center justify-between px-7 py-5 border-b border-slate-100">
+        <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+          <span class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-sm">💬</span>
+          <span>선생님 답변</span>
+        </h3>
+        <button onclick="closeAnswerModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">✕</button>
+      </div>
+      <div class="px-7 py-6">
+        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">답변 내용</label>
+        <textarea id="answer-content" rows="6"
+          placeholder="학생의 질문에 대한 답변을 작성해주세요."
+          class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all resize-none leading-relaxed"></textarea>
+      </div>
+      <div class="px-7 pb-7 flex space-x-3">
+        <button onclick="closeAnswerModal()" class="flex-1 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-200 transition-colors">취소</button>
+        <button onclick="saveAnswer()" id="answer-save-btn"
+          class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold py-3.5 rounded-2xl hover:shadow-lg transition-all flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          답변 등록
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- 수정 모달 -->
   <div id="edit-modal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
     onclick="if(event.target===this) closeEditQuestion()">
