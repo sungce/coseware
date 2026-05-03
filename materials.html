@@ -12,6 +12,16 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <style>
         body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
+        
+        /* 스크롤바 숨기기 (스크롤 기능은 유지됨) */
+        html, body {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        ::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
         .fade-in { animation: fadeIn 0.45s cubic-bezier(0.16,1,0.3,1) forwards; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
     </style>
