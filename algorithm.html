@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알고리즘 공작소 — Sungce AI-ON</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  body { font-family:'Pretendard',-apple-system,sans-serif; background:#f8fafc; }
+  .card { background:white; border-radius:1.5rem; border:1px solid #e2e8f0; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+<nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+  <div class="max-w-7xl mx-auto px-4 md:px-6">
+    <div class="flex justify-between items-center h-14 border-b border-slate-100">
+      <a href="index.html" class="flex items-center space-x-2 outline-none">
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
+        <div>
+          <div class="text-[15px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
+          <div class="text-[12px] font-medium text-slate-500 leading-tight">정보 교과 클래스룸</div>
+        </div>
+      </a>
+      <a href="index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl transition-colors">
+        <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
+      </a>
+    </div>
+    <div class="hidden md:flex items-center justify-end h-11 space-x-6 text-[13px] font-bold text-slate-600">
+      <a href="index.html#classes" class="hover:text-blue-600 transition-colors">교과수업</a>
+      <span class="text-blue-600 border-b-2 border-blue-600 pb-1">알고리즘 공작소</span>
+      <a href="data_play.html" target="_blank" class="hover:text-blue-600 transition-colors">데이터 실습실</a>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-6 pt-8 pb-16 w-full flex-1">
+  <div class="mb-10">
+    <div class="inline-flex items-center space-x-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-indigo-100">
+      <i data-lucide="git-branch" class="w-3.5 h-3.5"></i><span>인터렉티브 수업실</span>
+    </div>
+    <h1 class="text-4xl font-black text-slate-900 mb-3">알고리즘 공작소 <span class="text-indigo-500">⚙️</span></h1>
+    <p class="text-lg text-slate-500 font-medium">알고리즘의 원리를 시각화하고 직접 만들어보세요.</p>
+  </div>
+
+  <div class="card p-12 flex flex-col items-center justify-center text-center min-h-[60vh]">
+    <div class="w-20 h-20 bg-indigo-50 rounded-3xl flex items-center justify-center mb-6 shadow-sm">
+      <i data-lucide="git-branch" class="w-10 h-10 text-indigo-500"></i>
+    </div>
+    <h2 class="text-2xl font-black text-slate-800 mb-3">준비 중입니다</h2>
+    <p class="text-slate-500 font-medium max-w-md leading-relaxed">
+      <span class="font-black text-slate-700">알고리즘 공작소</span> 페이지를 준비하고 있어요.<br>
+      곧 멋진 콘텐츠로 찾아오겠습니다! 🚀
+    </p>
+    <a href="index.html" class="mt-8 inline-flex items-center gap-2 bg-slate-900 text-white font-bold px-6 py-3 rounded-2xl hover:bg-slate-700 transition-colors text-sm">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>메인으로 돌아가기
+    </a>
+  </div>
+</main>
+
+<script>
+  lucide.createIcons();
+  if (window.self !== window.top) {
+    document.querySelector('nav').style.display = 'none';
+    document.querySelector('main').style.paddingTop = '2rem';
+  }
+</script>
+</body>
+</html>
