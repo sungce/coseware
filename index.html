@@ -413,7 +413,7 @@
                                 <i data-lucide="external-link" class="w-4 h-4"></i>
                                 <span>교과서 멀티미디어 자료</span>
                             </button>
-                            <button onclick="showSection('iframe-gallery')" class="flex items-center space-x-2 px-6 py-3.5 bg-white/10 text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 backdrop-blur-md">
+                            <button onclick="window.open('gallery.html','_blank')" class="flex items-center space-x-2 px-6 py-3.5 bg-white/10 text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 backdrop-blur-md">
                                 <i data-lucide="sparkles" class="w-4 h-4"></i>
                                 <span>My Project Gallery</span>
                             </button>
@@ -484,7 +484,7 @@
                 </div>
 
                 <!-- 프로젝트 갤러리 (iframe 연동으로 변경) -->
-                <div class="md:col-span-1 lg:col-span-2 group glass-card rounded-[2rem] p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer" onclick="showSection('iframe-gallery')">
+                <div class="md:col-span-1 lg:col-span-2 group glass-card rounded-[2rem] p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer" onclick="window.open('gallery.html','_blank')">
                     <div class="flex justify-between items-start mb-6">
                         <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                             <i data-lucide="sparkles" class="w-6 h-6"></i>
@@ -755,7 +755,7 @@
 
         <!-- ==================== AI-ON 학생 작품실 (iframe) ==================== -->
         <section id="iframe-gallery" class="fade-in hidden max-w-7xl mx-auto w-full">
-            <iframe src="gallery.html"
+            <iframe src="st_gallery.html"
                 class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
                 style="min-height: 85vh; height: 85vh;"
                 frameborder="0">
