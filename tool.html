@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수업도구 — Sungce AI-ON 관리자</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<style>
+  body { font-family:'Pretendard',-apple-system,sans-serif; background:#f8fafc; }
+  .card { background:white; border-radius:1.5rem; border:1px solid #e2e8f0; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- 네비게이션 -->
+<nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex justify-between items-center h-16">
+      <!-- 로고 + 뒤로가기 -->
+      <div class="flex items-center space-x-4">
+        <a href="admin.html" class="text-slate-400 hover:text-slate-700 transition-colors p-2 rounded-lg hover:bg-slate-100">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </a>
+        <div class="flex items-center space-x-2">
+          <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
+          <div>
+            <span class="text-base font-black text-slate-900">수업 도구</span>
+            <span class="ml-2 text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 관리자 메뉴 -->
+      <div class="hidden md:flex items-center space-x-6 text-sm font-bold text-slate-500">
+        <a href="learning_admin.html" class="hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 py-1 transition-all duration-200">학습 현황</a>
+        <a href="notices_admin.html" class="hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 py-1 transition-all duration-200">공지사항</a>
+        <a href="materials_admin.html" class="hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 py-1 transition-all duration-200">학습자료</a>
+        <a href="st_gallery_admin.html" class="hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 py-1 transition-all duration-200">학생 작품</a>
+        <a href="gallery_admin.html" class="hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 py-1 transition-all duration-200">갤러리</a>
+        <a href="assignments.html" class="hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 py-1 transition-all duration-200">수행평가</a>
+        <a href="members.html" class="hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 py-1 transition-all duration-200">가입 학생</a>
+        <a href="tool.html" class="text-blue-600 border-b-2 border-blue-600 py-1">수업도구</a>
+      </div>
+
+      <!-- 사용자 + 로그아웃 -->
+      <div class="flex items-center space-x-3">
+        <div class="hidden sm:flex items-center space-x-2 bg-slate-100 px-4 py-2 rounded-xl">
+          <i data-lucide="user-check" class="w-4 h-4 text-slate-500"></i>
+          <span id="admin-name" class="text-sm font-bold text-slate-700"></span>
+        </div>
+        <button onclick="handleSignOut()" class="flex items-center space-x-1.5 text-slate-500 hover:text-rose-500 px-3 py-2 rounded-xl hover:bg-rose-50 text-sm font-bold transition-colors">
+          <i data-lucide="log-out" class="w-4 h-4"></i><span class="hidden sm:inline">로그아웃</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-6 pt-24 pb-16">
+  <!-- 헤더 -->
+  <div class="mb-10">
+    <div class="inline-flex items-center space-x-2 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-blue-100">
+      <i data-lucide="wrench" class="w-3.5 h-3.5"></i><span>관리자 도구</span>
+    </div>
+    <h1 class="text-4xl font-black text-slate-900 mb-3">수업 도구 <span class="text-blue-500">🛠️</span></h1>
+    <p class="text-lg text-slate-500 font-medium">수업에 활용할 수 있는 다양한 도구를 모아뒀습니다.</p>
+  </div>
+
+  <!-- 도구 카드 그리드 -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- 랜덤 모둠 생성기 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('random-group')">
+      <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="shuffle" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">랜덤 모둠 생성기</h3>
+      <p class="text-sm text-slate-500 font-medium">학생을 무작위로 모둠에 배정합니다.</p>
+    </div>
+
+    <!-- 타이머 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('timer')">
+      <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="timer" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">수업 타이머</h3>
+      <p class="text-sm text-slate-500 font-medium">활동 시간을 측정하고 알림을 설정합니다.</p>
+    </div>
+
+    <!-- 랜덤 발표자 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('random-pick')">
+      <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="user-round-check" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">랜덤 발표자 선택</h3>
+      <p class="text-sm text-slate-500 font-medium">무작위로 발표할 학생을 선택합니다.</p>
+    </div>
+
+    <!-- 공지 알림 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('notice-send')">
+      <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="bell" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">공지 빠른 등록</h3>
+      <p class="text-sm text-slate-500 font-medium">공지사항을 빠르게 작성하고 게시합니다.</p>
+    </div>
+
+    <!-- QR 생성기 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('qr-gen')">
+      <div class="w-12 h-12 bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="qr-code" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">QR 코드 생성기</h3>
+      <p class="text-sm text-slate-500 font-medium">수업 자료 URL의 QR 코드를 생성합니다.</p>
+    </div>
+
+    <!-- 출석 체크 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('attendance')">
+      <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">출석 체크</h3>
+      <p class="text-sm text-slate-500 font-medium">수업 출석 현황을 빠르게 확인합니다.</p>
+    </div>
+
+  </div>
+
+  <!-- 도구 실행 영역 -->
+  <div id="tool-area" class="hidden mt-10">
+    <div class="card p-8">
+      <div class="flex items-center justify-between mb-6">
+        <h2 id="tool-title" class="text-xl font-black text-slate-900"></h2>
+        <button onclick="closeTool()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="tool-content"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- 관리자 접근 차단 -->
+<div id="auth-block" class="fixed inset-0 bg-white z-[200] flex items-center justify-center hidden">
+  <div class="text-center">
+    <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+      <i data-lucide="lock" class="w-8 h-8"></i>
+    </div>
+    <h2 class="text-xl font-black text-slate-900 mb-2">관리자 전용 페이지</h2>
+    <p class="text-slate-500 text-sm mb-6">관리자 계정으로 로그인해주세요.</p>
+    <a href="index.html" class="bg-slate-900 text-white font-bold px-6 py-3 rounded-2xl hover:bg-slate-700 transition-colors">메인으로</a>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  const ADMIN_EMAIL = 'sungce27@gmail.com';
+  const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05" };
+  const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth(app);
+
+  auth.onAuthStateChanged(user => {
+    if (!user || user.email !== ADMIN_EMAIL) {
+      document.getElementById('auth-block').classList.remove('hidden');
+      return;
+    }
+    document.getElementById('admin-name').textContent = user.displayName || user.email.split('@')[0];
+    lucide.createIcons();
+  });
+
+  function handleSignOut() {
+    auth.signOut().then(() => window.location.href = 'index.html');
+  }
+
+  // ── 도구 영역 ──────────────────────────────────────────
+  const tools = {
+    'timer': {
+      title: '⏱️ 수업 타이머',
+      html: `
+        <div class="text-center">
+          <div id="timer-display" class="text-7xl font-black text-slate-900 mb-8 tabular-nums tracking-tight">05:00</div>
+          <div class="flex justify-center gap-3 mb-6">
+            <button onclick="setTimer(3)" class="bg-slate-100 text-slate-700 font-bold px-4 py-2 rounded-xl hover:bg-slate-200 text-sm transition-colors">3분</button>
+            <button onclick="setTimer(5)" class="bg-blue-100 text-blue-700 font-bold px-4 py-2 rounded-xl hover:bg-blue-200 text-sm transition-colors">5분</button>
+            <button onclick="setTimer(10)" class="bg-slate-100 text-slate-700 font-bold px-4 py-2 rounded-xl hover:bg-slate-200 text-sm transition-colors">10분</button>
+            <button onclick="setTimer(15)" class="bg-slate-100 text-slate-700 font-bold px-4 py-2 rounded-xl hover:bg-slate-200 text-sm transition-colors">15분</button>
+          </div>
+          <div class="flex justify-center gap-3">
+            <button onclick="startTimer()" id="start-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-2xl transition-colors flex items-center gap-2">
+              <i data-lucide="play" class="w-5 h-5"></i>시작
+            </button>
+            <button onclick="pauseTimer()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-2xl transition-colors flex items-center gap-2">
+              <i data-lucide="pause" class="w-5 h-5"></i>일시정지
+            </button>
+            <button onclick="resetTimer()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-8 py-3 rounded-2xl transition-colors flex items-center gap-2">
+              <i data-lucide="rotate-ccw" class="w-5 h-5"></i>초기화
+            </button>
+          </div>
+        </div>`
+    },
+    'random-pick': {
+      title: '🎲 랜덤 발표자 선택',
+      html: `
+        <div class="max-w-lg mx-auto text-center">
+          <div class="mb-6">
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">학생 이름 목록 (줄바꿈으로 구분)</label>
+            <textarea id="student-list" rows="6" placeholder="예)\n홍길동\n김철수\n이영희" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+          </div>
+          <button onclick="pickRandom()" class="bg-rose-500 hover:bg-rose-600 text-white font-bold px-8 py-3 rounded-2xl transition-colors flex items-center gap-2 mx-auto">
+            <i data-lucide="shuffle" class="w-5 h-5"></i>뽑기!
+          </button>
+          <div id="pick-result" class="mt-6 hidden">
+            <div class="bg-gradient-to-br from-rose-50 to-pink-50 border border-rose-100 rounded-2xl p-6">
+              <p class="text-xs font-bold text-rose-400 mb-2">선택된 학생</p>
+              <p id="picked-name" class="text-4xl font-black text-rose-600"></p>
+            </div>
+          </div>
+        </div>`
+    },
+    'qr-gen': {
+      title: '📱 QR 코드 생성기',
+      html: `
+        <div class="max-w-md mx-auto text-center">
+          <div class="mb-6">
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">URL 또는 텍스트 입력</label>
+            <input type="text" id="qr-input" value="${window.location.origin}/index.html"
+              placeholder="https://..."
+              class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+          <button onclick="generateQR()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-8 py-3 rounded-2xl transition-colors flex items-center gap-2 mx-auto mb-6">
+            <i data-lucide="qr-code" class="w-5 h-5"></i>생성하기
+          </button>
+          <div id="qr-output" class="flex justify-center"></div>
+        </div>`
+    },
+    'random-group': {
+      title: '👥 랜덤 모둠 생성기',
+      html: `
+        <div class="max-w-lg mx-auto">
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">학생 목록 (줄바꿈 구분)</label>
+              <textarea id="group-students" rows="8" placeholder="홍길동&#10;김철수&#10;이영희&#10;박민준" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"></textarea>
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">모둠 수</label>
+              <input type="number" id="group-count" value="4" min="2" max="10" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4">
+              <button onclick="makeGroups()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-2xl transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="shuffle" class="w-5 h-5"></i>모둠 만들기
+              </button>
+            </div>
+          </div>
+          <div id="group-result"></div>
+        </div>`
+    },
+    'notice-send': {
+      title: '📢 공지 빠른 등록',
+      html: `<div class="max-w-lg mx-auto text-center py-8">
+        <p class="text-slate-500 font-medium mb-4">공지사항 관리 페이지로 이동합니다.</p>
+        <a href="notices_admin.html" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-2xl transition-colors inline-flex items-center gap-2">
+          <i data-lucide="external-link" class="w-5 h-5"></i>공지사항 관리 열기
+        </a></div>`
+    },
+    'attendance': {
+      title: '✅ 출석 체크',
+      html: `<div class="max-w-lg mx-auto text-center py-8">
+        <p class="text-slate-500 font-medium mb-4">가입 학생 페이지에서 출석을 관리하세요.</p>
+        <a href="members.html" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-2xl transition-colors inline-flex items-center gap-2">
+          <i data-lucide="external-link" class="w-5 h-5"></i>가입 학생 열기
+        </a></div>`
+    },
+  };
+
+  function openTool(id) {
+    const t = tools[id]; if (!t) return;
+    document.getElementById('tool-title').textContent = t.title;
+    document.getElementById('tool-content').innerHTML = t.html;
+    document.getElementById('tool-area').classList.remove('hidden');
+    document.getElementById('tool-area').scrollIntoView({ behavior:'smooth', block:'start' });
+    lucide.createIcons();
+  }
+
+  function closeTool() {
+    document.getElementById('tool-area').classList.add('hidden');
+  }
+
+  // 타이머
+  let timerInterval = null, timerSeconds = 300;
+  function setTimer(min) { timerSeconds = min*60; updateTimerDisplay(); }
+  function updateTimerDisplay() {
+    const m = String(Math.floor(timerSeconds/60)).padStart(2,'0');
+    const s = String(timerSeconds%60).padStart(2,'0');
+    const el = document.getElementById('timer-display');
+    if (el) { el.textContent = `${m}:${s}`; el.className = timerSeconds <= 10 ? 'text-7xl font-black text-rose-600 mb-8 tabular-nums' : 'text-7xl font-black text-slate-900 mb-8 tabular-nums'; }
+  }
+  function startTimer() {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      updateTimerDisplay();
+      if (timerSeconds <= 0) { clearInterval(timerInterval); timerInterval = null; alert('⏰ 시간이 종료됐습니다!'); }
+    }, 1000);
+  }
+  function pauseTimer() { clearInterval(timerInterval); timerInterval = null; }
+  function resetTimer() { pauseTimer(); timerSeconds = 300; updateTimerDisplay(); }
+
+  // 랜덤 뽑기
+  function pickRandom() {
+    const names = document.getElementById('student-list').value.split('\n').map(n=>n.trim()).filter(Boolean);
+    if (!names.length) { alert('학생 이름을 입력해주세요.'); return; }
+    const picked = names[Math.floor(Math.random()*names.length)];
+    document.getElementById('picked-name').textContent = picked;
+    document.getElementById('pick-result').classList.remove('hidden');
+    lucide.createIcons();
+  }
+
+  // QR 생성
+  function generateQR() {
+    const val = document.getElementById('qr-input').value.trim();
+    if (!val) return;
+    const url = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(val)}`;
+    document.getElementById('qr-output').innerHTML = `<img src="${url}" class="rounded-2xl border-4 border-white shadow-xl" alt="QR">`;
+  }
+
+  // 랜덤 모둠
+  function makeGroups() {
+    const names = document.getElementById('group-students').value.split('\n').map(n=>n.trim()).filter(Boolean);
+    const cnt   = parseInt(document.getElementById('group-count').value) || 4;
+    if (!names.length) { alert('학생 이름을 입력해주세요.'); return; }
+    const shuffled = [...names].sort(()=>Math.random()-.5);
+    const groups = Array.from({length:cnt}, (_,i) => ({no:i+1, members:[]}));
+    shuffled.forEach((name,i) => groups[i%cnt].members.push(name));
+    const COLORS = ['blue','emerald','orange','purple','rose','sky','amber','teal'];
+    document.getElementById('group-result').innerHTML = `<div class="grid grid-cols-2 gap-3">${
+      groups.map((g,i) => `<div class="bg-${COLORS[i%COLORS.length]}-50 border border-${COLORS[i%COLORS.length]}-100 rounded-2xl p-4">
+        <p class="text-xs font-black text-${COLORS[i%COLORS.length]}-600 mb-2">모둠 ${g.no} (${g.members.length}명)</p>
+        ${g.members.map(m=>`<p class="text-sm font-bold text-slate-700">${m}</p>`).join('')}
+      </div>`).join('')
+    }</div>`;
+    lucide.createIcons();
+  }
+</script>
+</body>
+</html>
