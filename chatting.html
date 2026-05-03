@@ -534,13 +534,20 @@
     const text = (d.text||'').replace(/\n/g,'<br>').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/&lt;br&gt;/g,'<br>');
 
     if (isMine) {
-      return `<div class="flex items-end justify-end gap-3">
+      return `<div class="flex items-end justify-end gap-3 group/msg">
+        <button onclick="deleteMessage('${mid}')"
+          class="opacity-0 group-hover/msg:opacity-100 transition-opacity mb-1 w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 hover:bg-rose-500/20 text-slate-600 hover:text-rose-400 shrink-0"
+          title="메시지 삭제">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/>
+          </svg>
+        </button>
         <div class="flex flex-col items-end max-w-[85%]">
           <div class="flex items-baseline gap-2 mb-1.5">
             <span class="text-[12px] text-slate-600">${time}</span>
             <span class="text-sm font-black text-slate-400">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
           </div>
-          <div class="bg-indigo-600 text-white px-5 py-3 rounded-2xl rounded-br-sm text-[15px] leading-relaxed break-words shadow-sm w-fit">
+          <div class="bubble-mine px-5 py-3 rounded-2xl rounded-br-sm text-[15px] leading-relaxed break-words shadow-lg shadow-indigo-500/20 w-fit">
             ${text}
           </div>
         </div>
@@ -554,12 +561,19 @@
             <span class="text-sm font-black text-slate-400">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
             <span class="text-[12px] text-slate-600">${time}</span>
           </div>
-          <div class="bg-white border border-slate-200 text-slate-800 px-5 py-3 rounded-2xl rounded-bl-sm text-[15px] leading-relaxed break-words shadow-sm w-fit">
+          <div class="bubble-other px-5 py-3 rounded-2xl rounded-bl-sm text-[15px] leading-relaxed break-words shadow-sm w-fit">
             ${text}
           </div>
         </div>
       </div>`;
     }
+  }
+
+  async function deleteMessage(mid) {
+    try {
+      await db.collection('chat_rooms').doc(currentRoom)
+        .collection('messages').doc(mid).delete();
+    } catch(e) { console.warn('삭제 실패:', e); }
   }
 
   function formatTime(date) {
