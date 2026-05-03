@@ -199,10 +199,10 @@
 
                     <!-- 3. 우측 버튼 그룹 (사용자 정보 등) -->
                     <div class="flex items-center space-x-2 shrink-0">
-                        <!-- 내 대시보드 버튼 -->
-                        <a href="dashboard.html" class="hidden lg:flex items-center space-x-1.5 text-blue-600 bg-blue-50 border border-blue-100 px-3.5 py-2 rounded-xl text-sm font-bold hover:bg-blue-100 transition-colors">
-                            <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
-                            <span>내 대시보드</span>
+                        
+                        <!-- 내 대시보드 아이콘 버튼 -->
+                        <a href="dashboard.html" title="내 대시보드" class="hidden lg:flex items-center justify-center w-10 h-10 text-blue-600 bg-blue-50 border border-blue-100 rounded-xl hover:bg-blue-100 hover:text-blue-700 transition-all shadow-sm">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                         </a>
 
                         <!-- 비로그인 -->
@@ -281,7 +281,7 @@
                         </div>
                         <a href="dashboard.html"
                             class="w-full bg-blue-50 text-blue-600 border border-blue-100 py-3 px-4 rounded-xl hover:bg-blue-100 transition-colors flex justify-center items-center font-bold text-sm mb-2">
-                            <i data-lucide="bar-chart-2" class="w-4 h-4 mr-2"></i> 나의 대시보드
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 mr-2"></i> 나의 대시보드
                         </a>
                         <button onclick="handleSignOut(); document.getElementById('mobile-menu').classList.add('hidden');"
                             class="w-full bg-rose-50 text-rose-600 border border-rose-100 py-3 px-4 rounded-xl hover:bg-rose-100 transition-colors flex justify-center items-center font-bold text-sm">
@@ -743,9 +743,6 @@
 
         <!-- ==================== 구버전 인라인 학습자료 (숨김/유지) ==================== -->
         <section id="materials" class="fade-in hidden max-w-4xl mx-auto"></section>
-        
-        <!-- ==================== 구버전 인라인 갤러리 (숨김/유지) ==================== -->
-        <section id="gallery" class="fade-in hidden"></section>
 
         <!-- ==================== AI-ON 학습 자료실 (iframe) ==================== -->
         <section id="iframe-materials" class="fade-in hidden max-w-7xl mx-auto w-full">
@@ -1006,7 +1003,6 @@
             }
         }
 
-
         // ==========================================
         // 2. 기존 프론트엔드 로직 (메뉴, 렌더링 등)
         // ==========================================
@@ -1081,8 +1077,8 @@
 
         // SPA Navigation
         function showSection(sectionId) {
-            // iframe-materials, iframe-gallery 섹션 추가됨
-            const sections = ['home', 'notices', 'classes', 'materials', 'assignments', 'gallery', 'code-play', 'data-play', 'question', 'iframe-materials', 'iframe-gallery'];
+            // iframe-materials, iframe-gallery 섹션 유지, gallery 제외됨
+            const sections = ['home', 'notices', 'classes', 'materials', 'assignments', 'code-play', 'data-play', 'question', 'iframe-materials', 'iframe-gallery'];
             sections.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) { el.classList.add('hidden'); el.classList.remove('block'); }
