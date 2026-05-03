@@ -90,18 +90,28 @@
       });
     }
 
+    const MAIN_GS_URL = 'https://script.google.com/macros/s/AKfycbwCyznG-WST1S7hIoMFXIVzQv3Qmub1nSdr43tDiaQVTEp2W9vdnUpqgmjSb1o-X5er/exec';
+
     async function submitQuestion() {
       const title   = document.getElementById('q-title').value.trim();
       const content = document.getElementById('q-content').value.trim();
       if (!title || !content) { alert('제목과 내용을 입력해주세요.'); return; }
       const user = auth.currentUser;
-      const userName = user ? (user.displayName || user.email.split('@')[0]) : '익명';
+      const userName  = user ? (user.displayName || user.email.split('@')[0]) : '익명';
+      const studentId = user ? (localStorage.getItem('studentId_' + user.uid) || '') : '';
       try {
+        // 1. Firestore 저장
         await db.collection('questions').add({
-          title, content, category: selectedCat, userName,
+          title, content, category: selectedCat, userName, studentId,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           answered: false
         });
+        // 2. Google Sheets 저장
+        fetch(MAIN_GS_URL, {
+          method: 'POST', mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ type:'question', userName, studentId, category: selectedCat, title, content })
+        }).catch(() => {});
         document.getElementById('q-title').value = '';
         document.getElementById('q-content').value = '';
         loadQuestions();

@@ -251,6 +251,26 @@ function doPost(e) {
       return jsonResponse({ result: 'success' });
     }
 
+    // 질문 저장
+    if (type === 'question') {
+      let sheet = ss.getSheetByName('질문목록');
+      if (!sheet) {
+        sheet = ss.insertSheet('질문목록');
+        sheet.appendRow(['등록일', '학생명', '학번', '카테고리', '제목', '내용', '답변상태']);
+        sheet.getRange(1,1,1,7).setFontWeight('bold').setBackground('#7c3aed').setFontColor('#ffffff');
+      }
+      sheet.appendRow([
+        new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
+        data.userName || '익명',
+        data.studentId || '',
+        data.category || '기타',
+        data.title || '',
+        data.content || '',
+        '답변대기'
+      ]);
+      return jsonResponse({ result: 'success' });
+    }
+
     // 제출 수정
     if (type === 'updateSubmission') {
       const sheet = ss.getSheetByName(SHEET_SUBMIT);
