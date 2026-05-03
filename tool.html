@@ -118,19 +118,31 @@
       <p class="text-sm text-slate-500 font-medium">자유롭게 그리고 판서할 수 있는 화이트보드입니다.</p>
     </div>
 
-    <!-- 핀볼게임 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('pinball')">
-      <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="circle-dot" class="w-6 h-6"></i>
-      </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">핀볼 게임</h3>
-      <p class="text-sm text-slate-500 font-medium">수업 쉬는시간에 즐기는 핀볼 미니게임입니다.</p>
-    </div>
+    <!-- 랜덤 발표자 선택 -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('random-pick')">
       <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-4">
         <i data-lucide="user-round-check" class="w-6 h-6"></i>
       </div>
       <h3 class="text-base font-black text-slate-900 mb-1">랜덤 발표자 선택</h3>
       <p class="text-sm text-slate-500 font-medium">무작위로 발표할 학생을 선택합니다.</p>
+    </div>
+
+    <!-- 벽돌깨기 (구 핀볼) -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('brickbreak')">
+      <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="layers" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">벽돌깨기</h3>
+      <p class="text-sm text-slate-500 font-medium">수업 쉬는시간에 즐기는 벽돌깨기 미니게임입니다.</p>
+    </div>
+
+    <!-- 핀볼 (학생 선택 게임) -->
+    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('pinball')">
+      <div class="w-12 h-12 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center mb-4">
+        <i data-lucide="target" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 mb-1">핀볼 학생 선택</h3>
+      <p class="text-sm text-slate-500 font-medium">학생 이름을 입력하고 핀볼로 최종 1명을 선택합니다.</p>
     </div>
 
     <!-- QR 생성기 -->
@@ -363,12 +375,12 @@
         <div class="max-w-lg mx-auto text-center">
           <div class="mb-6">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">학생 이름 목록 (줄바꿈으로 구분)</label>
-            <textarea id="student-list" rows="6" placeholder="예)\n홍길동\n김철수\n이영희" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+            <textarea id="student-list" rows="6" placeholder="홍길동&#10;김철수&#10;이영희&#10;박민준" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-rose-500 resize-none"></textarea>
           </div>
           <button onclick="pickRandom()" class="bg-rose-500 hover:bg-rose-600 text-white font-bold px-8 py-3 rounded-2xl transition-colors flex items-center gap-2 mx-auto">
             <i data-lucide="shuffle" class="w-5 h-5"></i>뽑기!
           </button>
-          <div id="pick-result" class="mt-6 hidden">
+          <div id="pick-result" class="hidden mt-4">
             <div class="bg-gradient-to-br from-rose-50 to-pink-50 border border-rose-100 rounded-2xl p-6">
               <p class="text-xs font-bold text-rose-400 mb-2">선택된 학생</p>
               <p id="picked-name" class="text-4xl font-black text-rose-600"></p>
@@ -475,17 +487,37 @@
             style="touch-action:none;"></canvas>
         </div>`
     },
-    'pinball': {
-      title: '🎮 핀볼 게임',
+    'brickbreak': {
+      title: '🧱 벽돌깨기',
       html: `
         <div class="text-center">
           <div class="flex justify-center gap-6 mb-3 text-sm font-bold text-slate-600">
             <span>점수: <span id="pb-score" class="text-blue-600">0</span></span>
             <span>생명: <span id="pb-lives" class="text-rose-600">3</span> ❤️</span>
           </div>
-          <canvas id="pb-canvas" class="rounded-2xl border-2 border-slate-200 bg-slate-900 block mx-auto" width="480" height="480"
-            style="touch-action:none;"></canvas>
+          <canvas id="pb-canvas" class="rounded-2xl border-2 border-slate-200 bg-slate-900 block mx-auto" width="480" height="480" style="touch-action:none;"></canvas>
           <p class="text-xs text-slate-400 mt-3 font-medium">← → 방향키 또는 마우스로 패들을 조종하세요</p>
+          <button onclick="pbStart()" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors">게임 시작</button>
+        </div>`
+    },
+    'pinball': {
+      title: '🎯 핀볼 학생 선택',
+      html: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">학생 이름 입력 (줄바꿈 구분)</label>
+            <textarea id="pinball-names" rows="9" placeholder="홍길동&#10;김철수&#10;이영희&#10;박민준&#10;최지수&#10;정하늘" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"></textarea>
+            <button onclick="startPinball()" class="mt-3 w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 rounded-2xl transition-colors flex items-center justify-center gap-2">
+              <i data-lucide="play" class="w-5 h-5"></i>핀볼 시작!
+            </button>
+          </div>
+          <div class="flex flex-col items-center">
+            <canvas id="pinball-canvas" class="rounded-2xl border-2 border-violet-200 bg-slate-900 block" width="280" height="360" style="touch-action:none;"></canvas>
+            <div id="pinball-result" class="hidden mt-4 w-full text-center bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-200 rounded-2xl p-5">
+              <p class="text-xs font-black text-violet-400 mb-1">🎯 선택된 학생</p>
+              <p id="pinball-winner" class="text-3xl font-black text-violet-700"></p>
+            </div>
+          </div>
         </div>`
     },
     'notice-send': {
@@ -508,7 +540,8 @@
     lucide.createIcons();
     // 도구별 초기화
     if (id === 'whiteboard') setTimeout(initWhiteboard, 50);
-    if (id === 'pinball') { pbInit(); pbDraw(); setTimeout(pbStart, 100); }
+    if (id === 'brickbreak') { pbInit(); pbDraw(); }
+    if (id === 'pinball') { setTimeout(initPinballCanvas, 50); }
   }
 
   function closeTool() {
@@ -534,6 +567,97 @@
   }
   function pauseTimer() { clearInterval(timerInterval); timerInterval = null; }
   function resetTimer() { pauseTimer(); timerSeconds = 300; updateTimerDisplay(); }
+
+  // ── 핀볼 학생 선택 게임 ───────────────────────────────
+  let pbRaf2 = null;
+
+  function initPinballCanvas() {
+    const c = document.getElementById('pinball-canvas'); if(!c)return;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle='#0f172a'; ctx.fillRect(0,0,280,360);
+    ctx.fillStyle='#475569'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('학생 입력 후 시작!',140,180);
+  }
+
+  function startPinball() {
+    const names=(document.getElementById('pinball-names')?.value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    if(names.length<2){alert('학생을 2명 이상 입력해주세요.');return;}
+    document.getElementById('pinball-result')?.classList.add('hidden');
+    const c=document.getElementById('pinball-canvas'); if(!c)return;
+    const W=280,H=360; c.width=W; c.height=H;
+    const ctx=c.getContext('2d');
+    const COLORS=['#6366f1','#ec4899','#f59e0b','#22c55e','#3b82f6','#ef4444','#8b5cf6','#14b8a6'];
+    const r=20;
+    const balls=names.map((name,i)=>({
+      name, x:30+(i%6)*40+Math.random()*8, y:30+Math.floor(i/6)*45,
+      vx:(Math.random()-.5)*5, vy:(Math.random()+1)*3,
+      r, color:COLORS[i%COLORS.length], alive:true
+    }));
+    // 핀 피라미드
+    const pins=[];
+    for(let row=0;row<5;row++){
+      const cols=row+3; const sx=W/2-(cols-1)*22;
+      for(let col=0;col<cols;col++) pins.push({x:sx+col*44,y:85+row*45,r:5});
+    }
+    // 하단 구멍
+    const holes=names.map((_,i)=>({x:(W/(names.length+1))*(i+1),y:H-18,r:r+2,caught:null}));
+    if(pbRaf2)cancelAnimationFrame(pbRaf2);
+    let winner=null, cd=200;
+
+    function loop(){
+      ctx.fillStyle='#0f172a'; ctx.fillRect(0,0,W,H);
+      cd--;
+      balls.forEach(b=>{
+        if(!b.alive)return;
+        b.x+=b.vx; b.y+=b.vy; b.vy+=0.2;
+        if(b.x-b.r<0){b.x=b.r;b.vx=Math.abs(b.vx);}
+        if(b.x+b.r>W){b.x=W-b.r;b.vx=-Math.abs(b.vx);}
+        if(b.y-b.r<0){b.y=b.r;b.vy=Math.abs(b.vy)*0.8;}
+        pins.forEach(p=>{
+          const dx=b.x-p.x,dy=b.y-p.y,d=Math.sqrt(dx*dx+dy*dy);
+          if(d<b.r+p.r){const nx=dx/d,ny=dy/d,dot=b.vx*nx+b.vy*ny;b.vx-=2*dot*nx;b.vy-=2*dot*ny;b.vx*=.85;b.vy*=.85;b.x=p.x+nx*(b.r+p.r+1);b.y=p.y+ny*(b.r+p.r+1);}
+        });
+        if(cd<0&&!winner){
+          holes.forEach(h=>{
+            if(h.caught)return;
+            const dx=b.x-h.x,dy=b.y-h.y;
+            if(Math.sqrt(dx*dx+dy*dy)<h.r&&b.y>H-55){
+              b.alive=false;h.caught=b.name;
+              const alive=balls.filter(x=>x.alive);
+              if(alive.length===0){const caught=holes.map(x=>x.caught).filter(Boolean);winner=caught[Math.floor(Math.random()*caught.length)];}
+              else if(alive.length===1&&balls.length>1){winner=alive[0].name;alive[0].alive=false;}
+            }
+          });
+        }
+      });
+      // 핀
+      pins.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='#475569';ctx.fill();});
+      // 구멍
+      holes.forEach((h,i)=>{
+        ctx.beginPath();ctx.arc(h.x,h.y,h.r,0,Math.PI*2);
+        ctx.fillStyle=h.caught?'#22c55e22':'#1e293b';ctx.fill();
+        ctx.strokeStyle=h.caught?'#22c55e':'#334155';ctx.lineWidth=2;ctx.stroke();
+      });
+      // 공
+      balls.forEach(b=>{
+        if(!b.alive)return;
+        ctx.beginPath();ctx.arc(b.x+2,b.y+2,b.r,0,Math.PI*2);ctx.fillStyle='rgba(0,0,0,.3)';ctx.fill();
+        ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fillStyle=b.color;ctx.fill();
+        ctx.fillStyle='#fff';ctx.font=`bold ${b.name.length>3?8:10}px sans-serif`;ctx.textAlign='center';
+        ctx.fillText(b.name,b.x,b.y+4);
+      });
+      if(cd>0){const s=Math.ceil(cd/60);ctx.fillStyle='rgba(255,255,255,.12)';ctx.font='bold 56px sans-serif';ctx.textAlign='center';ctx.fillText(s,W/2,H/2+20);}
+      if(winner){
+        document.getElementById('pinball-winner').textContent=winner;
+        document.getElementById('pinball-result')?.classList.remove('hidden');
+        ctx.fillStyle='rgba(109,40,217,.4)';ctx.fillRect(0,0,W,H);
+        ctx.fillStyle='#fff';ctx.font='bold 20px sans-serif';ctx.textAlign='center';ctx.fillText('🎯 '+winner,W/2,H/2);
+        return;
+      }
+      pbRaf2=requestAnimationFrame(loop);
+    }
+    loop();
+  }
 
   // 랜덤 뽑기
   function pickRandom() {
