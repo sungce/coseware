@@ -788,12 +788,14 @@
         <section id="materials" class="fade-in hidden max-w-4xl mx-auto"></section>
 
         <!-- ==================== 공용 iframe 뷰어 ==================== -->
-        <section id="iframe-viewer" class="fade-in hidden max-w-7xl mx-auto w-full pt-4">
-            <iframe id="viewer-frame" src=""
-                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
-                style="min-height: 88vh; height: 88vh;"
-                frameborder="0">
-            </iframe>
+        <section id="iframe-viewer" class="fade-in hidden w-full" style="margin-left:calc(50% - 50vw);width:100vw;max-width:100vw;">
+            <div class="max-w-7xl mx-auto px-6 pt-4">
+                <iframe id="viewer-frame" src=""
+                    class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
+                    style="height:calc(100vh - 80px);"
+                    frameborder="0">
+                </iframe>
+            </div>
         </section>
 
         <!-- ==================== AI-ON 학습 자료실 (iframe) ==================== -->
