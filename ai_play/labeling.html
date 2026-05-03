@@ -1,1 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 라벨링 — Sungce AI-ON</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Pretendard',sans-serif;background:#f0fdf4;color:#1e293b;min-height:100vh;}
+  nav{background:white;border-bottom:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  .nav-link{font-size:13px;font-weight:700;color:#64748b;white-space:nowrap;transition:color .15s;}
+  .nav-link:hover,.nav-link.active{color:#16a34a;}
+  .nav-link.active{border-bottom:2px solid #16a34a;padding-bottom:2px;}
+  .card{background:white;border-radius:1.5rem;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+  .label-btn{padding:8px 20px;border-radius:.875rem;font-size:13px;font-weight:800;cursor:pointer;border:2px solid transparent;transition:all .12s;outline:none;}
+  .badge-count{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+  .data-item{border:2px solid #e2e8f0;border-radius:1rem;padding:1.25rem;transition:border-color .15s;}
+  .data-item:hover{border-color:#86efac;}
+  .progress-bar{background:#e2e8f0;border-radius:999px;height:8px;overflow:hidden;}
+  .progress-fill{background:linear-gradient(90deg,#22c55e,#16a34a);height:8px;border-radius:999px;transition:width .3s;}
+</style>
+</head>
+<body>
+<nav class="sticky top-0 z-50 w-full">
+  <div class="max-w-7xl mx-auto px-4 md:px-6 flex justify-between items-center h-14">
+    <a href="../index.html" class="flex items-center gap-2.5 shrink-0">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-xs font-black text-white">AI</div>
+      <div>
+        <div class="text-[15px] font-black text-slate-900 leading-tight">Sungce <span class="text-emerald-600">AI-ON</span></div>
+        <div class="text-[11px] text-slate-400 leading-tight">정보 교과 클래스룸</div>
+      </div>
+    </a>
+    <div class="hidden md:flex items-center gap-6">
+      <a href="ai_ex.html" class="nav-link">AI 체험관</a>
+      <a href="prompt.html" class="nav-link">프롬프트 엔지니어</a>
+      <span class="nav-link active">데이터 라벨링</span>
+    </div>
+    <a href="../index.html" class="nav-link flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shrink-0">
+      <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
+    </a>
+  </div>
+</nav>
 
+<main class="max-w-7xl mx-auto px-4 md:px-6 pt-10 pb-16">
+  <div class="mb-10">
+    <div class="inline-flex items-center gap-2 text-xs font-black px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 mb-4">
+      <i data-lucide="tag" class="w-3 h-3"></i>AI 탐험
+    </div>
+    <h1 class="text-5xl font-black text-slate-900 mb-3">데이터 라벨링 <span class="text-emerald-500">🏷️</span></h1>
+    <p class="text-lg text-slate-500 font-medium">AI 학습에 필요한 데이터에 직접 라벨을 붙여보세요.</p>
+  </div>
+
+  <!-- 개념 설명 -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div class="card p-5">
+      <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-3"><i data-lucide="database" class="w-5 h-5"></i></div>
+      <h3 class="font-black text-slate-900 mb-1 text-sm">데이터 수집</h3>
+      <p class="text-xs text-slate-500 leading-relaxed">AI 학습을 위해 원시 데이터(텍스트, 이미지 등)를 모읍니다.</p>
+    </div>
+    <div class="card p-5 border-emerald-200 bg-emerald-50">
+      <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-3"><i data-lucide="tag" class="w-5 h-5"></i></div>
+      <h3 class="font-black text-emerald-900 mb-1 text-sm">라벨링 ← 지금 여기!</h3>
+      <p class="text-xs text-emerald-700 leading-relaxed">데이터에 정답 태그(라벨)를 붙여 AI가 학습할 수 있게 만듭니다.</p>
+    </div>
+    <div class="card p-5">
+      <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-3"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+      <h3 class="font-black text-slate-900 mb-1 text-sm">AI 학습</h3>
+      <p class="text-xs text-slate-500 leading-relaxed">라벨이 붙은 데이터로 AI 모델이 패턴을 학습합니다.</p>
+    </div>
+  </div>
+
+  <!-- 실습 영역 -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- 실습 패널 -->
+    <div class="lg:col-span-2 card p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-3">
+          <h2 class="font-black text-slate-900 text-base">감정 라벨링 실습</h2>
+          <div class="flex items-center gap-2">
+            <div class="progress-bar w-32"><div class="progress-fill" id="progress-bar" style="width:0%"></div></div>
+            <span id="progress-text" class="text-xs font-bold text-slate-500">0/10</span>
+          </div>
+        </div>
+        <button onclick="resetLabeling()" class="text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center gap-1 px-3 py-1.5 rounded-xl hover:bg-slate-50 transition-colors">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>초기화
+        </button>
+      </div>
+
+      <div id="current-item" class="data-item mb-5">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">문장 <span id="item-number">1</span>/10</p>
+        <p id="item-text" class="text-base font-bold text-slate-800 leading-relaxed"></p>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mb-5" id="label-buttons">
+        <button onclick="label('긍정')" class="label-btn bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-200 hover:border-emerald-400">😊 긍정</button>
+        <button onclick="label('부정')" class="label-btn bg-rose-100 text-rose-700 border-rose-200 hover:bg-rose-200 hover:border-rose-400">😞 부정</button>
+        <button onclick="label('중립')" class="label-btn bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 hover:border-slate-400">😐 중립</button>
+        <button onclick="label('건너뛰기')" class="label-btn bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-200 hover:border-amber-400">⏭️ 건너뛰기</button>
+      </div>
+
+      <div id="complete-msg" class="hidden text-center py-8">
+        <p class="text-4xl mb-3">🎉</p>
+        <p class="font-black text-slate-900 text-lg mb-1">라벨링 완료!</p>
+        <p class="text-slate-500 text-sm mb-4">총 <span id="labeled-count" class="font-black text-emerald-600"></span>개 데이터에 라벨을 붙였습니다.</p>
+        <button onclick="showResult()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-6 py-3 rounded-2xl text-sm transition-colors">결과 보기</button>
+      </div>
+    </div>
+
+    <!-- 결과 패널 -->
+    <div class="card p-6">
+      <h2 class="font-black text-slate-900 text-base mb-4 flex items-center gap-2">
+        <i data-lucide="bar-chart-2" class="w-5 h-5 text-emerald-500"></i>라벨링 현황
+      </h2>
+      <div class="space-y-3" id="label-stats">
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-bold text-slate-600">😊 긍정</span>
+          <div class="flex items-center gap-2">
+            <div class="w-20 progress-bar"><div id="stat-pos" class="progress-fill" style="width:0%;background:linear-gradient(90deg,#22c55e,#16a34a)"></div></div>
+            <span id="count-pos" class="badge-count bg-emerald-100 text-emerald-700">0</span>
+          </div>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-bold text-slate-600">😞 부정</span>
+          <div class="flex items-center gap-2">
+            <div class="w-20 progress-bar"><div id="stat-neg" class="progress-fill" style="width:0%;background:linear-gradient(90deg,#f43f5e,#e11d48)"></div></div>
+            <span id="count-neg" class="badge-count bg-rose-100 text-rose-700">0</span>
+          </div>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-bold text-slate-600">😐 중립</span>
+          <div class="flex items-center gap-2">
+            <div class="w-20 progress-bar"><div id="stat-neu" class="progress-fill" style="width:0%;background:linear-gradient(90deg,#94a3b8,#64748b)"></div></div>
+            <span id="count-neu" class="badge-count bg-slate-100 text-slate-600">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+        <p class="text-xs font-black text-emerald-700 mb-1">💡 알고 계셨나요?</p>
+        <p class="text-xs text-emerald-600 leading-relaxed">실제 AI 학습에는 수천~수백만 개의 라벨링된 데이터가 필요합니다. 이 작업을 하는 사람을 <strong>데이터 라벨러</strong>라고 합니다!</p>
+      </div>
+
+      <div id="result-list" class="mt-4 max-h-48 overflow-y-auto space-y-1.5"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+  lucide.createIcons();
+  const sentences = [
+    "오늘 수학 시험을 망쳐서 너무 속상해요.",
+    "어제 친구들과 보드게임을 했는데 정말 재미있었어요!",
+    "오늘 점심은 김치찌개였어요.",
+    "선생님이 칭찬해 주셔서 기분이 좋았어요.",
+    "버스를 놓쳐서 학교에 지각했어요.",
+    "내일 소풍이 있어서 설레어요.",
+    "도서관에서 책 두 권을 빌렸어요.",
+    "친구가 내 이야기를 들어주지 않아서 서운했어요.",
+    "오늘 날씨가 맑고 화창해요.",
+    "발표 준비를 열심히 했는데 잘 할 수 있을지 걱정돼요."
+  ];
+  let current = 0, labels = [], counts = {긍정:0, 부정:0, 중립:0, 건너뛰기:0};
+
+  function showItem() {
+    if (current >= sentences.length) { finish(); return; }
+    document.getElementById('item-text').textContent = sentences[current];
+    document.getElementById('item-number').textContent = current+1;
+    const pct = (current/sentences.length)*100;
+    document.getElementById('progress-bar').style.width = pct+'%';
+    document.getElementById('progress-text').textContent = `${current}/${sentences.length}`;
+  }
+
+  function label(l) {
+    labels.push({text:sentences[current], label:l});
+    counts[l]++;
+    updateStats();
+    addResultItem(sentences[current], l);
+    current++;
+    showItem();
+  }
+
+  function updateStats() {
+    const total = labels.length || 1;
+    ['긍정','부정','중립'].forEach((k,i) => {
+      const ids = ['pos','neg','neu'];
+      document.getElementById('stat-'+ids[i]).style.width = (counts[k]/total*100)+'%';
+      document.getElementById('count-'+ids[i]).textContent = counts[k];
+    });
+  }
+
+  function addResultItem(text, lbl) {
+    const colors = {긍정:'bg-emerald-100 text-emerald-700', 부정:'bg-rose-100 text-rose-700', 중립:'bg-slate-100 text-slate-600', 건너뛰기:'bg-amber-100 text-amber-700'};
+    const el = document.createElement('div');
+    el.className = 'flex items-start gap-2 text-xs';
+    el.innerHTML = `<span class="font-black px-2 py-0.5 rounded-lg shrink-0 ${colors[lbl]}">${lbl}</span><span class="text-slate-500 leading-relaxed">${text.slice(0,20)}...</span>`;
+    document.getElementById('result-list').prepend(el);
+  }
+
+  function finish() {
+    document.getElementById('current-item').classList.add('hidden');
+    document.getElementById('label-buttons').classList.add('hidden');
+    document.getElementById('complete-msg').classList.remove('hidden');
+    document.getElementById('labeled-count').textContent = labels.filter(l=>l.label!=='건너뛰기').length;
+    document.getElementById('progress-bar').style.width='100%';
+    document.getElementById('progress-text').textContent='10/10';
+  }
+
+  function resetLabeling() {
+    current=0; labels=[]; counts={긍정:0,부정:0,중립:0,건너뛰기:0};
+    document.getElementById('current-item').classList.remove('hidden');
+    document.getElementById('label-buttons').classList.remove('hidden');
+    document.getElementById('complete-msg').classList.add('hidden');
+    document.getElementById('result-list').innerHTML='';
+    updateStats(); showItem();
+  }
+
+  function showResult() { alert(`🎉 라벨링 결과\n긍정: ${counts['긍정']}개\n부정: ${counts['부정']}개\n중립: ${counts['중립']}개\n건너뛰기: ${counts['건너뛰기']}개`); }
+
+  if (window.self !== window.top) {
+    document.querySelector('nav').style.display='none';
+    document.querySelector('main').style.paddingTop='2rem';
+  }
+
+  showItem();
+</script>
+</body>
+</html>

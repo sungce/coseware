@@ -1,1 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>프롬프트 엔지니어 — Sungce AI-ON</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Pretendard:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Pretendard',sans-serif;background:#0d1117;color:#e6edf3;min-height:100vh;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  nav{background:#161b22;border-bottom:1px solid #30363d;}
+  .nav-link{font-size:13px;font-weight:700;color:#7d8590;white-space:nowrap;transition:color .15s;}
+  .nav-link:hover,.nav-link.active{color:#58a6ff;}
+  .nav-link.active{border-bottom:2px solid #1f6feb;padding-bottom:2px;}
+  .card{background:#161b22;border:1px solid #30363d;border-radius:1rem;}
+  .badge-pill{font-size:10px;font-weight:800;padding:2px 10px;border-radius:999px;border:1px solid;}
+  textarea,select{background:#0d1117;border:1px solid #30363d;border-radius:.75rem;color:#e6edf3;font-family:inherit;resize:none;width:100%;outline:none;}
+  textarea:focus,select:focus{border-color:#1f6feb;box-shadow:0 0 0 3px rgba(31,111,235,.15);}
+  .tag{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+  .prompt-block{background:#0d1117;border:1px solid #30363d;border-radius:.75rem;padding:1rem;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8b949e;line-height:1.6;}
+  .prompt-block span.keyword{color:#79c0ff;}
+  .prompt-block span.value{color:#a5d6ff;}
+  .prompt-block span.comment{color:#3d444d;}
+  .result-box{background:#0d1117;border:1px solid #30363d;border-radius:.75rem;padding:1rem;font-size:13px;color:#e6edf3;line-height:1.7;min-height:80px;white-space:pre-wrap;}
+  .level-btn{padding:6px 14px;border-radius:.75rem;font-size:12px;font-weight:700;border:1px solid #30363d;background:transparent;color:#7d8590;cursor:pointer;transition:all .15s;}
+  .level-btn.active{background:#1f6feb22;border-color:#1f6feb;color:#58a6ff;}
+</style>
+</head>
+<body>
+<nav class="sticky top-0 z-50 w-full">
+  <div class="max-w-7xl mx-auto px-4 md:px-6 flex justify-between items-center h-14">
+    <a href="../index.html" class="flex items-center gap-2.5 shrink-0">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-xs font-black text-white">AI</div>
+      <div>
+        <div class="text-[15px] font-black leading-tight">Sungce <span class="text-pink-400">AI-ON</span></div>
+        <div class="text-[11px] text-slate-600 leading-tight">정보 교과 클래스룸</div>
+      </div>
+    </a>
+    <div class="hidden md:flex items-center gap-6">
+      <a href="ai_ex.html" class="nav-link">AI 체험관</a>
+      <span class="nav-link active">프롬프트 엔지니어</span>
+      <a href="labeling.html" class="nav-link">데이터 라벨링</a>
+    </div>
+    <a href="../index.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-700 shrink-0">
+      <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
+    </a>
+  </div>
+</nav>
 
+<main class="max-w-7xl mx-auto px-4 md:px-6 pt-10 pb-16">
+  <div class="mb-10">
+    <div class="inline-flex items-center gap-2 badge-pill bg-pink-500/10 text-pink-400 border-pink-500/30 mb-4">
+      <i data-lucide="message-square" class="w-3 h-3"></i>AI 탐험
+    </div>
+    <h1 class="text-5xl font-black mb-3">프롬프트 <span class="text-pink-400">엔지니어</span> ✍️</h1>
+    <p class="text-lg text-slate-400 font-medium">AI와 대화하는 방법을 배우고 직접 프롬프트를 작성해보세요.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+    <!-- 프롬프트 이론 -->
+    <div class="card p-6">
+      <h2 class="text-base font-black text-white mb-4 flex items-center gap-2">
+        <i data-lucide="book-open" class="w-5 h-5 text-pink-400"></i>프롬프트 작성 원칙
+      </h2>
+      <div class="space-y-3">
+        <div class="flex gap-3 items-start p-3 rounded-xl bg-white/3 border border-white/5">
+          <span class="text-pink-400 font-black text-sm mt-0.5 shrink-0">①</span>
+          <div><p class="text-sm font-bold text-white mb-0.5">명확한 역할 부여</p><p class="text-xs text-slate-500">예) "당신은 중학교 정보 선생님입니다"</p></div>
+        </div>
+        <div class="flex gap-3 items-start p-3 rounded-xl bg-white/3 border border-white/5">
+          <span class="text-pink-400 font-black text-sm mt-0.5 shrink-0">②</span>
+          <div><p class="text-sm font-bold text-white mb-0.5">구체적 지시</p><p class="text-xs text-slate-500">예) "3가지 예시를 들어 설명해주세요"</p></div>
+        </div>
+        <div class="flex gap-3 items-start p-3 rounded-xl bg-white/3 border border-white/5">
+          <span class="text-pink-400 font-black text-sm mt-0.5 shrink-0">③</span>
+          <div><p class="text-sm font-bold text-white mb-0.5">출력 형식 지정</p><p class="text-xs text-slate-500">예) "표 형태로 정리해주세요"</p></div>
+        </div>
+        <div class="flex gap-3 items-start p-3 rounded-xl bg-white/3 border border-white/5">
+          <span class="text-pink-400 font-black text-sm mt-0.5 shrink-0">④</span>
+          <div><p class="text-sm font-bold text-white mb-0.5">맥락 제공</p><p class="text-xs text-slate-500">예) "중학교 1학년 수준에 맞게"</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 프롬프트 템플릿 -->
+    <div class="card p-6">
+      <h2 class="text-base font-black text-white mb-4 flex items-center gap-2">
+        <i data-lucide="layout-template" class="w-5 h-5 text-pink-400"></i>프롬프트 구조 분석
+      </h2>
+      <div class="prompt-block mb-4">
+<span class="comment"># 역할(Role)</span>
+<span class="keyword">당신은</span> <span class="value">[전문가 역할]</span>입니다.
+
+<span class="comment"># 맥락(Context)</span>
+<span class="keyword">대상은</span> <span class="value">[대상 정보]</span>이고,
+<span class="keyword">목적은</span> <span class="value">[원하는 결과]</span>입니다.
+
+<span class="comment"># 지시(Instruction)</span>
+<span class="value">[구체적 요청]</span>을 <span class="value">[형식]</span>으로
+<span class="keyword">작성해주세요.</span>
+      </div>
+      <p class="text-xs text-slate-600 font-medium">이 구조를 따르면 AI가 더 정확한 답변을 제공합니다.</p>
+    </div>
+  </div>
+
+  <!-- 프롬프트 실습 -->
+  <div class="card p-6 mb-8">
+    <h2 class="text-base font-black text-white mb-2 flex items-center gap-2">
+      <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>직접 프롬프트 작성하기
+    </h2>
+    <p class="text-xs text-slate-500 font-medium mb-4">아래 요소를 채워 나만의 프롬프트를 완성해보세요</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+      <div>
+        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1.5">역할</label>
+        <input type="text" id="role-input" placeholder="예) 정보 선생님" class="p-2.5 text-sm">
+      </div>
+      <div>
+        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1.5">대상/맥락</label>
+        <input type="text" id="context-input" placeholder="예) 중학교 1학년 학생" class="p-2.5 text-sm">
+      </div>
+      <div>
+        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1.5">출력 형식</label>
+        <input type="text" id="format-input" placeholder="예) 3가지 예시와 함께 설명" class="p-2.5 text-sm">
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1.5">핵심 요청</label>
+      <textarea id="task-input" rows="3" placeholder="AI에게 원하는 내용을 입력하세요..." class="p-2.5 text-sm"></textarea>
+    </div>
+    <div class="flex gap-3 flex-wrap items-center mb-4">
+      <span class="text-xs font-bold text-slate-500">난이도:</span>
+      <button onclick="setLevel('쉽게')" class="level-btn active" id="level-easy">쉬운 설명</button>
+      <button onclick="setLevel('보통으로')" class="level-btn" id="level-mid">보통</button>
+      <button onclick="setLevel('전문적으로')" class="level-btn" id="level-hard">전문적으로</button>
+    </div>
+    <div class="flex gap-3">
+      <button onclick="buildPrompt()" class="bg-pink-600 hover:bg-pink-700 text-white font-black px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 transition-colors">
+        <i data-lucide="wand-2" class="w-4 h-4"></i>프롬프트 생성
+      </button>
+      <button onclick="sendPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 transition-colors">
+        <i data-lucide="send" class="w-4 h-4"></i>AI에게 보내기
+      </button>
+    </div>
+    <div id="built-prompt" class="hidden mt-4 prompt-block"></div>
+  </div>
+
+  <!-- AI 응답 -->
+  <div class="card p-6">
+    <h2 class="text-base font-black text-white mb-4 flex items-center gap-2">
+      <i data-lucide="bot" class="w-5 h-5 text-pink-400"></i>AI 응답
+    </h2>
+    <div id="ai-response" class="result-box text-slate-500">프롬프트를 작성하고 "AI에게 보내기" 버튼을 눌러보세요.</div>
+  </div>
+</main>
+
+<script>
+  lucide.createIcons();
+  let currentLevel = '쉽게';
+
+  function setLevel(l) {
+    currentLevel = l;
+    ['easy','mid','hard'].forEach(k => document.getElementById('level-'+k)?.classList.remove('active'));
+    const map = {'쉽게':'easy','보통으로':'mid','전문적으로':'hard'};
+    document.getElementById('level-'+map[l])?.classList.add('active');
+  }
+
+  function buildPrompt() {
+    const role = document.getElementById('role-input').value.trim();
+    const ctx  = document.getElementById('context-input').value.trim();
+    const fmt  = document.getElementById('format-input').value.trim();
+    const task = document.getElementById('task-input').value.trim();
+    if (!task) { alert('핵심 요청을 입력해주세요.'); return; }
+    let prompt = '';
+    if (role) prompt += `당신은 ${role}입니다.\n`;
+    if (ctx)  prompt += `대상은 ${ctx}입니다.\n`;
+    prompt += `\n${task}`;
+    if (fmt)  prompt += `\n\n${fmt} 형식으로 작성해주세요.`;
+    prompt += `\n${currentLevel} 설명해주세요.`;
+    const el = document.getElementById('built-prompt');
+    el.textContent = prompt; el.classList.remove('hidden');
+    lucide.createIcons();
+    return prompt;
+  }
+
+  async function sendPrompt() {
+    const prompt = buildPrompt();
+    if (!prompt) return;
+    const el = document.getElementById('ai-response');
+    el.textContent = '🤔 AI가 답변을 생성 중입니다...'; el.className = 'result-box text-slate-400';
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})
+      });
+      const d = await res.json();
+      el.textContent = d.content?.map(c=>c.text||'').join('') || '응답 오류';
+      el.className = 'result-box text-slate-200';
+    } catch(e) { el.textContent = '오류가 발생했습니다: '+e.message; }
+  }
+
+  if (window.self !== window.top) {
+    document.querySelector('nav').style.display='none';
+    document.querySelector('main').style.paddingTop='2rem';
+  }
+</script>
+</body>
+</html>
