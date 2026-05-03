@@ -20,29 +20,42 @@
   .channel-btn.active { background:#e0e7ff; color:#4338ca; font-weight:700; }
   .channel-btn { width:100%; display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:10px; font-size:13px; font-weight:500; color:#475569; transition:all .15s; cursor:pointer; border:none; background:transparent; outline:none; }
   .channel-btn:hover { background:#f1f5f9; }
-  #chat-input { resize:none; overflow:hidden; min-height:40px; max-height:120px; }
+  #chat-input { resize:none; overflow:hidden; min-height:36px; max-height:120px; }
   .avatar { width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0; }
 </style>
 </head>
 <body class="h-screen flex flex-col">
 
-<!-- 네비 -->
-<nav class="shrink-0 w-full z-50 bg-white border-b border-slate-200">
-  <div class="max-w-[1400px] mx-auto px-4 md:px-6 flex justify-between items-center h-14">
-    <a href="index.html" class="flex items-center space-x-2 outline-none">
-      <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
-      <div>
-        <div class="text-[14px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
-        <div class="text-[11px] text-slate-500 leading-tight">정보 교과 클래스룸</div>
+<!-- ══ 네비게이션 2줄 ══════════════════════════════════════ -->
+<nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
+  <div class="max-w-[1400px] mx-auto px-4 md:px-6">
+    <!-- 1행 -->
+    <div class="flex justify-between items-center h-14 border-b border-slate-100">
+      <a href="index.html" class="flex items-center space-x-2 shrink-0 outline-none focus:outline-none">
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
+        <div>
+          <div class="text-[15px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
+          <div class="text-[12px] font-medium text-slate-500 leading-tight">정보 교과 클래스룸</div>
+        </div>
+      </a>
+      <div class="flex items-center gap-3">
+        <div id="nav-user" class="hidden items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
+          <div id="nav-avatar" class="avatar w-6 h-6 rounded-lg text-[10px]"></div>
+          <span id="nav-name" class="text-sm font-bold text-slate-700"></span>
+        </div>
+        <a href="index.html" class="flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl transition-colors outline-none">
+          <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
+        </a>
       </div>
-    </a>
-    <div class="flex items-center gap-3">
-      <div id="nav-user" class="hidden items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
-        <div id="nav-avatar" class="avatar w-6 h-6 rounded-lg text-[10px]"></div>
-        <span id="nav-name" class="text-sm font-bold text-slate-700"></span>
-      </div>
-      <a href="index.html" class="flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl transition-colors outline-none">
-        <i data-lucide="home" class="w-4 h-4"></i><span>메인으로</span>
+    </div>
+    <!-- 2행 -->
+    <div class="hidden md:flex items-center justify-end h-11 space-x-7 text-[13px] font-bold text-slate-600">
+      <a href="curriculum/index.html" target="_blank" class="hover:text-blue-600 transition-colors">교과 수업</a>
+      <a href="code_play.html" target="_blank" class="hover:text-blue-600 transition-colors">코드 놀이터</a>
+      <a href="data_play.html" target="_blank" class="hover:text-blue-600 transition-colors">데이터 실습실</a>
+      <span class="text-blue-600 border-b-2 border-blue-600 pb-1">Vibe Room</span>
+      <a href="question.html" target="_blank" class="hover:text-blue-600 transition-colors flex items-center gap-1">
+        질문있어요<span class="text-[10px] bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-full font-black ml-1">NEW</span>
       </a>
     </div>
   </div>
@@ -61,98 +74,80 @@
 </div>
 
 <!-- 메인 채팅 레이아웃 -->
-<main id="chat-app" class="hidden flex-1 overflow-hidden max-w-[1400px] w-full mx-auto bg-white md:border-x md:border-slate-200">
+<main id="chat-app" class="hidden flex-1 overflow-hidden w-full max-w-[1400px] mx-auto bg-white md:border-x md:border-slate-200">
   <div class="flex h-full">
 
     <!-- 사이드바 -->
-    <aside class="w-60 bg-slate-50 border-r border-slate-200 flex-col hidden md:flex shrink-0 h-full">
+    <aside class="w-56 bg-slate-50 border-r border-slate-200 flex-col hidden md:flex shrink-0 h-full">
       <div class="p-4 border-b border-slate-200">
-        <h2 class="text-base font-black text-slate-800 flex items-center gap-2">
-          <i data-lucide="message-circle" class="w-5 h-5 text-indigo-500"></i>Vibe Room
+        <h2 class="text-sm font-black text-slate-800 flex items-center gap-2">
+          <i data-lucide="message-circle" class="w-4 h-4 text-indigo-500"></i>Vibe Room
         </h2>
         <p class="text-xs text-slate-400 mt-0.5">실시간 학급 채팅방</p>
       </div>
-
-      <!-- 채널 목록 -->
       <div class="flex-1 overflow-y-auto p-3 space-y-4">
         <div>
           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2">채널</p>
           <div id="channel-list" class="space-y-0.5">
-            <button class="channel-btn active" onclick="switchRoom('general','# 자유 수다방')">
-              <i data-lucide="hash" class="w-3.5 h-3.5"></i>자유 수다방
-            </button>
-            <button class="channel-btn" onclick="switchRoom('qna','# 질문 및 답변')">
-              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>질문 및 답변
-            </button>
-            <button class="channel-btn" onclick="switchRoom('unit1','# 단원1 컴퓨팅')">
-              <i data-lucide="cpu" class="w-3.5 h-3.5"></i>단원1 컴퓨팅
-            </button>
-            <button class="channel-btn" onclick="switchRoom('unit2','# 단원2 데이터')">
-              <i data-lucide="database" class="w-3.5 h-3.5"></i>단원2 데이터
-            </button>
-            <button class="channel-btn" onclick="switchRoom('unit3','# 단원3 알고리즘')">
-              <i data-lucide="code-2" class="w-3.5 h-3.5"></i>단원3 알고리즘
-            </button>
+            <button class="channel-btn active" data-room="general" onclick="switchRoom('general','자유 수다방',this)"><i data-lucide="hash" class="w-3.5 h-3.5"></i>자유 수다방</button>
+            <button class="channel-btn" data-room="qna" onclick="switchRoom('qna','질문 및 답변',this)"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i>질문 및 답변</button>
+            <button class="channel-btn" data-room="unit1" onclick="switchRoom('unit1','단원1 컴퓨팅',this)"><i data-lucide="cpu" class="w-3.5 h-3.5"></i>단원1 컴퓨팅</button>
+            <button class="channel-btn" data-room="unit2" onclick="switchRoom('unit2','단원2 데이터',this)"><i data-lucide="database" class="w-3.5 h-3.5"></i>단원2 데이터</button>
+            <button class="channel-btn" data-room="unit3" onclick="switchRoom('unit3','단원3 알고리즘',this)"><i data-lucide="code-2" class="w-3.5 h-3.5"></i>단원3 알고리즘</button>
           </div>
         </div>
-
-        <!-- 접속자 -->
         <div>
           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2 flex justify-between">
-            <span>접속 중</span>
-            <span id="online-count" class="bg-emerald-100 text-emerald-600 px-1.5 rounded-full text-[10px]">0</span>
+            <span>접속 중</span><span id="online-count" class="bg-emerald-100 text-emerald-600 px-1.5 rounded-full text-[10px] font-black">0</span>
           </p>
           <div id="online-list" class="space-y-1"></div>
         </div>
       </div>
-
-      <!-- 내 정보 -->
       <div class="p-3 border-t border-slate-200 bg-white">
         <div class="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2">
           <div id="my-avatar" class="avatar w-7 h-7 rounded-lg text-[10px]"></div>
           <div class="flex-1 min-w-0">
             <p id="my-name" class="text-xs font-bold text-slate-800 truncate"></p>
-            <p class="text-[10px] text-emerald-500 font-bold flex items-center gap-1">
-              <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span>온라인
-            </p>
+            <p class="text-[10px] text-emerald-500 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span>온라인</p>
           </div>
         </div>
       </div>
     </aside>
 
     <!-- 채팅 영역 -->
-    <section class="flex-1 flex flex-col h-full bg-slate-50/50">
-      <!-- 채팅방 헤더 -->
-      <header class="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-5 shrink-0">
+    <section class="flex-1 flex flex-col h-full min-w-0">
+      <header class="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0">
         <div class="flex items-center gap-2">
           <i data-lucide="hash" class="w-4 h-4 text-slate-400"></i>
           <h2 id="room-title" class="text-sm font-black text-slate-800">자유 수다방</h2>
+          <span id="room-count" class="text-xs text-slate-400 font-medium ml-2"></span>
         </div>
-        <div class="flex items-center gap-3">
-          <span id="room-count" class="text-xs text-slate-400 font-medium"></span>
-          <button onclick="clearMyMessages()" class="text-xs text-slate-400 hover:text-rose-500 font-bold transition-colors outline-none">내 메시지 삭제</button>
-        </div>
+        <button onclick="clearMyMessages()" class="text-xs text-slate-400 hover:text-rose-500 font-bold transition-colors outline-none flex items-center gap-1">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>내 메시지 삭제
+        </button>
       </header>
 
-      <!-- 메시지 목록 -->
-      <div id="chat-messages" class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-        <div id="msgs-loading" class="flex justify-center py-8">
-          <div class="text-sm text-slate-400 font-medium">메시지 불러오는 중...</div>
+      <!-- 메시지 목록 (핵심: flex-1 으로 남은 공간 모두 사용) -->
+      <div id="chat-messages" class="flex-1 overflow-y-auto px-8 py-6 space-y-5 bg-slate-50/40">
+        <div id="msgs-loading" class="flex justify-center py-16">
+          <p class="text-sm text-slate-400 font-medium">메시지 불러오는 중...</p>
         </div>
       </div>
 
       <!-- 입력창 -->
-      <div class="shrink-0 bg-white border-t border-slate-200 px-4 py-3">
-        <div class="flex items-end gap-3 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 focus-within:border-indigo-300 focus-within:bg-white transition-all">
+      <div class="shrink-0 bg-white border-t border-slate-200 px-6 py-4">
+        <div class="flex items-end gap-3 bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 focus-within:border-indigo-300 focus-within:bg-white focus-within:shadow-sm transition-all">
+          <div id="input-avatar" class="avatar w-8 h-8 rounded-xl text-[11px] shrink-0 mb-0.5"></div>
           <textarea id="chat-input"
-            class="flex-1 bg-transparent text-sm text-slate-800 placeholder-slate-400 outline-none font-medium"
-            placeholder="메시지를 입력하세요... (Enter: 전송, Shift+Enter: 줄바꿈)"
+            class="flex-1 bg-transparent text-sm text-slate-800 placeholder-slate-400 outline-none font-medium leading-relaxed"
+            placeholder="메시지를 입력하세요… (Enter: 전송 / Shift+Enter: 줄바꿈)"
             rows="1"></textarea>
           <button onclick="sendMessage()" id="send-btn"
-            class="w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl flex items-center justify-center transition-colors shrink-0 outline-none">
+            class="w-9 h-9 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl flex items-center justify-center transition-all shrink-0 outline-none mb-0.5">
             <i data-lucide="send" class="w-4 h-4"></i>
           </button>
         </div>
+        <p class="text-[11px] text-slate-400 font-medium mt-2 pl-1">Enter로 전송 · Shift+Enter로 줄바꿈</p>
       </div>
     </section>
 
@@ -211,7 +206,9 @@
 
     document.getElementById('my-avatar').className   = `avatar w-7 h-7 rounded-lg text-[10px] ${bg} ${tc}`;
     document.getElementById('my-avatar').textContent  = userName.charAt(0);
-    document.getElementById('my-name').textContent    = userName;
+    document.getElementById('my-name').textContent = userName;
+    const ia = document.getElementById('input-avatar');
+    if(ia){ia.className=`avatar w-8 h-8 rounded-xl text-[11px] shrink-0 mb-0.5 ${bg} ${tc}`;ia.textContent=userName.charAt(0);}
 
     document.getElementById('chat-app').classList.replace('hidden','flex');
     lucide.createIcons();
@@ -268,13 +265,13 @@
   }
 
   // ── 채팅방 전환 ───────────────────────────────────────
-  function switchRoom(room, title) {
+  function switchRoom(room, title, btn) {
     currentRoom = room;
     document.getElementById('room-title').textContent = title.replace('# ','');
 
     // 채널 버튼 활성화
     document.querySelectorAll('.channel-btn').forEach(b => b.classList.remove('active'));
-    event && event.currentTarget && event.currentTarget.classList.add('active');
+    if (btn) btn.classList.add('active');
 
     updatePresenceRoom(room);
     listenMessages(room);
