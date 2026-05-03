@@ -1232,7 +1232,7 @@
         }
 
         // ==================== Data Rendering ====================
-        const NOTICE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCyznG-WST1S7hIoMFXIVzQv3Qmub1nSdr43tDiaQVTEp2W9vdnUpqgmjSb1o-X5er/exec';
+        const NOTICE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywcUQg705jicQUv-i7RiqAm5-FoogN3d2efXLrg9xGAkfP_OQw6jW3XnrGlsBSa-LN/exec';
         let noticesLoaded = false;
 
         function loadNotices() {
@@ -1414,7 +1414,7 @@
             (function loadHomeNoticePreview() {
                 const preview = document.getElementById('home-notice-preview');
                 if (!preview) return;
-                const NOTICE_URL = 'https://script.google.com/macros/s/AKfycbwCyznG-WST1S7hIoMFXIVzQv3Qmub1nSdr43tDiaQVTEp2W9vdnUpqgmjSb1o-X5er/exec';
+                const NOTICE_URL = 'https://script.google.com/macros/s/AKfycbywcUQg705jicQUv-i7RiqAm5-FoogN3d2efXLrg9xGAkfP_OQw6jW3XnrGlsBSa-LN/exec';
                 const old = document.getElementById('jsonp-home-notice'); if (old) old.remove();
                 window.__homeNoticeCb = function(data) {
                     const notices = (data && data.notices) || [];
@@ -1447,7 +1447,7 @@
         });
 
         // ==================== 수행평가 폼 제출 ====================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCyznG-WST1S7hIoMFXIVzQv3Qmub1nSdr43tDiaQVTEp2W9vdnUpqgmjSb1o-X5er/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywcUQg705jicQUv-i7RiqAm5-FoogN3d2efXLrg9xGAkfP_OQw6jW3XnrGlsBSa-LN/exec';
 
         async function handleAssignmentSubmit(event) {
             event.preventDefault();
