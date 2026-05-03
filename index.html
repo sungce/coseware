@@ -568,28 +568,27 @@
             <iframe
                 src="curriculum/index.html"
                 id="curriculum-frame"
-                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
-                style="min-height: 80vh; height: 80vh; overflow: auto;"
+                class="w-full bg-transparent block"
                 frameborder="0"
-                onload="sendUserNameToFrame(); setTimeout(sendUserNameToFrame, 800);">
+                onload="sendUserNameToFrame(); setTimeout(sendUserNameToFrame, 800); try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
             </iframe>
         </section>
 
         <!-- ==================== 코드 놀이터 섹션 ==================== -->
         <section id="code-play" class="fade-in hidden max-w-7xl mx-auto w-full pt-6">
             <iframe src="code_play.html"
-                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
-                style="min-height: 85vh; height: 85vh;"
-                frameborder="0">
+                class="w-full bg-transparent block"
+                frameborder="0"
+                onload="try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
             </iframe>
         </section>
 
         <!-- ==================== 데이터 실습실 섹션 ==================== -->
         <section id="data-play" class="fade-in hidden max-w-7xl mx-auto w-full pt-6">
             <iframe src="data_play.html"
-                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
-                style="min-height: 85vh; height: 85vh;"
-                frameborder="0">
+                class="w-full bg-transparent block"
+                frameborder="0"
+                onload="try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
             </iframe>
         </section>
 
@@ -790,28 +789,27 @@
         <!-- ==================== 공용 iframe 뷰어 ==================== -->
         <section id="iframe-viewer" class="fade-in hidden max-w-7xl mx-auto w-full pt-4">
             <iframe id="viewer-frame" src=""
-                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
+                class="w-full bg-transparent block"
                 frameborder="0"
-                scrolling="no"
-                onload="this.style.height = this.contentDocument.body.scrollHeight + 'px'">
+                onload="try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
             </iframe>
         </section>
 
         <!-- ==================== AI-ON 학습 자료실 (iframe) ==================== -->
         <section id="iframe-materials" class="fade-in hidden max-w-7xl mx-auto w-full">
             <iframe src="materials.html?view=iframe"
-                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
-                style="min-height: 85vh; height: 85vh;"
-                frameborder="0">
+                class="w-full bg-transparent block"
+                frameborder="0"
+                onload="try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
             </iframe>
         </section>
 
         <!-- ==================== AI-ON 학생 작품실 (iframe) ==================== -->
         <section id="iframe-gallery" class="fade-in hidden max-w-7xl mx-auto w-full">
             <iframe src="st_gallery.html"
-                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
-                style="min-height: 85vh; height: 85vh;"
-                frameborder="0">
+                class="w-full bg-transparent block"
+                frameborder="0"
+                onload="try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
             </iframe>
         </section>
 
@@ -1320,18 +1318,8 @@
         // ==================== 공용 iframe 뷰어 ====================
         function openIframe(url, title) {
             const frame = document.getElementById('viewer-frame');
-            frame.style.height = '100vh'; // 로딩 중 기본 높이
+            frame.style.height = '';
             frame.src = url;
-            frame.onload = function() {
-                try {
-                    const h = frame.contentDocument.documentElement.scrollHeight
-                           || frame.contentDocument.body.scrollHeight;
-                    frame.style.height = h + 'px';
-                } catch(e) {
-                    // 크로스 오리진이면 100vh 유지
-                    frame.style.height = '100vh';
-                }
-            };
             showSection('iframe-viewer');
         }
 
