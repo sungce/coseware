@@ -47,18 +47,18 @@
   </nav>
 
   <!-- 1. 네이티브 콘텐츠 영역 (데이터 실습실 원본 화면) -->
-  <main id="native-content" class="max-w-5xl mx-auto px-6 pt-28 pb-16 w-full flex-1 block">
-    <div class="mb-10">
+  <main id="native-content" class="max-w-7xl mx-auto px-6 pt-28 pb-16 w-full flex-1 block">
+    <div class="mb-8">
       <div class="inline-flex items-center space-x-2 bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-orange-100">
         <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i><span>인터렉티브 수업실</span>
       </div>
-      <h1 class="text-4xl font-black text-slate-900 mb-3">데이터 실습실 <span class="text-orange-500">📊</span></h1>
+      <h1 class="text-4xl font-black text-slate-900 mb-2">데이터 실습실 <span class="text-orange-500">📊</span></h1>
       <p class="text-lg text-slate-500 font-medium">데이터를 입력하고 다양한 차트로 시각화해보세요.</p>
     </div>
 
     <!-- 데이터 입력 및 차트 UI -->
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-      <div class="lg:col-span-2 card p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+      <div class="lg:col-span-4 card p-6">
         <h2 class="text-base font-black text-slate-800 mb-4 flex items-center space-x-2">
           <i data-lucide="table" class="w-5 h-5 text-orange-500"></i><span>데이터 입력</span>
         </h2>
@@ -82,11 +82,11 @@
           </div>
         </div>
       </div>
-      <div class="lg:col-span-3 card p-6">
+      <div class="lg:col-span-8 card p-6">
         <h2 class="text-base font-black text-slate-800 mb-4 flex items-center space-x-2">
           <i data-lucide="trending-up" class="w-5 h-5 text-orange-500"></i><span>시각화 결과</span>
         </h2>
-        <canvas id="myChart" height="280"></canvas>
+        <canvas id="myChart" height="220"></canvas>
         <div id="stats" class="mt-4 grid grid-cols-3 gap-3"></div>
       </div>
     </div>
