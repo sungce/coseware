@@ -44,7 +44,7 @@
   </div>
 </nav>
 
-<main class="max-w-7xl mx-auto px-4 md:px-6 pt-10 pb-16">
+<main class="max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-16">
   <div class="mb-10">
     <div class="inline-flex items-center gap-2 text-xs font-black px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 mb-4">
       <i data-lucide="tag" class="w-3 h-3"></i>AI 탐험
@@ -221,8 +221,8 @@
   function showResult() { alert(`🎉 라벨링 결과\n긍정: ${counts['긍정']}개\n부정: ${counts['부정']}개\n중립: ${counts['중립']}개\n건너뛰기: ${counts['건너뛰기']}개`); }
 
   if (window.self !== window.top) {
-    document.querySelector('nav').style.display='none';
-    document.querySelector('main').style.paddingTop='2rem';
+    const _n=document.querySelector('nav'); if(_n){_n.style.display='none';_n.style.height='0';}
+    const _m=document.querySelector('main')||document.getElementById('native-content'); if(_m)_m.style.paddingTop='1rem';
   }
 
   showItem();

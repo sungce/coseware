@@ -10,18 +10,18 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:'Pretendard',sans-serif;background:#0a0a12;color:#e2e8f0;min-height:100vh;}
-  .glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px);}
-  .glow{box-shadow:0 0 30px rgba(139,92,246,.3);}
-  .tool-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:1.5rem;padding:1.5rem;cursor:pointer;transition:all .2s;}
-  .tool-card:hover{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.4);transform:translateY(-2px);}
-  nav{background:rgba(10,10,18,.9);border-bottom:1px solid rgba(255,255,255,.06);backdrop-filter:blur(12px);}
-  .nav-link{font-size:13px;font-weight:700;color:#64748b;transition:color .15s;white-space:nowrap;}
-  .nav-link:hover,.nav-link.active{color:#a78bfa;}
-  .nav-link.active{border-bottom:2px solid #a78bfa;padding-bottom:2px;}
-  textarea,input[type="text"]{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:.75rem;color:#e2e8f0;font-family:inherit;outline:none;resize:none;width:100%;}
+  body{font-family:'Pretendard',sans-serif;background:#f4f7f9;color:#1e293b;min-height:100vh;}
+  .glass{background:rgba(255,255,255,.9);border:1px solid #e2e8f0;backdrop-filter:blur(12px);}
+  .glow{box-shadow:0 4px 20px rgba(139,92,246,.15);}
+  .tool-card{background:#fff;border:1px solid #e2e8f0;border-radius:1.5rem;padding:1.5rem;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+  .tool-card:hover{background:#f5f3ff;border-color:#c4b5fd;transform:translateY(-2px);}
+  nav{background:rgba(255,255,255,.9);border-bottom:1px solid #e2e8f0;backdrop-filter:blur(12px);}
+  .nav-link{font-size:13px;font-weight:700;color:#475569;transition:color .15s;white-space:nowrap;}
+  .nav-link:hover,.nav-link.active{color:#7c3aed;}
+  .nav-link.active{border-bottom:2px solid #7c3aed;padding-bottom:2px;}
+  textarea,input[type="text"]{background:#fff;border:1px solid #e2e8f0;border-radius:.75rem;color:#1e293b;font-family:inherit;outline:none;resize:none;width:100%;}
   textarea:focus,input[type="text"]:focus{border-color:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,.15);}
-  .badge{font-size:10px;font-weight:800;padding:2px 10px;border-radius:999px;}
+  .badge{font-size:10px;font-weight:800;padding:2px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;}
   @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(139,92,246,.2);}50%{box-shadow:0 0 40px rgba(139,92,246,.5);}}
   .pulsing{animation:pulse-glow 2s infinite;}
 </style>
@@ -34,7 +34,7 @@
       <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center text-xs font-black text-white">AI</div>
       <div>
         <div class="text-[15px] font-black text-white leading-tight">Sungce <span class="text-violet-400">AI-ON</span></div>
-        <div class="text-[11px] text-slate-600 leading-tight">정보 교과 클래스룸</div>
+        <div class="text-[11px] text-slate-400 leading-tight">정보 교과 클래스룸</div>
       </div>
     </a>
     <div class="hidden md:flex items-center gap-6">
@@ -42,20 +42,20 @@
       <a href="prompt.html" class="nav-link">프롬프트 엔지니어</a>
       <a href="labeling.html" class="nav-link">데이터 라벨링</a>
     </div>
-    <a href="../index.html" class="nav-link flex items-center gap-1.5 glass px-3 py-1.5 rounded-xl shrink-0">
+    <a href="../index.html" class="nav-link flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shrink-0">
       <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
     </a>
   </div>
 </nav>
 
-<main class="max-w-7xl mx-auto px-4 md:px-6 pt-10 pb-16">
+<main class="max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-16">
 
   <!-- 헤더 -->
   <div class="mb-12">
     <div class="inline-flex items-center gap-2 badge bg-violet-500/20 text-violet-300 border border-violet-500/30 mb-4">
       <i data-lucide="brain" class="w-3 h-3"></i> AI 탐험
     </div>
-    <h1 class="text-5xl font-black mb-3 bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">AI 체험관 🤖</h1>
+    <h1 class="text-5xl font-black mb-3 text-slate-900">AI 체험관 🤖</h1>
     <p class="text-lg text-slate-400 font-medium">다양한 인공지능 도구를 직접 체험하고 비교해보세요.</p>
   </div>
 
@@ -67,8 +67,8 @@
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4">
         <i data-lucide="scan-eye" class="w-6 h-6 text-white"></i>
       </div>
-      <h3 class="font-black text-white mb-1">AI 이미지 인식</h3>
-      <p class="text-sm text-slate-400">이미지를 업로드하면 AI가 내용을 분석합니다.</p>
+      <h3 class="font-black text-slate-900 mb-1">AI 이미지 인식</h3>
+      <p class="text-sm text-slate-500">이미지를 업로드하면 AI가 내용을 분석합니다.</p>
     </div>
 
     <!-- 감정 분석 -->
@@ -76,8 +76,8 @@
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mb-4">
         <i data-lucide="heart" class="w-6 h-6 text-white"></i>
       </div>
-      <h3 class="font-black text-white mb-1">텍스트 감정 분석</h3>
-      <p class="text-sm text-slate-400">문장을 입력하면 AI가 감정을 분석합니다.</p>
+      <h3 class="font-black text-slate-900 mb-1">텍스트 감정 분석</h3>
+      <p class="text-sm text-slate-500">문장을 입력하면 AI가 감정을 분석합니다.</p>
     </div>
 
     <!-- AI 번역 -->
@@ -85,8 +85,8 @@
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-4">
         <i data-lucide="languages" class="w-6 h-6 text-white"></i>
       </div>
-      <h3 class="font-black text-white mb-1">AI 언어 번역</h3>
-      <p class="text-sm text-slate-400">다양한 언어로 자동 번역을 체험해보세요.</p>
+      <h3 class="font-black text-slate-900 mb-1">AI 언어 번역</h3>
+      <p class="text-sm text-slate-500">다양한 언어로 자동 번역을 체험해보세요.</p>
     </div>
 
     <!-- AI 글쓰기 -->
@@ -94,8 +94,8 @@
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-4">
         <i data-lucide="pencil-line" class="w-6 h-6 text-white"></i>
       </div>
-      <h3 class="font-black text-white mb-1">AI 글쓰기 도우미</h3>
-      <p class="text-sm text-slate-400">주제를 입력하면 AI가 글을 작성해줍니다.</p>
+      <h3 class="font-black text-slate-900 mb-1">AI 글쓰기 도우미</h3>
+      <p class="text-sm text-slate-500">주제를 입력하면 AI가 글을 작성해줍니다.</p>
     </div>
 
     <!-- 이미지 생성 -->
@@ -103,8 +103,8 @@
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center mb-4">
         <i data-lucide="image" class="w-6 h-6 text-white"></i>
       </div>
-      <h3 class="font-black text-white mb-1">AI 이미지 생성</h3>
-      <p class="text-sm text-slate-400">텍스트로 이미지를 생성하는 AI를 체험합니다.</p>
+      <h3 class="font-black text-slate-900 mb-1">AI 이미지 생성</h3>
+      <p class="text-sm text-slate-500">텍스트로 이미지를 생성하는 AI를 체험합니다.</p>
     </div>
 
     <!-- AI 퀴즈 -->
@@ -112,13 +112,13 @@
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center mb-4">
         <i data-lucide="help-circle" class="w-6 h-6 text-white"></i>
       </div>
-      <h3 class="font-black text-white mb-1">AI 퀴즈 생성기</h3>
-      <p class="text-sm text-slate-400">주제를 입력하면 AI가 퀴즈를 만들어줍니다.</p>
+      <h3 class="font-black text-slate-900 mb-1">AI 퀴즈 생성기</h3>
+      <p class="text-sm text-slate-500">주제를 입력하면 AI가 퀴즈를 만들어줍니다.</p>
     </div>
   </div>
 
   <!-- 체험 영역 -->
-  <div id="tool-area" class="hidden glass rounded-3xl p-8">
+  <div id="tool-area" class="hidden bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
     <div class="flex items-center justify-between mb-6">
       <h2 id="tool-title" class="text-xl font-black text-white"></h2>
       <button onclick="closeTool()" class="text-slate-500 hover:text-white p-2 rounded-xl hover:bg-white/5 transition-colors">
@@ -141,7 +141,7 @@
         <textarea id="sent-input" class="p-3 text-sm leading-relaxed" rows="4" placeholder="감정을 분석할 문장을 입력하세요...&#10;예) 오늘 친구와 싸워서 너무 속상해요. 어떻게 화해해야 할까요?"></textarea>
         <button onclick="analyzeSentiment()" class="mt-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black px-6 py-3 rounded-2xl hover:opacity-90 transition-opacity flex items-center gap-2 text-sm">
           <i data-lucide="brain" class="w-4 h-4"></i>감정 분석하기</button>
-        <div id="sent-result" class="mt-4 hidden p-5 rounded-2xl bg-white/5 border border-white/10 text-sm text-slate-300 leading-relaxed whitespace-pre-wrap"></div></div>`
+        <div id="sent-result" class="mt-4 hidden p-5 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap"></div></div>`
     },
     writing: {
       title:'✍️ AI 글쓰기 도우미',
@@ -152,7 +152,7 @@
         </div>
         <button onclick="generateWriting()" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black px-6 py-3 rounded-2xl hover:opacity-90 transition-opacity flex items-center gap-2 text-sm">
           <i data-lucide="pencil-line" class="w-4 h-4"></i>글 생성하기</button>
-        <div id="write-result" class="mt-4 hidden p-5 rounded-2xl bg-white/5 border border-white/10 text-sm text-slate-300 leading-relaxed whitespace-pre-wrap"></div></div>`
+        <div id="write-result" class="mt-4 hidden p-5 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap"></div></div>`
     },
     quiz: {
       title:'📝 AI 퀴즈 생성기',
@@ -160,7 +160,7 @@
         <input type="text" id="quiz-input" class="p-3 text-sm mb-3" placeholder="퀴즈 주제를 입력하세요... 예) 인공지능의 역사">
         <button onclick="generateQuiz()" class="bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black px-6 py-3 rounded-2xl hover:opacity-90 transition-opacity flex items-center gap-2 text-sm">
           <i data-lucide="help-circle" class="w-4 h-4"></i>퀴즈 만들기</button>
-        <div id="quiz-result" class="mt-4 hidden p-5 rounded-2xl bg-white/5 border border-white/10 text-sm text-slate-300 leading-relaxed whitespace-pre-wrap"></div></div>`
+        <div id="quiz-result" class="mt-4 hidden p-5 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap"></div></div>`
     },
     vision: {title:'🔍 AI 이미지 인식',html:`<div class="text-center py-8"><p class="text-slate-400 mb-4">Google Vision API 연동이 필요합니다.</p><a href="https://teachablemachine.withgoogle.com/" target="_blank" class="inline-flex items-center gap-2 bg-blue-600 text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-blue-700 transition-colors"><i data-lucide="external-link" class="w-4 h-4"></i>Teachable Machine 체험하기</a></div>`},
     translate: {title:'🌐 AI 언어 번역',html:`<div class="text-center py-8"><a href="https://translate.google.com/" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-emerald-700 transition-colors"><i data-lucide="external-link" class="w-4 h-4"></i>Google 번역 열기</a></div>`},
@@ -219,8 +219,8 @@
   }
 
   if (window.self !== window.top) {
-    document.querySelector('nav').style.display='none';
-    document.querySelector('main').style.paddingTop='2rem';
+    const nav=document.querySelector('nav'); if(nav)nav.style.display='none';
+    const main=document.querySelector('main'); if(main){main.style.paddingTop='1rem';main.style.paddingBottom='2rem';}
   }
 </script>
 </body>
