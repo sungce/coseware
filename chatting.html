@@ -159,6 +159,12 @@
 <script>
   lucide.createIcons();
 
+  // iframe 안에서 열렸을 때 nav 자동 숨김 (상단 여백 제거)
+  if (window.self !== window.top) {
+    const nav = document.querySelector('nav');
+    if (nav) { nav.style.display = 'none'; nav.style.height = '0'; }
+  }
+
   // Firebase 초기화
   const cfg = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
   const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg);

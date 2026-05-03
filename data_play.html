@@ -94,7 +94,7 @@
 
   <!-- 2. Iframe 콘텐츠 영역 (교과수업, 코드놀이터 등 로드) -->
   <section id="iframe-section" class="hidden pt-16 lg:pt-20 w-full flex-1">
-    <iframe id="content-frame" onload="hideIframeNav()" class="w-full h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] border-0 bg-slate-50" src=""></iframe>
+    <iframe id="content-frame" onload="hideIframeNav()" class="w-full h-full border-0 bg-slate-50" src=""></iframe>
   </section>
 
   <script>
@@ -143,11 +143,11 @@
         
         // iframe 내부의 <nav> 요소 찾아서 숨김 처리
         const nav = iframeDoc.querySelector('nav');
-        if (nav) nav.style.display = 'none';
+        if (nav) { nav.style.display = 'none'; nav.style.height = '0'; nav.style.overflow = 'hidden'; }
         
         // 상단 네비게이션이 사라졌으므로 main 영역의 padding-top 조정
         const main = iframeDoc.querySelector('main');
-        if (main) main.style.paddingTop = '2rem';
+        if (main) main.style.paddingTop = '0';
       } catch (error) {
         // 보안(CORS) 이유로 로컬 파일 환경 등에서는 접근이 거부될 수 있습니다. (서버 환경에선 정상 작동)
       }
