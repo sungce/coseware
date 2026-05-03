@@ -26,11 +26,11 @@
 </head>
 <body class="h-screen flex flex-col">
 
-<!-- ══ 네비게이션 2줄 ══════════════════════════════════════ -->
+<!-- ══ 네비게이션 1줄 ══════════════════════════════════════ -->
 <nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
   <div class="max-w-[1400px] mx-auto px-4 md:px-6">
-    <!-- 1행 -->
-    <div class="flex justify-between items-center h-14 border-b border-slate-100">
+    <div class="flex justify-between items-center h-14">
+      <!-- 로고 -->
       <a href="index.html" class="flex items-center space-x-2 shrink-0 outline-none focus:outline-none">
         <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
         <div>
@@ -38,25 +38,24 @@
           <div class="text-[12px] font-medium text-slate-500 leading-tight">정보 교과 클래스룸</div>
         </div>
       </a>
-      <div class="flex items-center gap-3">
-        <div id="nav-user" class="hidden items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
-          <div id="nav-avatar" class="avatar w-6 h-6 rounded-lg text-[10px]"></div>
-          <span id="nav-name" class="text-sm font-bold text-slate-700"></span>
+      <!-- 메뉴 + 사용자 -->
+      <div class="flex items-center gap-6">
+        <div class="hidden md:flex items-center gap-6 text-[13px] font-bold text-slate-600">
+          <a href="curriculum/index.html" target="_blank" class="hover:text-blue-600 transition-colors">교과 수업</a>
+          <a href="code_play.html" target="_blank" class="hover:text-blue-600 transition-colors">코드 놀이터</a>
+          <a href="data_play.html" target="_blank" class="hover:text-blue-600 transition-colors">데이터 실습실</a>
+          <span class="text-blue-600 border-b-2 border-blue-600 pb-0.5">Vibe Room</span>
         </div>
-        <a href="index.html" class="flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl transition-colors outline-none">
-          <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
-        </a>
+        <div class="flex items-center gap-3">
+          <div id="nav-user" class="hidden items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
+            <div id="nav-avatar" class="avatar w-6 h-6 rounded-lg text-[10px]"></div>
+            <span id="nav-name" class="text-sm font-bold text-slate-700"></span>
+          </div>
+          <a href="index.html" class="flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl transition-colors outline-none">
+            <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
+          </a>
+        </div>
       </div>
-    </div>
-    <!-- 2행 -->
-    <div class="hidden md:flex items-center justify-end h-11 space-x-7 text-[13px] font-bold text-slate-600">
-      <a href="curriculum/index.html" target="_blank" class="hover:text-blue-600 transition-colors">교과 수업</a>
-      <a href="code_play.html" target="_blank" class="hover:text-blue-600 transition-colors">코드 놀이터</a>
-      <a href="data_play.html" target="_blank" class="hover:text-blue-600 transition-colors">데이터 실습실</a>
-      <span class="text-blue-600 border-b-2 border-blue-600 pb-1">Vibe Room</span>
-      <a href="question.html" target="_blank" class="hover:text-blue-600 transition-colors flex items-center gap-1">
-        질문있어요<span class="text-[10px] bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-full font-black ml-1">NEW</span>
-      </a>
     </div>
   </div>
 </nav>
