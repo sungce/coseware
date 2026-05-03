@@ -4,342 +4,420 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vibe Room — Sungce AI-ON</title>
-<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- Pretendard Font -->
-<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-<!-- Lucide Icons -->
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <style>
-  body { 
-    font-family: 'Pretendard', -apple-system, sans-serif; 
-    background: #f8fafc; 
-    margin: 0; 
-    /* 웹앱처럼 화면 스크롤 고정 */
-    overflow: hidden; 
-  }
-  
-  /* 스크롤바 커스텀 */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  body { font-family:'Pretendard',-apple-system,sans-serif; background:#f8fafc; margin:0; overflow:hidden; }
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+  .msg-enter { animation: fadeSlide .25s ease-out; }
+  @keyframes fadeSlide { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  .channel-btn.active { background:#e0e7ff; color:#4338ca; font-weight:700; }
+  .channel-btn { width:100%; display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:10px; font-size:13px; font-weight:500; color:#475569; transition:all .15s; cursor:pointer; border:none; background:transparent; outline:none; }
+  .channel-btn:hover { background:#f1f5f9; }
+  #chat-input { resize:none; overflow:hidden; min-height:40px; max-height:120px; }
+  .avatar { width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0; }
 </style>
 </head>
 <body class="h-screen flex flex-col">
-  
-  <!-- 1. 네비게이션 바 (독립 접속 시 표시, iframe 내부에서는 부모 스크립트에 의해 숨겨짐) -->
-  <nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
-    <div class="max-w-[1400px] mx-auto px-4 md:px-6">
-      <div class="flex justify-between items-center h-16 lg:h-20">
-        <!-- 로고 -->
-        <a href="index.html" class="flex items-center space-x-2 shrink-0 outline-none focus:outline-none">
-          <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
-          <div>
-            <div class="text-[15px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
-            <div class="text-[12px] font-medium text-slate-500 leading-tight">정보 교과 클래스룸</div>
-          </div>
-        </a>
 
-        <!-- 메뉴 영역 -->
-        <div class="flex items-center space-x-6 lg:space-x-8">
-          <div class="hidden md:flex items-center space-x-6 xl:space-x-8 text-[14px] font-bold text-slate-600">
-            <a href="curriculum/index.html" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">교과 수업</a>
-            <a href="code_play.html" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">코드 놀이터</a>
-            <a href="data_play.html" class="nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors">데이터 실습실</a>
-            <span class="nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1">Vibe Room</span>
-          </div>
-          <a href="index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl transition-colors shrink-0 outline-none focus:outline-none">
-            <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
-          </a>
-        </div>
+<!-- 네비 -->
+<nav class="shrink-0 w-full z-50 bg-white border-b border-slate-200">
+  <div class="max-w-[1400px] mx-auto px-4 md:px-6 flex justify-between items-center h-14">
+    <a href="index.html" class="flex items-center space-x-2 outline-none">
+      <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
+      <div>
+        <div class="text-[14px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
+        <div class="text-[11px] text-slate-500 leading-tight">정보 교과 클래스룸</div>
       </div>
+    </a>
+    <div class="flex items-center gap-3">
+      <div id="nav-user" class="hidden items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
+        <div id="nav-avatar" class="avatar w-6 h-6 rounded-lg text-[10px]"></div>
+        <span id="nav-name" class="text-sm font-bold text-slate-700"></span>
+      </div>
+      <a href="index.html" class="flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl transition-colors outline-none">
+        <i data-lucide="home" class="w-4 h-4"></i><span>메인으로</span>
+      </a>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <!-- 2. 웹앱 메인 레이아웃 (남은 화면 높이를 모두 채움) -->
-  <main class="flex-1 flex overflow-hidden max-w-[1400px] w-full mx-auto bg-white md:border-x md:border-slate-200 shadow-sm">
-    
-    <!-- 2-1. 사이드바 (채널 및 유저 목록) -->
-    <aside class="w-64 bg-slate-50 border-r border-slate-200 flex-col hidden md:flex shrink-0 h-full">
-      
-      <!-- 방 제목 -->
-      <div class="p-5 border-b border-slate-200 bg-slate-100/50">
-        <h2 class="text-lg font-black text-slate-800 flex items-center">
-          <i data-lucide="headphones" class="w-5 h-5 mr-2 text-indigo-500"></i>Vibe Room
+<!-- 로그인 필요 -->
+<div id="login-wall" class="hidden flex-1 flex-col items-center justify-center bg-slate-50">
+  <div class="bg-white rounded-3xl p-10 border border-slate-100 shadow-sm text-center max-w-sm w-full mx-4">
+    <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
+      <i data-lucide="message-square" class="w-8 h-8"></i>
+    </div>
+    <h2 class="text-xl font-black text-slate-900 mb-2">Vibe Room</h2>
+    <p class="text-sm text-slate-500 font-medium mb-6">채팅에 참여하려면 로그인이 필요합니다.</p>
+    <a href="index.html" class="bg-indigo-600 text-white font-bold px-6 py-3 rounded-2xl hover:bg-indigo-700 transition-colors inline-block">로그인하러 가기</a>
+  </div>
+</div>
+
+<!-- 메인 채팅 레이아웃 -->
+<main id="chat-app" class="hidden flex-1 overflow-hidden max-w-[1400px] w-full mx-auto bg-white md:border-x md:border-slate-200">
+  <div class="flex h-full">
+
+    <!-- 사이드바 -->
+    <aside class="w-60 bg-slate-50 border-r border-slate-200 flex-col hidden md:flex shrink-0 h-full">
+      <div class="p-4 border-b border-slate-200">
+        <h2 class="text-base font-black text-slate-800 flex items-center gap-2">
+          <i data-lucide="message-circle" class="w-5 h-5 text-indigo-500"></i>Vibe Room
         </h2>
-        <p class="text-xs text-slate-500 font-medium mt-1">함께 코딩하며 소통하는 공간</p>
+        <p class="text-xs text-slate-400 mt-0.5">실시간 학급 채팅방</p>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-4 space-y-6">
-        <!-- 채널 목록 -->
+      <!-- 채널 목록 -->
+      <div class="flex-1 overflow-y-auto p-3 space-y-4">
         <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Channels</p>
-          <ul class="space-y-1">
-            <li>
-              <button class="w-full flex items-center space-x-2 px-2 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-bold transition-colors outline-none">
-                <i data-lucide="hash" class="w-4 h-4"></i><span>자유_수다방</span>
-              </button>
-            </li>
-            <li>
-              <button class="w-full flex items-center space-x-2 px-2 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg text-sm font-medium transition-colors outline-none">
-                <i data-lucide="hash" class="w-4 h-4"></i><span>질문_및_답변</span>
-              </button>
-            </li>
-            <li>
-              <button class="w-full flex items-center space-x-2 px-2 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg text-sm font-medium transition-colors outline-none">
-                <i data-lucide="hash" class="w-4 h-4"></i><span>프로젝트_팀빌딩</span>
-              </button>
-            </li>
-          </ul>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2">채널</p>
+          <div id="channel-list" class="space-y-0.5">
+            <button class="channel-btn active" onclick="switchRoom('general','# 자유 수다방')">
+              <i data-lucide="hash" class="w-3.5 h-3.5"></i>자유 수다방
+            </button>
+            <button class="channel-btn" onclick="switchRoom('qna','# 질문 및 답변')">
+              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>질문 및 답변
+            </button>
+            <button class="channel-btn" onclick="switchRoom('unit1','# 단원1 컴퓨팅')">
+              <i data-lucide="cpu" class="w-3.5 h-3.5"></i>단원1 컴퓨팅
+            </button>
+            <button class="channel-btn" onclick="switchRoom('unit2','# 단원2 데이터')">
+              <i data-lucide="database" class="w-3.5 h-3.5"></i>단원2 데이터
+            </button>
+            <button class="channel-btn" onclick="switchRoom('unit3','# 단원3 알고리즘')">
+              <i data-lucide="code-2" class="w-3.5 h-3.5"></i>단원3 알고리즘
+            </button>
+          </div>
         </div>
 
-        <!-- 접속자 목록 -->
+        <!-- 접속자 -->
         <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-2 flex justify-between">
-            <span>Online</span>
-            <span class="bg-emerald-100 text-emerald-600 px-1.5 rounded-full">3</span>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2 flex justify-between">
+            <span>접속 중</span>
+            <span id="online-count" class="bg-emerald-100 text-emerald-600 px-1.5 rounded-full text-[10px]">0</span>
           </p>
-          <ul class="space-y-1">
-            <li class="flex items-center space-x-2 px-2 py-1.5">
-              <div class="relative">
-                <div class="w-7 h-7 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs">나</div>
-                <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-50 rounded-full"></div>
-              </div>
-              <span class="text-sm font-bold text-slate-700">나 (학생)</span>
-            </li>
-            <li class="flex items-center space-x-2 px-2 py-1.5 cursor-pointer hover:bg-slate-200/50 rounded-lg transition-colors">
-              <div class="relative">
-                <div class="w-7 h-7 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xs">AI</div>
-                <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-50 rounded-full"></div>
-              </div>
-              <span class="text-sm font-bold text-slate-700">Sungce 봇</span>
-            </li>
-            <li class="flex items-center space-x-2 px-2 py-1.5 cursor-pointer hover:bg-slate-200/50 rounded-lg transition-colors">
-              <div class="relative">
-                <div class="w-7 h-7 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center font-bold text-xs">선생</div>
-                <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-50 rounded-full"></div>
-              </div>
-              <span class="text-sm font-bold text-slate-700">성광식 선생님</span>
-            </li>
-          </ul>
+          <div id="online-list" class="space-y-1"></div>
         </div>
       </div>
 
-      <!-- 미니 플레이어 (Vibe 감성) -->
-      <div class="p-4 border-t border-slate-200 bg-white">
-        <div class="flex items-center space-x-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-          <div class="w-10 h-10 bg-gradient-to-br from-pink-400 to-orange-400 rounded-lg flex items-center justify-center animate-pulse">
-            <i data-lucide="music" class="w-5 h-5 text-white"></i>
-          </div>
+      <!-- 내 정보 -->
+      <div class="p-3 border-t border-slate-200 bg-white">
+        <div class="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2">
+          <div id="my-avatar" class="avatar w-7 h-7 rounded-lg text-[10px]"></div>
           <div class="flex-1 min-w-0">
-            <p class="text-xs font-bold text-slate-800 truncate">Lofi Coding Chill</p>
-            <p class="text-[10px] text-slate-500 truncate">Sungce Playlist</p>
+            <p id="my-name" class="text-xs font-bold text-slate-800 truncate"></p>
+            <p class="text-[10px] text-emerald-500 font-bold flex items-center gap-1">
+              <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span>온라인
+            </p>
           </div>
-          <button class="text-slate-400 hover:text-indigo-500 transition-colors outline-none focus:outline-none">
-            <i data-lucide="play-circle" class="w-6 h-6"></i>
-          </button>
         </div>
       </div>
     </aside>
 
-    <!-- 2-2. 메인 채팅 영역 -->
-    <section class="flex-1 flex flex-col h-full relative bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-slate-50">
-      
-      <!-- 채팅방 헤더 (모바일에서는 햄버거 메뉴 포함) -->
-      <header class="h-14 bg-white/90 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0 z-10">
-        <div class="flex items-center space-x-3">
-          <i data-lucide="hash" class="w-5 h-5 text-slate-400"></i>
-          <h2 class="text-base font-black text-slate-800">자유_수다방</h2>
+    <!-- 채팅 영역 -->
+    <section class="flex-1 flex flex-col h-full bg-slate-50/50">
+      <!-- 채팅방 헤더 -->
+      <header class="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-5 shrink-0">
+        <div class="flex items-center gap-2">
+          <i data-lucide="hash" class="w-4 h-4 text-slate-400"></i>
+          <h2 id="room-title" class="text-sm font-black text-slate-800">자유 수다방</h2>
         </div>
-        <div class="flex items-center space-x-4 text-slate-400">
-          <button class="hover:text-indigo-500 transition-colors outline-none focus:outline-none"><i data-lucide="search" class="w-5 h-5"></i></button>
-          <button class="hover:text-indigo-500 transition-colors outline-none focus:outline-none md:hidden"><i data-lucide="users" class="w-5 h-5"></i></button>
+        <div class="flex items-center gap-3">
+          <span id="room-count" class="text-xs text-slate-400 font-medium"></span>
+          <button onclick="clearMyMessages()" class="text-xs text-slate-400 hover:text-rose-500 font-bold transition-colors outline-none">내 메시지 삭제</button>
         </div>
       </header>
 
-      <!-- 메시지 리스트 영역 -->
-      <div id="chat-messages" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-        
-        <!-- 날짜 구분선 -->
-        <div class="flex justify-center">
-          <span class="text-xs font-bold text-slate-400 bg-slate-200/50 px-3 py-1 rounded-full">오늘</span>
+      <!-- 메시지 목록 -->
+      <div id="chat-messages" class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+        <div id="msgs-loading" class="flex justify-center py-8">
+          <div class="text-sm text-slate-400 font-medium">메시지 불러오는 중...</div>
         </div>
-
-        <!-- 수신 메시지 (AI 봇) -->
-        <div class="flex items-start space-x-3">
-          <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center font-bold shrink-0">AI</div>
-          <div class="flex flex-col items-start">
-            <div class="flex items-baseline space-x-2 mb-1">
-              <span class="text-sm font-bold text-slate-700">Sungce 봇</span>
-              <span class="text-xs font-medium text-slate-400">오전 09:00</span>
-            </div>
-            <div class="bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed max-w-[85%] sm:max-w-md">
-              안녕하세요! Vibe Room에 오신 것을 환영합니다. 👋 <br>
-              이곳에서는 친구들과 대화하거나 저에게 코딩 관련 질문을 할 수 있어요. 무엇을 도와드릴까요?
-            </div>
-          </div>
-        </div>
-
-        <!-- 수신 메시지 (선생님) -->
-        <div class="flex items-start space-x-3">
-          <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center font-bold shrink-0">선생</div>
-          <div class="flex flex-col items-start">
-            <div class="flex items-baseline space-x-2 mb-1">
-              <span class="text-sm font-bold text-slate-700">성광식 선생님</span>
-              <span class="text-xs font-medium text-slate-400">오전 09:05</span>
-            </div>
-            <div class="bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed max-w-[85%] sm:max-w-md">
-              다들 이번 주 수행평가 과제 잊지 말고 '수행평가 제출' 메뉴에서 업로드 해주세요! 기한은 금요일까지입니다. 화이팅! 🚀
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- 메시지 입력 영역 -->
-      <footer class="p-4 bg-white border-t border-slate-200 shrink-0">
-        <form id="chat-form" onsubmit="sendMessage(event)" class="flex items-end space-x-2 bg-slate-50 border border-slate-200 rounded-2xl p-2 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-shadow">
-          
-          <button type="button" class="p-2 text-slate-400 hover:text-indigo-500 transition-colors outline-none focus:outline-none shrink-0">
-            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+      <!-- 입력창 -->
+      <div class="shrink-0 bg-white border-t border-slate-200 px-4 py-3">
+        <div class="flex items-end gap-3 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 focus-within:border-indigo-300 focus-within:bg-white transition-all">
+          <textarea id="chat-input"
+            class="flex-1 bg-transparent text-sm text-slate-800 placeholder-slate-400 outline-none font-medium"
+            placeholder="메시지를 입력하세요... (Enter: 전송, Shift+Enter: 줄바꿈)"
+            rows="1"></textarea>
+          <button onclick="sendMessage()" id="send-btn"
+            class="w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl flex items-center justify-center transition-colors shrink-0 outline-none">
+            <i data-lucide="send" class="w-4 h-4"></i>
           </button>
-          
-          <textarea id="chat-input" rows="1" class="flex-1 bg-transparent border-none focus:ring-0 resize-none text-sm font-medium text-slate-700 py-2 outline-none max-h-32" placeholder="메시지를 입력하세요... (Enter로 전송, Shift+Enter로 줄바꿈)"></textarea>
-          
-          <div class="flex items-center space-x-1 shrink-0 pb-1">
-            <button type="button" class="p-2 text-slate-400 hover:text-amber-500 transition-colors outline-none focus:outline-none hidden sm:block">
-              <i data-lucide="smile" class="w-5 h-5"></i>
-            </button>
-            <button type="submit" class="bg-indigo-600 text-white p-2 rounded-xl hover:bg-indigo-700 transition-colors outline-none focus:outline-none shadow-md shadow-indigo-500/30 flex items-center justify-center">
-              <i data-lucide="send" class="w-4 h-4 ml-0.5"></i>
-            </button>
-          </div>
-        </form>
-      </footer>
-
+        </div>
+      </div>
     </section>
-  </main>
 
-  <script>
-    // 아이콘 렌더링
+  </div>
+</main>
+
+<script>
+  lucide.createIcons();
+
+  // Firebase 초기화
+  const cfg = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
+  const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg);
+  const auth = firebase.auth(app);
+  const db   = firebase.firestore(app);
+
+  let currentUser = null;
+  let userName    = '';
+  let studentId   = '';
+  let currentRoom = 'general';
+  let unsubscribeMessages = null;
+  let unsubscribePresence = null;
+  let presenceDocId = null;
+
+  // 아바타 색상 배열
+  const COLORS = [
+    ['bg-blue-100','text-blue-700'],['bg-violet-100','text-violet-700'],
+    ['bg-emerald-100','text-emerald-700'],['bg-rose-100','text-rose-700'],
+    ['bg-amber-100','text-amber-700'],['bg-cyan-100','text-cyan-700'],
+    ['bg-pink-100','text-pink-700'],['bg-indigo-100','text-indigo-700'],
+  ];
+  function getColor(name) {
+    let n = 0; for (const c of (name||'?')) n += c.charCodeAt(0);
+    return COLORS[n % COLORS.length];
+  }
+  function makeAvatar(name) {
+    const [bg, text] = getColor(name);
+    return `${bg} ${text}`;
+  }
+
+  // ── 인증 ──────────────────────────────────────────────
+  auth.onAuthStateChanged(async user => {
+    if (!user) {
+      document.getElementById('login-wall').classList.replace('hidden','flex');
+      return;
+    }
+    currentUser = user;
+    userName  = user.displayName || user.email.split('@')[0];
+    studentId = localStorage.getItem('studentId_' + user.uid) || '';
+
+    // 네비 업데이트
+    const [bg, tc] = getColor(userName);
+    document.getElementById('nav-avatar').className = `avatar w-6 h-6 rounded-lg text-[10px] ${bg} ${tc}`;
+    document.getElementById('nav-avatar').textContent = userName.charAt(0);
+    document.getElementById('nav-name').textContent   = userName;
+    document.getElementById('nav-user').classList.replace('hidden','flex');
+
+    document.getElementById('my-avatar').className   = `avatar w-7 h-7 rounded-lg text-[10px] ${bg} ${tc}`;
+    document.getElementById('my-avatar').textContent  = userName.charAt(0);
+    document.getElementById('my-name').textContent    = userName;
+
+    document.getElementById('chat-app').classList.replace('hidden','flex');
     lucide.createIcons();
 
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input');
-    const chatForm = document.getElementById('chat-form');
+    // 접속자 등록
+    await registerPresence();
+    listenPresence();
+    switchRoom('general', '# 자유 수다방');
+  });
 
-    // 스크롤 맨 아래로 이동 함수
-    function scrollToBottom() {
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    // 현재 시간 구하기 (예: 오후 2:30)
-    function getCurrentTime() {
-      const now = new Date();
-      let hours = now.getHours();
-      let minutes = now.getMinutes();
-      const ampm = hours >= 12 ? '오후' : '오전';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // 0시는 12시로 표시
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      return `${ampm} ${hours}:${minutes}`;
-    }
-
-    // 내가 보낸 메시지 HTML 생성
-    function createMyMessage(text) {
-      const time = getCurrentTime();
-      // 텍스트 줄바꿈 처리
-      const formattedText = text.replace(/\n/g, '<br>');
-      
-      return `
-        <div class="flex items-start justify-end space-x-3 animate-[fadeIn_0.3s_ease-out]">
-          <div class="flex flex-col items-end">
-            <div class="flex items-baseline space-x-2 mb-1">
-              <span class="text-xs font-medium text-slate-400">${time}</span>
-              <span class="text-sm font-bold text-slate-700">나</span>
+  // ── 접속자 관리 ───────────────────────────────────────
+  async function registerPresence() {
+    try {
+      const ref = await db.collection('chat_presence').add({
+        uid: currentUser.uid, name: userName, studentId,
+        joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        room: currentRoom
+      });
+      presenceDocId = ref.id;
+      window.addEventListener('beforeunload', removePresence);
+    } catch(e) { console.warn('presence error:', e); }
+  }
+  async function updatePresenceRoom(room) {
+    if (!presenceDocId) return;
+    try { await db.collection('chat_presence').doc(presenceDocId).update({ room }); } catch(e) {}
+  }
+  function removePresence() {
+    if (presenceDocId)
+      db.collection('chat_presence').doc(presenceDocId).delete().catch(()=>{});
+  }
+  function listenPresence() {
+    if (unsubscribePresence) unsubscribePresence();
+    unsubscribePresence = db.collection('chat_presence')
+      .onSnapshot(snap => {
+        const users = snap.docs.map(d => d.data()).filter(d => d.uid);
+        const unique = Object.values(Object.fromEntries(users.map(u => [u.uid, u])));
+        document.getElementById('online-count').textContent = unique.length;
+        const list = document.getElementById('online-list');
+        list.innerHTML = unique.map(u => {
+          const [bg, tc] = getColor(u.name);
+          const isMe = u.uid === currentUser.uid;
+          return `<div class="flex items-center gap-2 px-2 py-1.5 rounded-lg ${isMe?'bg-indigo-50':''}">
+            <div class="relative">
+              <div class="avatar w-7 h-7 rounded-lg text-[10px] ${bg} ${tc}">${(u.name||'?').charAt(0)}</div>
+              <div class="absolute bottom-0 right-0 w-2 h-2 bg-emerald-400 border-2 border-white rounded-full"></div>
             </div>
-            <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed max-w-[85%] sm:max-w-md text-left break-words">
-              ${formattedText}
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-slate-700 truncate">${u.name}${isMe?' (나)':''}</p>
+              ${u.studentId ? `<p class="text-[10px] text-slate-400">${u.studentId}</p>` : ''}
             </div>
-          </div>
-        </div>
-      `;
-    }
+          </div>`;
+        }).join('');
+      });
+  }
 
-    // 봇(AI) 메시지 HTML 생성
-    function createBotMessage(text) {
-      const time = getCurrentTime();
-      const formattedText = text.replace(/\n/g, '<br>');
+  // ── 채팅방 전환 ───────────────────────────────────────
+  function switchRoom(room, title) {
+    currentRoom = room;
+    document.getElementById('room-title').textContent = title.replace('# ','');
 
-      return `
-        <div class="flex items-start space-x-3 animate-[fadeIn_0.3s_ease-out]">
-          <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center font-bold shrink-0">AI</div>
-          <div class="flex flex-col items-start">
-            <div class="flex items-baseline space-x-2 mb-1">
-              <span class="text-sm font-bold text-slate-700">Sungce 봇</span>
-              <span class="text-xs font-medium text-slate-400">${time}</span>
-            </div>
-            <div class="bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed max-w-[85%] sm:max-w-md break-words">
-              ${formattedText}
-            </div>
-          </div>
-        </div>
-      `;
-    }
+    // 채널 버튼 활성화
+    document.querySelectorAll('.channel-btn').forEach(b => b.classList.remove('active'));
+    event && event.currentTarget && event.currentTarget.classList.add('active');
 
-    // 메시지 전송 로직
-    function sendMessage(e) {
-      if (e) e.preventDefault();
-      
-      const text = chatInput.value.trim();
-      if (!text) return;
+    updatePresenceRoom(room);
+    listenMessages(room);
+    lucide.createIcons();
+  }
 
-      // 1. 내 메시지 화면에 추가
-      chatMessages.insertAdjacentHTML('beforeend', createMyMessage(text));
-      chatInput.value = '';
-      chatInput.style.height = 'auto'; // 높이 초기화
-      scrollToBottom();
+  // ── 메시지 실시간 구독 ────────────────────────────────
+  function listenMessages(room) {
+    if (unsubscribeMessages) unsubscribeMessages();
+    document.getElementById('chat-messages').innerHTML =
+      '<div id="msgs-loading" class="flex justify-center py-8"><div class="text-sm text-slate-400 font-medium">불러오는 중...</div></div>';
 
-      // 2. 가상의 봇 답장 시뮬레이션 (1초 후)
-      setTimeout(() => {
-        let reply = '';
-        if (text.includes('안녕') || text.includes('하이')) {
-          reply = '안녕하세요! 오늘도 즐거운 코딩 하세요 😊';
-        } else if (text.includes('오류') || text.includes('에러')) {
-          reply = '에러가 발생했군요! 어떤 에러 메시지가 뜨는지 "질문있어요" 게시판에 코드를 올려주시면 자세히 도와드릴게요.';
-        } else if (text.includes('파이썬')) {
-          reply = '파이썬은 정말 멋진 언어죠! 코드 놀이터에서 직접 코드를 실행해볼 수 있답니다.';
-        } else {
-          reply = '네, 확인했습니다! 다른 궁금한 점이 있으면 언제든 말씀해 주세요.';
+    unsubscribeMessages = db.collection('chat_rooms').doc(room)
+      .collection('messages')
+      .orderBy('createdAt','asc')
+      .limitToLast(100)
+      .onSnapshot(snap => {
+        const msgs = document.getElementById('chat-messages');
+
+        snap.docChanges().forEach(change => {
+          if (change.type === 'added') {
+            // 로딩 제거
+            const loading = document.getElementById('msgs-loading');
+            if (loading) loading.remove();
+
+            const d   = change.doc.data();
+            const mid = change.doc.id;
+            if (!document.getElementById('msg-' + mid)) {
+              const el = document.createElement('div');
+              el.id = 'msg-' + mid;
+              el.className = 'msg-enter';
+              const isMine = d.uid === currentUser.uid;
+              el.innerHTML = renderMessage(d, mid, isMine);
+              msgs.appendChild(el);
+              scrollBottom();
+              lucide.createIcons();
+            }
+          }
+          if (change.type === 'removed') {
+            const el = document.getElementById('msg-' + change.doc.id);
+            if (el) el.remove();
+          }
+        });
+
+        // 메시지 없을 때
+        if (snap.empty) {
+          msgs.innerHTML = '<div class="flex flex-col items-center py-12 text-slate-400 space-y-2"><i data-lucide="message-square" class="w-10 h-10 text-slate-200"></i><p class="text-sm font-medium">첫 메시지를 남겨보세요!</p></div>';
+          lucide.createIcons();
         }
-        
-        chatMessages.insertAdjacentHTML('beforeend', createBotMessage(reply));
-        scrollToBottom();
-      }, 1000);
+
+        // 방 메시지 수
+        document.getElementById('room-count').textContent = snap.size + '개 메시지';
+      });
+  }
+
+  function renderMessage(d, mid, isMine) {
+    const [bg, tc] = getColor(d.userName||'?');
+    const time = d.createdAt ? formatTime(d.createdAt.toDate()) : '';
+    const text = (d.text||'').replace(/\n/g,'<br>').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/&lt;br&gt;/g,'<br>');
+
+    if (isMine) {
+      return `<div class="flex items-end justify-end gap-2">
+        <div class="flex flex-col items-end">
+          <div class="flex items-baseline gap-2 mb-1">
+            <span class="text-[11px] text-slate-400">${time}</span>
+            <span class="text-xs font-black text-slate-700">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
+          </div>
+          <div class="bg-indigo-600 text-white px-4 py-2.5 rounded-2xl rounded-br-sm text-sm leading-relaxed max-w-sm break-words shadow-sm">
+            ${text}
+          </div>
+        </div>
+        <div class="avatar ${bg} ${tc} mb-1">${(d.userName||'?').charAt(0)}</div>
+      </div>`;
+    } else {
+      return `<div class="flex items-end gap-2">
+        <div class="avatar ${bg} ${tc} mb-1">${(d.userName||'?').charAt(0)}</div>
+        <div class="flex flex-col">
+          <div class="flex items-baseline gap-2 mb-1">
+            <span class="text-xs font-black text-slate-700">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
+            <span class="text-[11px] text-slate-400">${time}</span>
+          </div>
+          <div class="bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-2xl rounded-bl-sm text-sm leading-relaxed max-w-sm break-words shadow-sm">
+            ${text}
+          </div>
+        </div>
+      </div>`;
     }
+  }
 
-    // Textarea 엔터키 전송 (Shift+Enter는 줄바꿈)
-    chatInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
+  function formatTime(date) {
+    let h = date.getHours(), m = date.getMinutes();
+    const ap = h >= 12 ? '오후' : '오전';
+    h = h % 12 || 12;
+    return `${ap} ${h}:${m.toString().padStart(2,'0')}`;
+  }
 
-    // Textarea 내용에 따라 높이 자동 조절
-    chatInput.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
-      if (this.scrollHeight > 128) {
-        this.style.overflowY = 'auto';
-      } else {
-        this.style.overflowY = 'hidden';
-      }
-    });
+  // ── 메시지 전송 ───────────────────────────────────────
+  async function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const text  = input.value.trim();
+    if (!text || !currentUser) return;
 
-    // 페이지 로드 시 맨 아래로 스크롤 맞춤
-    window.onload = scrollToBottom;
-  </script>
+    const btn = document.getElementById('send-btn');
+    btn.disabled = true;
+    input.value = '';
+    input.style.height = 'auto';
+
+    try {
+      await db.collection('chat_rooms').doc(currentRoom)
+        .collection('messages').add({
+          uid: currentUser.uid,
+          userName, studentId, text,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch(e) { alert('메시지 전송 실패: ' + e.message); input.value = text; }
+    finally { btn.disabled = false; input.focus(); }
+  }
+
+  // ── 내 메시지 삭제 ─────────────────────────────────────
+  async function clearMyMessages() {
+    if (!confirm('이 채팅방에서 내가 보낸 메시지를 모두 삭제할까요?')) return;
+    try {
+      const snap = await db.collection('chat_rooms').doc(currentRoom)
+        .collection('messages').where('uid','==',currentUser.uid).get();
+      const batch = db.batch();
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+    } catch(e) { alert('삭제 오류: ' + e.message); }
+  }
+
+  function scrollBottom() {
+    const el = document.getElementById('chat-messages');
+    el.scrollTop = el.scrollHeight;
+  }
+
+  // 입력창 키 이벤트
+  document.getElementById('chat-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+  document.getElementById('chat-input').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  });
+</script>
 </body>
 </html>
