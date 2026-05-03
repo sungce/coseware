@@ -28,7 +28,8 @@
 
 <!-- ══ 네비게이션 1줄 ══════════════════════════════════════ -->
 <nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50" style="margin-top:0;padding-top:0;">
-  <div class="max-w-7xl mx-auto px-4 md:px-6">
+  <!-- 네비게이션 너비 확장: max-w-7xl 제거, px-5 md:px-8 통일 -->
+  <div class="w-full px-5 md:px-8">
     <div class="flex justify-between items-center h-14">
       <!-- 로고 -->
       <a href="index.html" class="flex items-center space-x-2 shrink-0 outline-none focus:outline-none">
@@ -72,8 +73,8 @@
   </div>
 </div>
 
-<!-- 메인 채팅 레이아웃 -->
-<main id="chat-app" class="hidden flex-1 overflow-hidden max-w-7xl mx-auto w-full bg-white border-x border-slate-200">
+<!-- 메인 채팅 레이아웃 (너비 확장: max-w-7xl 제거) -->
+<main id="chat-app" class="hidden flex-1 overflow-hidden w-full bg-white">
   <div class="flex h-full">
 
     <!-- 사이드바 -->
@@ -157,7 +158,9 @@
 
     <!-- 채팅 영역 -->
     <section class="flex-1 flex flex-col h-full min-w-0">
-      <header class="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0">
+      
+      <!-- 헤더 (좌우 여백: px-5 md:px-8 통일) -->
+      <header class="h-12 bg-white border-b border-slate-200 flex items-center justify-between px-5 md:px-8 shrink-0">
         <div class="flex items-center gap-2">
           <i data-lucide="hash" class="w-4 h-4 text-slate-400"></i>
           <h2 id="room-title" class="text-sm font-black text-slate-800">자유 수다방</h2>
@@ -168,15 +171,15 @@
         </button>
       </header>
 
-      <!-- 메시지 목록 -->
-      <div id="chat-messages" class="flex-1 overflow-y-auto px-10 py-7 space-y-6 bg-white">
+      <!-- 메시지 목록 (좌우 여백: px-5 md:px-8 통일) -->
+      <div id="chat-messages" class="flex-1 overflow-y-auto px-5 md:px-8 py-7 space-y-6 bg-white">
         <div id="msgs-loading" class="flex justify-center py-16">
           <p class="text-sm text-slate-400 font-medium">메시지 불러오는 중...</p>
         </div>
       </div>
 
-      <!-- 입력창 -->
-      <div class="shrink-0 bg-white border-t border-slate-200 px-8 py-5">
+      <!-- 입력창 (좌우 여백: px-5 md:px-8 통일) -->
+      <div class="shrink-0 bg-white border-t border-slate-200 px-5 md:px-8 py-5">
         <div class="flex items-end gap-4 bg-slate-50 border-2 border-slate-200 rounded-2xl px-6 py-4 focus-within:border-indigo-400 focus-within:bg-white focus-within:shadow-md transition-all">
           <div id="input-avatar" class="avatar w-10 h-10 rounded-xl text-[13px] shrink-0 mb-0.5"></div>
           <textarea id="chat-input"
@@ -233,7 +236,6 @@
   }
 
   lucide.createIcons();
-  // ★ 초기 상태가 닫혀있도록 시작 시 실행되던 toggleTeamDropdown() 삭제/주석처리 함
 
   // iframe 안에서 열렸을 때 nav 자동 숨김
   if (window.self !== window.top) {
@@ -380,9 +382,8 @@
     const content = document.getElementById('group-mgmt-content');
     content.innerHTML = '<div class="text-center py-4 text-slate-400 text-sm">불러오는 중...</div>';
     try {
-      // 권한 에러를 회피하기 위해 각각의 통신에 에러 캐치를 추가했습니다.
       const presenceSnap = await db.collection('chat_presence').get().catch(e => { return { docs: [] }; });
-      const groupSnap = await db.collection('chat_groups').get(); // 여기서 에러가 발생하면 catch로 넘어갑니다.
+      const groupSnap = await db.collection('chat_groups').get();
       
       const groupMap = {}; 
       groupSnap.docs.forEach(d => { groupMap[d.data().uid] = d.data().group; });
@@ -532,6 +533,7 @@
       });
   }
 
+  // 말풍선 최대 너비 확장 (max-w-lg -> max-w-2xl xl:max-w-3xl)
   function renderMessage(d, mid, isMine) {
     const [bg, tc] = getColor(d.userName||'?');
     const time = d.createdAt ? formatTime(d.createdAt.toDate()) : '';
@@ -544,7 +546,7 @@
             <span class="text-[12px] text-slate-400">${time}</span>
             <span class="text-sm font-black text-slate-700">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
           </div>
-          <div class="bg-indigo-600 text-white px-5 py-3 rounded-2xl rounded-br-sm text-[15px] leading-relaxed max-w-lg break-words shadow-sm">
+          <div class="bg-indigo-600 text-white px-5 py-3 rounded-2xl rounded-br-sm text-[15px] leading-relaxed max-w-2xl xl:max-w-3xl break-words shadow-sm">
             ${text}
           </div>
         </div>
@@ -558,7 +560,7 @@
             <span class="text-sm font-black text-slate-700">${d.userName||'-'}${d.studentId?' ('+d.studentId+')':''}</span>
             <span class="text-[12px] text-slate-400">${time}</span>
           </div>
-          <div class="bg-white border border-slate-200 text-slate-800 px-5 py-3 rounded-2xl rounded-bl-sm text-[15px] leading-relaxed max-w-lg break-words shadow-sm">
+          <div class="bg-white border border-slate-200 text-slate-800 px-5 py-3 rounded-2xl rounded-bl-sm text-[15px] leading-relaxed max-w-2xl xl:max-w-3xl break-words shadow-sm">
             ${text}
           </div>
         </div>
