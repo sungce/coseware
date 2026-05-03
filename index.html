@@ -568,27 +568,30 @@
             <iframe
                 src="curriculum/index.html"
                 id="curriculum-frame"
-                class="w-full bg-transparent block"
-                frameborder="0"
-                onload="sendUserNameToFrame(); setTimeout(sendUserNameToFrame, 800); try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
+                class="w-full block"
+                style="border:0;overflow:hidden;"
+                scrolling="no"
+                onload="sendUserNameToFrame(); setTimeout(sendUserNameToFrame,800); autoResizeFrame(this);">
             </iframe>
         </section>
 
         <!-- ==================== 코드 놀이터 섹션 ==================== -->
         <section id="code-play" class="fade-in hidden max-w-7xl mx-auto w-full pt-6">
             <iframe src="code_play.html"
-                class="w-full bg-transparent block"
-                frameborder="0"
-                onload="try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
+                class="w-full block"
+                style="border:0;overflow:hidden;"
+                scrolling="no"
+                onload="autoResizeFrame(this)">
             </iframe>
         </section>
 
         <!-- ==================== 데이터 실습실 섹션 ==================== -->
         <section id="data-play" class="fade-in hidden max-w-7xl mx-auto w-full pt-6">
             <iframe src="data_play.html"
-                class="w-full bg-transparent block"
-                frameborder="0"
-                onload="try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
+                class="w-full block"
+                style="border:0;overflow:hidden;"
+                scrolling="no"
+                onload="autoResizeFrame(this)">
             </iframe>
         </section>
 
@@ -789,27 +792,30 @@
         <!-- ==================== 공용 iframe 뷰어 ==================== -->
         <section id="iframe-viewer" class="fade-in hidden max-w-7xl mx-auto w-full pt-4">
             <iframe id="viewer-frame" src=""
-                class="w-full bg-transparent block"
-                frameborder="0"
-                onload="try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
+                class="w-full block"
+                style="border:0;overflow:hidden;"
+                scrolling="no"
+                onload="autoResizeFrame(this)">
             </iframe>
         </section>
 
         <!-- ==================== AI-ON 학습 자료실 (iframe) ==================== -->
         <section id="iframe-materials" class="fade-in hidden max-w-7xl mx-auto w-full">
             <iframe src="materials.html?view=iframe"
-                class="w-full bg-transparent block"
-                frameborder="0"
-                onload="try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
+                class="w-full block"
+                style="border:0;overflow:hidden;"
+                scrolling="no"
+                onload="autoResizeFrame(this)">
             </iframe>
         </section>
 
         <!-- ==================== AI-ON 학생 작품실 (iframe) ==================== -->
         <section id="iframe-gallery" class="fade-in hidden max-w-7xl mx-auto w-full">
             <iframe src="st_gallery.html"
-                class="w-full bg-transparent block"
-                frameborder="0"
-                onload="try{this.style.height=this.contentDocument.documentElement.scrollHeight+'px';}catch(e){this.style.height='100vh';}">
+                class="w-full block"
+                style="border:0;overflow:hidden;"
+                scrolling="no"
+                onload="autoResizeFrame(this)">
             </iframe>
         </section>
 
@@ -1314,6 +1320,32 @@
                 setTimeout(() => showSection(gotoSection), 400);
             }
         });
+
+        // ==================== iframe 자동 높이 조절 ====================
+        function autoResizeFrame(frame) {
+            try {
+                const doc = frame.contentDocument || frame.contentWindow.document;
+                // 내부 body overflow 제거 (스크롤바 없애기)
+                if (doc.body) {
+                    doc.body.style.overflow = 'hidden';
+                    doc.documentElement.style.overflow = 'hidden';
+                }
+                const setH = () => {
+                    const h = doc.documentElement.scrollHeight || doc.body.scrollHeight || 0;
+                    if (h > 0) frame.style.height = h + 'px';
+                };
+                setH();
+                // 동적 콘텐츠 대응: 500ms 간격으로 높이 재조정
+                let checks = 0;
+                const interval = setInterval(() => {
+                    setH();
+                    if (++checks > 10) clearInterval(interval);
+                }, 400);
+            } catch(e) {
+                // 크로스 오리진: 화면 전체 높이 사용
+                frame.style.height = window.innerHeight + 'px';
+            }
+        }
 
         // ==================== 공용 iframe 뷰어 ====================
         function openIframe(url, title) {
