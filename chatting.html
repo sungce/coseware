@@ -97,7 +97,7 @@
                 <span class="flex items-center gap-2">
                   <i data-lucide="users" class="w-3.5 h-3.5"></i>모둠별 수다방
                 </span>
-                <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="team-chevron"></i>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform rotate-180" id="team-chevron"></i>
               </button>
               <div id="team-dropdown" class="hidden pl-4 mt-0.5 space-y-0.5">
                 <button class="channel-btn" data-room="team1" onclick="switchRoom('team1','모둠1 수다방',this)">
@@ -168,7 +168,7 @@
         </button>
       </header>
 
-      <!-- 메시지 목록 (핵심: flex-1 으로 남은 공간 모두 사용) -->
+      <!-- 메시지 목록 -->
       <div id="chat-messages" class="flex-1 overflow-y-auto px-10 py-7 space-y-6 bg-white">
         <div id="msgs-loading" class="flex justify-center py-16">
           <p class="text-sm text-slate-400 font-medium">메시지 불러오는 중...</p>
@@ -194,7 +194,8 @@
 
   </div>
 </main>
-<!-- 모둠 회원 설정 모달 (관리자 전용) -->
+
+<!-- 모둠 회원 설정 모달 -->
 <div id="group-mgmt-modal" class="fixed inset-0 z-[300] hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4"
   onclick="if(event.target===this) closeGroupMgmt()">
   <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
@@ -216,7 +217,6 @@
   </div>
 </div>
 
-<!-- 여기에 자바스크립트 시작 태그를 추가했습니다! -->
 <script>
   const ADMIN_EMAIL = 'sungce27@gmail.com';
   const TEAMS = ['team1','team2','team3','team4','team5','team6'];
@@ -233,10 +233,9 @@
   }
 
   lucide.createIcons();
-  // 초기 드롭다운 열기
-  toggleTeamDropdown();
+  // ★ 초기 상태가 닫혀있도록 시작 시 실행되던 toggleTeamDropdown() 삭제/주석처리 함
 
-  // iframe 안에서 열렸을 때 nav 자동 숨김 (상단 여백 제거)
+  // iframe 안에서 열렸을 때 nav 자동 숨김
   if (window.self !== window.top) {
     const nav = document.querySelector('nav');
     if (nav) { nav.style.display = 'none'; nav.style.height = '0'; }
@@ -256,7 +255,6 @@
   let unsubscribePresence = null;
   let presenceDocId = null;
 
-  // 아바타 색상 배열
   const COLORS = [
     ['bg-blue-100','text-blue-700'],['bg-violet-100','text-violet-700'],
     ['bg-emerald-100','text-emerald-700'],['bg-rose-100','text-rose-700'],
@@ -282,7 +280,6 @@
     userName  = user.displayName || user.email.split('@')[0];
     studentId = localStorage.getItem('studentId_' + user.uid) || '';
 
-    // 네비 업데이트
     const [bg, tc] = getColor(userName);
     document.getElementById('nav-avatar').className = `avatar w-6 h-6 rounded-lg text-[10px] ${bg} ${tc}`;
     document.getElementById('nav-avatar').textContent = userName.charAt(0);
@@ -298,16 +295,12 @@
     document.getElementById('chat-app').classList.replace('hidden','flex');
     lucide.createIcons();
 
-    // 관리자 버튼 표시
     if (currentUser.email === ADMIN_EMAIL) {
       const btn = document.getElementById('group-mgmt-btn');
       btn.classList.remove('hidden'); btn.classList.add('flex');
     }
 
-    // 내 모둠 배지
     await loadMyTeam();
-
-    // 접속자 등록
     await registerPresence();
     listenPresence();
     switchRoom('general', '자유 수다방');
@@ -330,44 +323,40 @@
     try { await db.collection('chat_presence').doc(presenceDocId).update({ room }); } catch(e) {}
   }
   function removePresence() {
-    if (presenceDocId)
-      db.collection('chat_presence').doc(presenceDocId).delete().catch(()=>{});
+    if (presenceDocId) db.collection('chat_presence').doc(presenceDocId).delete().catch(()=>{});
   }
   function listenPresence() {
     if (unsubscribePresence) unsubscribePresence();
-    unsubscribePresence = db.collection('chat_presence')
-      .onSnapshot(snap => {
-        const users = snap.docs.map(d => d.data()).filter(d => d.uid);
-        const unique = Object.values(Object.fromEntries(users.map(u => [u.uid, u])));
-        document.getElementById('online-count').textContent = unique.length;
-        const list = document.getElementById('online-list');
-        list.innerHTML = unique.map(u => {
-          const [bg, tc] = getColor(u.name);
-          const isMe = u.uid === currentUser.uid;
-          return `<div class="flex items-center gap-2 px-2 py-1.5 rounded-lg ${isMe?'bg-indigo-50':''}">
-            <div class="relative">
-              <div class="avatar w-7 h-7 rounded-lg text-[10px] ${bg} ${tc}">${(u.name||'?').charAt(0)}</div>
-              <div class="absolute bottom-0 right-0 w-2 h-2 bg-emerald-400 border-2 border-white rounded-full"></div>
-            </div>
-            <div class="min-w-0">
-              <p class="text-xs font-bold text-slate-700 truncate">${u.name}${isMe?' (나)':''}</p>
-              ${u.studentId ? `<p class="text-[10px] text-slate-400">${u.studentId}</p>` : ''}
-            </div>
-          </div>`;
-        }).join('');
-      });
+    unsubscribePresence = db.collection('chat_presence').onSnapshot(snap => {
+      const users = snap.docs.map(d => d.data()).filter(d => d.uid);
+      const unique = Object.values(Object.fromEntries(users.map(u => [u.uid, u])));
+      document.getElementById('online-count').textContent = unique.length;
+      const list = document.getElementById('online-list');
+      list.innerHTML = unique.map(u => {
+        const [bg, tc] = getColor(u.name);
+        const isMe = u.uid === currentUser.uid;
+        return `<div class="flex items-center gap-2 px-2 py-1.5 rounded-lg ${isMe?'bg-indigo-50':''}">
+          <div class="relative">
+            <div class="avatar w-7 h-7 rounded-lg text-[10px] ${bg} ${tc}">${(u.name||'?').charAt(0)}</div>
+            <div class="absolute bottom-0 right-0 w-2 h-2 bg-emerald-400 border-2 border-white rounded-full"></div>
+          </div>
+          <div class="min-w-0">
+            <p class="text-xs font-bold text-slate-700 truncate">${u.name}${isMe?' (나)':''}</p>
+            ${u.studentId ? `<p class="text-[10px] text-slate-400">${u.studentId}</p>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    });
   }
 
   // ── 내 모둠 배지 ──────────────────────────────────────
   async function loadMyTeam() {
     try {
-      const snap = await db.collection('chat_groups')
-        .where('uid','==', currentUser.uid).limit(1).get();
+      const snap = await db.collection('chat_groups').where('uid','==', currentUser.uid).limit(1).get();
       if (!snap.empty) {
         const myGroup = snap.docs[0].data().group;
         const badge = document.getElementById('my-team-badge-' + myGroup);
         if (badge) badge.classList.remove('hidden');
-        // 내 모둠 이름 사이드바 표시
         const nameEl = document.getElementById('my-name');
         if (nameEl && TEAM_LABELS[myGroup]) {
           nameEl.innerHTML = `${userName} <span class="text-[10px] text-indigo-500 font-black">${TEAM_LABELS[myGroup]}</span>`;
@@ -391,30 +380,23 @@
     const content = document.getElementById('group-mgmt-content');
     content.innerHTML = '<div class="text-center py-4 text-slate-400 text-sm">불러오는 중...</div>';
     try {
-      // 가입 학생 목록 (메인 Sheets에서 불러옴)
-      const membersSnap = await db.collection('users_list').get().catch(() => null);
-      // Firestore users_list가 없을 수 있으니 chat_presence 최근 접속자로 대체
-      const presenceSnap = await db.collection('chat_presence').get();
+      // 권한 에러를 회피하기 위해 각각의 통신에 에러 캐치를 추가했습니다.
+      const presenceSnap = await db.collection('chat_presence').get().catch(e => { return { docs: [] }; });
+      const groupSnap = await db.collection('chat_groups').get(); // 여기서 에러가 발생하면 catch로 넘어갑니다.
       
-      // 현재 그룹 배정 현황
-      const groupSnap = await db.collection('chat_groups').get();
-      const groupMap = {}; // uid → group
+      const groupMap = {}; 
       groupSnap.docs.forEach(d => { groupMap[d.data().uid] = d.data().group; });
 
-      // 고유 사용자 목록 (presence 기반)
       const usersMap = {};
       presenceSnap.docs.forEach(d => {
         const u = d.data();
         if (u.uid) usersMap[u.uid] = u;
       });
 
-      // 가입 학생 (Firestore members 컬렉션 시도)
       let membersList = Object.values(usersMap);
       try {
         const ms = await db.collection('members').get();
-        if (!ms.empty) {
-          membersList = ms.docs.map(d => d.data());
-        }
+        if (!ms.empty) membersList = ms.docs.map(d => d.data());
       } catch(e) {}
 
       if (!membersList.length) {
@@ -422,7 +404,6 @@
         return;
       }
 
-      // 모둠별 그룹 UI
       content.innerHTML = `
         <div class="space-y-4">
           ${TEAMS.map(team => {
@@ -447,7 +428,6 @@
             </div>`;
           }).join('')}
 
-          <!-- 미배정 학생 -->
           <div class="bg-amber-50 rounded-2xl p-4 border border-amber-100">
             <p class="text-sm font-black text-amber-700 mb-3">미배정 학생</p>
             ${membersList.filter(u => !groupMap[u.uid]).map(u => `
@@ -468,21 +448,26 @@
           </div>
         </div>`;
     } catch(e) {
-      content.innerHTML = `<div class="text-center py-8 text-rose-400 text-sm">오류: ${e.message}</div>`;
+      content.innerHTML = `
+        <div class="text-center py-8 text-rose-500 text-sm font-bold flex flex-col items-center gap-2">
+          <i data-lucide="shield-alert" class="w-8 h-8"></i>
+          오류: Firebase 보안 규칙 권한이 부족합니다.
+          <span class="text-slate-500 font-medium text-xs mt-2 text-left block max-w-sm">
+            Firebase 콘솔 > Firestore Database > Rules 탭에서 읽기/쓰기 권한(allow read, write: if request.auth != null;)을 허용으로 변경해주세요.
+          </span>
+        </div>`;
+      lucide.createIcons();
     }
   }
 
   async function assignToGroup(uid, name, studentId, group) {
     if (!group) return;
     try {
-      // 기존 배정 삭제
       const old = await db.collection('chat_groups').where('uid','==',uid).get();
       const batch = db.batch();
       old.docs.forEach(d => batch.delete(d.ref));
       await batch.commit();
-      // 새 배정
-      await db.collection('chat_groups').add({ uid, name, studentId, group,
-        assignedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      await db.collection('chat_groups').add({ uid, name, studentId, group, assignedAt: firebase.firestore.FieldValue.serverTimestamp() });
       renderGroupMgmt();
     } catch(e) { alert('배정 오류: ' + e.message); }
   }
@@ -501,11 +486,8 @@
   function switchRoom(room, title, btn) {
     currentRoom = room;
     document.getElementById('room-title').textContent = title.replace('# ','');
-
-    // 채널 버튼 활성화
     document.querySelectorAll('.channel-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
-
     updatePresenceRoom(room);
     listenMessages(room);
     lucide.createIcons();
@@ -514,19 +496,12 @@
   // ── 메시지 실시간 구독 ────────────────────────────────
   function listenMessages(room) {
     if (unsubscribeMessages) unsubscribeMessages();
-    document.getElementById('chat-messages').innerHTML =
-      '<div id="msgs-loading" class="flex justify-center py-8"><div class="text-sm text-slate-400 font-medium">불러오는 중...</div></div>';
+    document.getElementById('chat-messages').innerHTML = '<div id="msgs-loading" class="flex justify-center py-8"><div class="text-sm text-slate-400 font-medium">불러오는 중...</div></div>';
 
-    unsubscribeMessages = db.collection('chat_rooms').doc(room)
-      .collection('messages')
-      .orderBy('createdAt','asc')
-      .limitToLast(100)
-      .onSnapshot(snap => {
+    unsubscribeMessages = db.collection('chat_rooms').doc(room).collection('messages').orderBy('createdAt','asc').limitToLast(100).onSnapshot(snap => {
         const msgs = document.getElementById('chat-messages');
-
         snap.docChanges().forEach(change => {
           if (change.type === 'added') {
-            // 로딩 제거
             const loading = document.getElementById('msgs-loading');
             if (loading) loading.remove();
 
@@ -549,13 +524,10 @@
           }
         });
 
-        // 메시지 없을 때
         if (snap.empty) {
           msgs.innerHTML = '<div class="flex flex-col items-center py-12 text-slate-400 space-y-2"><i data-lucide="message-square" class="w-10 h-10 text-slate-200"></i><p class="text-sm font-medium">첫 메시지를 남겨보세요!</p></div>';
           lucide.createIcons();
         }
-
-        // 방 메시지 수
         document.getElementById('room-count').textContent = snap.size + '개 메시지';
       });
   }
@@ -613,22 +585,18 @@
     input.style.height = 'auto';
 
     try {
-      await db.collection('chat_rooms').doc(currentRoom)
-        .collection('messages').add({
-          uid: currentUser.uid,
-          userName, studentId, text,
+      await db.collection('chat_rooms').doc(currentRoom).collection('messages').add({
+          uid: currentUser.uid, userName, studentId, text,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
     } catch(e) { alert('메시지 전송 실패: ' + e.message); input.value = text; }
     finally { btn.disabled = false; input.focus(); }
   }
 
-  // ── 내 메시지 삭제 ─────────────────────────────────────
   async function clearMyMessages() {
     if (!confirm('이 채팅방에서 내가 보낸 메시지를 모두 삭제할까요?')) return;
     try {
-      const snap = await db.collection('chat_rooms').doc(currentRoom)
-        .collection('messages').where('uid','==',currentUser.uid).get();
+      const snap = await db.collection('chat_rooms').doc(currentRoom).collection('messages').where('uid','==',currentUser.uid).get();
       const batch = db.batch();
       snap.docs.forEach(d => batch.delete(d.ref));
       await batch.commit();
@@ -640,7 +608,6 @@
     el.scrollTop = el.scrollHeight;
   }
 
-  // 입력창 키 이벤트
   document.getElementById('chat-input').addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
