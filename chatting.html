@@ -77,7 +77,7 @@
   <div class="flex h-full">
 
     <!-- 사이드바 -->
-    <aside class="w-56 bg-slate-50 border-r border-slate-200 flex-col hidden md:flex shrink-0 h-full">
+    <aside class="w-64 bg-slate-50 border-r border-slate-200 flex-col hidden md:flex shrink-0 h-full">
       <div class="p-4 border-b border-slate-200">
         <h2 class="text-sm font-black text-slate-800 flex items-center gap-2">
           <i data-lucide="message-circle" class="w-4 h-4 text-indigo-500"></i>Vibe Room
@@ -92,6 +92,8 @@
             <button class="channel-btn" data-room="team2" onclick="switchRoom('team2','모둠2 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠2 수다방</button>
             <button class="channel-btn" data-room="team3" onclick="switchRoom('team3','모둠3 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠3 수다방</button>
             <button class="channel-btn" data-room="team4" onclick="switchRoom('team4','모둠4 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠4 수다방</button>
+            <button class="channel-btn" data-room="team5" onclick="switchRoom('team5','모둠5 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠5 수다방</button>
+            <button class="channel-btn" data-room="team6" onclick="switchRoom('team6','모둠6 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠6 수다방</button>
             <button class="channel-btn" data-room="general" onclick="switchRoom('general','자유 수다방',this)"><i data-lucide="hash" class="w-3.5 h-3.5"></i>자유 수다방</button>
             <button class="channel-btn" data-room="qna" onclick="switchRoom('qna','질문 및 답변',this)"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i>질문 및 답변</button>
           </div>
@@ -128,22 +130,22 @@
       </header>
 
       <!-- 메시지 목록 (핵심: flex-1 으로 남은 공간 모두 사용) -->
-      <div id="chat-messages" class="flex-1 overflow-y-auto px-8 py-6 space-y-5 bg-white">
+      <div id="chat-messages" class="flex-1 overflow-y-auto px-10 py-7 space-y-6 bg-white">
         <div id="msgs-loading" class="flex justify-center py-16">
           <p class="text-sm text-slate-400 font-medium">메시지 불러오는 중...</p>
         </div>
       </div>
 
       <!-- 입력창 -->
-      <div class="shrink-0 bg-white border-t border-slate-200 px-6 py-5">
-        <div class="flex items-end gap-4 bg-slate-50 border-2 border-slate-200 rounded-2xl px-5 py-4 focus-within:border-indigo-400 focus-within:bg-white focus-within:shadow-md transition-all">
-          <div id="input-avatar" class="avatar w-9 h-9 rounded-xl text-[12px] shrink-0 mb-0.5"></div>
+      <div class="shrink-0 bg-white border-t border-slate-200 px-8 py-5">
+        <div class="flex items-end gap-4 bg-slate-50 border-2 border-slate-200 rounded-2xl px-6 py-4 focus-within:border-indigo-400 focus-within:bg-white focus-within:shadow-md transition-all">
+          <div id="input-avatar" class="avatar w-10 h-10 rounded-xl text-[13px] shrink-0 mb-0.5"></div>
           <textarea id="chat-input"
             class="flex-1 bg-transparent text-base text-slate-800 placeholder-slate-400 outline-none font-medium leading-relaxed"
             placeholder="메시지를 입력하세요… (Enter: 전송 / Shift+Enter: 줄바꿈)"
             rows="2"></textarea>
           <button onclick="sendMessage()" id="send-btn"
-            class="w-11 h-11 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl flex items-center justify-center transition-all shrink-0 outline-none mb-0.5 shadow-sm">
+            class="w-12 h-12 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl flex items-center justify-center transition-all shrink-0 outline-none mb-0.5 shadow-sm">
             <i data-lucide="send" class="w-5 h-5"></i>
           </button>
         </div>
