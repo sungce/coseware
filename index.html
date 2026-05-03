@@ -794,8 +794,7 @@
             <iframe id="viewer-frame" src=""
                 class="w-full block"
                 style="border:0;overflow:hidden;"
-                scrolling="no"
-                onload="autoResizeFrame(this)">
+                scrolling="no">
             </iframe>
         </section>
 
@@ -1352,6 +1351,20 @@
             const frame = document.getElementById('viewer-frame');
             frame.style.height = '';
             frame.src = url;
+            // chatting.html 은 h-screen 레이아웃 → 고정 100vh
+            if (url.includes('chatting')) {
+                frame.style.height = 'calc(100vh - 100px)';
+                frame.onload = null;
+            } else {
+                frame.onload = function() {
+                    try {
+                        const h = frame.contentDocument.documentElement.scrollHeight;
+                        if (h > 100) frame.style.height = h + 'px';
+                    } catch(e) {
+                        frame.style.height = 'calc(100vh - 100px)';
+                    }
+                };
+            }
             showSection('iframe-viewer');
         }
 
