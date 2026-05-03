@@ -119,18 +119,37 @@
         const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
         const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
         const db  = firebase.firestore(app);
+        // 오프라인 캐시 활성화
+        db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+        firebase.firestore().enablePersistence().catch(()=>{});
 
         let projects = [], currentFilter = { year:'all', query:'' };
 
         async function loadProjects() {
             const grid = document.getElementById('gallery-grid');
-            grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-400 font-medium">불러오는 중...</div>`;
+            grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-400 font-medium flex flex-col items-center space-y-2">
+                <svg class="w-6 h-6 animate-spin text-amber-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+                <span>불러오는 중...</span></div>`;
             try {
-                const snap = await db.collection('student_works').orderBy('createdAt','desc').get();
-                projects = snap.docs.map(doc=>({id:doc.id,...doc.data(),year:String(doc.data().year)}));
-                document.getElementById('total-count').textContent = projects.length + '개 작품';
+                let snap;
+                try {
+                    snap = await db.collection('student_works').orderBy('createdAt','desc').get();
+                } catch(e) {
+                    // orderBy 인덱스 없으면 정렬 없이 재시도
+                    snap = await db.collection('student_works').get();
+                }
+                projects = snap.docs.map(doc=>({id:doc.id,...doc.data(),year:String(doc.data().year||new Date().getFullYear())}));
+                const tc = document.getElementById('total-count');
+                if (tc) tc.textContent = projects.length + '개 작품';
                 buildYearFilters(); renderGallery();
-            } catch(e) { grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-400">불러오기 실패: ${e.message}</div>`; }
+            } catch(e) {
+                console.error('loadProjects error:', e);
+                grid.innerHTML = `<div class="col-span-full py-16 text-center">
+                    <p class="text-slate-400 font-medium mb-2">데이터를 불러올 수 없습니다.</p>
+                    <p class="text-xs text-slate-300">${e.message}</p>
+                    <button onclick="loadProjects()" class="mt-4 bg-amber-500 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-amber-600 transition-colors">다시 시도</button>
+                </div>`;
+            }
         }
 
         function buildYearFilters() {
