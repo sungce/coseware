@@ -788,14 +788,13 @@
         <section id="materials" class="fade-in hidden max-w-4xl mx-auto"></section>
 
         <!-- ==================== 공용 iframe 뷰어 ==================== -->
-        <section id="iframe-viewer" class="fade-in hidden w-full" style="margin-left:calc(50% - 50vw);width:100vw;max-width:100vw;">
-            <div class="max-w-7xl mx-auto px-6 pt-4">
-                <iframe id="viewer-frame" src=""
-                    class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
-                    style="height:calc(100vh - 80px);"
-                    frameborder="0">
-                </iframe>
-            </div>
+        <section id="iframe-viewer" class="fade-in hidden max-w-7xl mx-auto w-full pt-4">
+            <iframe id="viewer-frame" src=""
+                class="w-full rounded-2xl border border-slate-200 shadow-sm bg-white block"
+                frameborder="0"
+                scrolling="no"
+                onload="this.style.height = this.contentDocument.body.scrollHeight + 'px'">
+            </iframe>
         </section>
 
         <!-- ==================== AI-ON 학습 자료실 (iframe) ==================== -->
@@ -1320,7 +1319,19 @@
 
         // ==================== 공용 iframe 뷰어 ====================
         function openIframe(url, title) {
-            document.getElementById('viewer-frame').src = url;
+            const frame = document.getElementById('viewer-frame');
+            frame.style.height = '100vh'; // 로딩 중 기본 높이
+            frame.src = url;
+            frame.onload = function() {
+                try {
+                    const h = frame.contentDocument.documentElement.scrollHeight
+                           || frame.contentDocument.body.scrollHeight;
+                    frame.style.height = h + 'px';
+                } catch(e) {
+                    // 크로스 오리진이면 100vh 유지
+                    frame.style.height = '100vh';
+                }
+            };
             showSection('iframe-viewer');
         }
 
