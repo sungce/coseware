@@ -88,15 +88,54 @@
         <div>
           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2">채널</p>
           <div id="channel-list" class="space-y-0.5">
-            <button class="channel-btn active" data-room="team1" onclick="switchRoom('team1','모둠1 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠1 수다방</button>
-            <button class="channel-btn" data-room="team2" onclick="switchRoom('team2','모둠2 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠2 수다방</button>
-            <button class="channel-btn" data-room="team3" onclick="switchRoom('team3','모둠3 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠3 수다방</button>
-            <button class="channel-btn" data-room="team4" onclick="switchRoom('team4','모둠4 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠4 수다방</button>
-            <button class="channel-btn" data-room="team5" onclick="switchRoom('team5','모둠5 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠5 수다방</button>
-            <button class="channel-btn" data-room="team6" onclick="switchRoom('team6','모둠6 수다방',this)"><i data-lucide="users" class="w-3.5 h-3.5"></i>모둠6 수다방</button>
+
+            <!-- 모둠별 수다방 드롭다운 -->
+            <div>
+              <button onclick="toggleTeamDropdown()"
+                class="channel-btn w-full flex items-center justify-between"
+                id="team-dropdown-btn">
+                <span class="flex items-center gap-2">
+                  <i data-lucide="users" class="w-3.5 h-3.5"></i>모둠별 수다방
+                </span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="team-chevron"></i>
+              </button>
+              <div id="team-dropdown" class="hidden pl-4 mt-0.5 space-y-0.5">
+                <button class="channel-btn" data-room="team1" onclick="switchRoom('team1','모둠1 수다방',this)">
+                  <i data-lucide="hash" class="w-3 h-3"></i>모둠1 수다방
+                  <span id="my-team-badge-team1" class="hidden ml-auto text-[9px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-black">내 모둠</span>
+                </button>
+                <button class="channel-btn" data-room="team2" onclick="switchRoom('team2','모둠2 수다방',this)">
+                  <i data-lucide="hash" class="w-3 h-3"></i>모둠2 수다방
+                  <span id="my-team-badge-team2" class="hidden ml-auto text-[9px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-black">내 모둠</span>
+                </button>
+                <button class="channel-btn" data-room="team3" onclick="switchRoom('team3','모둠3 수다방',this)">
+                  <i data-lucide="hash" class="w-3 h-3"></i>모둠3 수다방
+                  <span id="my-team-badge-team3" class="hidden ml-auto text-[9px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-black">내 모둠</span>
+                </button>
+                <button class="channel-btn" data-room="team4" onclick="switchRoom('team4','모둠4 수다방',this)">
+                  <i data-lucide="hash" class="w-3 h-3"></i>모둠4 수다방
+                  <span id="my-team-badge-team4" class="hidden ml-auto text-[9px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-black">내 모둠</span>
+                </button>
+                <button class="channel-btn" data-room="team5" onclick="switchRoom('team5','모둠5 수다방',this)">
+                  <i data-lucide="hash" class="w-3 h-3"></i>모둠5 수다방
+                  <span id="my-team-badge-team5" class="hidden ml-auto text-[9px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-black">내 모둠</span>
+                </button>
+                <button class="channel-btn" data-room="team6" onclick="switchRoom('team6','모둠6 수다방',this)">
+                  <i data-lucide="hash" class="w-3 h-3"></i>모둠6 수다방
+                  <span id="my-team-badge-team6" class="hidden ml-auto text-[9px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-black">내 모둠</span>
+                </button>
+              </div>
+            </div>
+
             <button class="channel-btn" data-room="general" onclick="switchRoom('general','자유 수다방',this)"><i data-lucide="hash" class="w-3.5 h-3.5"></i>자유 수다방</button>
             <button class="channel-btn" data-room="qna" onclick="switchRoom('qna','질문 및 답변',this)"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i>질문 및 답변</button>
           </div>
+
+          <!-- 관리자: 모둠 설정 버튼 -->
+          <button id="group-mgmt-btn" onclick="openGroupMgmt()"
+            class="hidden w-full mt-3 flex items-center justify-center gap-2 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-2 rounded-xl transition-colors">
+            <i data-lucide="settings" class="w-3.5 h-3.5"></i>모둠 회원 설정
+          </button>
         </div>
         <div>
           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2 flex justify-between">
@@ -155,9 +194,46 @@
 
   </div>
 </main>
+<!-- 모둠 회원 설정 모달 (관리자 전용) -->
+<div id="group-mgmt-modal" class="fixed inset-0 z-[300] hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4"
+  onclick="if(event.target===this) closeGroupMgmt()">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+    <div class="flex items-center justify-between px-7 py-5 border-b border-slate-100 shrink-0">
+      <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+        <span class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-sm">⚙️</span>
+        모둠 회원 설정
+      </h3>
+      <button onclick="closeGroupMgmt()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100">✕</button>
+    </div>
+    <div class="flex-1 overflow-y-auto px-7 py-5">
+      <p class="text-xs text-slate-500 font-medium mb-4">가입 학생을 모둠에 배정하세요. 학생은 배정된 모둠 채팅방에 <span class="text-indigo-600 font-black">내 모둠</span> 표시가 됩니다.</p>
+      <div id="group-mgmt-content" class="text-center py-8 text-slate-400 text-sm">학생 목록 불러오는 중...</div>
+    </div>
+    <div class="px-7 py-5 border-t border-slate-100 shrink-0 flex justify-between items-center">
+      <span class="text-xs text-slate-400 font-medium">변경 즉시 저장됩니다</span>
+      <button onclick="closeGroupMgmt()" class="bg-indigo-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors text-sm">완료</button>
+    </div>
+  </div>
+</div>
 
-<script>
+
+  const ADMIN_EMAIL = 'sungce27@gmail.com';
+  const TEAMS = ['team1','team2','team3','team4','team5','team6'];
+  const TEAM_LABELS = { team1:'모둠1', team2:'모둠2', team3:'모둠3', team4:'모둠4', team5:'모둠5', team6:'모둠6' };
+
+  // ── 드롭다운 토글 ─────────────────────────────────────
+  function toggleTeamDropdown() {
+    const dd   = document.getElementById('team-dropdown');
+    const chev = document.getElementById('team-chevron');
+    const open = !dd.classList.contains('hidden');
+    dd.classList.toggle('hidden', open);
+    chev.style.transform = open ? '' : 'rotate(180deg)';
+    lucide.createIcons();
+  }
+
   lucide.createIcons();
+  // 초기 드롭다운 열기
+  toggleTeamDropdown();
 
   // iframe 안에서 열렸을 때 nav 자동 숨김 (상단 여백 제거)
   if (window.self !== window.top) {
@@ -221,10 +297,19 @@
     document.getElementById('chat-app').classList.replace('hidden','flex');
     lucide.createIcons();
 
+    // 관리자 버튼 표시
+    if (currentUser.email === ADMIN_EMAIL) {
+      const btn = document.getElementById('group-mgmt-btn');
+      btn.classList.remove('hidden'); btn.classList.add('flex');
+    }
+
+    // 내 모둠 배지
+    await loadMyTeam();
+
     // 접속자 등록
     await registerPresence();
     listenPresence();
-    switchRoom('general', '# 자유 수다방');
+    switchRoom('general', '자유 수다방');
   });
 
   // ── 접속자 관리 ───────────────────────────────────────
@@ -270,6 +355,145 @@
           </div>`;
         }).join('');
       });
+  }
+
+  // ── 내 모둠 배지 ──────────────────────────────────────
+  async function loadMyTeam() {
+    try {
+      const snap = await db.collection('chat_groups')
+        .where('uid','==', currentUser.uid).limit(1).get();
+      if (!snap.empty) {
+        const myGroup = snap.docs[0].data().group;
+        const badge = document.getElementById('my-team-badge-' + myGroup);
+        if (badge) badge.classList.remove('hidden');
+        // 내 모둠 이름 사이드바 표시
+        const nameEl = document.getElementById('my-name');
+        if (nameEl && TEAM_LABELS[myGroup]) {
+          nameEl.innerHTML = `${userName} <span class="text-[10px] text-indigo-500 font-black">${TEAM_LABELS[myGroup]}</span>`;
+        }
+      }
+    } catch(e) {}
+  }
+
+  // ── 모둠 관리 모달 ─────────────────────────────────────
+  function openGroupMgmt() {
+    document.getElementById('group-mgmt-modal').classList.remove('hidden');
+    document.getElementById('group-mgmt-modal').classList.add('flex');
+    renderGroupMgmt();
+  }
+  function closeGroupMgmt() {
+    document.getElementById('group-mgmt-modal').classList.add('hidden');
+    document.getElementById('group-mgmt-modal').classList.remove('flex');
+  }
+
+  async function renderGroupMgmt() {
+    const content = document.getElementById('group-mgmt-content');
+    content.innerHTML = '<div class="text-center py-4 text-slate-400 text-sm">불러오는 중...</div>';
+    try {
+      // 가입 학생 목록 (메인 Sheets에서 불러옴)
+      const membersSnap = await db.collection('users_list').get().catch(() => null);
+      // Firestore users_list가 없을 수 있으니 chat_presence 최근 접속자로 대체
+      const presenceSnap = await db.collection('chat_presence').get();
+      
+      // 현재 그룹 배정 현황
+      const groupSnap = await db.collection('chat_groups').get();
+      const groupMap = {}; // uid → group
+      groupSnap.docs.forEach(d => { groupMap[d.data().uid] = d.data().group; });
+
+      // 고유 사용자 목록 (presence 기반)
+      const usersMap = {};
+      presenceSnap.docs.forEach(d => {
+        const u = d.data();
+        if (u.uid) usersMap[u.uid] = u;
+      });
+
+      // 가입 학생 (Firestore members 컬렉션 시도)
+      let membersList = Object.values(usersMap);
+      try {
+        const ms = await db.collection('members').get();
+        if (!ms.empty) {
+          membersList = ms.docs.map(d => d.data());
+        }
+      } catch(e) {}
+
+      if (!membersList.length) {
+        content.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">접속한 학생이 없습니다. 학생들이 먼저 로그인해야 합니다.</div>';
+        return;
+      }
+
+      // 모둠별 그룹 UI
+      content.innerHTML = `
+        <div class="space-y-4">
+          ${TEAMS.map(team => {
+            const members = membersList.filter(u => groupMap[u.uid] === team);
+            return `<div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+              <p class="text-sm font-black text-slate-700 mb-3 flex items-center gap-2">
+                <span class="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center text-xs font-black">${team.replace('team','')}</span>
+                ${TEAM_LABELS[team]} 수다방
+                <span class="text-xs text-slate-400 font-normal">(${members.length}명)</span>
+              </p>
+              ${members.map(u => `
+                <div class="flex items-center justify-between bg-white rounded-xl px-3 py-2 mb-1.5 border border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${makeAvatar(u.name||u.userName||'?')}">${(u.name||u.userName||'?').charAt(0)}</div>
+                    <div>
+                      <p class="text-xs font-bold text-slate-700">${u.name||u.userName||'-'}</p>
+                      <p class="text-[10px] text-slate-400">${u.studentId||''}</p>
+                    </div>
+                  </div>
+                  <button onclick="removeFromGroup('${u.uid}')" class="text-xs text-rose-400 hover:text-rose-600 font-bold">제거</button>
+                </div>`).join('')}
+            </div>`;
+          }).join('')}
+
+          <!-- 미배정 학생 -->
+          <div class="bg-amber-50 rounded-2xl p-4 border border-amber-100">
+            <p class="text-sm font-black text-amber-700 mb-3">미배정 학생</p>
+            ${membersList.filter(u => !groupMap[u.uid]).map(u => `
+              <div class="flex items-center justify-between bg-white rounded-xl px-3 py-2 mb-1.5 border border-slate-100">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${makeAvatar(u.name||u.userName||'?')}">${(u.name||u.userName||'?').charAt(0)}</div>
+                  <div>
+                    <p class="text-xs font-bold text-slate-700">${u.name||u.userName||'-'}</p>
+                    <p class="text-[10px] text-slate-400">${u.studentId||''}</p>
+                  </div>
+                </div>
+                <select onchange="assignToGroup('${u.uid}','${u.name||u.userName||''}','${u.studentId||''}', this.value)"
+                  class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                  <option value="">모둠 선택</option>
+                  ${TEAMS.map(t=>`<option value="${t}">${TEAM_LABELS[t]}</option>`).join('')}
+                </select>
+              </div>`).join('') || '<p class="text-xs text-amber-500 font-medium">모든 학생이 모둠에 배정되었습니다 ✅</p>'}
+          </div>
+        </div>`;
+    } catch(e) {
+      content.innerHTML = `<div class="text-center py-8 text-rose-400 text-sm">오류: ${e.message}</div>`;
+    }
+  }
+
+  async function assignToGroup(uid, name, studentId, group) {
+    if (!group) return;
+    try {
+      // 기존 배정 삭제
+      const old = await db.collection('chat_groups').where('uid','==',uid).get();
+      const batch = db.batch();
+      old.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+      // 새 배정
+      await db.collection('chat_groups').add({ uid, name, studentId, group,
+        assignedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      renderGroupMgmt();
+    } catch(e) { alert('배정 오류: ' + e.message); }
+  }
+
+  async function removeFromGroup(uid) {
+    try {
+      const snap = await db.collection('chat_groups').where('uid','==',uid).get();
+      const batch = db.batch();
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+      renderGroupMgmt();
+    } catch(e) { alert('제거 오류: ' + e.message); }
   }
 
   // ── 채팅방 전환 ───────────────────────────────────────
