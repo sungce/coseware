@@ -148,7 +148,6 @@
                     
                     <!-- 2. 데스크탑 메뉴 링크 -->
                     <div class="hidden lg:flex items-center space-x-5 xl:space-x-8 text-[13.5px] xl:text-[14.5px] font-bold text-slate-600">
-                        <a href="#" onclick="showSection('home')" class="nav-link hover:text-blue-600 transition-colors" id="nav-home">홈</a>
                         <a href="#" onclick="showSection('notices')" class="nav-link hover:text-blue-600 transition-colors" id="nav-notices">공지사항</a>
 
                         <!-- 인터렉티브 수업실 드롭다운 -->
@@ -228,6 +227,9 @@
                                 <a href="#" onclick="showSection('assignments'); return false;" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
                                     <i data-lucide="clipboard-list" class="w-4 h-4"></i><span>수행평가 제출</span>
                                 </a>
+                                <a href="#" onclick="openIframe('tool.html','수업도구'); return false;" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors border-t border-slate-50">
+                                    <i data-lucide="wrench" class="w-4 h-4"></i><span>수업 도구</span>
+                                </a>
                             </div>
                         </div>
 
@@ -282,7 +284,6 @@
         <!-- 모바일 드롭다운 -->
         <div id="mobile-menu" class="hidden lg:hidden bg-white/95 backdrop-blur-xl border-b border-slate-100 shadow-xl absolute w-full font-bold">
             <div class="px-4 py-4 space-y-1">
-                <a href="#" onclick="showSection('home')" class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">홈</a>
                 <a href="#" onclick="showSection('notices')" class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">공지사항</a>
                 <a href="#" onclick="showSection('classes'); return false;" class="block py-3 px-4 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">인터렉티브 수업실</a>
                 <a href="code_play.html" target="_blank" class="block py-3 px-8 text-slate-500 hover:bg-blue-50 hover:text-blue-600 rounded-xl text-sm">↳ 코드 놀이터</a>
