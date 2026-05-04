@@ -1,64 +1,514 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>블록코딩 룸 — Sungce AI-ON</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
-<script src="https://unpkg.com/lucide@latest"></script>
+
 <style>
-  body { font-family:'Pretendard',-apple-system,sans-serif; background:#f8fafc; }
-  .card { background:white; border-radius:1.5rem; border:1px solid #e2e8f0; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR',sans-serif;background:#f7f8fa;color:#1a1d23;min-height:100vh;font-size:13px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#e2e4e8;border-radius:2px}
+.app{display:flex;flex-direction:column;height:100vh;min-height:600px}
+header{height:56px;background:#fff;border-bottom:1px solid #eaecf0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:700;color:#1a1d23;letter-spacing:-0.3px}
+.logo-box{width:28px;height:28px;border-radius:7px;background:#4f7ef7;display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff}
+.logo em{color:#4f7ef7;font-style:normal}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.chip{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid}
+.chip-blue{color:#185FA5;border-color:#B5D4F4;background:#E6F1FB}
+.chip-green{color:#0F6E56;border-color:#9FE1CB;background:#E1F5EE;display:flex;align-items:center;gap:5px}
+.dot-live{width:5px;height:5px;border-radius:50%;background:#1D9E75}
+.hbtn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #eaecf0;background:#fff;color:#4a5568;font-family:inherit;transition:all .15s}
+.hbtn:hover{background:#f7f8fa;border-color:#d0d5dd}
+.hbtn-primary{background:#4f7ef7;color:#fff;border-color:#4f7ef7}
+.hbtn-primary:hover{background:#3a6de0;border-color:#3a6de0}
+.body{display:grid;grid-template-columns:260px 1fr 288px;flex:1;overflow:hidden;min-height:0}
+.sidebar{background:#fff;border-right:1px solid #eaecf0;display:flex;flex-direction:column;overflow-y:auto}
+.sb-sec{padding:16px 14px;border-bottom:1px solid #f0f1f4}
+.sb-label{font-size:10px;font-weight:700;color:#9aa3b2;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px}
+.plat-btn{width:100%;padding:10px 12px;border-radius:9px;border:1px solid #eaecf0;background:transparent;color:#374151;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:500;font-family:inherit;transition:all .15s;margin-bottom:6px;text-align:left}
+.plat-btn:hover{background:#f7f8fa;border-color:#d0d5dd}
+.plat-btn.on{background:#EBF2FF;border-color:#B5D4F4;color:#185FA5}
+.plat-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.pi-scratch{background:#FEF3E7}.pi-entry{background:#E1F5EE}
+.pn{font-size:12px;font-weight:600}.pd{font-size:11px;color:#9aa3b2;margin-top:1px}
+.plat-btn.on .pd{color:#378ADD}
+.url-sec{padding:14px;border-bottom:1px solid #f0f1f4}
+.url-lbl{font-size:11px;font-weight:600;color:#6b7280;margin-bottom:6px}
+.url-inp{width:100%;padding:9px 11px;border-radius:8px;border:1px solid #e5e7eb;background:#f9fafb;color:#1a1d23;font-size:11px;font-family:'Consolas',monospace;outline:none;transition:border-color .15s}
+.url-inp:focus{border-color:#4f7ef7;background:#fff}
+.url-inp::placeholder{color:#c4c9d4}
+.load-btn{width:100%;margin-top:8px;padding:9px;border-radius:8px;background:#4f7ef7;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.load-btn:hover{background:#3a6de0}
+.tasks-sec{padding:14px;flex:1}
+.task-item{width:100%;padding:10px 12px;border-radius:9px;border:1px solid #f0f1f4;background:transparent;color:#374151;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:11px;font-family:inherit;transition:all .15s;margin-bottom:6px;text-align:left}
+.task-item:hover{background:#f7f8fa;border-color:#e5e7eb}
+.task-item.on{background:#EBF2FF;border-color:#B5D4F4;color:#185FA5}
+.task-num{width:18px;height:18px;border-radius:50%;background:#f0f1f4;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#6b7280;flex-shrink:0}
+.task-item.on .task-num{background:#4f7ef7;color:#fff}
+.task-done{margin-left:auto;font-size:12px;color:#1D9E75;font-weight:700}
+.task-arrow{margin-left:auto;font-size:11px;color:#c4c9d4}
+.task-item.on .task-arrow{color:#4f7ef7}
+.stats-sec{padding:14px;border-top:1px solid #f0f1f4;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-card{padding:10px 12px;border-radius:9px;background:#f7f8fa;border:1px solid #f0f1f4;text-align:center}
+.stat-num{font-size:22px;font-weight:700;line-height:1}
+.stat-num-green{color:#1D9E75}.stat-num-amber{color:#BA7517}
+.stat-lbl{font-size:10px;color:#9aa3b2;margin-top:3px}
+.main{display:flex;flex-direction:column;background:#f7f8fa;overflow:hidden}
+.toolbar{padding:10px 16px;background:#fff;border-bottom:1px solid #eaecf0;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tab-btn{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;border:none;cursor:pointer;font-family:inherit;background:transparent;color:#6b7280;transition:all .15s}
+.tab-btn:hover{color:#1a1d23}
+.tab-btn.on{background:#EBF2FF;color:#185FA5;font-weight:600}
+.sep{width:1px;height:20px;background:#eaecf0}
+.task-label{font-size:11px;color:#6b7280;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbtn{padding:5px 11px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #eaecf0;background:#fff;color:#374151;font-family:inherit;transition:all .15s}
+.tbtn:hover{background:#f7f8fa}
+.embed-area{flex:1;position:relative;overflow:hidden;margin:12px;border-radius:12px;background:#fff;border:1px solid #eaecf0}
+.embed-frame{width:100%;height:100%;border:none;display:block;border-radius:12px}
+.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#9aa3b2}
+.ph-icon{width:72px;height:72px;border-radius:18px;background:#f7f8fa;border:1.5px dashed #d0d5dd;display:flex;align-items:center;justify-content:center;font-size:32px}
+.ph-title{font-size:16px;font-weight:700;color:#374151}
+.ph-sub{font-size:12px;color:#9aa3b2;text-align:center;line-height:1.7;max-width:260px}
+.ph-tip{font-size:11px;color:#B5D4F4;background:#EBF2FF;padding:6px 14px;border-radius:20px;border:1px solid #B5D4F4;color:#185FA5}
+
+.loading-overlay{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-radius:12px;z-index:10}
+.spinner{width:32px;height:32px;border:3px solid #f0f1f4;border-top-color:#4f7ef7;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:12px;color:#9aa3b2;font-weight:500}
+
+.status-bar{padding:6px 16px;background:#fff;border-top:1px solid #eaecf0;display:flex;align-items:center;gap:14px;font-size:11px;color:#9aa3b2;flex-shrink:0}
+.si{display:flex;align-items:center;gap:5px}
+.sdot{width:6px;height:6px;border-radius:50%}
+.sd-green{background:#1D9E75}.sd-blue{background:#378ADD}.sd-gray{background:#d0d5dd}
+.ssep{color:#e5e7eb}
+.panel{background:#fff;border-left:1px solid #eaecf0;display:flex;flex-direction:column;overflow:hidden}
+.ph2{padding:14px 16px;border-bottom:1px solid #eaecf0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ph-name{font-size:13px;font-weight:700;color:#1a1d23;display:flex;align-items:center;gap:8px}
+.ph-icon2{width:22px;height:22px;border-radius:6px;background:#4f7ef7;display:flex;align-items:center;justify-content:center;font-size:11px}
+.eval-btn{padding:5px 12px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;background:#EBF2FF;color:#185FA5;border:1px solid #B5D4F4;font-family:inherit;transition:all .15s}
+.eval-btn:hover{background:#D6E8FF}
+.pb{flex:1;overflow-y:auto;padding:14px}
+.score-wrap{display:flex;flex-direction:column;align-items:center;padding:16px 0 12px;margin-bottom:14px}
+.ring-w{position:relative;width:96px;height:96px}
+.ring-svg{transform:rotate(-90deg)}
+.ring-track{fill:none;stroke:#f0f1f4;stroke-width:7}
+.ring-prog{fill:none;stroke:#4f7ef7;stroke-width:7;stroke-linecap:round;stroke-dasharray:251;stroke-dashoffset:251;transition:stroke-dashoffset 1s ease}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-score{font-size:22px;font-weight:700;color:#1a1d23}
+.ring-lbl{font-size:9px;color:#9aa3b2}
+.score-grade{font-size:13px;font-weight:700;color:#1a1d23;margin-top:8px}
+.score-sub{font-size:11px;color:#9aa3b2;margin-top:2px}
+.sec-head{font-size:10px;font-weight:700;color:#9aa3b2;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sec-head::after{content:'';flex:1;height:1px;background:#f0f1f4}
+.crit{padding:11px 12px;border-radius:9px;border:1px solid #f0f1f4;background:#fafbfc;margin-bottom:8px}
+.crit-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.crit-name{font-size:11px;font-weight:600;color:#374151}
+.crit-pts{font-size:11px;color:#9aa3b2}
+.crit-pts b{color:#4f7ef7;font-weight:700}
+.crit-bar{height:4px;border-radius:2px;background:#f0f1f4;overflow:hidden;margin-bottom:5px}
+.crit-fill{height:100%;border-radius:2px;transition:width 1s ease}
+.fill-b{background:#4f7ef7}.fill-g{background:#1D9E75}.fill-a{background:#BA7517}
+.crit-note{font-size:10px;color:#9aa3b2;line-height:1.5}
+.fb-box{padding:12px 13px;border-radius:9px;background:#EBF2FF;border:1px solid #B5D4F4;margin-bottom:14px}
+.fb-title{font-size:10px;font-weight:700;color:#185FA5;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.fb-text{font-size:11px;color:#378ADD;line-height:1.7}
+.checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.chk{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid #f0f1f4;cursor:pointer;transition:all .15s}
+.chk:hover{border-color:#e5e7eb;background:#fafbfc}
+.chk-box{width:15px;height:15px;border-radius:4px;border:1.5px solid #d0d5dd;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;transition:all .15s}
+.chk.done .chk-box{background:#1D9E75;border-color:#1D9E75;color:#fff}
+.chk-lbl{font-size:11px;color:#6b7280;line-height:1.5}
+.chk.done .chk-lbl{color:#374151}
+.memo{width:100%;height:72px;padding:9px 11px;border-radius:8px;border:1px solid #e5e7eb;background:#f9fafb;color:#1a1d23;font-size:11px;font-family:inherit;resize:none;outline:none;line-height:1.6}
+.memo:focus{border-color:#4f7ef7;background:#fff}
+.pf{padding:12px 14px;border-top:1px solid #eaecf0;display:flex;flex-direction:column;gap:7px;flex-shrink:0}
+.pf-row{display:flex;gap:7px}
+.pf-btn{flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;border:1px solid}
+.pf-save{background:#E1F5EE;color:#0F6E56;border-color:#9FE1CB}.pf-save:hover{background:#C8EFE0}
+.pf-reset{background:#fff;color:#6b7280;border-color:#e5e7eb}.pf-reset:hover{background:#f7f8fa}
+.pf-send{width:100%;padding:9px;border-radius:8px;background:#4f7ef7;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.pf-send:hover{background:#3a6de0}
+.toast{position:absolute;bottom:20px;right:20px;z-index:999;padding:10px 16px;border-radius:9px;background:#1a1d23;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;gap:8px;transform:translateY(60px);opacity:0;transition:all .25s ease;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.toast.show{transform:translateY(0);opacity:1}
 </style>
-</head>
-<body class="min-h-screen flex flex-col">
-<nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
-  <div class="max-w-7xl mx-auto px-4 md:px-6">
-    <div class="flex justify-between items-center h-14 border-b border-slate-100">
-      <a href="../index.html" class="flex items-center space-x-2 outline-none focus:outline-none">
-        <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold">AI</div>
-        <div>
-          <div class="text-[15px] font-bold text-slate-900 leading-tight">Sungce <span class="text-blue-600">AI-ON</span></div>
-          <div class="text-[12px] font-medium text-slate-500 leading-tight">정보 교과 클래스룸</div>
+
+<div class="app">
+  <header>
+    <div class="logo">
+      <div class="logo-box">🧩</div>
+      Block<em>Code</em> Room
+    </div>
+    <div class="hdr-right">
+      <div class="chip chip-green"><div class="dot-live"></div>세션 진행중</div>
+      <div class="chip chip-blue">🏫 5학년 2반</div>
+      <button class="hbtn" onclick="showToast('수업 저장됨 ✓')">💾 저장</button>
+      <button class="hbtn hbtn-primary" onclick="showToast('리포트가 생성되었습니다!')">📊 리포트</button>
+    </div>
+  </header>
+
+  <div class="body">
+    <div class="sidebar">
+      <div class="sb-sec">
+        <div class="sb-label">플랫폼 선택</div>
+        <button class="plat-btn on" id="scrBtn" onclick="setPlatform('scratch')">
+          <div class="plat-icon pi-scratch">🐱</div>
+          <div><div class="pn">Scratch</div><div class="pd">MIT 스크래치 3.0</div></div>
+        </button>
+        <button class="plat-btn" id="entBtn" onclick="setPlatform('entry')">
+          <div class="plat-icon pi-entry">🚀</div>
+          <div><div class="pn">Entry (엔트리)</div><div class="pd">새 탭으로 열기</div></div>
+        </button>
+      </div>
+
+      <div class="url-sec">
+        <div class="url-lbl">작품 URL 직접 입력</div>
+        <input class="url-inp" id="urlInp" placeholder="scratch.mit.edu/projects/123456789">
+        <button class="load-btn" onclick="loadFromInput()">▶ 작품 불러오기</button>
+      </div>
+
+      <div class="tasks-sec">
+        <div class="sb-label">수업 과제 목록 <span style="color:#4f7ef7;font-size:9px;font-weight:700;margin-left:4px">클릭하면 작품이 열려요</span></div>
+        <button class="task-item on" id="task0" onclick="selTask(0)">
+          <div class="task-num">1</div>
+          <span style="flex:1">고양이 10걸음 움직이기</span>
+          <span class="task-done">✓</span>
+        </button>
+        <button class="task-item" id="task1" onclick="selTask(1)">
+          <div class="task-num">2</div>
+          <span style="flex:1">소리 효과 추가하기</span>
+          <span class="task-arrow">▶</span>
+        </button>
+        <button class="task-item" id="task2" onclick="selTask(2)">
+          <div class="task-num">3</div>
+          <span style="flex:1">반복문 애니메이션</span>
+          <span class="task-arrow">▶</span>
+        </button>
+        <button class="task-item" id="task3" onclick="selTask(3)">
+          <div class="task-num">4</div>
+          <span style="flex:1">변수로 점수판 만들기</span>
+          <span class="task-arrow">▶</span>
+        </button>
+        <button class="task-item" id="task4" onclick="selTask(4)">
+          <div class="task-num">5</div>
+          <span style="flex:1">조건문 게임 만들기</span>
+          <span class="task-arrow">▶</span>
+        </button>
+      </div>
+
+      <div class="stats-sec">
+        <div class="stat-card"><div class="stat-num stat-num-green">18</div><div class="stat-lbl">제출 완료</div></div>
+        <div class="stat-card"><div class="stat-num stat-num-amber">7</div><div class="stat-lbl">진행 중</div></div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="toolbar">
+        <button class="tab-btn on" id="tabEmbed" onclick="switchTab('embed')">🖥 작품 실행</button>
+        <button class="tab-btn" id="tabEditor" onclick="switchTab('editor')">✏️ 편집기</button>
+        <div class="sep"></div>
+        <span class="task-label" id="taskLabel">📌 과제 1: 고양이 10걸음 움직이기</span>
+        <button class="tbtn" onclick="toggleFS()">⛶ 전체화면</button>
+        <button class="tbtn" onclick="refreshF()">↺ 새로고침</button>
+      </div>
+
+      <div class="embed-area" id="embedArea">
+        <div class="placeholder" id="ph">
+          <div class="ph-icon">🧩</div>
+          <div class="ph-title">작품을 선택해 주세요</div>
+          <div class="ph-sub">왼쪽 과제 목록을 클릭하면<br>해당 예제 작품이 바로 열려요</div>
+          <div class="ph-tip">👆 과제 목록 클릭 → 작품 자동 로드</div>
         </div>
-      </a>
-      <a href="../index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl transition-colors">
-        <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
-      </a>
+        <div class="loading-overlay" id="loadingOverlay" style="display:none">
+          <div class="spinner"></div>
+          <div class="loading-text" id="loadingText">작품 불러오는 중...</div>
+        </div>
+        <iframe class="embed-frame" id="frame" src="" style="display:none" allowfullscreen
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+      </div>
+
+      <div class="status-bar">
+        <div class="si"><div class="sdot sd-green"></div>연결됨</div>
+        <span class="ssep">|</span>
+        <div class="si" id="platStatus"><div class="sdot sd-blue"></div>Scratch 3.0</div>
+        <span class="ssep">|</span>
+        <div class="si" id="frameStatus"><div class="sdot sd-gray"></div>대기 중</div>
+        <span class="ssep" style="margin-left:auto">|</span>
+        <div class="si">👩‍🏫 김민지 선생님</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph2">
+        <div class="ph-name"><div class="ph-icon2">⭐</div>AI 평가 패널</div>
+        <button class="eval-btn" onclick="runEval()">▶ 평가 실행</button>
+      </div>
+      <div class="pb">
+        <div class="score-wrap">
+          <div class="ring-w">
+            <svg class="ring-svg" viewBox="0 0 100 100" width="96" height="96">
+              <circle class="ring-track" cx="50" cy="50" r="40"/>
+              <circle class="ring-prog" id="ringProg" cx="50" cy="50" r="40"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-score" id="ringScore">--</div>
+              <div class="ring-lbl">/ 100점</div>
+            </div>
+          </div>
+          <div class="score-grade" id="scoreGrade">평가 대기</div>
+          <div class="score-sub" id="scoreSub">과제를 선택하고 평가를 실행하세요</div>
+        </div>
+        <div class="sec-head">평가 기준</div>
+        <div class="crit">
+          <div class="crit-hd"><div class="crit-name">🎯 과제 완성도</div><div class="crit-pts"><b id="p1">0</b> / 40점</div></div>
+          <div class="crit-bar"><div class="crit-fill fill-b" id="b1" style="width:0%"></div></div>
+          <div class="crit-note" id="n1">평가를 실행하면 결과가 표시됩니다</div>
+        </div>
+        <div class="crit">
+          <div class="crit-hd"><div class="crit-name">🧠 코드 구조</div><div class="crit-pts"><b id="p2">0</b> / 30점</div></div>
+          <div class="crit-bar"><div class="crit-fill fill-g" id="b2" style="width:0%"></div></div>
+          <div class="crit-note" id="n2">평가를 실행하면 결과가 표시됩니다</div>
+        </div>
+        <div class="crit">
+          <div class="crit-hd"><div class="crit-name">🎨 창의성</div><div class="crit-pts"><b id="p3">0</b> / 20점</div></div>
+          <div class="crit-bar"><div class="crit-fill fill-a" id="b3" style="width:0%"></div></div>
+          <div class="crit-note" id="n3">평가를 실행하면 결과가 표시됩니다</div>
+        </div>
+        <div class="crit">
+          <div class="crit-hd"><div class="crit-name">📝 제출 준수</div><div class="crit-pts"><b id="p4">0</b> / 10점</div></div>
+          <div class="crit-bar"><div class="crit-fill fill-b" id="b4" style="width:0%"></div></div>
+          <div class="crit-note" id="n4">평가를 실행하면 결과가 표시됩니다</div>
+        </div>
+        <div class="sec-head">체크리스트</div>
+        <div class="checklist">
+          <div class="chk" onclick="toggleChk(this)"><div class="chk-box"></div><div class="chk-lbl">스프라이트가 화면에 표시됨</div></div>
+          <div class="chk" onclick="toggleChk(this)"><div class="chk-box"></div><div class="chk-lbl">버튼 클릭 시 이벤트가 발생함</div></div>
+          <div class="chk" onclick="toggleChk(this)"><div class="chk-box"></div><div class="chk-lbl">움직임 블록을 사용함</div></div>
+          <div class="chk" onclick="toggleChk(this)"><div class="chk-box"></div><div class="chk-lbl">반복 또는 조건 블록 사용</div></div>
+          <div class="chk" onclick="toggleChk(this)"><div class="chk-box"></div><div class="chk-lbl">작품 제목이 설정됨</div></div>
+        </div>
+        <div class="fb-box">
+          <div class="fb-title">💬 AI 피드백</div>
+          <div class="fb-text" id="fbText">과제를 선택하고 평가를 실행하면 AI가 구체적인 피드백을 제공합니다.</div>
+        </div>
+        <div class="sec-head">교사 메모</div>
+        <textarea class="memo" placeholder="학생에게 전달할 개별 피드백을 입력하세요..."></textarea>
+      </div>
+      <div class="pf">
+        <div class="pf-row">
+          <button class="pf-btn pf-save" onclick="showToast('평가 결과가 저장되었습니다 ✓')">💾 평가 저장</button>
+          <button class="pf-btn pf-reset" onclick="resetEval()">↺ 초기화</button>
+        </div>
+        <button class="pf-send" onclick="showToast('학생에게 피드백이 전송되었습니다! 📤')">📤 학생에게 피드백 전송</button>
+      </div>
     </div>
   </div>
-</nav>
+</div>
 
-<main class="max-w-7xl mx-auto px-6 pt-8 pb-16 w-full flex-1">
-  <div class="mb-10">
-    <div class="inline-flex items-center space-x-2 bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-orange-100">
-      <i data-lucide="blocks" class="w-3.5 h-3.5"></i><span>블록코딩 룸</span>
-    </div>
-    <h1 class="text-4xl font-black text-slate-900 mb-3">블록코딩 룸 <span class="text-orange-500">🧱</span></h1>
-    <p class="text-lg text-slate-500 font-medium">블록으로 프로그래밍의 기초를 배워보세요.</p>
-  </div>
+<div class="toast" id="toast"></div>
 
-  <div class="card p-12 flex flex-col items-center justify-center text-center min-h-[60vh]">
-    <div class="w-20 h-20 bg-orange-50 text-orange-700 rounded-3xl flex items-center justify-center mb-6 shadow-sm">
-      <i data-lucide="blocks" class="w-10 h-10 text-orange-500"></i>
-    </div>
-    <h2 class="text-2xl font-black text-slate-800 mb-3">준비 중입니다</h2>
-    <p class="text-slate-500 font-medium max-w-md leading-relaxed">
-      <span class="font-black text-slate-700">블록코딩 룸</span> 페이지를 준비하고 있어요.<br>
-      곧 멋진 콘텐츠로 찾아오겠습니다! 🚀
-    </p>
-    <a href="../index.html" class="mt-8 inline-flex items-center gap-2 bg-slate-900 text-white font-bold px-6 py-3 rounded-2xl hover:bg-slate-700 transition-colors text-sm">
-      <i data-lucide="arrow-left" class="w-4 h-4"></i>메인으로 돌아가기
-    </a>
-  </div>
-</main>
-
-<script>lucide.createIcons();
-  if (window.self !== window.top) {
-    document.querySelector('nav').style.display = 'none';
-    document.querySelector('main').style.paddingTop = '2rem';
+<script>
+const TASKS = [
+  {
+    label: '📌 과제 1: 고양이 10걸음 움직이기',
+    url: 'https://scratch.mit.edu/projects/10128407/embed',
+    platform: 'scratch',
+    done: true
+  },
+  {
+    label: '📌 과제 2: 소리 효과 추가하기',
+    url: 'https://scratch.mit.edu/projects/104/embed',
+    platform: 'scratch',
+    done: false
+  },
+  {
+    label: '📌 과제 3: 반복문 애니메이션',
+    url: 'https://scratch.mit.edu/projects/1031685490/embed',
+    platform: 'scratch',
+    done: false
+  },
+  {
+    label: '📌 과제 4: 변수로 점수판 만들기',
+    url: 'https://scratch.mit.edu/projects/885950758/embed',
+    platform: 'scratch',
+    done: false
+  },
+  {
+    label: '📌 과제 5: 조건문 게임 만들기',
+    url: 'https://scratch.mit.edu/projects/60917032/embed',
+    platform: 'scratch',
+    done: false
   }
+];
+
+let currentTask = -1;
+let currentPlatform = 'scratch';
+let evaluated = false;
+let toastTimer;
+
+function setPlatform(p) {
+  currentPlatform = p;
+  document.getElementById('scrBtn').classList.toggle('on', p === 'scratch');
+  document.getElementById('entBtn').classList.toggle('on', p === 'entry');
+  document.getElementById('platStatus').innerHTML = p === 'scratch'
+    ? '<div class="sdot sd-blue"></div>Scratch 3.0'
+    : '<div class="sdot sd-green"></div>Entry (새 탭)';
+  document.getElementById('urlInp').placeholder = p === 'scratch'
+    ? 'scratch.mit.edu/projects/123456789'
+    : 'playentry.org/projects/abcdef12';
+  showToast(p === 'scratch' ? '🐱 Scratch 모드' : '🚀 Entry 모드 (새 탭으로 열림)');
+}
+
+function selTask(idx) {
+  currentTask = idx;
+  const task = TASKS[idx];
+
+  document.querySelectorAll('.task-item').forEach((el, i) => {
+    el.classList.toggle('on', i === idx);
+  });
+  document.getElementById('taskLabel').textContent = task.label;
+
+  if (task.platform === 'entry') {
+    window.open(task.url, '_blank');
+    showToast('🚀 엔트리 작품을 새 탭에서 열었어요');
+    return;
+  }
+
+  loadEmbed(task.url, task.label);
+  if (evaluated) resetEval();
+}
+
+function loadFromInput() {
+  let url = document.getElementById('urlInp').value.trim();
+  if (!url) { showToast('⚠️ URL을 입력해 주세요'); return; }
+  if (!url.startsWith('http')) url = 'https://' + url;
+  if (url.includes('scratch.mit.edu/projects/') && !url.includes('/embed')) {
+    const m = url.match(/projects\/(\d+)/);
+    if (m) url = `https://scratch.mit.edu/projects/${m[1]}/embed`;
+  }
+  if (url.includes('playentry.org')) {
+    window.open(url, '_blank');
+    showToast('🚀 엔트리 작품을 새 탭에서 열었어요');
+    return;
+  }
+  loadEmbed(url, '직접 입력한 작품');
+}
+
+function loadEmbed(url, label) {
+  const frame = document.getElementById('frame');
+  const ph = document.getElementById('ph');
+  const overlay = document.getElementById('loadingOverlay');
+  const loadingText = document.getElementById('loadingText');
+
+  ph.style.display = 'none';
+  frame.style.display = 'none';
+  overlay.style.display = 'flex';
+  loadingText.textContent = label + ' 불러오는 중...';
+  document.getElementById('frameStatus').innerHTML = '<div class="sdot sd-gray"></div>로딩 중...';
+
+  frame.src = '';
+  setTimeout(() => {
+    frame.src = url;
+    frame.onload = () => {
+      overlay.style.display = 'none';
+      frame.style.display = 'block';
+      document.getElementById('frameStatus').innerHTML = '<div class="sdot sd-green"></div>✓ 작품 로드됨';
+      showToast('▶ 작품이 열렸습니다!');
+    };
+    setTimeout(() => {
+      if (overlay.style.display !== 'none') {
+        overlay.style.display = 'none';
+        frame.style.display = 'block';
+        document.getElementById('frameStatus').innerHTML = '<div class="sdot sd-green"></div>✓ 작품 로드됨';
+      }
+    }, 4000);
+  }, 300);
+}
+
+function switchTab(tab) {
+  document.getElementById('tabEmbed').classList.toggle('on', tab === 'embed');
+  document.getElementById('tabEditor').classList.toggle('on', tab === 'editor');
+  if (tab === 'editor') {
+    const task = TASKS[currentTask] || TASKS[0];
+    const editUrl = task.url.replace('/embed', '');
+    window.open(editUrl, '_blank');
+    showToast('✏️ 편집기를 새 탭에서 열었습니다');
+  }
+}
+
+function toggleFS() {
+  const a = document.getElementById('embedArea');
+  if (a.requestFullscreen) a.requestFullscreen();
+}
+
+function refreshF() {
+  const f = document.getElementById('frame');
+  if (f.src) { const s = f.src; f.src = ''; setTimeout(() => f.src = s, 100); showToast('↺ 새로고침됨'); }
+  else showToast('⚠️ 먼저 작품을 불러와 주세요');
+}
+
+function toggleChk(el) {
+  el.classList.toggle('done');
+  el.querySelector('.chk-box').textContent = el.classList.contains('done') ? '✓' : '';
+}
+
+function runEval() {
+  if (currentTask === -1) { showToast('⚠️ 먼저 과제를 선택해 주세요'); return; }
+  showToast('🤖 AI 평가 분석 중...');
+  setTimeout(() => {
+    const s = {
+      c1: Math.floor(Math.random() * 16) + 25,
+      c2: Math.floor(Math.random() * 12) + 18,
+      c3: Math.floor(Math.random() * 9) + 11,
+      c4: Math.floor(Math.random() * 3) + 7
+    };
+    const total = s.c1 + s.c2 + s.c3 + s.c4;
+    animRing(total);
+    [[1,s.c1,40],[2,s.c2,30],[3,s.c3,20],[4,s.c4,10]].forEach(([i,v,mx], idx) => {
+      setTimeout(() => {
+        document.getElementById('p'+i).textContent = v;
+        document.getElementById('b'+i).style.width = (v/mx*100) + '%';
+        document.getElementById('n'+i).textContent = v/mx >= .8 ? '✅ 우수한 수준입니다' : '⚠️ 개선이 필요합니다';
+      }, idx * 150);
+    });
+    const grades = [{t:90,g:'🏆 우수'},{t:75,g:'⭐ 양호'},{t:60,g:'👍 보통'},{t:0,g:'💪 노력 필요'}];
+    const gr = grades.find(g => total >= g.t);
+    document.getElementById('scoreGrade').textContent = gr.g;
+    document.getElementById('scoreSub').textContent = `총점 ${total}점`;
+    const fbs = [
+      '스프라이트 이동 블록을 잘 활용했습니다. 반복문을 추가하면 더 자연스러운 애니메이션을 만들 수 있어요!',
+      '블록 구조가 잘 정돈되어 있습니다. 조건문을 활용하면 더 풍부한 인터랙션을 구현할 수 있을 거예요.',
+      '창의적인 캐릭터 선택이 돋보입니다! 배경 전환 기능을 추가하면 완성도가 더 높아질 것 같아요.'
+    ];
+    document.getElementById('fbText').textContent = fbs[Math.floor(Math.random() * fbs.length)];
+    evaluated = true;
+    showToast('✓ AI 평가 완료! 총점 ' + total + '점');
+  }, 1600);
+}
+
+function animRing(total) {
+  document.getElementById('ringProg').style.strokeDashoffset = 251 - (total/100)*251;
+  let cur = 0, step = total/60;
+  const sc = document.getElementById('ringScore');
+  const t = setInterval(() => { cur = Math.min(cur+step, total); sc.textContent = Math.round(cur); if(cur>=total) clearInterval(t); }, 16);
+}
+
+function resetEval() {
+  document.getElementById('ringProg').style.strokeDashoffset = 251;
+  document.getElementById('ringScore').textContent = '--';
+  document.getElementById('scoreGrade').textContent = '평가 대기';
+  document.getElementById('scoreSub').textContent = '과제를 선택하고 평가를 실행하세요';
+  [1,2,3,4].forEach(i => {
+    document.getElementById('p'+i).textContent = '0';
+    document.getElementById('b'+i).style.width = '0%';
+    document.getElementById('n'+i).textContent = '평가를 실행하면 결과가 표시됩니다';
+  });
+  document.getElementById('fbText').textContent = '과제를 선택하고 평가를 실행하면 AI가 구체적인 피드백을 제공합니다.';
+  evaluated = false;
+  showToast('↺ 초기화되었습니다');
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+selTask(0);
 </script>
-</body>
-</html>
