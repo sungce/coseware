@@ -1,49 +1,1901 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>웹코딩 실습실 — Sungce AI-ON</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<title>웹 실습실 — Sungce AI-ON</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
-  body { font-family:'Pretendard',-apple-system,sans-serif; background:#f8fafc; }
-  .card { background:white; border-radius:1.5rem; border:1px solid #e2e8f0; }
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --bg4: #21262d;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --accent: #3b82f6;
+    --accent2: #60a5fa;
+    --accent-glow: rgba(59,130,246,0.18);
+    --green: #23d18b;
+    --green-dim: rgba(35,209,139,0.12);
+    --red: #f85149;
+    --amber: #e3b341;
+    --purple: #bc8cff;
+    --tab-active: #3b82f6;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --sans: 'Pretendard', -apple-system, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    height: 56px;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 0;
+    z-index: 100;
+    flex-shrink: 0;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    margin-right: 24px;
+  }
+  .nav-logo-icon {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; color: white;
+    letter-spacing: 0.02em;
+  }
+  .nav-logo-text { line-height: 1.2; }
+  .nav-logo-title { font-size: 14px; font-weight: 800; color: var(--text); }
+  .nav-logo-title span { color: var(--accent2); }
+  .nav-logo-sub { font-size: 11px; font-weight: 500; color: var(--text3); }
+
+  .nav-divider { width: 1px; height: 22px; background: var(--border2); margin: 0 20px; }
+
+  .nav-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--green-dim);
+    border: 1px solid rgba(35,209,139,0.25);
+    color: var(--green);
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .nav-badge svg { width: 11px; height: 11px; }
+
+  .nav-title {
+    font-size: 16px; font-weight: 800; color: var(--text);
+    margin-left: 12px;
+  }
+
+  .nav-spacer { flex: 1; }
+
+  .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 8px;
+    font-family: var(--sans); font-size: 13px; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn svg { width: 14px; height: 14px; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border2);
+  }
+  .btn-ghost:hover { background: var(--bg4); color: var(--text); border-color: var(--border2); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 0 0 0 var(--accent-glow);
+  }
+  .btn-primary:hover { background: #2563eb; box-shadow: 0 0 16px var(--accent-glow); }
+  .btn-primary:active { transform: scale(0.97); }
+
+  .btn-run {
+    background: #166534;
+    border: 1px solid #22c55e40;
+    color: var(--green);
+    font-size: 13px; font-weight: 700;
+    padding: 7px 18px;
+  }
+  .btn-run:hover { background: #15803d; box-shadow: 0 0 14px rgba(34,197,94,0.25); }
+  .btn-run:active { transform: scale(0.97); }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    height: 44px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .toolbar-tabs { display: flex; align-items: center; gap: 2px; flex: 1; }
+
+  .tab {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 7px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+    border: 1px solid transparent;
+    color: var(--text3);
+    background: transparent;
+    font-family: var(--sans);
+    white-space: nowrap;
+  }
+  .tab svg { width: 13px; height: 13px; }
+  .tab:hover { color: var(--text2); background: var(--bg4); }
+
+  .tab.active-html { color: #f97316; background: rgba(249,115,22,0.1); border-color: rgba(249,115,22,0.2); }
+  .tab.active-css  { color: #3b82f6; background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.2); }
+  .tab.active-js   { color: #f59e0b; background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); }
+
+  .tab-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot-html { background: #f97316; }
+  .dot-css  { background: #3b82f6; }
+  .dot-js   { background: #f59e0b; }
+
+  .toolbar-right { display: flex; align-items: center; gap: 6px; }
+
+  .icon-btn {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 7px; border: 1px solid var(--border);
+    background: transparent; cursor: pointer; color: var(--text3);
+    transition: all 0.15s; font-family: var(--sans);
+  }
+  .icon-btn svg { width: 14px; height: 14px; }
+  .icon-btn:hover { background: var(--bg4); color: var(--text2); border-color: var(--border2); }
+
+  /* ── LAYOUT ── */
+  .workspace {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .panel-editor {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .panel-preview {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── EDITOR ── */
+  .editor-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .code-editor {
+    position: absolute; inset: 0;
+    background: var(--bg);
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #e6edf3;
+    padding: 16px 16px 16px 56px;
+    border: none; outline: none; resize: none;
+    width: 100%; height: 100%;
+    tab-size: 2;
+    caret-color: var(--accent2);
+    overflow: auto;
+  }
+
+  .code-editor:focus { outline: none; }
+
+  .line-numbers {
+    position: absolute;
+    top: 0; left: 0;
+    width: 44px;
+    padding: 16px 8px 16px 0;
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--text3);
+    background: var(--bg);
+    pointer-events: none;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    height: 26px;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 12px;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .status-item {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 11px; color: var(--text3);
+    font-family: var(--mono);
+  }
+  .status-item svg { width: 11px; height: 11px; }
+
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+  /* ── PREVIEW ── */
+  .preview-header {
+    height: 44px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 14px;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .traffic-lights { display: flex; align-items: center; gap: 5px; }
+  .light {
+    width: 11px; height: 11px; border-radius: 50%;
+    cursor: default;
+  }
+  .light-red { background: #ff5f57; }
+  .light-amber { background: #febc2e; }
+  .light-green { background: #28c840; }
+
+  .url-bar {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 7px;
+    height: 28px;
+    display: flex; align-items: center;
+    padding: 0 10px;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+  .url-bar svg { width: 12px; height: 12px; color: var(--green); }
+
+  .preview-frame {
+    flex: 1;
+    background: white;
+    border: none;
+    width: 100%;
+  }
+
+  /* ── EXAMPLES DRAWER ── */
+  .examples-panel {
+    width: 200px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+
+  .examples-header {
+    padding: 12px 14px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .example-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: all 0.12s;
+    border-bottom: 1px solid var(--border);
+    border: none; background: transparent;
+    width: 100%; text-align: left;
+    font-family: var(--sans);
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  .example-item:hover { background: var(--bg4); color: var(--text); }
+  .example-item:last-child { border-bottom: none; }
+
+  .example-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+  .example-info { min-width: 0; }
+  .example-name { font-size: 12px; font-weight: 700; line-height: 1.2; }
+  .example-desc { font-size: 10px; color: var(--text3); line-height: 1.2; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ── SPLITTER ── */
+  .splitter {
+    width: 4px;
+    background: var(--border);
+    cursor: col-resize;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .splitter:hover { background: var(--accent); }
+
+  /* ── SCROLLBARS ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* ── NOTIFICATIONS ── */
+  .toast {
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600;
+    color: var(--green);
+    transform: translateY(60px); opacity: 0;
+    transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 999;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast svg { width: 15px; height: 15px; }
+
+  /* ── RESPONSIVE ADJUSTMENTS ── */
+  @media (max-width: 900px) {
+    .examples-panel { display: none; }
+    .panel-editor { width: 50%; }
+  }
+  @media (max-width: 600px) {
+    .panel-editor { display: none; }
+    .panel-preview { width: 100%; }
+  }
+
+  /* syntax highlight colors for textarea */
+  .code-editor.html-mode { color: #e6edf3; }
+  .code-editor.css-mode  { color: #e6edf3; }
+  .code-editor.js-mode   { color: #e6edf3; }
+
+  /* Auto-run indicator */
+  .auto-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 700;
+    background: var(--green-dim);
+    color: var(--green);
+    border: 1px solid rgba(35,209,139,0.2);
+  }
 </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
 
-
-<main class="max-w-7xl mx-auto px-6 pt-8 pb-16 w-full flex-1">
-  <div class="mb-10">
-    <div class="inline-flex items-center space-x-2 bg-sky-50 text-sky-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-sky-100">
-      <i data-lucide="globe" class="w-3.5 h-3.5"></i><span>웹코딩 실습실</span>
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">AI</div>
+    <div class="nav-logo-text">
+      <div class="nav-logo-title">Sungce <span>AI-ON</span></div>
+      <div class="nav-logo-sub">정보 교과 클래스룸</div>
     </div>
-    <h1 class="text-4xl font-black text-slate-900 mb-3">웹코딩 실습실 <span class="text-sky-500">🌐</span></h1>
-    <p class="text-lg text-slate-500 font-medium">HTML, CSS, JavaScript로 나만의 웹을 만들어보세요.</p>
+  </a>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-badge">
+    <i data-lucide="code-2"></i>
+    웹 실습실
   </div>
+  <span class="nav-title">HTML / CSS / JS 에디터</span>
 
-  <div class="card p-12 flex flex-col items-center justify-center text-center min-h-[60vh]">
-    <div class="w-20 h-20 bg-sky-50 text-sky-700 rounded-3xl flex items-center justify-center mb-6 shadow-sm">
-      <i data-lucide="globe" class="w-10 h-10 text-sky-500"></i>
-    </div>
-    <h2 class="text-2xl font-black text-slate-800 mb-3">준비 중입니다</h2>
-    <p class="text-slate-500 font-medium max-w-md leading-relaxed">
-      <span class="font-black text-slate-700">웹코딩 실습실</span> 페이지를 준비하고 있어요.<br>
-      곧 멋진 콘텐츠로 찾아오겠습니다! 🚀
-    </p>
-    <a href="../index.html" class="mt-8 inline-flex items-center gap-2 bg-slate-900 text-white font-bold px-6 py-3 rounded-2xl hover:bg-slate-700 transition-colors text-sm">
-      <i data-lucide="arrow-left" class="w-4 h-4"></i>메인으로 돌아가기
+  <div class="nav-spacer"></div>
+
+  <div class="nav-actions">
+    <span class="auto-badge">
+      <i data-lucide="zap" style="width:9px;height:9px;"></i> 자동 실행
+    </span>
+    <button class="btn btn-ghost" onclick="formatCode()">
+      <i data-lucide="align-left"></i> 정렬
+    </button>
+    <button class="btn btn-ghost" onclick="clearAll()">
+      <i data-lucide="trash-2"></i> 초기화
+    </button>
+    <button class="btn btn-run" onclick="runPreview()">
+      <i data-lucide="play"></i> 실행
+    </button>
+    <a href="index.html" class="btn btn-ghost">
+      <i data-lucide="home"></i> <span style="font-size:12px;">메인</span>
     </a>
   </div>
-</main>
+</nav>
 
-<script>lucide.createIcons();
-  if (window.self !== window.top) {
-    document.querySelector('nav').style.display = 'none';
-    document.querySelector('main').style.paddingTop = '2rem';
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-tabs">
+    <button class="tab active-html" id="tab-html" onclick="switchTab('html')">
+      <span class="tab-dot dot-html"></span> HTML
+    </button>
+    <button class="tab" id="tab-css" onclick="switchTab('css')">
+      <span class="tab-dot dot-css"></span> CSS
+    </button>
+    <button class="tab" id="tab-js" onclick="switchTab('js')">
+      <span class="tab-dot dot-js"></span> JavaScript
+    </button>
+  </div>
+  <div class="toolbar-right">
+    <button class="icon-btn" onclick="toggleFullPreview()" title="미리보기 전체화면">
+      <i data-lucide="maximize-2"></i>
+    </button>
+    <button class="icon-btn" onclick="copyCode()" title="코드 복사">
+      <i data-lucide="copy"></i>
+    </button>
+    <button class="icon-btn" onclick="downloadCode()" title="코드 저장">
+      <i data-lucide="download"></i>
+    </button>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- EXAMPLES SIDEBAR -->
+  <div class="examples-panel">
+    <div class="examples-header">예제 템플릿</div>
+
+    <button class="example-item" onclick="loadExample('hello')">
+      <div class="example-icon" style="background:rgba(249,115,22,0.12);color:#f97316;">👋</div>
+      <div class="example-info">
+        <div class="example-name">Hello World</div>
+        <div class="example-desc">기본 HTML 구조</div>
+      </div>
+    </button>
+    <button class="example-item" onclick="loadExample('card')">
+      <div class="example-icon" style="background:rgba(59,130,246,0.12);color:#3b82f6;">🃏</div>
+      <div class="example-info">
+        <div class="example-name">프로필 카드</div>
+        <div class="example-desc">CSS 카드 레이아웃</div>
+      </div>
+    </button>
+    <button class="example-item" onclick="loadExample('animation')">
+      <div class="example-icon" style="background:rgba(139,92,246,0.12);color:#a78bfa;">✨</div>
+      <div class="example-info">
+        <div class="example-name">CSS 애니메이션</div>
+        <div class="example-desc">keyframe 효과</div>
+      </div>
+    </button>
+    <button class="example-item" onclick="loadExample('counter')">
+      <div class="example-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b;">🔢</div>
+      <div class="example-info">
+        <div class="example-name">카운터 앱</div>
+        <div class="example-desc">JS DOM 조작</div>
+      </div>
+    </button>
+    <button class="example-item" onclick="loadExample('flexbox')">
+      <div class="example-icon" style="background:rgba(16,185,129,0.12);color:#34d399;">📦</div>
+      <div class="example-info">
+        <div class="example-name">Flexbox</div>
+        <div class="example-desc">레이아웃 실습</div>
+      </div>
+    </button>
+    <button class="example-item" onclick="loadExample('todo')">
+      <div class="example-icon" style="background:rgba(236,72,153,0.12);color:#f472b6;">📝</div>
+      <div class="example-info">
+        <div class="example-name">할 일 목록</div>
+        <div class="example-desc">이벤트 핸들링</div>
+      </div>
+    </button>
+    <button class="example-item" onclick="loadExample('gradient')">
+      <div class="example-icon" style="background:rgba(99,102,241,0.12);color:#818cf8;">🌈</div>
+      <div class="example-info">
+        <div class="example-name">그라디언트</div>
+        <div class="example-desc">CSS gradient</div>
+      </div>
+    </button>
+    <button class="example-item" onclick="loadExample('grid')">
+      <div class="example-icon" style="background:rgba(20,184,166,0.12);color:#2dd4bf;">🔲</div>
+      <div class="example-info">
+        <div class="example-name">CSS Grid</div>
+        <div class="example-desc">그리드 레이아웃</div>
+      </div>
+    </button>
+    <button class="example-item" onclick="loadExample('clock')">
+      <div class="example-icon" style="background:rgba(251,113,133,0.12);color:#fb7185;">🕐</div>
+      <div class="example-info">
+        <div class="example-name">디지털 시계</div>
+        <div class="example-desc">setInterval 활용</div>
+      </div>
+    </button>
+  </div>
+
+  <!-- EDITOR PANEL -->
+  <div class="panel-editor" id="editor-panel">
+    <div class="editor-area">
+      <div class="line-numbers" id="line-numbers"></div>
+      <textarea class="code-editor" id="code-editor" spellcheck="false"
+        oninput="onEditorChange()" onscroll="syncScroll()" onkeydown="handleKeyDown(event)"
+      ></textarea>
+    </div>
+    <div class="status-bar">
+      <div class="status-item">
+        <div class="status-dot"></div>
+        <span id="status-lang">HTML</span>
+      </div>
+      <div class="status-item">
+        <i data-lucide="type"></i>
+        <span id="status-lines">1줄</span>
+      </div>
+      <div class="status-item">
+        <i data-lucide="mouse-pointer-2"></i>
+        <span id="status-cursor">1:1</span>
+      </div>
+      <div style="flex:1"></div>
+      <div class="status-item" style="color: var(--text3);">
+        <span>UTF-8</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPLITTER -->
+  <div class="splitter" id="splitter"></div>
+
+  <!-- PREVIEW PANEL -->
+  <div class="panel-preview">
+    <div class="preview-header">
+      <div class="traffic-lights">
+        <div class="light light-red"></div>
+        <div class="light light-amber"></div>
+        <div class="light light-green"></div>
+      </div>
+      <div class="url-bar">
+        <i data-lucide="lock"></i>
+        <span>preview — sungce.ai-on</span>
+      </div>
+      <button class="icon-btn" onclick="refreshPreview()" title="새로고침">
+        <i data-lucide="refresh-cw"></i>
+      </button>
+      <button class="icon-btn" onclick="openNewTab()" title="새 탭에서 열기">
+        <i data-lucide="external-link"></i>
+      </button>
+    </div>
+    <iframe class="preview-frame" id="preview-frame" sandbox="allow-scripts allow-modals"></iframe>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i data-lucide="check-circle"></i>
+  <span id="toast-msg">완료!</span>
+</div>
+
+<script>
+lucide.createIcons();
+
+// ── STATE ──
+let state = { html: '', css: '', js: '' };
+let currentTab = 'html';
+let autoRunTimer = null;
+let isFullPreview = false;
+
+// ── EXAMPLES ──
+const examples = {
+  hello: {
+    html: `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Hello World</title>
+</head>
+<body>
+  <h1>안녕하세요, 세계! 🌍</h1>
+  <p>첫 번째 웹 페이지입니다.</p>
+  <button onclick="greet()">인사하기</button>
+  <p id="msg"></p>
+</body>
+</html>`,
+    css: `body {
+  font-family: 'Pretendard', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+p {
+  font-size: 1.1rem;
+  opacity: 0.85;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 12px 28px;
+  background: white;
+  color: #764ba2;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+#msg {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}`,
+    js: `function greet() {
+  const names = ['학생', '코더', '개발자', '디자이너'];
+  const name = names[Math.floor(Math.random() * names.length)];
+  document.getElementById('msg').textContent = \`반갑습니다, \${name}님! 🎉\`;
+}`
+  },
+  card: {
+    html: `<div class="card">
+  <div class="avatar">🧑‍💻</div>
+  <h2>김민준</h2>
+  <p class="role">웹 개발자</p>
+  <div class="tags">
+    <span class="tag">HTML</span>
+    <span class="tag">CSS</span>
+    <span class="tag">JavaScript</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><strong>42</strong><span>프로젝트</span></div>
+    <div class="stat"><strong>1.2k</strong><span>팔로워</span></div>
+    <div class="stat"><strong>98%</strong><span>달성률</span></div>
+  </div>
+  <button class="follow-btn">팔로우</button>
+</div>`,
+    css: `* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f172a;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 20px;
+  padding: 36px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  color: #e2e8f0;
+}
+
+.avatar {
+  font-size: 4rem;
+  margin-bottom: 16px;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 4px;
+}
+
+.role {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.tags {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.tag {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #334155;
+  border-bottom: 1px solid #334155;
+  padding: 20px 0;
+  margin-bottom: 24px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.stat span {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.follow-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.follow-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}`,
+    js: `// 팔로우 버튼 토글
+const btn = document.querySelector('.follow-btn');
+let following = false;
+btn.addEventListener('click', () => {
+  following = !following;
+  btn.textContent = following ? '✓ 팔로잉' : '팔로우';
+  btn.style.background = following
+    ? 'linear-gradient(135deg, #059669, #10b981)'
+    : 'linear-gradient(135deg, #6366f1, #8b5cf6)';
+});`
+  },
+  animation: {
+    html: `<div class="scene">
+  <div class="orbit orbit-1"><div class="planet p1"></div></div>
+  <div class="orbit orbit-2"><div class="planet p2"></div></div>
+  <div class="orbit orbit-3"><div class="planet p3"></div></div>
+  <div class="sun">☀️</div>
+</div>
+<h2>CSS 태양계</h2>`,
+    css: `* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: #020617;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+
+.scene {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sun {
+  font-size: 3rem;
+  z-index: 10;
+  filter: drop-shadow(0 0 20px rgba(251,191,36,0.8));
+}
+
+.orbit {
+  position: absolute;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  animation: spin linear infinite;
+}
+
+.orbit-1 { width: 120px; height: 120px; animation-duration: 4s; }
+.orbit-2 { width: 200px; height: 200px; animation-duration: 8s; }
+.orbit-3 { width: 300px; height: 300px; animation-duration: 14s; }
+
+.planet {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  margin-top: -7px;
+}
+
+.p1 { background: radial-gradient(circle at 35% 35%, #fb923c, #ea580c); box-shadow: 0 0 10px rgba(251,146,60,0.6); }
+.p2 { background: radial-gradient(circle at 35% 35%, #60a5fa, #2563eb); box-shadow: 0 0 10px rgba(96,165,250,0.6); width: 18px; height: 18px; margin-top: -9px; }
+.p3 { background: radial-gradient(circle at 35% 35%, #34d399, #059669); box-shadow: 0 0 10px rgba(52,211,153,0.6); width: 22px; height: 22px; margin-top: -11px; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+h2 {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  margin-top: 24px;
+  letter-spacing: 0.1em;
+}`,
+    js: `// 클릭하면 속도 변경
+const orbits = document.querySelectorAll('.orbit');
+let fast = false;
+document.body.addEventListener('click', () => {
+  fast = !fast;
+  orbits.forEach((o, i) => {
+    const speeds = fast
+      ? ['0.8s', '1.5s', '2.5s']
+      : ['4s', '8s', '14s'];
+    o.style.animationDuration = speeds[i];
+  });
+});`
+  },
+  counter: {
+    html: `<div class="counter-app">
+  <h1>🔢 카운터</h1>
+  <div class="display" id="display">0</div>
+  <div class="controls">
+    <button id="dec" onclick="change(-1)">−</button>
+    <button id="reset" onclick="reset()">⟳</button>
+    <button id="inc" onclick="change(1)">+</button>
+  </div>
+  <p class="hint">클릭하거나 키보드 방향키를 사용하세요</p>
+</div>`,
+    css: `* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.counter-app {
+  text-align: center;
+  color: #e2e8f0;
+}
+
+h1 {
+  font-size: 1.3rem;
+  color: #94a3b8;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.display {
+  font-size: 6rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 36px;
+  transition: all 0.15s;
+  font-variant-numeric: tabular-nums;
+}
+
+.display.positive { color: #34d399; }
+.display.negative { color: #f87171; }
+.display.zero     { color: #e2e8f0; }
+
+.controls {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+button {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid #334155;
+  background: #1e293b;
+  color: #e2e8f0;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 700;
+}
+
+#inc:hover { background: #064e3b; border-color: #34d399; color: #34d399; }
+#dec:hover { background: #450a0a; border-color: #f87171; color: #f87171; }
+#reset:hover { background: #1e40af; border-color: #60a5fa; color: #60a5fa; }
+
+button:active { transform: scale(0.92); }
+
+.hint {
+  font-size: 0.8rem;
+  color: #475569;
+}`,
+    js: `let count = 0;
+
+function change(delta) {
+  count += delta;
+  update();
+}
+
+function reset() {
+  count = 0;
+  update();
+}
+
+function update() {
+  const d = document.getElementById('display');
+  d.textContent = count;
+  d.className = 'display ' + (count > 0 ? 'positive' : count < 0 ? 'negative' : 'zero');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp' || e.key === 'ArrowRight') change(1);
+  if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') change(-1);
+  if (e.key === ' ') { e.preventDefault(); reset(); }
+});
+
+update();`
+  },
+  flexbox: {
+    html: `<div class="container">
+  <h2>Flexbox 레이아웃</h2>
+  <div class="flex-demo" id="flex-box">
+    <div class="box b1">A</div>
+    <div class="box b2">B</div>
+    <div class="box b3">C</div>
+    <div class="box b4">D</div>
+    <div class="box b5">E</div>
+  </div>
+  <div class="controls">
+    <label>justify-content
+      <select onchange="setJustify(this.value)">
+        <option>flex-start</option>
+        <option selected>center</option>
+        <option>flex-end</option>
+        <option>space-between</option>
+        <option>space-around</option>
+        <option>space-evenly</option>
+      </select>
+    </label>
+    <label>align-items
+      <select onchange="setAlign(this.value)">
+        <option>flex-start</option>
+        <option selected>center</option>
+        <option>flex-end</option>
+        <option>stretch</option>
+      </select>
+    </label>
+    <label>flex-direction
+      <select onchange="setDirection(this.value)">
+        <option selected>row</option>
+        <option>column</option>
+        <option>row-reverse</option>
+        <option>column-reverse</option>
+      </select>
+    </label>
+  </div>
+</div>`,
+    css: `* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: #0f172a;
+  font-family: 'Pretendard', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 560px;
+  color: #e2e8f0;
+}
+
+h2 {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.flex-demo {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  transition: all 0.4s ease;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.box {
+  width: 50px; height: 50px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.b1 { background: rgba(99,102,241,0.3); border: 1px solid #6366f1; color: #a5b4fc; }
+.b2 { background: rgba(59,130,246,0.3); border: 1px solid #3b82f6; color: #93c5fd; }
+.b3 { background: rgba(16,185,129,0.3); border: 1px solid #10b981; color: #6ee7b7; }
+.b4 { background: rgba(245,158,11,0.3); border: 1px solid #f59e0b; color: #fcd34d; }
+.b5 { background: rgba(236,72,153,0.3); border: 1px solid #ec4899; color: #f9a8d4; }
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+select {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}`,
+    js: `const box = document.getElementById('flex-box');
+function setJustify(v) { box.style.justifyContent = v; }
+function setAlign(v)   { box.style.alignItems = v; }
+function setDirection(v) { box.style.flexDirection = v; }`
+  },
+  todo: {
+    html: `<div class="app">
+  <h1>📝 할 일 목록</h1>
+  <div class="input-row">
+    <input type="text" id="todo-input" placeholder="할 일을 입력하세요..." onkeydown="if(event.key==='Enter')addTodo()">
+    <button onclick="addTodo()">추가</button>
+  </div>
+  <ul id="todo-list"></ul>
+  <p id="empty-msg">아직 할 일이 없어요 🎉</p>
+</div>`,
+    css: `* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: #0f172a;
+  font-family: 'Pretendard', sans-serif;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.app {
+  width: 100%;
+  max-width: 440px;
+  color: #e2e8f0;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+input {
+  flex: 1;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: 'Pretendard', sans-serif;
+  outline: none;
+}
+
+input:focus { border-color: #6366f1; }
+
+button {
+  padding: 10px 18px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+  transition: background 0.15s;
+}
+
+button:hover { background: #4f46e5; }
+
+ul { list-style: none; }
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  animation: slideIn 0.25s ease;
+  transition: opacity 0.2s;
+}
+
+li.done { opacity: 0.45; }
+li.done .todo-text { text-decoration: line-through; color: #64748b; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.check-btn {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid #475569;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: transparent;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+li.done .check-btn {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: white;
+}
+
+.todo-text { flex: 1; font-size: 0.9rem; transition: all 0.2s; }
+
+.del-btn {
+  background: transparent;
+  border: none;
+  color: #475569;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.del-btn:hover { color: #f87171; }
+
+#empty-msg {
+  text-align: center;
+  color: #475569;
+  font-size: 0.9rem;
+  margin-top: 24px;
+}`,
+    js: `function addTodo() {
+  const inp = document.getElementById('todo-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  
+  const li = document.createElement('li');
+  li.innerHTML = \`
+    <button class="check-btn" onclick="toggleDone(this)">✓</button>
+    <span class="todo-text">\${text}</span>
+    <button class="del-btn" onclick="this.closest('li').remove(); updateEmpty()">✕</button>
+  \`;
+  
+  document.getElementById('todo-list').prepend(li);
+  inp.value = '';
+  updateEmpty();
+}
+
+function toggleDone(btn) {
+  btn.closest('li').classList.toggle('done');
+}
+
+function updateEmpty() {
+  const empty = document.getElementById('todo-list').children.length === 0;
+  document.getElementById('empty-msg').style.display = empty ? 'block' : 'none';
+}`
+  },
+  gradient: {
+    html: `<div class="page">
+  <div class="card">
+    <h2>CSS 그라디언트</h2>
+    <p>다양한 gradient 효과를 탐색해보세요</p>
+    <div class="swatches" id="swatches"></div>
+    <div class="controls">
+      <label>
+        시작 색상 <input type="color" id="c1" value="#6366f1" oninput="updateGradient()">
+      </label>
+      <label>
+        끝 색상 <input type="color" id="c2" value="#ec4899" oninput="updateGradient()">
+      </label>
+      <label>
+        방향 <input type="range" id="deg" min="0" max="360" value="135" oninput="updateGradient()">
+        <span id="deg-val">135°</span>
+      </label>
+    </div>
+    <div class="preview" id="preview"></div>
+    <code id="css-out"></code>
+  </div>
+</div>`,
+    css: `* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: #0f172a;
+  font-family: 'Pretendard', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 20px;
+  padding: 28px;
+  width: 100%;
+  max-width: 420px;
+  color: #e2e8f0;
+}
+
+h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
+p { font-size: 0.85rem; color: #64748b; margin-bottom: 20px; }
+
+.swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.swatch {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.swatch:hover { transform: scale(1.15); border-color: white; }
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 600;
+  gap: 10px;
+}
+
+input[type="color"] {
+  width: 36px; height: 28px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+}
+
+input[type="range"] { flex: 1; cursor: pointer; }
+
+.preview {
+  height: 80px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: background 0.2s;
+}
+
+code {
+  display: block;
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.75rem;
+  color: #7dd3fc;
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-all;
+}`,
+    js: `const presets = [
+  ['#6366f1','#ec4899'],['#06b6d4','#6366f1'],['#f59e0b','#ef4444'],
+  ['#10b981','#3b82f6'],['#f97316','#eab308'],['#8b5cf6','#06b6d4'],
+  ['#ec4899','#f97316'],['#64748b','#334155']
+];
+
+const swatches = document.getElementById('swatches');
+presets.forEach(([c1,c2]) => {
+  const s = document.createElement('div');
+  s.className = 'swatch';
+  s.style.background = \`linear-gradient(135deg, \${c1}, \${c2})\`;
+  s.onclick = () => {
+    document.getElementById('c1').value = c1;
+    document.getElementById('c2').value = c2;
+    updateGradient();
+  };
+  swatches.appendChild(s);
+});
+
+function updateGradient() {
+  const c1 = document.getElementById('c1').value;
+  const c2 = document.getElementById('c2').value;
+  const deg = document.getElementById('deg').value;
+  document.getElementById('deg-val').textContent = deg + '°';
+  const g = \`linear-gradient(\${deg}deg, \${c1}, \${c2})\`;
+  document.getElementById('preview').style.background = g;
+  document.getElementById('css-out').textContent = \`background: \${g};\`;
+}
+updateGradient();`
+  },
+  grid: {
+    html: `<div class="page">
+  <h2>CSS Grid 레이아웃</h2>
+  <div class="controls">
+    <label>열: <input type="range" id="cols" min="1" max="6" value="3" oninput="update()"></label>
+    <label>행 간격: <input type="range" id="gap" min="0" max="30" value="12" oninput="update()"></label>
+    <button onclick="addBox()">박스 추가</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>`,
+    css: `* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: #0f172a;
+  font-family: 'Pretendard', sans-serif;
+  padding: 24px;
+  color: #e2e8f0;
+}
+
+h2 {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+input[type="range"] { cursor: pointer; width: 80px; }
+
+button {
+  padding: 6px 14px;
+  background: #1e40af;
+  color: #93c5fd;
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  transition: all 0.3s;
+}
+
+.box {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #94a3b8;
+  animation: pop 0.2s ease;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.box:hover { background: #273344; }
+
+@keyframes pop {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}`,
+    js: `const colors = ['#6366f1','#3b82f6','#10b981','#f59e0b','#ec4899','#14b8a6','#f97316','#8b5cf6'];
+let count = 9;
+
+const grid = document.getElementById('grid');
+
+for (let i = 1; i <= 9; i++) addBoxWithNum(i);
+
+function addBox() {
+  count++;
+  addBoxWithNum(count);
+}
+
+function addBoxWithNum(n) {
+  const b = document.createElement('div');
+  b.className = 'box';
+  b.textContent = n;
+  b.style.borderColor = colors[n % colors.length] + '50';
+  b.style.color = colors[n % colors.length];
+  grid.appendChild(b);
+}
+
+function update() {
+  const cols = document.getElementById('cols').value;
+  const gap = document.getElementById('gap').value;
+  grid.style.gridTemplateColumns = \`repeat(\${cols}, 1fr)\`;
+  grid.style.gap = gap + 'px';
+}`
+  },
+  clock: {
+    html: `<div class="clock-app">
+  <div class="clock-face">
+    <div class="display" id="time">00:00:00</div>
+    <div class="date" id="date"></div>
+  </div>
+  <div class="seconds-bar">
+    <div class="seconds-fill" id="sec-fill"></div>
+  </div>
+  <div class="info">
+    <div class="info-item">
+      <span class="label">오늘</span>
+      <span id="day">월요일</span>
+    </div>
+    <div class="info-item">
+      <span class="label">주차</span>
+      <span id="week">-</span>
+    </div>
+    <div class="info-item">
+      <span class="label">AM/PM</span>
+      <span id="ampm">AM</span>
+    </div>
+  </div>
+</div>`,
+    css: `* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: #020617;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', 'Pretendard', monospace;
+}
+
+.clock-app {
+  text-align: center;
+  color: #e2e8f0;
+}
+
+.clock-face {
+  margin-bottom: 20px;
+}
+
+.display {
+  font-size: 4.5rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #f8fafc;
+  text-shadow: 0 0 40px rgba(99,102,241,0.5);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.date {
+  font-size: 0.85rem;
+  color: #475569;
+  letter-spacing: 0.1em;
+}
+
+.seconds-bar {
+  width: 280px;
+  height: 3px;
+  background: #1e293b;
+  border-radius: 2px;
+  margin: 0 auto 20px;
+  overflow: hidden;
+}
+
+.seconds-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #ec4899);
+  border-radius: 2px;
+  transition: width 0.5s linear;
+}
+
+.info {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.label {
+  font-size: 0.65rem;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.info-item span:last-child {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 600;
+}`,
+    js: `const days = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+
+function getWeek(d) {
+  const start = new Date(d.getFullYear(), 0, 1);
+  return Math.ceil(((d - start) / 86400000 + start.getDay() + 1) / 7);
+}
+
+function tick() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  
+  document.getElementById('time').textContent = \`\${h}:\${m}:\${s}\`;
+  document.getElementById('date').textContent = 
+    \`\${now.getFullYear()}년 \${now.getMonth()+1}월 \${now.getDate()}일\`;
+  document.getElementById('day').textContent = days[now.getDay()];
+  document.getElementById('week').textContent = getWeek(now) + '주';
+  document.getElementById('ampm').textContent = now.getHours() < 12 ? 'AM' : 'PM';
+  document.getElementById('sec-fill').style.width = (now.getSeconds() / 59 * 100) + '%';
+}
+
+tick();
+setInterval(tick, 1000);`
   }
+};
+
+// ── INIT ──
+function init() {
+  const defaultEx = examples.hello;
+  state.html = defaultEx.html;
+  state.css = defaultEx.css;
+  state.js = defaultEx.js;
+  setEditorContent('html');
+  runPreview();
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  // save current
+  state[currentTab] = document.getElementById('code-editor').value;
+  currentTab = tab;
+  setEditorContent(tab);
+
+  // update tab styles
+  ['html','css','js'].forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    el.className = 'tab';
+    if (t === tab) el.classList.add('active-' + t);
+  });
+
+  document.getElementById('status-lang').textContent = tab.toUpperCase();
+}
+
+function setEditorContent(tab) {
+  const editor = document.getElementById('code-editor');
+  editor.value = state[tab];
+  updateLineNumbers();
+  updateStatus();
+}
+
+// ── LINE NUMBERS ──
+function updateLineNumbers() {
+  const editor = document.getElementById('code-editor');
+  const lines = editor.value.split('\n').length;
+  const ln = document.getElementById('line-numbers');
+  let html = '';
+  for (let i = 1; i <= lines; i++) html += i + '\n';
+  ln.textContent = html;
+}
+
+function syncScroll() {
+  const editor = document.getElementById('code-editor');
+  document.getElementById('line-numbers').scrollTop = editor.scrollTop;
+}
+
+// ── STATUS ──
+function updateStatus() {
+  const editor = document.getElementById('code-editor');
+  const lines = editor.value.split('\n').length;
+  document.getElementById('status-lines').textContent = lines + '줄';
+
+  editor.addEventListener('keyup', updateCursor);
+  editor.addEventListener('click', updateCursor);
+}
+
+function updateCursor() {
+  const editor = document.getElementById('code-editor');
+  const pos = editor.selectionStart;
+  const lines = editor.value.substr(0, pos).split('\n');
+  document.getElementById('status-cursor').textContent =
+    lines.length + ':' + lines[lines.length-1].length;
+}
+
+// ── EDITOR EVENTS ──
+function onEditorChange() {
+  state[currentTab] = document.getElementById('code-editor').value;
+  updateLineNumbers();
+  updateCursor();
+
+  clearTimeout(autoRunTimer);
+  autoRunTimer = setTimeout(runPreview, 800);
+}
+
+function handleKeyDown(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const ta = e.target;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    ta.value = ta.value.substring(0, start) + '  ' + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = start + 2;
+    state[currentTab] = ta.value;
+    updateLineNumbers();
+  }
+}
+
+// ── PREVIEW ──
+function runPreview() {
+  const frame = document.getElementById('preview-frame');
+
+  // Build combined document
+  let html = state.html;
+
+  // If html doesn't have head/body structure, wrap it
+  if (!html.includes('<html')) {
+    html = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>${state.css}</style>
+</head>
+<body>
+${state.html}
+<script>${state.js}<\/script>
+</body>
+</html>`;
+  } else {
+    // Inject CSS & JS into existing structure
+    html = html
+      .replace('</head>', `<style>${state.css}</style>\n</head>`)
+      .replace('</body>', `<script>${state.js}<\/script>\n</body>`);
+    if (!html.includes('</body>')) {
+      html += `<style>${state.css}</style><script>${state.js}<\/script>`;
+    }
+  }
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+
+  // Clean up old URL
+  if (frame._blobUrl) URL.revokeObjectURL(frame._blobUrl);
+  frame._blobUrl = url;
+  frame.src = url;
+}
+
+function refreshPreview() {
+  runPreview();
+  showToast('🔄 새로고침 완료');
+}
+
+function openNewTab() {
+  const frame = document.getElementById('preview-frame');
+  if (frame._blobUrl) window.open(frame._blobUrl, '_blank');
+}
+
+// ── EXAMPLES ──
+function loadExample(key) {
+  const ex = examples[key];
+  state.html = ex.html;
+  state.css = ex.css;
+  state.js = ex.js;
+  setEditorContent(currentTab);
+  runPreview();
+  showToast('📂 예제 로드 완료');
+}
+
+// ── ACTIONS ──
+function clearAll() {
+  if (!confirm('모든 코드를 초기화할까요?')) return;
+  state = { html: '', css: '', js: '' };
+  setEditorContent(currentTab);
+  runPreview();
+  showToast('🗑️ 초기화 완료');
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(state[currentTab])
+    .then(() => showToast('📋 코드 복사 완료'));
+}
+
+function downloadCode() {
+  const ext = { html: 'html', css: 'css', js: 'js' }[currentTab];
+  const blob = new Blob([state[currentTab]], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'code.' + ext;
+  a.click();
+  showToast('💾 파일 저장 완료');
+}
+
+function formatCode() {
+  // Simple basic formatting — add newline awareness
+  showToast('✨ 정렬 기능은 준비 중이에요');
+}
+
+function toggleFullPreview() {
+  const ep = document.getElementById('editor-panel');
+  const sp = document.getElementById('splitter');
+  isFullPreview = !isFullPreview;
+  ep.style.display = isFullPreview ? 'none' : '';
+  sp.style.display = isFullPreview ? 'none' : '';
+  showToast(isFullPreview ? '🖥️ 미리보기 전체화면' : '✏️ 에디터 복원');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── SPLITTER DRAG ──
+const splitter = document.getElementById('splitter');
+let dragging = false;
+let startX, startW;
+
+splitter.addEventListener('mousedown', e => {
+  dragging = true;
+  startX = e.clientX;
+  startW = document.getElementById('editor-panel').offsetWidth;
+  document.body.style.cursor = 'col-resize';
+  document.body.style.userSelect = 'none';
+});
+
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const dx = e.clientX - startX;
+  const ep = document.getElementById('editor-panel');
+  const newW = Math.max(240, Math.min(window.innerWidth - 300, startW + dx));
+  ep.style.width = newW + 'px';
+});
+
+window.addEventListener('mouseup', () => {
+  dragging = false;
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+});
+
+// ── START ──
+init();
 </script>
 </body>
 </html>
