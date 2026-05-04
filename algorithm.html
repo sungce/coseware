@@ -245,14 +245,15 @@ body { background-color: #F1F5F9; padding: 2rem; display: flex; justify-content:
 </style>
 </head>
 <body>
-
-<div class="workshop">
-  <div class="header">
-    <div class="header-badge"><span class="header-badge-dot"></span>인터렉티브 수업실</div>
-    <h1>알고리즘 공작소 ⚙️</h1>
-    <p>알고리즘의 원리를 시각화하고 직접 만들어보세요.</p>
-  </div>
-
+  <!-- 1. 네이티브 콘텐츠 영역 (코드 놀이터 원본 화면) -->
+  <main id="native-content" class="max-w-7xl mx-auto px-4 md:px-6 pt-8 pb-16 w-full">
+    <div class="mb-10">
+      <div class="inline-flex items-center space-x-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-green-100">
+        <i data-lucide="code-2" class="w-3.5 h-3.5"></i><span>인터렉티브 수업실</span>
+      </div>
+      <h1 class="text-4xl font-black text-slate-900 mb-3">알고리즘 공작소 ⚙️ <span class="text-green-500">🎮</span></h1>
+      <p class="text-lg text-slate-500 font-medium">알고리즘의 원리를 시각화하고 직접 만들어보세요.</p>
+    </div>
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('flowchart',this)"><span>📊</span> 순서도 그리기</button>
     <button class="tab-btn" onclick="switchTab('maze',this)"><span>🌀</span> 알고리즘 미로</button>
