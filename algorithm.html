@@ -27,7 +27,7 @@
   --shadow-lg: 0 12px 32px rgba(15,23,42,0.08);
 }
 
-body { background-color: #F1F5F9; padding: 2rem; display: flex; justify-content: center; }
+body { background-color: #f4f7f9; margin: 0; padding: 0; }
 
 .workshop { 
   width: 100%; max-width: 1000px; min-height: 600px; 
@@ -36,18 +36,16 @@ body { background-color: #F1F5F9; padding: 2rem; display: flex; justify-content:
   overflow: hidden; border: 1px solid #FFFFFF;
 }
 
-.header { padding: 2rem 2rem 1.5rem; background: var(--bg); border-bottom: 1px solid var(--border); }
-.header-badge { 
-  display: inline-flex; align-items: center; gap: 6px; 
-  background: var(--brand2-light); border: 1px solid rgba(2,132,199,0.1); 
-  color: var(--brand2); font-size: 12px; font-weight: 700; 
-  padding: 4px 12px; border-radius: 24px; margin-bottom: 12px; 
+.header { padding: 2rem 0 1.5rem; }
+.header-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #eef2ff; color: #4338ca; font-size: 11px; font-weight: 700;
+  padding: 5px 12px; border-radius: 999px; margin-bottom: 14px; border: 1px solid #e0e7ff;
 }
-.header-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand2); }
-.header h1 { font-size: 28px; font-weight: 800; color: var(--txt); line-height: 1.2; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-.header p { font-size: 14px; color: var(--txt2); font-weight: 500; }
+.header h1 { font-size: 32px; font-weight: 900; color: #0f172a; line-height: 1.2; margin-bottom: 8px; letter-spacing: -0.03em; }
+.header p { font-size: 15px; color: #64748b; font-weight: 500; }
 
-.tab-nav { display: flex; border-bottom: 1px solid var(--border); padding: 0 1.5rem; background: var(--bg); overflow-x: auto; scrollbar-width: none; }
+.tab-nav { display: flex; border-bottom: 1px solid var(--border); padding: 0; background: transparent; overflow-x: auto; scrollbar-width: none; }
 .tab-nav::-webkit-scrollbar { display: none; }
 .tab-btn { 
   display: flex; align-items: center; gap: 8px; padding: 14px 20px; 
@@ -58,7 +56,7 @@ body { background-color: #F1F5F9; padding: 2rem; display: flex; justify-content:
 .tab-btn:hover { color: var(--brand); }
 .tab-btn.active { color: var(--brand2); border-bottom-color: var(--brand2); }
 
-.panel { display: none; padding: 2rem; }
+.panel { display: none; padding: 1.5rem 0; }
 .panel.active { display: block; animation: fadeIn 0.4s ease forwards; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -247,12 +245,13 @@ body { background-color: #F1F5F9; padding: 2rem; display: flex; justify-content:
 <body>
   <!-- 1. 네이티브 콘텐츠 영역 (코드 놀이터 원본 화면) -->
   <main id="native-content" class="max-w-7xl mx-auto px-6 pt-8 pb-16 w-full">
-    <div class="mb-10">
-      <div class="inline-flex items-center space-x-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-green-100">
-        <i data-lucide="code-2" class="w-3.5 h-3.5"></i><span>인터렉티브 수업실</span>
+    <div class="header">
+      <div class="header-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        인터렉티브 수업실
       </div>
-      <h1 class="text-4xl font-black text-slate-900 mb-3">알고리즘 공작소 ⚙️ <span class="text-green-500">🎮</span></h1>
-      <p class="text-lg text-slate-500 font-medium">알고리즘의 원리를 시각화하고 직접 만들어보세요.</p>
+      <h1>알고리즘 공작소 <span style="color:#6366f1">⚙️</span></h1>
+      <p>알고리즘의 원리를 시각화하고 직접 만들어보세요.</p>
     </div>
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('flowchart',this)"><span>📊</span> 순서도 그리기</button>
