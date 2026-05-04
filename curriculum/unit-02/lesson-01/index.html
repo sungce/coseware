@@ -24,7 +24,7 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#F5F4F0;colo
 .topbar{background:var(--sf);border-bottom:1px solid var(--br);height:var(--TH);padding:0 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:90}
 .bc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mt);flex:1}.bc a{color:var(--mt);text-decoration:none}.bc a:hover{color:var(--tx)}.bcsep{color:var(--br)}.tbr{display:flex;align-items:center;gap:6px}
 .btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:var(--rSM);font-size:12px;font-family:inherit;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf);color:var(--tx);text-decoration:none;transition:background .12s;white-space:nowrap}.btn:hover{background:var(--bg)}.bsm{padding:5px 9px;font-size:11px}.bp{background:var(--u);color:#fff;border-color:var(--u)}.bp:hover{background:var(--udk)}.bok{background:var(--green);color:#fff;border-color:var(--green)}
-.page{padding:24px 32px;flex:1}.g2{display:grid;grid-template-columns:1fr minmax(0,270px);gap:20px;align-items:start}.cm{min-width:0}.ca{position:sticky;top:calc(var(--TH)+12px)}
+.page{padding:24px 32px;flex:1}.g2{display:block}.cm{min-width:0}.ca{display:none}
 .card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rLG);margin-bottom:11px;overflow:hidden}
 .ch{display:flex;align-items:center;gap:9px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--br);transition:background .12s;user-select:none}.ch:hover{background:var(--bg)}
 .sn{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}.ch h3{font-size:13px;font-weight:600;flex:1}
@@ -318,24 +318,7 @@ table{width:100%;border-collapse:collapse}
 </div>
 
   </div>
-  <div class="ca">
-    <div class="ap"><h5>학습 진행</h5><div class="slist">
-      <div class="si" onclick="goTo('sec-goal')"><div class="dot sd">1</div>학습목표</div>
-      <div class="si" onclick="goTo('sec-concept')"><div class="dot">2</div>개념설명</div>
-      <div class="si" onclick="goTo('sec-activity')"><div class="dot sa">★</div>수행 활동</div>
-      <div class="si" onclick="goTo('sec-assess')"><div class="dot">4</div>수행평가</div>
-      <div class="si" onclick="goTo('sec-review')"><div class="dot">5</div>확인하기</div>
-    </div></div>
-    <div class="ap" style="background:var(--ult);border-color:var(--umd)"><h5 style="color:var(--u)">단원 진도</h5>
-      <div style="display:flex;align-items:center;gap:7px"><div class="pbtrack" style="flex:1"><div class="pbfill" style="width:15%"></div></div><span style="font-size:11px;font-weight:600;color:var(--u)">1/6</span></div>
-    </div>
-    <div class="ap"><h5>핵심 용어</h5><div class="termlist"><div class="tterm"><span class="tw">데이터</span><span class="tdef">관찰·측정으로 얻는 값</span></div><div class="tterm"><span class="tw">아날로그</span><span class="tdef">연속적 신호</span></div><div class="tterm"><span class="tw">디지털</span><span class="tdef">불연속적 숫자(0,1)</span></div><div class="tterm"><span class="tw">저장</span><span class="tdef">부피·무게 증가 없음</span></div><div class="tterm"><span class="tw">가공</span><span class="tdef">검색·수정·분석 용이</span></div><div class="tterm"><span class="tw">전송</span><span class="tdef">손실 없고 빠름</span></div></div></div>
-    <div class="ap" style="background:#F0FDF4;border-color:#BBF7D0">
-      <h5 style="color:#166534">🔗 데이터 도구</h5>
-      <a href="https://codap.concord.org" target="_blank" class="btn bsm" style="width:100%;justify-content:center;background:var(--u);color:#fff;border-color:var(--udk);margin-bottom:5px">코답(CODAP) 열기 ↗</a>
-      <a href="https://kosis.kr" target="_blank" class="btn bsm" style="width:100%;justify-content:center;font-size:10px;color:var(--mt)">국가통계포털 ↗</a>
-    </div>
-  </div>
+  
   </div></div>
 </main>
 <div id="toast"></div>
