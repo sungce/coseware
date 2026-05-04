@@ -1,447 +1,369 @@
-
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알고리즘 공작소 — Sungce AI-ON</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap');
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --brand: #FF6B35; --brand2: #4ECDC4;
-  --bg: var(--color-background-primary); --bg2: var(--color-background-secondary);
-  --txt: var(--color-text-primary); --txt2: var(--color-text-secondary);
-  --border: var(--color-border-tertiary); --r: 12px;
-}
-body { font-family: 'Nanum Gothic', sans-serif; }
-.workshop { min-height: 600px; padding: 0 0 2rem; background: var(--bg); }
-
-.header { padding: 1.5rem 1.5rem 1.25rem; background: var(--bg); border-bottom: 0.5px solid var(--border); }
-.header-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--bg2); border: 0.5px solid var(--border); color: var(--txt2); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; margin-bottom: 10px; }
-.header-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #818CF8; }
-.header h1 { font-size: 26px; font-weight: 800; color: var(--txt); line-height: 1.2; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-.header p { font-size: 13px; color: var(--txt2); }
-
-.tab-nav { display: flex; border-bottom: 2px solid var(--border); padding: 0 1rem; background: var(--bg); overflow-x: auto; scrollbar-width: none; }
-.tab-nav::-webkit-scrollbar { display: none; }
-.tab-btn { display: flex; align-items: center; gap: 6px; padding: 12px 16px; border: none; background: transparent; color: var(--txt2); font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; font-family: 'Nanum Gothic', sans-serif; }
-.tab-btn:hover { color: var(--brand); }
-.tab-btn.active { color: var(--brand); border-bottom-color: var(--brand); }
-
-.panel { display: none; padding: 1.25rem; }
-.panel.active { display: block; }
-
-/* ── FLOWCHART ── */
-.flowchart-wrap { display: grid; grid-template-columns: 200px 1fr; gap: 1rem; height: calc(100vh - 200px); min-height: 480px; }
-.fc-palette { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--r); padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; }
-.fc-palette h3 { font-size: 11px; color: var(--txt2); font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
-.fc-section { margin-bottom: 14px; flex-shrink: 0; }
-.fc-section-title { font-size: 11px; color: var(--txt2); margin-bottom: 6px; }
-.fc-block { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 700; margin-bottom: 5px; border: 1.5px solid transparent; transition: transform 0.15s; user-select: none; }
-.fc-block:hover { transform: translateX(2px); }
-.fc-block.start    { background: #DCFCE7; color: #166534; border-color: #86EFAC; }
-.fc-block.end      { background: #FEE2E2; color: #991B1B; border-color: #FCA5A5; }
-.fc-block.process  { background: #EFF6FF; color: #1E3A8A; border-color: #93C5FD; }
-.fc-block.decision { background: #FEF9C3; color: #713F12; border-color: #FDE047; }
-.fc-block.io       { background: #F3E8FF; color: #581C87; border-color: #C084FC; }
-.fc-label-block { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 700; margin-bottom: 5px; border: 1.5px dashed; transition: transform 0.15s; user-select: none; }
-.fc-label-block:hover { transform: translateX(2px); }
-.fc-label-block.yes    { background: #F0FDF4; color: #15803D; border-color: #4ADE80; }
-.fc-label-block.no     { background: #FFF1F2; color: #BE123C; border-color: #FDA4AF; }
-.fc-label-block.custom { background: var(--bg); color: var(--txt2); border-color: var(--border); }
-.fc-edge-label { position: absolute; background: var(--bg); border: 1.5px solid; border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 700; cursor: move; user-select: none; white-space: nowrap; transform: translate(-50%,-50%); z-index: 20; }
-.fc-edge-label:hover { box-shadow: 0 0 0 2px var(--brand); }
-.fc-edge-label.yes    { color: #15803D; border-color: #4ADE80; background: #F0FDF4; }
-.fc-edge-label.no     { color: #BE123C; border-color: #FDA4AF; background: #FFF1F2; }
-.fc-edge-label.custom { color: var(--txt); border-color: var(--border); }
-.template-btn { display: block; width: 100%; padding: 7px 10px; background: var(--bg); border: 0.5px solid var(--border); border-radius: 8px; color: var(--txt); font-size: 12px; cursor: pointer; text-align: left; margin-bottom: 5px; font-family: 'Nanum Gothic', sans-serif; transition: background 0.15s; }
-.template-btn:hover { background: var(--brand2); color: #fff; border-color: var(--brand2); }
-.fc-tip { background: #EFF6FF; border: 0.5px solid #93C5FD; border-radius: 8px; padding: 8px 10px; font-size: 11px; color: #1E3A8A; line-height: 1.7; margin-top: auto; }
-.fc-canvas-wrap { position: relative; background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--r); overflow: hidden; display: flex; flex-direction: column; }
-.fc-toolbar { flex-shrink: 0; display: flex; align-items: center; gap: 4px; padding: 6px 10px; border-bottom: 0.5px solid var(--border); background: var(--bg2); min-height: 0; }
-.fc-toolbar-title { font-size: 11px; font-weight: 700; color: var(--txt2); white-space: nowrap; flex-shrink: 0; margin-right: 2px; }
-.fc-divider { width: 1px; height: 14px; background: var(--border); flex-shrink: 0; margin: 0 2px; }
-.fc-icon-btn { flex-shrink: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: 0.5px solid var(--border); background: var(--bg); cursor: pointer; font-size: 14px; line-height: 1; transition: all 0.15s; position: relative; }
-.fc-icon-btn:hover { background: var(--brand); border-color: var(--brand); }
-.fc-icon-btn:hover .btn-tooltip { opacity: 1; }
-.btn-tooltip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.75); color: #fff; font-size: 10px; font-family: 'Nanum Gothic', sans-serif; padding: 3px 8px; border-radius: 6px; white-space: nowrap; opacity: 0; transition: opacity 0.15s; pointer-events: none; z-index: 200; }
-.fc-icon-btn.save-btn { background: #EFF6FF; border-color: #93C5FD; }
-.fc-icon-btn.save-btn:hover { background: #1E3A8A; border-color: #1E3A8A; }
-#fc-canvas { flex: 1; position: relative; overflow: hidden; min-height: 0; }
-.fc-node { position: absolute; cursor: move; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; text-align: center; line-height: 1.3; user-select: none; transition: box-shadow 0.12s; }
-.fc-node.selected { box-shadow: 0 0 0 2.5px var(--brand) !important; }
-.fc-node .node-label { pointer-events: none; padding: 0 8px; }
-.fc-node.start-node    { background: #DCFCE7; color: #166534; border: 2px solid #86EFAC; border-radius: 30px; width: 120px; height: 42px; }
-.fc-node.end-node      { background: #FEE2E2; color: #991B1B; border: 2px solid #FCA5A5; border-radius: 30px; width: 120px; height: 42px; }
-.fc-node.process-node  { background: #EFF6FF; color: #1E3A8A; border: 2px solid #93C5FD; border-radius: 8px; width: 140px; min-height: 48px; }
-.fc-node.decision-node { background: #FEF9C3; color: #713F12; clip-path: polygon(50% 0%,100% 50%,50% 100%,0% 50%); width: 120px; height: 84px; }
-.fc-node.io-node       { background: #F3E8FF; color: #581C87; border: 2px solid #C084FC; width: 140px; height: 48px; transform: skewX(-12deg); }
-.fc-node.io-node .node-label { transform: skewX(12deg); }
-.connect-port { position: absolute; width: 12px; height: 12px; background: var(--brand2); border: 2px solid #fff; border-radius: 50%; opacity: 0; transition: opacity 0.15s; cursor: crosshair; z-index: 10; }
-.fc-node:hover .connect-port { opacity: 1; }
-.connect-port.top    { top: -6px;    left: 50%; transform: translateX(-50%); }
-.connect-port.bottom { bottom: -6px; left: 50%; transform: translateX(-50%); }
-.connect-port.left   { left: -6px;   top: 50%;  transform: translateY(-50%); }
-.connect-port.right  { right: -6px;  top: 50%;  transform: translateY(-50%); }
-.fc-node.decision-node .connect-port.top    { top: 4px; }
-.fc-node.decision-node .connect-port.bottom { bottom: 4px; }
-.fc-node.decision-node .connect-port.left   { left: 6px; }
-.fc-node.decision-node .connect-port.right  { right: 6px; }
-.fc-drop-hint { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--txt2); font-size: 13px; pointer-events: none; opacity: 1; transition: opacity 0.3s; }
-#fc-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-.save-toast { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); background: #166534; color: #fff; font-size: 12px; font-weight: 700; padding: 7px 18px; border-radius: 20px; pointer-events: none; opacity: 0; transition: opacity 0.3s; white-space: nowrap; z-index: 300; }
-.save-toast.show { opacity: 1; }
-.label-popup { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--r); padding: 14px 16px; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,0.12); display: none; flex-direction: column; gap: 8px; min-width: 220px; }
-.label-popup.show { display: flex; }
-.label-popup label { font-size: 12px; font-weight: 700; color: var(--txt); }
-.label-popup input { padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px; font-family: 'Nanum Gothic', sans-serif; color: var(--txt); background: var(--bg2); outline: none; }
-.label-popup input:focus { border-color: var(--brand); }
-.label-popup-btns { display: flex; gap: 6px; }
-.label-popup-btns button { flex: 1; padding: 6px; border-radius: 6px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Nanum Gothic', sans-serif; }
-.popup-ok { background: var(--brand); color: #fff; }
-.popup-cancel { background: var(--bg2); color: var(--txt2); border: 0.5px solid var(--border) !important; }
-
-/* ── 공통 버튼 ── */
-.action-btn {
-  padding: 6px 16px; border-radius: 8px;
-  border: 0.5px solid var(--border);
-  background: var(--bg); color: var(--txt);
-  font-size: 12px; cursor: pointer;
-  font-family: 'Nanum Gothic', sans-serif; font-weight: 700;
-  transition: all 0.15s; white-space: nowrap;
-  display: inline-flex; align-items: center; gap: 5px;
-}
-.action-btn:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
-
-/* ── 버튼 그룹: 가운데 정렬 ── */
-.btn-group {
-  display: flex;
-  justify-content: center;   /* 가운데 정렬 */
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-/* ── SORT ── */
-.sort-scenario { background: linear-gradient(135deg,#FFF7ED,#FEF9C3); border: 1.5px solid #FDE68A; border-radius: var(--r); padding: 1rem; margin-bottom: 1rem; }
-.sort-scenario h3 { font-size: 14px; font-weight: 700; color: #92400E; margin-bottom: 4px; }
-.sort-scenario p  { font-size: 12px; color: #78350F; }
-.sort-board { display: flex; align-items: flex-end; justify-content: center; gap: 8px; height: 190px; padding: 12px 12px 32px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--r); margin-bottom: 1rem; position: relative; overflow: visible; }
-.sort-bar { width: 40px; border-radius: 6px 6px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 5px; transition: all 0.3s; position: relative; flex-shrink: 0; }
-.sort-bar .bar-val { font-size: 12px; font-weight: 800; color: #fff; line-height: 1; }
-.sort-bar .bar-label { position: absolute; bottom: -26px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: var(--txt2); white-space: nowrap; }
-.sort-algo-info { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--r); padding: 1rem; font-size: 13px; color: var(--txt2); line-height: 1.6; margin-top: 1rem; }
-.compare-highlight { color: #EF4444; font-weight: 700; }
-.swap-highlight { color: #22C55E; font-weight: 700; }
-
-/* ── MAZE ── */
-.maze-wrap { display: grid; grid-template-columns: 1fr 200px; gap: 1rem; }
-.maze-board-wrap { background: var(--bg2); border: 1.5px solid var(--border); border-radius: var(--r); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-#maze-canvas { border-radius: 8px; border: 2px solid var(--brand); }
-.maze-algo-panel { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--r); padding: 1rem; }
-.maze-algo-panel h3 { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
-.algo-step { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; margin-bottom: 6px; border-radius: 8px; font-size: 12px; border: 0.5px solid var(--border); background: var(--bg2); transition: all 0.3s; }
-.algo-step.active { background: #FFF7ED; border-color: var(--brand); color: #9A3412; }
-.algo-step-num { font-weight: 700; font-size: 11px; background: var(--brand); color: #fff; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-.algo-step.active .algo-step-num { background: #EA580C; }
-.maze-status { font-size: 13px; font-weight: 700; color: var(--txt2); text-align: center; min-height: 20px; }
-
-/* ── SEQUENCE ── */
-.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-.badge-orange { background: #FFF7ED; color: #C2410C; border: 0.5px solid #FED7AA; }
-.badge-teal   { background: #F0FDFA; color: #0F766E; border: 0.5px solid #99F6E4; }
-.badge-yellow { background: #FEF9C3; color: #854D0E; border: 0.5px solid #FDE047; }
-.problems-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
-.problem-card { border: 0.5px solid var(--border); border-radius: var(--r); padding: 1rem; cursor: pointer; transition: all 0.15s; background: var(--bg); }
-.problem-card:hover { border-color: var(--brand); }
-.problem-card.selected { border-color: var(--brand); background: #FFF7ED; }
-.problem-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-.problem-card p  { font-size: 12px; color: var(--txt2); }
-.diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
-.diff-dot.filled { background: var(--brand); }
-.seq-steps-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; min-height: 60px; padding: 10px; background: var(--bg2); border: 1.5px dashed var(--border); border-radius: var(--r); }
-.seq-step-card { padding: 8px 14px; border-radius: 8px; border: 1.5px solid var(--brand2); background: rgba(78,205,196,0.1); color: var(--txt); font-size: 13px; font-weight: 700; cursor: pointer; user-select: none; transition: all 0.15s; }
-.seq-step-card:hover { background: var(--brand2); color: #fff; }
-.seq-answer-area { min-height: 100px; padding: 10px; background: var(--bg); border: 1.5px dashed var(--brand); border-radius: var(--r); display: flex; flex-direction: column; gap: 6px; }
-.seq-answer-slot { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; border: 0.5px solid var(--border); background: var(--bg2); font-size: 12px; }
-.seq-answer-slot .slot-num { font-weight: 700; font-size: 11px; background: var(--brand); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.seq-drop-hint { color: var(--txt2); font-size: 13px; text-align: center; padding: 20px; }
-.seq-check-result { padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; margin-top: 10px; display: none; }
-.seq-check-result.correct { background: #DCFCE7; color: #166534; border: 1.5px solid #86EFAC; display: block; }
-.seq-check-result.wrong   { background: #FEE2E2; color: #991B1B; border: 1.5px solid #FCA5A5; display: block; }
-
-@media (max-width: 560px) {
-  .flowchart-wrap { grid-template-columns: 1fr; height: auto; }
-  .maze-wrap { grid-template-columns: 1fr; }
-  .problems-grid { grid-template-columns: 1fr; }
-}
+  body { font-family: 'Pretendard', -apple-system, sans-serif; background: #f4f7f9; margin: 0; }
+  .card { background: white; border-radius: 1.5rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+  .tab-btn { transition: all .15s; cursor: pointer; }
+  .tab-btn.active { background: white; box-shadow: 0 2px 8px rgba(79,70,229,.15); color: #4f46e5; }
+  .shape-card { background: white; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 10px; }
+  .shape-card:hover { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129,140,248,.15); transform: translateY(-1px); }
+  .shape-preview { width: 44px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; }
+  .shape-diamond { clip-path: polygon(50% 0%,100% 50%,50% 100%,0% 50%); width: 44px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; flex-shrink: 0; }
+  .fc-canvas-area { background: #fafbfc; border: 1.5px dashed #e2e8f0; border-radius: 16px; position: relative; min-height: 260px; overflow: hidden; }
+  .fc-node { position: absolute; cursor: move; user-select: none; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; text-align: center; transition: box-shadow .1s; }
+  .fc-node:hover, .fc-node.sel { box-shadow: 0 0 0 2.5px #4f46e5, 0 4px 12px rgba(79,70,229,.25) !important; }
+  .fn-start { border-radius: 20px; background: #eef2ff; border: 1.5px solid #a5b4fc; color: #3730a3; width: 88px; height: 34px; }
+  .fn-process { border-radius: 8px; background: #eff6ff; border: 1.5px solid #93c5fd; color: #1e40af; width: 100px; height: 36px; }
+  .fn-decision { clip-path: polygon(50% 0%,100% 50%,50% 100%,0% 50%); background: #fffbeb; border: none; outline: 2px solid #fcd34d; color: #92400e; width: 88px; height: 64px; padding: 10px; }
+  .fn-io { border-radius: 4px; background: #f0fdf4; border: 1.5px solid #86efac; color: #166534; width: 100px; height: 36px; font-style: italic; }
+  .maze-grid { display: grid; border: 2px solid #e2e8f0; border-radius: 12px; overflow: hidden; width: fit-content; }
+  .maze-cell { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 17px; transition: background .1s; }
+  .mc-wall { background: #ede9fe; }
+  .mc-path { background: white; }
+  .mc-start { background: #dcfce7; }
+  .mc-end { background: #fee2e2; }
+  .mc-player { background: #eef2ff; }
+  .mc-visited { background: #f5f3ff; }
+  .sort-bar { flex: 1; border-radius: 4px 4px 0 0; min-width: 0; transition: height .25s, background .2s; }
+  .step-tab { padding: 8px 16px; font-size: 12px; font-weight: 700; border: none; background: transparent; cursor: pointer; color: #94a3b8; border-bottom: 2px solid transparent; transition: all .15s; white-space: nowrap; }
+  .step-tab.on { color: #4f46e5; border-color: #4f46e5; }
+  .ctrl-btn { display: inline-flex; align-items: center; gap: 5px; padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1.5px solid #e2e8f0; background: white; color: #374151; transition: all .12s; white-space: nowrap; }
+  .ctrl-btn:hover { background: #f8fafc; }
+  .ctrl-btn.primary { background: #4f46e5; border-color: #4f46e5; color: white; }
+  .ctrl-btn.primary:hover { background: #4338ca; }
+  .ctrl-btn.danger { background: #fff1f2; border-color: #fca5a5; color: #b91c1c; }
+  .info-pill { background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 12px 16px; font-size: 12.5px; color: #64748b; line-height: 1.7; }
+  .info-pill strong { color: #1e293b; font-weight: 700; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 10px; font-weight: 800; }
 </style>
+</head>
+<body class="min-h-screen">
 
-<div class="workshop">
-  <div class="header">
-    <div class="header-badge"><span class="header-badge-dot"></span>인터렉티브 수업실</div>
-    <h1>알고리즘 공작소 ⚙️</h1>
-    <p>알고리즘의 원리를 시각화하고 직접 만들어보세요.</p>
-  </div>
+<main class="max-w-5xl mx-auto px-4 md:px-6 pt-8 pb-16">
 
-  <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('flowchart',this)"><span>📊</span> 순서도 그리기</button>
-    <button class="tab-btn" onclick="switchTab('maze',this)"><span>🌀</span> 알고리즘 미로</button>
-    <button class="tab-btn" onclick="switchTab('sort',this)"><span>📶</span> 정렬 시각화</button>
-    <button class="tab-btn" onclick="switchTab('sequence',this)"><span>🧩</span> 순서 맞히기</button>
-  </div>
-
-  <!-- FLOWCHART -->
-  <div class="panel active" id="panel-flowchart">
-    <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <span class="badge badge-orange">📊 순서도</span>
-      <span style="font-size:12px;color:var(--txt2)">블록 추가 · 포트(●) 드래그로 연결 · 예/아니오 라벨 배치</span>
+  <!-- 헤더 -->
+  <div class="mb-8">
+    <div class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-black mb-4 border border-indigo-100">
+      <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>인터렉티브 수업실
     </div>
-    <div class="flowchart-wrap">
-      <div class="fc-palette">
-        <h3>블록 팔레트</h3>
-        <div class="fc-section">
-          <div class="fc-section-title">클릭해서 추가</div>
-          <div class="fc-block start"    onclick="addNode('start')">● 시작</div>
-          <div class="fc-block end"      onclick="addNode('end')">● 끝</div>
-          <div class="fc-block process"  onclick="addNode('process')">▭ 처리</div>
-          <div class="fc-block decision" onclick="addNode('decision')">◇ 판단</div>
-          <div class="fc-block io"       onclick="addNode('io')">▱ 입출력</div>
+    <h1 class="text-4xl font-black text-slate-900 mb-3">알고리즘 공작소 <span class="text-indigo-500">⚙️</span></h1>
+    <p class="text-lg text-slate-500 font-medium">코딩 이전 단계 — 일상의 문제를 논리로 분해하고 알고리즘을 직접 체험합니다.</p>
+  </div>
+
+  <!-- 탭 -->
+  <div class="card p-1.5 flex gap-1 mb-7 w-fit">
+    <button onclick="switchTab(0,this)" class="tab-btn active px-5 py-2.5 rounded-xl text-sm font-black text-indigo-600 flex items-center gap-2">
+      <i data-lucide="network" class="w-4 h-4"></i>순서도 그리기
+    </button>
+    <button onclick="switchTab(1,this)" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-black text-slate-500 flex items-center gap-2">
+      <i data-lucide="compass" class="w-4 h-4"></i>미로 탐색
+    </button>
+    <button onclick="switchTab(2,this)" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-black text-slate-500 flex items-center gap-2">
+      <i data-lucide="bar-chart-2" class="w-4 h-4"></i>정렬 시각화
+    </button>
+  </div>
+
+  <!-- ① 순서도 -->
+  <div id="panel-0">
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
+            <i data-lucide="network" class="w-5 h-5 text-indigo-500"></i>나만의 순서도 그리기
+          </h2>
+          <p class="text-xs text-slate-400 font-medium mt-0.5">도형을 클릭해 배치하고 드래그로 이동해보세요</p>
         </div>
-        <div class="fc-section">
-          <div class="fc-section-title">텍스트 라벨</div>
-          <div class="fc-label-block yes"    onclick="addLabel('yes')">✔ 예</div>
-          <div class="fc-label-block no"     onclick="addLabel('no')">✘ 아니오</div>
-          <div class="fc-label-block custom" onclick="addLabel('custom')">✎ 직접 입력</div>
+        <span class="badge bg-indigo-50 text-indigo-700 border border-indigo-100">활동 1</span>
+      </div>
+
+      <!-- 도형 팔레트 -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+        <div class="shape-card" onclick="addNode('fn-start','시작/끝')">
+          <div class="shape-preview rounded-2xl" style="background:#eef2ff;border:1.5px solid #a5b4fc;color:#3730a3">시작/끝</div>
+          <div><p class="text-xs font-black text-slate-700">시작 / 끝</p><p class="text-[10px] text-slate-400">타원형</p></div>
         </div>
-        <div class="fc-section">
-          <div class="fc-section-title">예시 템플릿</div>
-          <button class="template-btn" onclick="loadTemplate('morning')">🌅 아침 등교</button>
-          <button class="template-btn" onclick="loadTemplate('homework')">📚 숙제 할까?</button>
-          <button class="template-btn" onclick="loadTemplate('snack')">🍪 간식 고르기</button>
+        <div class="shape-card" onclick="addNode('fn-process','처리')">
+          <div class="shape-preview" style="background:#eff6ff;border:1.5px solid #93c5fd;color:#1e40af">처리</div>
+          <div><p class="text-xs font-black text-slate-700">처리</p><p class="text-[10px] text-slate-400">직사각형</p></div>
         </div>
-        <div class="fc-tip">
-          <strong>💡 사용법</strong><br>
-          ① 블록 클릭 → 추가<br>
-          ② 포트(●) 드래그 → 연결<br>
-          ③ 라벨 → 화살표 위 배치<br>
-          ④ 연결선 클릭 → 삭제<br>
-          ⑤ 📸 버튼 → 이미지 저장
+        <div class="shape-card" onclick="addNode('fn-decision','판단')">
+          <div class="shape-diamond" style="background:#fffbeb;color:#92400e">판단</div>
+          <div><p class="text-xs font-black text-slate-700">판단</p><p class="text-[10px] text-slate-400">마름모</p></div>
+        </div>
+        <div class="shape-card" onclick="addNode('fn-io','입/출력')">
+          <div class="shape-preview" style="background:#f0fdf4;border:1.5px solid #86efac;color:#166534;font-style:italic">I/O</div>
+          <div><p class="text-xs font-black text-slate-700">입 / 출력</p><p class="text-[10px] text-slate-400">평행사변형</p></div>
         </div>
       </div>
-      <div class="fc-canvas-wrap">
-        <div class="fc-toolbar">
-          <span class="fc-toolbar-title">내 순서도</span>
-          <div class="fc-divider"></div>
-          <button class="fc-icon-btn" onclick="clearCanvas()">🗑<span class="btn-tooltip">전체 지우기</span></button>
-          <button class="fc-icon-btn" onclick="deleteSelected()">✂️<span class="btn-tooltip">선택 삭제</span></button>
-          <button class="fc-icon-btn" onclick="undoLastEdge()">↩<span class="btn-tooltip">선 취소</span></button>
-          <button class="fc-icon-btn" onclick="fcShare()">💬<span class="btn-tooltip">피드백</span></button>
-          <div class="fc-divider"></div>
-          <button class="fc-icon-btn save-btn" onclick="saveAsImage()">📸<span class="btn-tooltip">이미지 저장</span></button>
+
+      <!-- 툴바 -->
+      <div class="flex gap-2 mb-4 flex-wrap items-center">
+        <button class="ctrl-btn" onclick="loadExample()">
+          <i data-lucide="layout-template" class="w-3.5 h-3.5"></i>예제 불러오기
+        </button>
+        <button class="ctrl-btn danger" onclick="clearCanvas()">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>초기화
+        </button>
+        <span id="node-hint" class="text-xs text-slate-400 font-medium ml-1"></span>
+      </div>
+
+      <!-- 캔버스 -->
+      <div class="fc-canvas-area" id="fc-canvas">
+        <svg id="fc-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none"></svg>
+        <div id="fc-nodes" style="position:relative;width:100%;height:260px;"></div>
+        <div class="absolute bottom-3 right-4 text-[10px] text-slate-300 font-medium">도형 클릭 → 배치 · 드래그 → 이동</div>
+      </div>
+
+      <div class="info-pill mt-4">
+        <strong>순서도(Flowchart)</strong>란 알고리즘의 흐름을 도형과 화살표로 시각화한 그림입니다. 코드 작성 전 논리 구조를 설계할 때 사용해요. 오른쪽 팔레트에서 도형을 선택해 배치해보세요.
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 미로 -->
+  <div id="panel-1" class="hidden">
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
+            <i data-lucide="compass" class="w-5 h-5 text-emerald-500"></i>알고리즘 미로 탐색
+          </h2>
+          <p class="text-xs text-slate-400 font-medium mt-0.5">방향키 또는 버튼으로 캐릭터를 움직여 출구를 찾으세요</p>
         </div>
-        <div id="fc-canvas">
-          <div class="fc-drop-hint" id="fc-hint">← 블록을 클릭해 추가하고, 포트를 드래그해 연결하세요!</div>
-          <svg id="fc-svg" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M2 1L8 5L2 9" fill="none" stroke="#FF6B35" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </marker>
-              <marker id="ah-drag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M2 1L8 5L2 9" fill="none" stroke="#4ECDC4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </marker>
-            </defs>
-            <path id="drag-line" d="" stroke="#4ECDC4" stroke-width="2" stroke-dasharray="6 3" fill="none" opacity="0" marker-end="url(#ah-drag)"/>
-          </svg>
-          <div class="save-toast" id="save-toast">✅ 이미지가 저장됐어요!</div>
-          <div class="label-popup" id="label-popup">
-            <label>라벨 텍스트 입력</label>
-            <input type="text" id="label-input" maxlength="12" placeholder="예: 맞다, 틀리다…"/>
-            <div class="label-popup-btns">
-              <button class="popup-ok" onclick="confirmCustomLabel()">추가</button>
-              <button class="popup-cancel" onclick="cancelCustomLabel()">취소</button>
+        <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-100">활동 2</span>
+      </div>
+
+      <div class="flex flex-col md:flex-row gap-6 items-start">
+        <div class="flex flex-col items-center gap-4">
+          <div class="maze-grid shadow-sm" id="maze-grid"></div>
+          <div class="flex items-center gap-2">
+            <button class="ctrl-btn" onclick="movePlayer(-1,0)"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+            <div class="flex flex-col gap-1.5">
+              <button class="ctrl-btn" onclick="movePlayer(0,-1)"><i data-lucide="arrow-up" class="w-4 h-4"></i></button>
+              <button class="ctrl-btn" onclick="movePlayer(0,1)"><i data-lucide="arrow-down" class="w-4 h-4"></i></button>
             </div>
+            <button class="ctrl-btn" onclick="movePlayer(1,0)"><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+            <button class="ctrl-btn primary" onclick="resetMaze()">다시 시작</button>
+          </div>
+          <p id="maze-status" class="text-sm font-black text-emerald-600 h-5"></p>
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="card p-5 bg-slate-50/50 mb-4">
+            <p class="text-xs font-black text-slate-500 uppercase tracking-wider mb-3">범례</p>
+            <div class="grid grid-cols-2 gap-2 text-xs font-medium text-slate-600">
+              <div class="flex items-center gap-2"><div class="w-6 h-6 bg-green-100 border border-green-300 rounded"></div>시작점</div>
+              <div class="flex items-center gap-2"><div class="w-6 h-6 bg-red-100 border border-red-300 rounded flex items-center justify-center text-sm">🚪</div>출구</div>
+              <div class="flex items-center gap-2"><div class="w-6 h-6 bg-indigo-100 border border-indigo-300 rounded flex items-center justify-center text-sm">🧒</div>현재 위치</div>
+              <div class="flex items-center gap-2"><div class="w-6 h-6 bg-violet-200 rounded"></div>벽</div>
+              <div class="flex items-center gap-2"><div class="w-6 h-6 bg-violet-50 border border-violet-200 rounded"></div>지나온 경로</div>
+            </div>
+          </div>
+          <div class="card p-5">
+            <p class="text-xs font-black text-slate-500 uppercase tracking-wider mb-2">진행 현황</p>
+            <div class="flex items-baseline gap-2">
+              <span class="text-3xl font-black text-indigo-600" id="move-count">0</span>
+              <span class="text-sm text-slate-400 font-medium">번 이동</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">최적 경로는 몇 번일까요?<br>나만의 탐색 알고리즘을 생각해봐요!</p>
           </div>
         </div>
       </div>
+
+      <div class="info-pill mt-5">
+        <strong>미로 탐색 알고리즘</strong>은 경로를 찾는 대표적인 알고리즘 문제입니다. 실제 내비게이션, 게임 AI 등에 활용돼요. 방향키(↑↓←→)로도 조작할 수 있습니다.
+      </div>
     </div>
   </div>
 
-  <!-- MAZE -->
-  <div class="panel" id="panel-maze">
-    <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;">
-      <span class="badge badge-teal">🌀 미로</span>
-      <span style="font-size:12px;color:var(--txt2)">DFS 알고리즘으로 미로를 탐색해요!</span>
-    </div>
-    <div class="maze-wrap">
-      <div class="maze-board-wrap">
-        <!-- 미로 버튼 가운데 정렬 -->
-        <div class="btn-group">
-          <button class="action-btn" onclick="generateMaze()">🔀 새 미로</button>
-          <button class="action-btn" onclick="solveMaze()">🤖 자동 풀기</button>
-          <button class="action-btn" onclick="resetMaze()">↺ 초기화</button>
-          <select id="maze-size" onchange="generateMaze()" style="padding:5px 10px;border-radius:8px;border:0.5px solid var(--border);background:var(--bg);color:var(--txt);font-size:12px;font-family:'Nanum Gothic',sans-serif;cursor:pointer;">
-            <option value="9">쉬움</option><option value="13" selected>보통</option><option value="17">어려움</option>
-          </select>
+  <!-- ③ 정렬 -->
+  <div id="panel-2" class="hidden">
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
+            <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-500"></i>정렬 알고리즘 시각화
+          </h2>
+          <p class="text-xs text-slate-400 font-medium mt-0.5">거품·선택·삽입 정렬을 한 단계씩 직접 확인해보세요</p>
         </div>
-        <div class="maze-status" id="maze-status">▶ 자동 풀기를 눌러보세요</div>
-        <canvas id="maze-canvas" width="330" height="330"></canvas>
-        <div style="display:flex;gap:12px;font-size:11px;color:var(--txt2);">
-          <span>🟢 시작</span><span>🔴 목표</span>
-          <span style="display:flex;align-items:center;gap:3px;"><span style="width:12px;height:12px;background:#818CF8;display:inline-block;border-radius:2px;"></span>방문</span>
-          <span style="display:flex;align-items:center;gap:3px;"><span style="width:12px;height:12px;background:#FBBF24;display:inline-block;border-radius:2px;"></span>경로</span>
-        </div>
+        <span class="badge bg-blue-50 text-blue-700 border border-blue-100">활동 3</span>
       </div>
-      <div class="maze-algo-panel">
-        <h3>🧠 DFS 알고리즘</h3>
-        <div class="algo-step" id="step-0"><div class="algo-step-num">1</div><div>시작점에서 출발</div></div>
-        <div class="algo-step" id="step-1"><div class="algo-step-num">2</div><div>이동 가능한 방향 확인</div></div>
-        <div class="algo-step" id="step-2"><div class="algo-step-num">3</div><div>방문 안 한 곳으로 이동</div></div>
-        <div class="algo-step" id="step-3"><div class="algo-step-num">4</div><div>막히면 뒤로 돌아가기</div></div>
-        <div class="algo-step" id="step-4"><div class="algo-step-num">5</div><div>목표 도달 시 완료!</div></div>
-        <div style="margin-top:14px;padding:10px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--txt2);line-height:1.6;"><strong style="color:var(--txt)">핵심 개념</strong><br>한 방향으로 끝까지 가다가 막히면 돌아와서 다른 길을 탐색해요.</div>
+
+      <div class="flex border-b border-slate-100 mb-5">
+        <button class="step-tab on" onclick="setSortAlgo('bubble',this)">거품 정렬</button>
+        <button class="step-tab" onclick="setSortAlgo('selection',this)">선택 정렬</button>
+        <button class="step-tab" onclick="setSortAlgo('insertion',this)">삽입 정렬</button>
+      </div>
+
+      <div class="card p-5 bg-slate-50/50 mb-5">
+        <div id="sort-bars" class="flex items-end gap-1.5 h-28 mb-2"></div>
+        <div id="sort-labels" class="flex gap-1.5"></div>
+      </div>
+
+      <div class="flex gap-2 flex-wrap items-center">
+        <button class="ctrl-btn primary" onclick="startSort()">
+          <i data-lucide="play" class="w-4 h-4"></i>단계 실행
+        </button>
+        <button class="ctrl-btn" onclick="shuffleBars()">
+          <i data-lucide="shuffle" class="w-3.5 h-3.5"></i>섞기
+        </button>
+        <button class="ctrl-btn" onclick="resetSort()">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>초기화
+        </button>
+        <span id="sort-info" class="text-xs text-slate-400 font-medium ml-1"></span>
+      </div>
+
+      <div class="info-pill mt-5" id="sort-desc">
+        <strong>거품 정렬(Bubble Sort)</strong>은 인접한 두 값을 비교해 큰 값을 오른쪽으로 옮기는 과정을 반복합니다. 단계 실행을 눌러 한 단계씩 확인해보세요.
       </div>
     </div>
   </div>
 
-  <!-- SORT -->
-  <div class="panel" id="panel-sort">
-    <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;">
-      <span class="badge badge-yellow">📶 정렬</span>
-      <span style="font-size:12px;color:var(--txt2)">버블정렬로 책을 순서대로 정리해봐요!</span>
-    </div>
-    <div class="sort-scenario"><h3>📚 도서관 사서가 되어보자!</h3><p>뒤섞인 책들을 이웃한 두 책을 비교해서 정렬해요.</p></div>
-    <div class="sort-board" id="sort-board"></div>
-    <div style="margin:8px 0;text-align:center;"><div id="sort-log" style="font-size:12px;color:var(--txt2);min-height:18px;"></div></div>
-    <!-- 정렬 버튼 가운데 정렬 -->
-    <div class="btn-group" style="margin-bottom:1rem;">
-      <button class="action-btn" onclick="shuffleSort()">🔀 섞기</button>
-      <button class="action-btn" onclick="sortStep()">▶ 한 단계</button>
-      <button class="action-btn" onclick="autoSort()">⏩ 자동 정렬</button>
-      <button class="action-btn" onclick="resetSort()">↺ 초기화</button>
-    </div>
-    <div class="sort-algo-info"><strong>버블 정렬(Bubble Sort)</strong>이란?<br>이웃한 두 값을 비교해서 큰 값을 오른쪽으로 밀어내요.<br><br><span class="compare-highlight">빨간색 = 비교 중</span> &nbsp; <span class="swap-highlight">초록색 = 교환됨</span></div>
-  </div>
-
-  <!-- SEQUENCE -->
-  <div class="panel" id="panel-sequence">
-    <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;">
-      <span class="badge badge-orange">🧩 순서 맞히기</span>
-      <span style="font-size:12px;color:var(--txt2)">올바른 순서로 단계를 배열해보세요.</span>
-    </div>
-    <div class="problems-grid">
-      <div class="problem-card selected" onclick="selectProblem(0,this)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><h4>🍳 라면 끓이기</h4><div style="display:flex;gap:3px;"><div class="diff-dot filled"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
-        <p>라면 조리 순서를 알고리즘으로</p>
-      </div>
-      <div class="problem-card" onclick="selectProblem(1,this)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><h4>🔍 이진 탐색</h4><div style="display:flex;gap:3px;"><div class="diff-dot filled"></div><div class="diff-dot filled"></div><div class="diff-dot"></div></div></div>
-        <p>숫자를 찾는 단계를 맞혀보세요</p>
-      </div>
-      <div class="problem-card" onclick="selectProblem(2,this)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><h4>🚿 샤워 순서</h4><div style="display:flex;gap:3px;"><div class="diff-dot filled"></div><div class="diff-dot filled"></div><div class="diff-dot"></div></div></div>
-        <p>효율적인 샤워 알고리즘 완성</p>
-      </div>
-      <div class="problem-card" onclick="selectProblem(3,this)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><h4>📱 비밀번호 찾기</h4><div style="display:flex;gap:3px;"><div class="diff-dot filled"></div><div class="diff-dot filled"></div><div class="diff-dot filled"></div></div></div>
-        <p>선형 탐색으로 비밀번호 찾기</p>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px;">
-      <div style="font-size:13px;font-weight:700;" id="seq-title"></div>
-      <div id="seq-try-count" style="font-size:12px;color:var(--txt2);"></div>
-    </div>
-    <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;" id="seq-desc"></div>
-    <div style="font-size:11px;color:var(--txt2);margin-bottom:4px;">📦 단계 카드</div>
-    <div class="seq-steps-pool" id="seq-pool"></div>
-    <div style="font-size:11px;color:var(--txt2);margin-bottom:4px;">✅ 내 답</div>
-    <div class="seq-answer-area" id="seq-answer"></div>
-    <!-- 순서 맞히기 버튼 가운데 정렬 -->
-    <div class="btn-group" style="margin-top:10px;">
-      <button class="action-btn" onclick="checkSequence()">✅ 정답 확인</button>
-      <button class="action-btn" onclick="resetSequence()">↺ 다시 풀기</button>
-      <button class="action-btn" onclick="seqHint()">💡 힌트</button>
-    </div>
-    <div class="seq-check-result" id="seq-result"></div>
-  </div>
-</div>
+</main>
 
 <script>
-function switchTab(name, btn) {
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  btn.classList.add('active');
-  if(name==='maze') setTimeout(generateMaze,50);
-  if(name==='sort') initSort();
-  if(name==='sequence') selectProblem(0,document.querySelector('.problem-card'));
-}
+  lucide.createIcons();
 
-// ── FLOWCHART ──
-let fcNodes=[],fcEdges=[],fcLabels=[];
-let selectedId=null,nodeCounter=0,labelCounter=0;
-let draggingPort=false,portFromId=null,portFromSide=null;
-let draggingNode=false,dragNodeId=null,dragOffX=0,dragOffY=0;
-let draggingLabel=false,dragLabelId=null,dragLabelOffX=0,dragLabelOffY=0;
-const CV=()=>document.getElementById('fc-canvas');
-const SVG=()=>document.getElementById('fc-svg');
-function getCenter(id){const el=document.getElementById(id);if(!el)return{x:0,y:0};return{x:parseFloat(el.style.left)+el.offsetWidth/2,y:parseFloat(el.style.top)+el.offsetHeight/2};}
-function getEdgePoint(id,side){const el=document.getElementById(id);if(!el)return{x:0,y:0};const l=parseFloat(el.style.left),t=parseFloat(el.style.top),w=el.offsetWidth,h=el.offsetHeight;if(side==='top')return{x:l+w/2,y:t};if(side==='bottom')return{x:l+w/2,y:t+h};if(side==='left')return{x:l,y:t+h/2};if(side==='right')return{x:l+w,y:t+h/2};return{x:l+w/2,y:t+h/2};}
-function bestSides(a,b){const f=getCenter(a),t=getCenter(b);const dx=t.x-f.x,dy=t.y-f.y;if(Math.abs(dy)>=Math.abs(dx))return dy>=0?['bottom','top']:['top','bottom'];return dx>=0?['right','left']:['left','right'];}
-function makeCurve(fp,tp,fs,ts){const d=Math.max(40,Math.hypot(tp.x-fp.x,tp.y-fp.y)*0.45);const off=s=>({top:{x:0,y:-d},bottom:{x:0,y:d},left:{x:-d,y:0},right:{x:d,y:0}}[s]||{x:0,y:0});const c1=off(fs),c2=off(ts);return `M${fp.x},${fp.y} C${fp.x+c1.x},${fp.y+c1.y} ${tp.x+c2.x},${tp.y+c2.y} ${tp.x},${tp.y}`;}
-function renderEdges(){SVG().querySelectorAll('path.edge').forEach(e=>e.remove());fcEdges.forEach(edge=>{const[fs,ts]=bestSides(edge.from,edge.to);const fp=getEdgePoint(edge.from,fs),tp=getEdgePoint(edge.to,ts);const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('class','edge');path.setAttribute('d',makeCurve(fp,tp,fs,ts));path.setAttribute('fill','none');path.setAttribute('stroke','#FF6B35');path.setAttribute('stroke-width','2');path.setAttribute('marker-end','url(#ah)');path.style.pointerEvents='stroke';path.style.cursor='pointer';path.addEventListener('click',()=>{fcEdges=fcEdges.filter(e=>!(e.from===edge.from&&e.to===edge.to));renderEdges();});SVG().appendChild(path);});}
-function addPort(nodeEl,nodeId,side){const port=document.createElement('div');port.className='connect-port '+side;port.addEventListener('mousedown',e=>{e.stopPropagation();draggingPort=true;portFromId=nodeId;portFromSide=side;const fp=getEdgePoint(nodeId,side);const dl=document.getElementById('drag-line');dl.style.opacity='1';dl.setAttribute('d',`M${fp.x},${fp.y} L${fp.x},${fp.y}`);document.addEventListener('mousemove',onPortMove);document.addEventListener('mouseup',onPortUp);});nodeEl.appendChild(port);}
-function onPortMove(e){if(!draggingPort)return;const cr=CV().getBoundingClientRect();const mx=e.clientX-cr.left,my=e.clientY-cr.top;const fp=getEdgePoint(portFromId,portFromSide);document.getElementById('drag-line').setAttribute('d',`M${fp.x},${fp.y} L${mx},${my}`);}
-function onPortUp(e){if(!draggingPort)return;draggingPort=false;const dl=document.getElementById('drag-line');dl.style.opacity='0';dl.setAttribute('d','');document.removeEventListener('mousemove',onPortMove);document.removeEventListener('mouseup',onPortUp);const cr=CV().getBoundingClientRect();const mx=e.clientX-cr.left,my=e.clientY-cr.top;let targetId=null;fcNodes.forEach(n=>{const el=document.getElementById(n.id);if(!el)return;const l=parseFloat(el.style.left),t=parseFloat(el.style.top),w=el.offsetWidth,h=el.offsetHeight;if(mx>=l&&mx<=l+w&&my>=t&&my<=t+h&&n.id!==portFromId)targetId=n.id;});if(targetId&&!fcEdges.some(e=>e.from===portFromId&&e.to===targetId)){fcEdges.push({from:portFromId,to:targetId});renderEdges();}}
-function createNode(type,x,y,label){document.getElementById('fc-hint').style.opacity='0';const id='fcn'+(nodeCounter++);const el=document.createElement('div');el.id=id;el.className='fc-node '+type+'-node';el.style.left=x+'px';el.style.top=y+'px';const lbl=document.createElement('div');lbl.className='node-label';lbl.textContent=label;el.appendChild(lbl);['top','bottom','left','right'].forEach(s=>addPort(el,id,s));el.addEventListener('mousedown',e=>{if(e.target.classList.contains('connect-port'))return;selectNode(id);draggingNode=true;dragNodeId=id;const cr=CV().getBoundingClientRect();dragOffX=e.clientX-cr.left-parseFloat(el.style.left);dragOffY=e.clientY-cr.top-parseFloat(el.style.top);document.addEventListener('mousemove',onNodeMove);document.addEventListener('mouseup',onNodeUp);e.stopPropagation();});CV().appendChild(el);fcNodes.push({id,type,x,y,label});return id;}
-function onNodeMove(e){if(!draggingNode)return;const cr=CV().getBoundingClientRect();const el=document.getElementById(dragNodeId);if(!el)return;const nx=Math.max(0,e.clientX-cr.left-dragOffX),ny=Math.max(0,e.clientY-cr.top-dragOffY);el.style.left=nx+'px';el.style.top=ny+'px';const n=fcNodes.find(n=>n.id===dragNodeId);if(n){n.x=nx;n.y=ny;}renderEdges();}
-function onNodeUp(){draggingNode=false;document.removeEventListener('mousemove',onNodeMove);document.removeEventListener('mouseup',onNodeUp);}
-function selectNode(id){if(selectedId)document.getElementById(selectedId)?.classList.remove('selected');selectedId=id;document.getElementById(id)?.classList.add('selected');}
-CV().addEventListener('click',e=>{if(e.target===CV()||e.target.id==='fc-svg'||e.target.id==='fc-hint'){if(selectedId){document.getElementById(selectedId)?.classList.remove('selected');selectedId=null;}}});
-function addNode(type){const cr=CV().getBoundingClientRect();const x=60+Math.random()*Math.max(100,cr.width-220),y=30+Math.random()*Math.max(80,cr.height-120);createNode(type,x,y,{start:'시작',end:'끝',process:'처리 단계',decision:'조건?',io:'입력/출력'}[type]);}
-function addLabel(kind){if(kind==='custom'){const p=document.getElementById('label-popup');document.getElementById('label-input').value='';p.classList.add('show');setTimeout(()=>document.getElementById('label-input').focus(),50);return;}spawnLabel(kind,kind==='yes'?'예':'아니오');}
-function confirmCustomLabel(){const v=document.getElementById('label-input').value.trim();if(!v)return;document.getElementById('label-popup').classList.remove('show');spawnLabel('custom',v);}
-function cancelCustomLabel(){document.getElementById('label-popup').classList.remove('show');}
-document.getElementById('label-input').addEventListener('keydown',e=>{if(e.key==='Enter')confirmCustomLabel();if(e.key==='Escape')cancelCustomLabel();});
-function spawnLabel(kind,text){const cr=CV().getBoundingClientRect();createEdgeLabel(kind,text,cr.width/2+(Math.random()-.5)*80,cr.height/2+(Math.random()-.5)*60);}
-function createEdgeLabel(kind,text,cx,cy){document.getElementById('fc-hint').style.opacity='0';const id='lbl'+(labelCounter++);const el=document.createElement('div');el.id=id;el.className='fc-edge-label '+kind;el.textContent=text;el.style.left=cx+'px';el.style.top=cy+'px';el.addEventListener('mousedown',e=>{e.stopPropagation();draggingLabel=true;dragLabelId=id;const cr=CV().getBoundingClientRect();dragLabelOffX=e.clientX-cr.left-parseFloat(el.style.left);dragLabelOffY=e.clientY-cr.top-parseFloat(el.style.top);document.addEventListener('mousemove',onLabelMove);document.addEventListener('mouseup',onLabelUp);});el.addEventListener('dblclick',e=>{e.stopPropagation();el.remove();fcLabels=fcLabels.filter(l=>l.id!==id);});CV().appendChild(el);fcLabels.push({id,kind,text,cx,cy});return id;}
-function onLabelMove(e){if(!draggingLabel)return;const cr=CV().getBoundingClientRect();const el=document.getElementById(dragLabelId);if(!el)return;el.style.left=(e.clientX-cr.left-dragLabelOffX)+'px';el.style.top=(e.clientY-cr.top-dragLabelOffY)+'px';}
-function onLabelUp(){draggingLabel=false;document.removeEventListener('mousemove',onLabelMove);document.removeEventListener('mouseup',onLabelUp);}
-function clearCanvas(){document.querySelectorAll('.fc-node').forEach(n=>n.remove());document.querySelectorAll('.fc-edge-label').forEach(l=>l.remove());fcNodes=[];fcEdges=[];fcLabels=[];selectedId=null;SVG().querySelectorAll('path.edge').forEach(e=>e.remove());document.getElementById('fc-hint').style.opacity='1';}
-function deleteSelected(){if(!selectedId)return;fcEdges=fcEdges.filter(e=>e.from!==selectedId&&e.to!==selectedId);document.getElementById(selectedId)?.remove();fcNodes=fcNodes.filter(n=>n.id!==selectedId);selectedId=null;renderEdges();}
-function undoLastEdge(){if(!fcEdges.length)return;fcEdges.pop();renderEdges();}
-function loadTemplate(name){clearCanvas();const T={morning:[{type:'start',x:165,y:10,label:'시작'},{type:'process',x:125,y:80,label:'알람 끄기'},{type:'decision',x:125,y:165,label:'지각 위기?'},{type:'process',x:15,y:270,label:'빠르게 준비'},{type:'process',x:225,y:270,label:'여유롭게'},{type:'io',x:125,y:355,label:'학교 출발'},{type:'end',x:160,y:420,label:'끝'}],homework:[{type:'start',x:160,y:10,label:'시작'},{type:'decision',x:125,y:90,label:'숙제 있나?'},{type:'process',x:15,y:195,label:'숙제하기'},{type:'process',x:235,y:195,label:'자유시간'},{type:'decision',x:125,y:300,label:'다 했나?'},{type:'end',x:160,y:390,label:'끝'}],snack:[{type:'start',x:160,y:10,label:'시작'},{type:'process',x:125,y:80,label:'냉장고 열기'},{type:'decision',x:125,y:165,label:'배고픈가?'},{type:'io',x:15,y:270,label:'간식 꺼내기'},{type:'process',x:235,y:270,label:'닫기'},{type:'end',x:160,y:360,label:'끝'}]};const E={morning:[[0,1],[1,2],[2,3],[2,4],[3,5],[4,5],[5,6]],homework:[[0,1],[1,2],[1,3],[2,4],[3,4],[4,5]],snack:[[0,1],[1,2],[2,3],[2,4],[3,5],[4,5]]};const LP={morning:[{kind:'yes',text:'예',cx:55,cy:230},{kind:'no',text:'아니오',cx:265,cy:230}],homework:[{kind:'yes',text:'예',cx:55,cy:150},{kind:'no',text:'아니오',cx:270,cy:150}],snack:[{kind:'yes',text:'예',cx:55,cy:230},{kind:'no',text:'아니오',cx:270,cy:230}]};const ids=T[name].map(s=>createNode(s.type,s.x,s.y,s.label));E[name].forEach(([a,b])=>fcEdges.push({from:ids[a],to:ids[b]}));LP[name].forEach(l=>createEdgeLabel(l.kind,l.text,l.cx,l.cy));setTimeout(renderEdges,50);}
-function fcShare(){sendPrompt(`순서도 피드백 부탁해요! 노드 ${fcNodes.length}개, 화살표 ${fcEdges.length}개, 라벨 ${fcLabels.length}개, 블록 종류: ${[...new Set(fcNodes.map(n=>n.type))].join(', ')}`);}
+  /* ── 탭 전환 ── */
+  function switchTab(i, el) {
+    ['panel-0','panel-1','panel-2'].forEach((id,n) => {
+      document.getElementById(id).classList.toggle('hidden', n !== i);
+    });
+    document.querySelectorAll('.tab-btn').forEach((b, n) => {
+      b.classList.toggle('active', n === i);
+      b.classList.toggle('text-indigo-600', n === i);
+      b.classList.toggle('text-slate-500', n !== i);
+    });
+  }
 
-let toastTimer=null;
-function showSaveToast(msg,ok=true){const t=document.getElementById('save-toast');t.textContent=msg;t.style.background=ok?'#166534':'#991B1B';t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2500);}
-async function saveAsImage(){const canvas=CV();const w=canvas.offsetWidth,h=canvas.offsetHeight;if(w===0||h===0){showSaveToast('⚠️ 캔버스가 비어 있어요',false);return;}const oc=document.createElement('canvas');oc.width=w*2;oc.height=h*2;const ctx=oc.getContext('2d');ctx.scale(2,2);ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);const svgEl=document.getElementById('fc-svg');const svgClone=svgEl.cloneNode(true);svgClone.setAttribute('width',w);svgClone.setAttribute('height',h);const dl=svgClone.getElementById('drag-line');if(dl)dl.setAttribute('opacity','0');const svgStr=new XMLSerializer().serializeToString(svgClone);const svgBlob=new Blob([svgStr],{type:'image/svg+xml;charset=utf-8'});const svgUrl=URL.createObjectURL(svgBlob);await new Promise((res,rej)=>{const img=new Image();img.onload=()=>{ctx.drawImage(img,0,0);URL.revokeObjectURL(svgUrl);res();};img.onerror=rej;img.src=svgUrl;});const nodeStyles={'start-node':{fill:'#DCFCE7',stroke:'#86EFAC',color:'#166534',radius:21},'end-node':{fill:'#FEE2E2',stroke:'#FCA5A5',color:'#991B1B',radius:21},'process-node':{fill:'#EFF6FF',stroke:'#93C5FD',color:'#1E3A8A',radius:8},'decision-node':{fill:'#FEF9C3',stroke:'#FDE047',color:'#713F12',diamond:true},'io-node':{fill:'#F3E8FF',stroke:'#C084FC',color:'#581C87',skew:true}};document.querySelectorAll('.fc-node').forEach(node=>{const x=parseFloat(node.style.left),y=parseFloat(node.style.top),nw=node.offsetWidth,nh=node.offsetHeight;const label=node.querySelector('.node-label')?.textContent||'';let typeKey=[...node.classList].find(c=>c.endsWith('-node')&&c!=='fc-node');const st=nodeStyles[typeKey]||{fill:'#eee',stroke:'#ccc',color:'#333',radius:4};ctx.save();ctx.strokeStyle=st.stroke;ctx.lineWidth=2;if(st.diamond){ctx.fillStyle=st.fill;ctx.beginPath();ctx.moveTo(x+nw/2,y);ctx.lineTo(x+nw,y+nh/2);ctx.lineTo(x+nw/2,y+nh);ctx.lineTo(x,y+nh/2);ctx.closePath();ctx.fill();ctx.stroke();}else if(st.skew){const sk=nh*0.21;ctx.fillStyle=st.fill;ctx.beginPath();ctx.moveTo(x+sk,y);ctx.lineTo(x+nw+sk,y);ctx.lineTo(x+nw,y+nh);ctx.lineTo(x,y+nh);ctx.closePath();ctx.fill();ctx.stroke();}else{const r=st.radius||8;ctx.fillStyle=st.fill;ctx.beginPath();ctx.roundRect(x,y,nw,nh,r);ctx.fill();ctx.stroke();}ctx.fillStyle=st.color;ctx.font='bold 12px "Nanum Gothic",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,x+nw/2,y+nh/2);ctx.restore();});document.querySelectorAll('.fc-edge-label').forEach(lbl=>{const cx=parseFloat(lbl.style.left),cy=parseFloat(lbl.style.top),lw=lbl.offsetWidth,lh=lbl.offsetHeight;const text=lbl.textContent;const isYes=lbl.classList.contains('yes'),isNo=lbl.classList.contains('no');const fill=isYes?'#F0FDF4':isNo?'#FFF1F2':'#f8f8f8';const stroke=isYes?'#4ADE80':isNo?'#FDA4AF':'#ccc';const color=isYes?'#15803D':isNo?'#BE123C':'#444';ctx.save();ctx.fillStyle=fill;ctx.strokeStyle=stroke;ctx.lineWidth=1.5;const rx=cx-lw/2,ry=cy-lh/2;ctx.beginPath();ctx.roundRect(rx,ry,lw,lh,lh/2);ctx.fill();ctx.stroke();ctx.fillStyle=color;ctx.font='bold 11px "Nanum Gothic",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,cx,cy);ctx.restore();});try{oc.toBlob(blob=>{const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='순서도_'+new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','') +'.png';a.click();URL.revokeObjectURL(url);showSaveToast('✅ 이미지가 저장됐어요!');
-},'image/png');}catch(e){showSaveToast('⚠️ 저장에 실패했어요',false);}}
+  /* ── 순서도 ── */
+  let nodes = [], nc = 0;
+  function addNode(type, label) {
+    const x = 30 + (nodes.length % 4) * 115, y = 16 + Math.floor(nodes.length / 4) * 85;
+    nodes.push({ id: 'n' + (++nc), type, label, x, y });
+    renderNodes();
+    document.getElementById('node-hint').textContent = `도형 ${nodes.length}개`;
+  }
+  function renderNodes() {
+    const cont = document.getElementById('fc-nodes'); cont.innerHTML = '';
+    nodes.forEach(n => {
+      const el = document.createElement('div');
+      el.className = 'fc-node ' + n.type;
+      el.style.left = n.x + 'px'; el.style.top = n.y + 'px';
+      el.textContent = n.label;
+      el.addEventListener('mousedown', ev => {
+        ev.stopPropagation();
+        const sx = ev.clientX - n.x, sy = ev.clientY - n.y;
+        const mv = e => { n.x = e.clientX - sx; n.y = e.clientY - sy; renderNodes(); };
+        const up = () => { document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); };
+        document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
+      });
+      cont.appendChild(el);
+    });
+    const svg = document.getElementById('fc-svg');
+    svg.innerHTML = '<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3z" fill="#a5b4fc"/></marker></defs>';
+    for (let i = 0; i < nodes.length - 1; i++) {
+      const a = nodes[i], b = nodes[i + 1];
+      const aw = a.type==='fn-process'||a.type==='fn-io'?100:88;
+      const x1 = a.x + aw/2, y1 = a.y + (a.type==='fn-decision'?64:36)/2*2;
+      const x2 = b.x + aw/2, y2 = b.y;
+      const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d', `M${x1},${y1} C${x1},${(y1+y2)/2} ${x2},${(y1+y2)/2} ${x2},${y2}`);
+      p.setAttribute('fill','none'); p.setAttribute('stroke','#a5b4fc'); p.setAttribute('stroke-width','2');
+      p.setAttribute('stroke-dasharray','none'); p.setAttribute('marker-end','url(#arr)');
+      svg.appendChild(p);
+    }
+  }
+  function loadExample() {
+    nodes = []; nc = 0;
+    [{type:'fn-start',label:'시작',x:130,y:10},{type:'fn-io',label:'숫자 입력',x:120,y:60},{type:'fn-decision',label:'짝수?',x:126,y:110},{type:'fn-io',label:'"짝수" 출력',x:30,y:185},{type:'fn-io',label:'"홀수" 출력',x:240,y:185},{type:'fn-start',label:'끝',x:130,y:185}]
+      .forEach(d => nodes.push({ id:'n'+(++nc), ...d }));
+    renderNodes();
+    document.getElementById('node-hint').textContent = '도형 6개 (예제)';
+  }
+  function clearCanvas() { nodes = []; nc = 0; renderNodes(); document.getElementById('node-hint').textContent = ''; }
+  loadExample();
 
-// ── MAZE ──
-let maze=[],mazeSize=13,mazeStart={r:1,c:1},mazeEnd,playerPos,mazeTimer=null;
-function generateMaze(){mazeSize=parseInt(document.getElementById('maze-size').value);mazeEnd={r:mazeSize-2,c:mazeSize-2};maze=Array.from({length:mazeSize},()=>Array(mazeSize).fill(1));function carve(r,c){maze[r][c]=0;[[0,2],[2,0],[0,-2],[-2,0]].sort(()=>Math.random()-.5).forEach(([dr,dc])=>{const nr=r+dr,nc=c+dc;if(nr>0&&nr<mazeSize-1&&nc>0&&nc<mazeSize-1&&maze[nr][nc]===1){maze[r+dr/2][c+dc/2]=0;carve(nr,nc);}});}carve(1,1);playerPos={...mazeStart};document.getElementById('maze-status').textContent='▶ 자동 풀기를 눌러보세요';highlightStep(-1);drawMaze();}
-function drawMaze(visited=[],path=[]){const cv=document.getElementById('maze-canvas'),ctx=cv.getContext('2d');const sz=Math.min(330,cv.parentElement.offsetWidth-40);cv.width=sz;cv.height=sz;const cell=sz/mazeSize,dark=window.matchMedia('(prefers-color-scheme:dark)').matches;ctx.fillStyle=dark?'#1a1a1a':'#f8f8f8';ctx.fillRect(0,0,sz,sz);for(let r=0;r<mazeSize;r++)for(let c=0;c<mazeSize;c++){const x=c*cell,y=r*cell;if(maze[r][c]===1){ctx.fillStyle=dark?'#2d2d2d':'#334155';ctx.fillRect(x,y,cell,cell);}else{const ip=path.find(v=>v.r===r&&v.c===c),iv=visited.find(v=>v.r===r&&v.c===c);ctx.fillStyle=ip?'rgba(251,191,36,0.5)':iv?'rgba(129,140,248,0.35)':dark?'#111':'#fff';ctx.fillRect(x,y,cell,cell);}}ctx.fillStyle='#22C55E';ctx.beginPath();ctx.arc((mazeStart.c+.5)*cell,(mazeStart.r+.5)*cell,cell*.35,0,Math.PI*2);ctx.fill();ctx.fillStyle='#EF4444';ctx.beginPath();ctx.arc((mazeEnd.c+.5)*cell,(mazeEnd.r+.5)*cell,cell*.35,0,Math.PI*2);ctx.fill();ctx.fillStyle='#FF6B35';ctx.beginPath();ctx.arc((playerPos.c+.5)*cell,(playerPos.r+.5)*cell,cell*.3,0,Math.PI*2);ctx.fill();}
-function solveMaze(){if(mazeTimer)clearTimeout(mazeTimer);playerPos={...mazeStart};const visited=[],stack=[{r:1,c:1,path:[{r:1,c:1}]}],vs=new Set(),steps=[];while(stack.length){const{r,c,path:cp}=stack.pop(),k=r+','+c;if(vs.has(k))continue;vs.add(k);visited.push({r,c});steps.push({visited:[...visited],path:[],pos:{r,c},si:visited.length<3?0:(r===mazeEnd.r&&c===mazeEnd.c)?4:2});if(r===mazeEnd.r&&c===mazeEnd.c){steps.push({visited:[...visited],path:cp,pos:{r,c},si:4,done:true});break;}for(const[dr,dc]of[[0,1],[1,0],[0,-1],[-1,0]]){const nr=r+dr,nc=c+dc;if(nr>=0&&nr<mazeSize&&nc>=0&&nc<mazeSize&&maze[nr][nc]===0&&!vs.has(nr+','+nc))stack.push({r:nr,c:nc,path:[...cp,{r:nr,c:nc}]});}}let i=0;const spd=mazeSize===9?60:mazeSize===13?40:20;function run(){if(i>=steps.length)return;const s=steps[i];playerPos=s.pos;drawMaze(s.visited,s.path||[]);highlightStep(s.si);document.getElementById('maze-status').textContent=s.done?'🎉 목표 도달!':`탐색 중... ${s.visited.length}칸`;i++;if(!s.done)mazeTimer=setTimeout(run,spd);}run();}
-function resetMaze(){if(mazeTimer)clearTimeout(mazeTimer);playerPos={...mazeStart};drawMaze();document.getElementById('maze-status').textContent='초기화됨.';highlightStep(-1);}
-function highlightStep(idx){for(let i=0;i<=4;i++)document.getElementById('step-'+i).classList.toggle('active',i===idx);}
+  /* ── 미로 ── */
+  const MAZE = [[1,0,1,1,1,1,1],[1,0,0,0,0,0,1],[1,1,1,0,1,0,1],[1,0,0,0,1,0,1],[1,0,1,1,1,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,0,1]];
+  const ST = {x:1,y:0}, EN = {x:5,y:6};
+  let pl = {...ST}, vis = new Set(['1,0']), mv = 0;
+  function resetMaze() { pl={...ST}; vis=new Set(['1,0']); mv=0; document.getElementById('move-count').textContent=0; document.getElementById('maze-status').textContent=''; renderMaze(); }
+  function renderMaze() {
+    const g = document.getElementById('maze-grid'); g.innerHTML = '';
+    g.style.gridTemplateColumns = `repeat(${MAZE[0].length},38px)`;
+    MAZE.forEach((row,y) => row.forEach((cell,x) => {
+      const d = document.createElement('div'); d.className = 'maze-cell';
+      if(cell===1) d.classList.add('mc-wall');
+      else if(x===EN.x&&y===EN.y){d.classList.add('mc-end');d.textContent='🚪';}
+      else if(x===pl.x&&y===pl.y){d.classList.add('mc-player');d.textContent='🧒';}
+      else if(x===ST.x&&y===ST.y) d.classList.add('mc-start');
+      else if(vis.has(`${x},${y}`)) d.classList.add('mc-visited');
+      else d.classList.add('mc-path');
+      g.appendChild(d);
+    }));
+  }
+  function movePlayer(dx,dy) {
+    const nx=pl.x+dx, ny=pl.y+dy;
+    if(ny<0||ny>=MAZE.length||nx<0||nx>=MAZE[0].length||MAZE[ny][nx]===1) return;
+    vis.add(`${pl.x},${pl.y}`); pl={x:nx,y:ny}; mv++;
+    document.getElementById('move-count').textContent = mv;
+    renderMaze();
+    if(nx===EN.x&&ny===EN.y) document.getElementById('maze-status').textContent = `🎉 탈출 성공! (${mv}번 이동)`;
+  }
+  document.addEventListener('keydown', e => {
+    if(document.getElementById('panel-1').classList.contains('hidden')) return;
+    const map = {'ArrowLeft':[-1,0],'ArrowRight':[1,0],'ArrowUp':[0,-1],'ArrowDown':[0,1]};
+    if(map[e.key]){e.preventDefault();movePlayer(...map[e.key]);}
+  });
+  resetMaze();
 
-// ── SORT ──
-let sortArr=[],sI=0,sJ=0,sorted=false,sortTimer=null;
-const SC=['#FF6B35','#4ECDC4','#FFE66D','#A8DADC','#C7CEEA','#FFDAC1','#B5EAD7'];
-const SL=['국어','수학','영어','사회','과학','음악','미술'];
-function initSort(){sortArr=[5,2,7,1,4,6,3].map((v,i)=>({v,color:SC[i],label:SL[i]}));sI=0;sJ=0;sorted=false;if(sortTimer)clearInterval(sortTimer);renderSort([],[]);document.getElementById('sort-log').textContent='▶ 한 단계를 눌러보세요';}
-function renderSort(cmp,swp){const b=document.getElementById('sort-board');b.innerHTML='';const mx=Math.max(...sortArr.map(a=>a.v));sortArr.forEach((it,idx)=>{const h=Math.round((it.v/mx)*146);const bar=document.createElement('div');bar.className='sort-bar';bar.style.height=h+'px';bar.style.background=swp.includes(idx)?'#22C55E':cmp.includes(idx)?'#EF4444':it.color;const val=document.createElement('div');val.className='bar-val';val.textContent=it.v;bar.appendChild(val);const lbl=document.createElement('div');lbl.className='bar-label';lbl.textContent=it.label;bar.appendChild(lbl);b.appendChild(bar);});}
-function sortStep(){if(sorted){document.getElementById('sort-log').textContent='✅ 정렬 완료!';return;}if(sI>=sortArr.length-1){sorted=true;renderSort([],[]);document.getElementById('sort-log').textContent='🎉 정렬 완료!';return;}if(sJ>=sortArr.length-1-sI){sI++;sJ=0;sortStep();return;}const a=sortArr[sJ],b2=sortArr[sJ+1];renderSort([sJ,sJ+1],[]);if(a.v>b2.v){sortArr[sJ]=b2;sortArr[sJ+1]=a;setTimeout(()=>renderSort([],[sJ,sJ+1]),180);document.getElementById('sort-log').textContent=`${a.label}(${a.v}) > ${b2.label}(${b2.v}) → 교환! 💚`;}else document.getElementById('sort-log').textContent=`${a.label}(${a.v}) ≤ ${b2.label}(${b2.v}) → 유지`;sJ++;}
-function shuffleSort(){if(sortTimer)clearInterval(sortTimer);sortArr.sort(()=>Math.random()-.5);sI=0;sJ=0;sorted=false;renderSort([],[]);document.getElementById('sort-log').textContent='섞었어요!';}
-function autoSort(){if(sortTimer)clearInterval(sortTimer);sortTimer=setInterval(()=>{if(sorted||sI>=sortArr.length-1){clearInterval(sortTimer);return;}sortStep();},400);}
-function resetSort(){if(sortTimer)clearInterval(sortTimer);initSort();}
-
-// ── SEQUENCE ──
-const SP=[{title:'🍳 라면 끓이기',desc:'올바른 라면 조리 순서를 맞혀보세요!',steps:['물을 냄비에 붓는다','물을 끓인다','면과 스프를 넣는다','3분간 끓인다','그릇에 담는다','먹는다'],shuffled:['그릇에 담는다','물을 끓인다','3분간 끓인다','먹는다','물을 냄비에 붓는다','면과 스프를 넣는다']},{title:'🔍 이진 탐색',desc:'이진 탐색으로 숫자를 찾는 단계를 맞혀보세요.',steps:['범위를 1~100으로 설정','중간값 50을 확인','50보다 크면 51~100 선택','중간값 75를 확인','범위를 좁혀 반복','정답 발견!'],shuffled:['정답 발견!','중간값 50을 확인','범위를 좁혀 반복','중간값 75를 확인','범위를 1~100으로 설정','50보다 크면 51~100 선택']},{title:'🚿 샤워 순서',desc:'효율적인 샤워 알고리즘을 완성해보세요!',steps:['욕실 들어가기','물 온도 맞추기','머리 감기','몸 씻기','헹구기','수건으로 닦기'],shuffled:['몸 씻기','물 온도 맞추기','수건으로 닦기','욕실 들어가기','헹구기','머리 감기']},{title:'📱 비밀번호 찾기',desc:'선형 탐색으로 올바른 비밀번호를 찾는 과정을 맞혀보세요!',steps:['비밀번호 목록 준비','첫 번째 번호 시도','틀리면 다음 번호로','맞을 때까지 반복','올바른 번호 발견','로그인 성공!'],shuffled:['올바른 번호 발견','첫 번째 번호 시도','비밀번호 목록 준비','로그인 성공!','맞을 때까지 반복','틀리면 다음 번호로']}];
-let curProb=0,seqAns=[],seqPool=[],seqTries=0;
-function selectProblem(idx,card){document.querySelectorAll('.problem-card').forEach(c=>c.classList.remove('selected'));card.classList.add('selected');curProb=idx;seqTries=0;const p=SP[idx];document.getElementById('seq-title').textContent=p.title;document.getElementById('seq-desc').textContent=p.desc;seqPool=[...p.shuffled];seqAns=[];renderPool();renderAns();document.getElementById('seq-result').className='seq-check-result';document.getElementById('seq-try-count').textContent='';}
-function renderPool(){const el=document.getElementById('seq-pool');el.innerHTML='';if(!seqPool.length){el.innerHTML='<div style="font-size:12px;color:var(--txt2);padding:10px;">모두 배치했어요!</div>';return;}seqPool.forEach((s,i)=>{const c=document.createElement('div');c.className='seq-step-card';c.textContent=s;c.onclick=()=>{seqAns.push(seqPool[i]);seqPool.splice(i,1);renderPool();renderAns();document.getElementById('seq-result').className='seq-check-result';};el.appendChild(c);});}
-function renderAns(){const el=document.getElementById('seq-answer');el.innerHTML='';if(!seqAns.length){el.innerHTML='<div class="seq-drop-hint">위 단계 카드를 클릭해서 순서대로 추가하세요</div>';return;}seqAns.forEach((s,i)=>{const slot=document.createElement('div');slot.className='seq-answer-slot';slot.innerHTML=`<div class="slot-num">${i+1}</div><div>${s}</div><div style="margin-left:auto;cursor:pointer;color:var(--txt2);font-size:11px;" onclick="(function(){seqPool.push(seqAns[${i}]);seqAns.splice(${i},1);renderPool();renderAns();})()">✕</div>`;el.appendChild(slot);});}
-function checkSequence(){seqTries++;const correct=SP[curProb].steps,result=document.getElementById('seq-result');document.getElementById('seq-try-count').textContent=`시도 ${seqTries}회`;if(seqAns.length!==correct.length){result.className='seq-check-result wrong';result.textContent=`❌ ${correct.length-seqAns.length}개 더 필요해요!`;return;}const ok=seqAns.every((s,i)=>s===correct[i]);if(ok){result.className='seq-check-result correct';result.textContent=`🎉 정답! ${seqTries}번 만에 완성!`;}else{const wi=seqAns.findIndex((s,i)=>s!==correct[i]);result.className='seq-check-result wrong';result.textContent=`❌ ${wi+1}번째 단계를 다시 확인해보세요.`;}}
-function resetSequence(){selectProblem(curProb,document.querySelectorAll('.problem-card')[curProb]);}
-function seqHint(){sendPrompt(`순서 맞히기 "${SP[curProb].title}" 문제에서 막혔어요. 힌트를 주세요!`);}
-
-generateMaze(); initSort(); selectProblem(0,document.querySelector('.problem-card'));
+  /* ── 정렬 ── */
+  let sarr=[5,3,8,1,9,2,7,4,6], sstep=0, salgo='bubble', scmp=[];
+  const SCOL=['#93c5fd','#60a5fa','#3b82f6','#2563eb','#1d4ed8','#93c5fd','#86efac','#4ade80','#22c55e'];
+  const SDESC = {
+    bubble:'<strong>거품 정렬(Bubble Sort)</strong>은 인접한 두 값을 비교해 큰 값을 오른쪽으로 옮기는 과정을 반복합니다.',
+    selection:'<strong>선택 정렬(Selection Sort)</strong>은 매 회전마다 남은 원소 중 가장 작은 값을 찾아 앞으로 이동시킵니다.',
+    insertion:'<strong>삽입 정렬(Insertion Sort)</strong>은 정렬된 부분에 새 원소를 올바른 위치에 삽입해 나갑니다.'
+  };
+  function setSortAlgo(a,el){salgo=a;resetSort();document.querySelectorAll('.step-tab').forEach(s=>s.classList.toggle('on',s===el));document.getElementById('sort-desc').innerHTML=SDESC[a];}
+  function shuffleBars(){sarr=[...Array(9)].map((_,i)=>i+1).sort(()=>Math.random()-.5);sstep=0;scmp=[];renderBars();document.getElementById('sort-info').textContent='';}
+  function resetSort(){sarr=[5,3,8,1,9,2,7,4,6];sstep=0;scmp=[];renderBars();document.getElementById('sort-info').textContent='';}
+  function renderBars(){
+    const max=Math.max(...sarr);
+    document.getElementById('sort-bars').innerHTML=sarr.map((v,i)=>`<div class="sort-bar" style="height:${Math.round(v/max*100)}%;background:${scmp.includes(i)?'#fbbf24':SCOL[i%SCOL.length]};border-radius:4px 4px 0 0;flex:1;min-width:0"></div>`).join('');
+    document.getElementById('sort-labels').innerHTML=sarr.map(v=>`<div style="flex:1;min-width:0;text-align:center;font-size:11px;font-weight:700;color:#94a3b8">${v}</div>`).join('');
+  }
+  function startSort(){
+    const arr=sarr,n=arr.length;
+    if(salgo==='bubble'){
+      const i=Math.floor(sstep/n),j=sstep%n;
+      if(i>=n-1){document.getElementById('sort-info').textContent='✅ 정렬 완료!';scmp=[];renderBars();return;}
+      if(j>=n-1-i){sstep=(i+1)*n;startSort();return;}
+      scmp=[j,j+1];if(arr[j]>arr[j+1])[arr[j],arr[j+1]]=[arr[j+1],arr[j]];
+      sstep++;document.getElementById('sort-info').textContent=`${i+1}번째 순회 · ${j+1}번째 비교`;
+    } else if(salgo==='selection'){
+      if(sstep>=n-1){document.getElementById('sort-info').textContent='✅ 정렬 완료!';scmp=[];renderBars();return;}
+      let mi=sstep;for(let k=sstep+1;k<n;k++)if(arr[k]<arr[mi])mi=k;
+      scmp=[sstep,mi];[arr[sstep],arr[mi]]=[arr[mi],arr[sstep]];
+      document.getElementById('sort-info').textContent=`${sstep+1}번째 위치 ← 최솟값 ${arr[sstep]}`;sstep++;
+    } else {
+      if(sstep>=n-1){document.getElementById('sort-info').textContent='✅ 정렬 완료!';scmp=[];renderBars();return;}
+      sstep++;let key=arr[sstep],k=sstep-1;scmp=[sstep];
+      while(k>=0&&arr[k]>key){arr[k+1]=arr[k];k--;scmp.push(k+1);}
+      arr[k+1]=key;document.getElementById('sort-info').textContent=`${key} 삽입 완료 (${sstep+1}번째 원소)`;
+    }
+    renderBars();
+  }
+  renderBars();
 </script>
+</body>
+</html>
