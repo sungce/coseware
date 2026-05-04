@@ -613,8 +613,6 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-lucide.createIcons();
 
 // ── STATE ──
 let state = { html: '', css: '', js: '' };
@@ -1865,17 +1863,8 @@ function showToast(msg) {
 }
 
 // ── SPLITTER DRAG ──
-const splitter = document.getElementById('splitter');
 let dragging = false;
 let startX, startW;
-
-splitter.addEventListener('mousedown', e => {
-  dragging = true;
-  startX = e.clientX;
-  startW = document.getElementById('editor-panel').offsetWidth;
-  document.body.style.cursor = 'col-resize';
-  document.body.style.userSelect = 'none';
-});
 
 window.addEventListener('mousemove', e => {
   if (!dragging) return;
@@ -1892,8 +1881,20 @@ window.addEventListener('mouseup', () => {
 });
 
 // ── START ──
-init();
-}); // DOMContentLoaded
+window.addEventListener('load', function() {
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+
+  const splitter = document.getElementById('splitter');
+  splitter.addEventListener('mousedown', e => {
+    dragging = true;
+    startX = e.clientX;
+    startW = document.getElementById('editor-panel').offsetWidth;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  });
+
+  init();
+});
 </script>
 </body>
 </html>
