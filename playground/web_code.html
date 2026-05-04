@@ -418,42 +418,6 @@
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a href="index.html" class="nav-logo">
-    <div class="nav-logo-icon">AI</div>
-    <div class="nav-logo-text">
-      <div class="nav-logo-title">Sungce <span>AI-ON</span></div>
-      <div class="nav-logo-sub">정보 교과 클래스룸</div>
-    </div>
-  </a>
-
-  <div class="nav-divider"></div>
-
-  <div class="nav-badge">
-    <i data-lucide="code-2"></i>
-    웹 실습실
-  </div>
-  <span class="nav-title">HTML / CSS / JS 에디터</span>
-
-  <div class="nav-spacer"></div>
-
-  <div class="nav-actions">
-    <span class="auto-badge">
-      <i data-lucide="zap" style="width:9px;height:9px;"></i> 자동 실행
-    </span>
-    <button class="btn btn-ghost" onclick="formatCode()">
-      <i data-lucide="align-left"></i> 정렬
-    </button>
-    <button class="btn btn-ghost" onclick="clearAll()">
-      <i data-lucide="trash-2"></i> 초기화
-    </button>
-    <button class="btn btn-run" onclick="runPreview()">
-      <i data-lucide="play"></i> 실행
-    </button>
-  </div>
-</nav>
-
 <!-- 페이지 제목 -->
 <div style="padding:28px 32px 20px;border-bottom:1px solid var(--border2);background:var(--bg);">
   <div style="display:inline-flex;align-items:center;gap:6px;background:#eff6ff;color:#1d4ed8;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:700;margin-bottom:12px;border:1px solid #bfdbfe;">
@@ -476,6 +440,12 @@
     </button>
   </div>
   <div class="toolbar-right">
+     <button class="btn btn-ghost" onclick="clearAll()">
+      <i data-lucide="trash-2"></i> 초기화
+    </button>
+    <button class="btn btn-run" onclick="runPreview()">
+      <i data-lucide="play"></i> 실행
+    </button>
     <button class="icon-btn" onclick="toggleFullPreview()" title="미리보기 전체화면">
       <i data-lucide="maximize-2"></i>
     </button>
