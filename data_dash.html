@@ -518,6 +518,31 @@
       showToast('💾 저장된 데이터를 복원했습니다.');
     } catch(e) {}
   }
+
+  // 기본 Apps Script URL 자동 설정
+  const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeHjWrKlGwqSh30Bz_jRFCgPkLZ-HzfZjZaeOxkEzFvP_ZwmlH2W4UPDSPiY8c4TQZ/exec';
+  document.getElementById('script-url-input').value = DEFAULT_SCRIPT_URL;
+
+  // 페이지 로드 시 자동으로 데이터 불러오기
+  (async () => {
+    try {
+      const res = await fetch(DEFAULT_SCRIPT_URL);
+      if (!res.ok) return;
+      const json = await res.json();
+      if (!Array.isArray(json) || !json.length) return;
+      allData = json.map(row => ({
+        name:     row['이름']   || row.name     || '-',
+        sid:      row['학번']   || row.sid      || '',
+        task:     row['과제명'] || row.task     || '-',
+        score:    Number(row['점수']   || row.score    || 0),
+        progress: Number(row['진도율'] || row.progress || 0),
+        status:   row['상태']   || row.status   || '진행중',
+      }));
+      filteredData = [...allData];
+      renderTable(filteredData); updateSummary();
+      showToast(`✅ 스프레드시트에서 ${allData.length}개 데이터를 불러왔습니다!`);
+    } catch(e) { /* 실패 시 조용히 무시 */ }
+  })();
 </script>
 </body>
 </html>
