@@ -1,1 +1,993 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>마이크로비트 에듀 시뮬레이터</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:#f0f4f8;color:#1e293b;height:100vh;overflow:hidden;user-select:none;letter-spacing:-0.01em;-webkit-font-smoothing:antialiased;}
+#root{display:flex;flex-direction:column;height:100vh;}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;padding:0 18px;height:54px;background:#ffffff;border-bottom:1px solid #e2e8f0;gap:12px;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.07);}
+.hdr-logo{display:flex;align-items:center;gap:9px;}
+.hdr-logo svg{width:28px;height:28px;}
+.hdr-title{font-size:16px;font-weight:800;color:#1d4ed8;letter-spacing:-0.6px;}
+.hdr-sub{font-size:11px;color:#94a3b8;font-family:'JetBrains Mono',monospace;letter-spacing:0.02em;}
+.hdr-space{flex:1;}
+.status-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px;}
+.status-pill.idle{background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;}
+.status-pill.running{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;}
+.status-pill .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+.status-pill.running .dot{animation:pulse 1s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.btn{border:none;border-radius:8px;padding:7px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Pretendard', -apple-system, sans-serif;transition:all 0.15s;display:flex;align-items:center;gap:6px;letter-spacing:-0.02em;}
+.btn-run{background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;box-shadow:0 2px 6px rgba(59,130,246,0.35);}
+.btn-run:hover{background:linear-gradient(135deg,#60a5fa,#3b82f6);transform:translateY(-1px);box-shadow:0 4px 10px rgba(59,130,246,0.4);}
+.btn-stop{background:linear-gradient(135deg,#ef4444,#dc2626);color:white;box-shadow:0 2px 6px rgba(239,68,68,0.35);}
+.btn-stop:hover{background:linear-gradient(135deg,#f87171,#ef4444);}
+.btn-reset{background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;}
+.btn-reset:hover{background:#e2e8f0;color:#334155;}
+
+/* MAIN LAYOUT */
+.main{display:flex;flex:1;overflow:hidden;}
+
+/* PALETTE */
+.palette{width:215px;background:#ffffff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;flex-shrink:0;box-shadow:2px 0 8px rgba(0,0,0,0.04);}
+.palette-cats{display:flex;flex-direction:column;gap:2px;padding:10px 8px;border-bottom:1px solid #f1f5f9;}
+.cat-btn{padding:7px 10px;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;border:none;color:#475569;background:transparent;text-align:left;transition:all 0.15s;display:flex;align-items:center;gap:8px;letter-spacing:-0.01em;}
+.cat-btn:hover{background:#f1f5f9;color:#1e293b;}
+.cat-btn.active{color:#1e293b;background:#e8f0fe;box-shadow:inset 0 0 0 1px #c7d7fd;}
+.cat-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+.palette-blocks{flex:1;overflow-y:auto;padding:10px 8px;display:flex;flex-direction:column;gap:5px;}
+.palette-block{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:12px;color:#1e293b;transition:all 0.15s;border:1px solid rgba(0,0,0,0.07);position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.palette-block::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.15s;}
+.palette-block:hover::before{background:rgba(0,0,0,0.04);}
+.palette-block:hover{transform:translateX(3px);box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+.palette-block:active{transform:scale(0.97);}
+.pb-label{font-weight:700;font-size:12px;letter-spacing:-0.02em;}
+.pb-hint{font-size:10px;color:#64748b;opacity:1;margin-top:3px;font-family:'JetBrains Mono',monospace;letter-spacing:0.01em;}
+.palette-tip{font-size:10px;color:#64748b;text-align:center;padding:10px 8px;line-height:1.6;border-top:1px solid #f1f5f9;}
+
+/* WORKSPACE */
+.workspace{flex:1;overflow-y:auto;padding:16px;background:#f0f4f8;display:flex;flex-direction:column;gap:14px;}
+.add-evt-row{display:flex;flex-wrap:wrap;gap:8px;}
+.add-evt-btn{background:#ffffff;border:1.5px dashed #cbd5e1;color:#64748b;padding:7px 14px;border-radius:9px;cursor:pointer;font-size:12px;font-weight:600;font-family:'Pretendard', -apple-system, sans-serif;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
+.add-evt-btn:hover{border-color:#3b82f6;color:#3b82f6;background:#eff6ff;}
+
+/* EVENT CONTAINER */
+.evt-container{background:#ffffff;border-radius:13px;border:1px solid #e2e8f0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.evt-header{padding:10px 14px;color:white;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;cursor:default;letter-spacing:-0.02em;}
+.evt-badge{font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,0.2);}
+.evt-del{margin-left:auto;background:rgba(255,255,255,0.15);border:none;color:rgba(255,255,255,0.6);border-radius:4px;cursor:pointer;padding:3px 8px;font-size:11px;transition:all 0.15s;}
+.evt-del:hover{background:rgba(255,255,255,0.3);color:white;}
+.evt-body{padding:10px;display:flex;flex-direction:column;gap:6px;min-height:46px;background:#fafbfc;}
+.evt-body.is-target{background:#eff6ff;outline:2px dashed #93c5fd;outline-offset:-4px;border-radius:8px;}
+.add-here-btn{text-align:center;padding:6px;color:#3b82f6;font-size:11px;cursor:pointer;border:1px dashed #bfdbfe;border-radius:6px;transition:all 0.15s;background:transparent;font-family:'Pretendard', -apple-system, sans-serif;}
+.add-here-btn:hover{background:#eff6ff;}
+
+/* BLOCKS IN WORKSPACE */
+.ws-block{border-radius:8px;padding:9px 10px;color:white;font-size:12px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.15);letter-spacing:-0.01em;font-weight:500;}
+.ws-block input,.ws-block select{border:none;background:rgba(255,255,255,0.25);color:white;border-radius:4px;padding:3px 6px;font-size:12px;font-family:'Pretendard', -apple-system, sans-serif;outline:none;}
+.ws-block input::placeholder{color:rgba(255,255,255,0.6);}
+.ws-block input:focus,.ws-block select:focus{background:rgba(255,255,255,0.35);outline:1.5px solid rgba(255,255,255,0.5);}
+.ws-block input[type=number]{width:55px;}
+.ws-block input[type=text]{width:75px;}
+.ws-block select option{background:#1e293b;color:white;}
+.block-btns{display:flex;align-items:center;gap:3px;margin-left:auto;}
+.block-mv{background:rgba(255,255,255,0.2);border:none;color:rgba(255,255,255,0.7);border-radius:3px;cursor:pointer;font-size:10px;padding:2px 5px;line-height:1;transition:all 0.1s;}
+.block-mv:hover{background:rgba(255,255,255,0.35);color:white;}
+.block-del{background:rgba(255,255,255,0.15);border:none;color:rgba(255,255,255,0.6);border-radius:3px;cursor:pointer;font-size:11px;padding:2px 6px;transition:all 0.1s;}
+.block-del:hover{background:rgba(239,68,68,0.4);color:white;}
+
+/* NESTED BLOCK CONTAINERS */
+.sub-block-wrap{margin-left:18px;margin-top:4px;width:calc(100% - 18px);}
+.sub-label{font-size:10px;font-weight:700;color:#94a3b8;padding:2px 0 2px 6px;text-transform:uppercase;letter-spacing:1px;}
+.sub-body{background:#f1f5f9;border-left:3px solid #cbd5e1;border-radius:0 7px 7px 0;padding:6px;display:flex;flex-direction:column;gap:5px;min-height:32px;}
+.sub-body.is-target{outline:1.5px dashed #93c5fd;background:#eff6ff;}
+
+/* SIMULATOR */
+.simulator{width:288px;background:#ffffff;border-left:1px solid #e2e8f0;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;flex-shrink:0;box-shadow:-2px 0 8px rgba(0,0,0,0.04);}
+.sim-section{background:#f8fafc;border-radius:11px;padding:12px;border:1px solid #e2e8f0;}
+.sim-section-title{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:6px;font-family:'Pretendard',-apple-system,sans-serif;}
+.sim-section-title::after{content:'';flex:1;height:1px;background:#e2e8f0;}
+
+/* MICROBIT BOARD */
+.mb-board{background:linear-gradient(145deg,#1e3a1e,#152a15);border-radius:14px;padding:16px 14px;border:2px solid #2d5a2d;position:relative;box-shadow:0 4px 16px rgba(0,0,0,0.2);}
+.mb-logo{text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:#4a9a4a;letter-spacing:2px;margin-bottom:12px;}
+
+.led-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;width:140px;margin:0 auto;}
+.led{width:24px;height:24px;border-radius:50%;background:rgba(180,20,20,0.15);border:1px solid rgba(200,80,80,0.2);transition:background 0.08s,box-shadow 0.08s;}
+.led.on{background:radial-gradient(circle at 35% 35%,#ff7777,#dd0000);box-shadow:0 0 8px #ff2222,0 0 18px rgba(255,0,0,0.35);border-color:#ff5555;}
+
+.mb-display-text{text-align:center;min-height:16px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#5aaa5a;margin-top:8px;letter-spacing:0.5px;}
+
+.mb-usb{width:20px;height:12px;background:#2a4a2a;border-radius:3px 3px 0 0;margin:8px auto 0;border:1px solid #3a6a3a;}
+.mb-buttons{display:flex;justify-content:space-between;margin-top:14px;padding:0 4px;}
+.mb-btn{width:38px;height:38px;border-radius:50%;border:3px solid #3a6a9a;background:linear-gradient(145deg,#2a4a6a,#1a3050);color:#90c0e8;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.1s;font-family:'JetBrains Mono',monospace;user-select:none;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
+.mb-btn:hover{border-color:#60a5fa;color:#93c5fd;}
+.mb-btn:active,.mb-btn.pressed{background:linear-gradient(145deg,#0a1a30,#081520);transform:scale(0.93);box-shadow:inset 0 2px 5px rgba(0,0,0,0.5);}
+
+/* SENSORS */
+.sensor-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.sensor-label{font-size:11px;color:#64748b;width:52px;flex-shrink:0;}
+.sensor-val{font-size:11px;color:#2563eb;width:36px;text-align:right;font-family:'JetBrains Mono',monospace;flex-shrink:0;font-weight:600;}
+.sensor-slider{flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:#e2e8f0;outline:none;cursor:pointer;}
+.sensor-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#3b82f6;cursor:pointer;box-shadow:0 1px 3px rgba(59,130,246,0.4);}
+
+/* ACCELEROMETER */
+.accel-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:4px;}
+.accel-btn{background:#ffffff;border:1px solid #e2e8f0;color:#64748b;padding:7px 0;border-radius:7px;cursor:pointer;font-size:11px;text-align:center;transition:all 0.15s;font-family:'Pretendard', -apple-system, sans-serif;box-shadow:0 1px 2px rgba(0,0,0,0.05);}
+.accel-btn:hover{border-color:#3b82f6;color:#3b82f6;background:#eff6ff;}
+.accel-btn.active{background:#eff6ff;border-color:#3b82f6;color:#2563eb;font-weight:700;}
+.accel-info{display:flex;gap:8px;margin-top:6px;font-size:10px;font-family:'JetBrains Mono',monospace;color:#94a3b8;}
+.accel-info span{color:#2563eb;font-weight:600;}
+
+/* RADIO */
+.radio-log{max-height:90px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;margin-bottom:8px;}
+.radio-msg{font-size:10px;padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;display:flex;gap:6px;align-items:center;}
+.radio-msg.sent{background:#f0fdf4;color:#16a34a;border-left:2px solid #4ade80;}
+.radio-msg.received{background:#eff6ff;color:#2563eb;border-left:2px solid #3b82f6;}
+.radio-msg-time{opacity:0.5;font-size:9px;}
+.radio-send-row{display:flex;gap:6px;}
+.radio-send-input{flex:1;background:#ffffff;border:1px solid #e2e8f0;color:#1e293b;padding:5px 8px;border-radius:6px;font-size:11px;font-family:'Pretendard', -apple-system, sans-serif;outline:none;}
+.radio-send-input:focus{border-color:#3b82f6;box-shadow:0 0 0 2px rgba(59,130,246,0.1);}
+.radio-send-btn{background:#3b82f6;color:white;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;}
+.radio-send-btn:hover{background:#2563eb;}
+.radio-empty{font-size:10px;color:#cbd5e1;text-align:center;padding:10px;font-family:'JetBrains Mono',monospace;}
+
+/* VARIABLES PANEL */
+.vars-list{display:flex;flex-direction:column;gap:4px;max-height:80px;overflow-y:auto;}
+.var-row{display:flex;justify-content:space-between;font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 8px;background:#ffffff;border-radius:5px;border:1px solid #f1f5f9;}
+.var-name{color:#7c3aed;font-weight:600;}
+.var-value{color:#16a34a;font-weight:600;}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useCallback, useEffect } = React;
+
+// ==================== ICON PATTERNS ====================
+const ICON_PATTERNS = {
+  heart:  [[0,1,0,1,0],[1,1,1,1,1],[1,1,1,1,1],[0,1,1,1,0],[0,0,1,0,0]],
+  smile:  [[0,0,0,0,0],[0,1,0,1,0],[0,0,0,0,0],[1,0,0,0,1],[0,1,1,1,0]],
+  sad:    [[0,0,0,0,0],[0,1,0,1,0],[0,0,0,0,0],[0,1,1,1,0],[1,0,0,0,1]],
+  yes:    [[0,0,0,0,1],[0,0,0,1,0],[0,0,1,0,0],[1,0,0,0,0],[0,0,0,0,0]],
+  no:     [[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0],[0,1,0,1,0],[1,0,0,0,1]],
+  up:     [[0,0,1,0,0],[0,1,1,1,0],[1,0,1,0,1],[0,0,1,0,0],[0,0,1,0,0]],
+  down:   [[0,0,1,0,0],[0,0,1,0,0],[1,0,1,0,1],[0,1,1,1,0],[0,0,1,0,0]],
+  diamond:[[0,0,1,0,0],[0,1,0,1,0],[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0]],
+  square: [[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,1]],
+  target: [[0,1,1,1,0],[1,0,1,0,1],[1,1,0,1,1],[1,0,1,0,1],[0,1,1,1,0]],
+  all:    [[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1]],
+};
+
+// 3×5 pixel font
+const PF = {
+  ' ':[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+  '0':[[1,1,1],[1,0,1],[1,0,1],[1,0,1],[1,1,1]],
+  '1':[[0,1,0],[1,1,0],[0,1,0],[0,1,0],[1,1,1]],
+  '2':[[1,1,1],[0,0,1],[0,1,1],[1,0,0],[1,1,1]],
+  '3':[[1,1,1],[0,0,1],[0,1,1],[0,0,1],[1,1,1]],
+  '4':[[1,0,1],[1,0,1],[1,1,1],[0,0,1],[0,0,1]],
+  '5':[[1,1,1],[1,0,0],[1,1,1],[0,0,1],[1,1,1]],
+  '6':[[0,1,1],[1,0,0],[1,1,1],[1,0,1],[1,1,1]],
+  '7':[[1,1,1],[0,0,1],[0,1,0],[0,1,0],[0,1,0]],
+  '8':[[1,1,1],[1,0,1],[1,1,1],[1,0,1],[1,1,1]],
+  '9':[[1,1,1],[1,0,1],[1,1,1],[0,0,1],[0,1,1]],
+  'A':[[0,1,0],[1,0,1],[1,1,1],[1,0,1],[1,0,1]],
+  'B':[[1,1,0],[1,0,1],[1,1,0],[1,0,1],[1,1,0]],
+  'C':[[0,1,1],[1,0,0],[1,0,0],[1,0,0],[0,1,1]],
+  'D':[[1,1,0],[1,0,1],[1,0,1],[1,0,1],[1,1,0]],
+  'E':[[1,1,1],[1,0,0],[1,1,0],[1,0,0],[1,1,1]],
+  'F':[[1,1,1],[1,0,0],[1,1,0],[1,0,0],[1,0,0]],
+  'G':[[0,1,1],[1,0,0],[1,0,1],[1,0,1],[0,1,1]],
+  'H':[[1,0,1],[1,0,1],[1,1,1],[1,0,1],[1,0,1]],
+  'I':[[1,1,1],[0,1,0],[0,1,0],[0,1,0],[1,1,1]],
+  'J':[[0,0,1],[0,0,1],[0,0,1],[1,0,1],[0,1,0]],
+  'K':[[1,0,1],[1,1,0],[1,1,0],[1,0,1],[1,0,1]],
+  'L':[[1,0,0],[1,0,0],[1,0,0],[1,0,0],[1,1,1]],
+  'M':[[1,0,1],[1,1,1],[1,0,1],[1,0,1],[1,0,1]],
+  'N':[[1,0,1],[1,1,1],[1,1,1],[1,0,1],[1,0,1]],
+  'O':[[0,1,0],[1,0,1],[1,0,1],[1,0,1],[0,1,0]],
+  'P':[[1,1,0],[1,0,1],[1,1,0],[1,0,0],[1,0,0]],
+  'R':[[1,1,0],[1,0,1],[1,1,0],[1,1,0],[1,0,1]],
+  'S':[[0,1,1],[1,0,0],[0,1,0],[0,0,1],[1,1,0]],
+  'T':[[1,1,1],[0,1,0],[0,1,0],[0,1,0],[0,1,0]],
+  'U':[[1,0,1],[1,0,1],[1,0,1],[1,0,1],[0,1,1]],
+  'W':[[1,0,1],[1,0,1],[1,1,1],[1,1,1],[1,0,1]],
+  'X':[[1,0,1],[0,1,0],[0,1,0],[0,1,0],[1,0,1]],
+  'Y':[[1,0,1],[1,0,1],[0,1,0],[0,1,0],[0,1,0]],
+  'Z':[[1,1,0],[0,0,1],[0,1,0],[1,0,0],[0,1,1]],
+  '!':[[0,1,0],[0,1,0],[0,1,0],[0,0,0],[0,1,0]],
+  '?':[[0,1,0],[1,0,1],[0,0,1],[0,1,0],[0,1,0]],
+};
+
+const EMPTY_LEDS = () => Array(5).fill(null).map(() => Array(5).fill(false));
+
+function charToLEDs(ch) {
+  const f = PF[ch?.toUpperCase()];
+  if (!f) return null;
+  const m = EMPTY_LEDS();
+  for(let r=0;r<5;r++) for(let c=0;c<3;c++) m[r][c+1]=!!f[r][c];
+  return m;
+}
+
+// ==================== BLOCK DEFINITIONS ====================
+const CATS = [
+  {id:'basic', label:'💡 기본', color:'#3b82f6'},
+  {id:'input', label:'🎮 입력', color:'#f59e0b'},
+  {id:'logic', label:'🔀 논리', color:'#f97316'},
+  {id:'loops', label:'🔄 반복', color:'#ef4444'},
+  {id:'vars',  label:'📦 변수', color:'#8b5cf6'},
+  {id:'math',  label:'➕ 수학', color:'#10b981'},
+  {id:'radio', label:'📡 라디오', color:'#06b6d4'},
+];
+
+const BDEFS = {
+  basic:[
+    {type:'show_string', label:'문자열 표시', hint:'텍스트 스크롤',
+     params:[{name:'text',type:'text',def:'안녕!'}],
+     render:(e)=><>문자 표시 {e('text')}</>},
+    {type:'show_number', label:'숫자 표시', hint:'숫자 LED 표시',
+     params:[{name:'num',type:'text',def:'0'}],
+     render:(e)=><>숫자 표시 {e('num')}</>},
+    {type:'show_icon', label:'아이콘 표시', hint:'이모지 LED 패턴',
+     params:[{name:'icon',type:'select',opts:Object.keys(ICON_PATTERNS),def:'heart'}],
+     render:(e)=><>아이콘 {e('icon')}</>},
+    {type:'clear_screen', label:'화면 지우기', hint:'LED 전체 끄기',
+     params:[],
+     render:()=><>화면 지우기</>},
+    {type:'pause', label:'일시정지', hint:'실행 잠시 멈춤',
+     params:[{name:'ms',type:'number',def:500}],
+     render:(e)=><>일시정지 {e('ms')} ms</>},
+    {type:'set_led', label:'LED 켜기/끄기', hint:'특정 LED 제어',
+     params:[{name:'x',type:'select',opts:['0','1','2','3','4'],def:'0'},{name:'y',type:'select',opts:['0','1','2','3','4'],def:'0'},{name:'state',type:'select',opts:['켜기','끄기'],def:'켜기'}],
+     render:(e)=><>LED x={e('x')} y={e('y')} {e('state')}</>},
+  ],
+  input:[
+    {type:'read_temp', label:'온도 읽기', hint:'온도→변수에 저장',
+     params:[{name:'v',type:'text',def:'온도값'}],
+     render:(e)=><>온도 읽기 → {e('v')}</>},
+    {type:'read_light', label:'빛 읽기', hint:'빛밝기→변수에 저장',
+     params:[{name:'v',type:'text',def:'빛값'}],
+     render:(e)=><>빛 읽기 → {e('v')}</>},
+    {type:'read_accelX', label:'가속도 X 읽기', hint:'기울기X→변수',
+     params:[{name:'v',type:'text',def:'기울기X'}],
+     render:(e)=><>가속도X → {e('v')}</>},
+    {type:'read_accelY', label:'가속도 Y 읽기', hint:'기울기Y→변수',
+     params:[{name:'v',type:'text',def:'기울기Y'}],
+     render:(e)=><>가속도Y → {e('v')}</>},
+  ],
+  logic:[
+    {type:'if_then', label:'만약 ~ 이면', hint:'조건이 참일 때 실행',
+     params:[{name:'cond',type:'text',def:'온도값 > 30'}],
+     render:(e)=><>만약 {e('cond')} 이면</>,
+     hasBody:true},
+    {type:'if_then_else', label:'만약/아니면', hint:'조건 분기 처리',
+     params:[{name:'cond',type:'text',def:'A버튼'}],
+     render:(e)=><>만약 {e('cond')} 이면 / 아니면</>,
+     hasBody:true, hasElse:true},
+  ],
+  loops:[
+    {type:'repeat', label:'N번 반복', hint:'정해진 횟수만큼',
+     params:[{name:'n',type:'number',def:4}],
+     render:(e)=><>{e('n')} 번 반복</>,
+     hasBody:true},
+    {type:'while', label:'조건 반복', hint:'조건이 참인 동안',
+     params:[{name:'cond',type:'text',def:'참'}],
+     render:(e)=><>{e('cond')} 동안 반복</>,
+     hasBody:true},
+  ],
+  vars:[
+    {type:'set_var', label:'변수 설정', hint:'변수에 값 저장',
+     params:[{name:'name',type:'text',def:'내변수'},{name:'val',type:'text',def:'0'}],
+     render:(e)=><>{e('name')} = {e('val')}</>},
+    {type:'change_var', label:'변수 변경', hint:'변수 값 증감',
+     params:[{name:'name',type:'text',def:'내변수'},{name:'d',type:'text',def:'1'}],
+     render:(e)=><>{e('name')} += {e('d')}</>},
+  ],
+  math:[
+    {type:'random', label:'무작위 숫자', hint:'범위 내 랜덤',
+     params:[{name:'v',type:'text',def:'랜덤값'},{name:'min',type:'number',def:0},{name:'max',type:'number',def:10}],
+     render:(e)=><>{e('v')} = 무작위({e('min')}~{e('max')})</>},
+  ],
+  radio:[
+    {type:'radio_num', label:'라디오 숫자 보내기', hint:'숫자 전송',
+     params:[{name:'val',type:'text',def:'0'}],
+     render:(e)=><>📡 숫자 보내기: {e('val')}</>},
+    {type:'radio_str', label:'라디오 문자 보내기', hint:'문자 전송',
+     params:[{name:'text',type:'text',def:'안녕'}],
+     render:(e)=><>📡 문자 보내기: "{e('text')}"</>},
+  ],
+};
+
+const EVTS = [
+  {type:'on_start',  label:'▶ 시작할 때',         color:'#1d4ed8', badge:'시작'},
+  {type:'forever',   label:'∞ 무한 반복',          color:'#1e40af', badge:'반복'},
+  {type:'on_btn_a',  label:'🅰 버튼 A 눌렸을 때', color:'#9d174d', badge:'버튼A'},
+  {type:'on_btn_b',  label:'🅱 버튼 B 눌렸을 때', color:'#6b21a8', badge:'버튼B'},
+  {type:'on_radio',  label:'📡 라디오 받았을 때', color:'#065f46', badge:'라디오'},
+];
+
+const CAT_COLOR = Object.fromEntries(CATS.map(c=>[c.id,c.color]));
+const TYPE_TO_CAT = {};
+Object.entries(BDEFS).forEach(([cat,defs])=>defs.forEach(d=>{TYPE_TO_CAT[d.type]=cat;}));
+
+function getBlockColor(type){ return CAT_COLOR[TYPE_TO_CAT[type]]||'#374151'; }
+
+let _id = 100;
+const uid = () => ++_id;
+
+function createBlock(def) {
+  const params = {};
+  def.params.forEach(p=>{ params[p.name]=p.def; });
+  const b = {id:uid(), type:def.type, params};
+  if(def.hasBody) b.body=[];
+  if(def.hasElse) b.elseBody=[];
+  return b;
+}
+
+function getAllDef(type){ return Object.values(BDEFS).flat().find(d=>d.type===type)||null; }
+
+// ==================== INTERPRETER ====================
+class Interp {
+  constructor(getSim, setSim, onRadioSend, onVarsChange) {
+    this.getSim = getSim;
+    this.setSim = setSim;
+    this.onRadioSend = onRadioSend;
+    this.onVarsChange = onVarsChange;
+    this.running = false;
+    this.vars = {};
+    this.btnHandlers = {A:null, B:null};
+    this.radioHandler = null;
+  }
+
+  stop() {
+    this.running = false;
+    this.btnHandlers = {A:null, B:null};
+    this.radioHandler = null;
+  }
+
+  async run(ws) {
+    this.running = true;
+    this.vars = {};
+    this.onVarsChange({});
+
+    const onStart  = ws.find(c=>c.type==='on_start');
+    const forever  = ws.find(c=>c.type==='forever');
+    const onBtnA   = ws.find(c=>c.type==='on_btn_a');
+    const onBtnB   = ws.find(c=>c.type==='on_btn_b');
+    const onRadio  = ws.find(c=>c.type==='on_radio');
+
+    if(onBtnA) this.btnHandlers.A = ()=>this.runBlocks(onBtnA.blocks,[]);
+    if(onBtnB) this.btnHandlers.B = ()=>this.runBlocks(onBtnB.blocks,[]);
+    if(onRadio) this.radioHandler = (msg)=>this.runBlocks(onRadio.blocks,[{수신값:msg}]);
+
+    if(onStart) await this.runBlocks(onStart.blocks,[]);
+
+    if(forever) {
+      while(this.running) {
+        await this.runBlocks(forever.blocks,[]);
+        await this.sleep(10);
+      }
+    }
+    if(this.running) this.running = false;
+  }
+
+  async runBlocks(blocks, extraList) {
+    for(const b of (blocks||[])) {
+      if(!this.running) break;
+      await this.runBlock(b, extraList);
+    }
+  }
+
+  async runBlock(b, extraList) {
+    if(!this.running) return;
+    const ev = (expr) => this.eval(expr, extraList);
+
+    switch(b.type) {
+      case 'show_string': {
+        const text = String(b.params.text||'');
+        for(let i=0;i<text.length&&this.running;i++){
+          const ch = text[i];
+          const m = charToLEDs(ch);
+          if(m) this.setLEDs(m, text.length>1?text:null);
+          else this.setSim(p=>({...p, displayText:text.length>1?text:ch}));
+          if(text.length>1) await this.sleep(350);
+        }
+        break;
+      }
+      case 'show_number': {
+        const n = String(Math.round(Number(ev(b.params.num))||0));
+        for(let i=0;i<n.length&&this.running;i++){
+          const m = charToLEDs(n[i]);
+          if(m) this.setLEDs(m, n.length>1?n:null);
+          else this.setSim(p=>({...p, displayText:n}));
+          if(n.length>1) await this.sleep(350);
+        }
+        break;
+      }
+      case 'show_icon': {
+        const pat = ICON_PATTERNS[b.params.icon]||ICON_PATTERNS.heart;
+        this.setSim(p=>({...p, leds:pat.map(r=>r.map(v=>!!v)), displayText:null}));
+        break;
+      }
+      case 'clear_screen':
+        this.setSim(p=>({...p, leds:EMPTY_LEDS(), displayText:null}));
+        break;
+      case 'pause':
+        await this.sleep(parseInt(b.params.ms)||500);
+        break;
+      case 'set_led': {
+        const x=parseInt(b.params.x)||0, y=parseInt(b.params.y)||0, on=b.params.state==='켜기';
+        this.setSim(p=>{const nl=p.leds.map(r=>[...r]);nl[y][x]=on;return{...p,leds:nl};});
+        break;
+      }
+      case 'read_temp':
+        this.vars[b.params.v]=this.getSim().temperature; this.notifyVars(); break;
+      case 'read_light':
+        this.vars[b.params.v]=this.getSim().lightLevel; this.notifyVars(); break;
+      case 'read_accelX':
+        this.vars[b.params.v]=this.getSim().accel.x; this.notifyVars(); break;
+      case 'read_accelY':
+        this.vars[b.params.v]=this.getSim().accel.y; this.notifyVars(); break;
+      case 'set_var':
+        this.vars[b.params.name]=ev(b.params.val); this.notifyVars(); break;
+      case 'change_var': {
+        const cur=Number(this.vars[b.params.name])||0;
+        this.vars[b.params.name]=cur+Number(ev(b.params.d)||0); this.notifyVars(); break;
+      }
+      case 'random': {
+        const mn=parseInt(b.params.min)||0, mx=parseInt(b.params.max)||10;
+        this.vars[b.params.v]=Math.floor(Math.random()*(mx-mn+1))+mn; this.notifyVars(); break;
+      }
+      case 'if_then':
+        if(ev(b.params.cond)) await this.runBlocks(b.body, extraList); break;
+      case 'if_then_else':
+        if(ev(b.params.cond)) await this.runBlocks(b.body, extraList);
+        else await this.runBlocks(b.elseBody, extraList); break;
+      case 'repeat': {
+        const n=parseInt(b.params.n)||1;
+        for(let i=0;i<n&&this.running;i++) await this.runBlocks(b.body, extraList); break;
+      }
+      case 'while':
+        while(this.running && ev(b.params.cond)) {
+          await this.runBlocks(b.body, extraList);
+          await this.sleep(10); // yield to prevent busy-loop with empty body
+        }
+        break;
+      case 'radio_num':
+        this.onRadioSend({type:'sent', value:String(ev(b.params.val)), time:new Date().toLocaleTimeString('ko-KR')}); break;
+      case 'radio_str':
+        this.onRadioSend({type:'sent', value:`"${b.params.text}"`, time:new Date().toLocaleTimeString('ko-KR')}); break;
+    }
+  }
+
+  setLEDs(m, text) {
+    this.setSim(p=>({...p, leds:m, displayText:text}));
+  }
+
+  notifyVars() { this.onVarsChange({...this.vars}); }
+
+  eval(expr, extraList) {
+    if(expr===undefined||expr===null) return 0;
+    let s=String(expr).trim();
+    if(s==='참'||s==='true') return true;
+    if(s==='거짓'||s==='false') return false;
+
+    const sim=this.getSim();
+    // Merge extra variables from event (e.g. 수신값)
+    const allExtra = Object.assign({}, ...(extraList||[]));
+    const allVars = {...this.vars, ...allExtra};
+
+    // Replace var names (longer first)
+    Object.keys(allVars).sort((a,b)=>b.length-a.length).forEach(name=>{
+      s=s.replace(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g'), String(allVars[name]));
+    });
+
+    s=s.replace(/온도/g,String(sim.temperature))
+       .replace(/빛/g,String(sim.lightLevel))
+       .replace(/가속도X/g,String(sim.accel.x))
+       .replace(/가속도Y/g,String(sim.accel.y))
+       .replace(/A버튼/g,String(sim.buttonA))
+       .replace(/B버튼/g,String(sim.buttonB))
+       .replace(/참/g,'true').replace(/거짓/g,'false')
+       .replace(/그리고/g,'&&').replace(/또는/g,'||');
+    try{ return eval(s); }catch{ return 0; }
+  }
+
+  sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+  pressButton(btn){ if(this.running&&this.btnHandlers[btn]) this.btnHandlers[btn](); }
+  receiveRadio(msg){ if(this.running&&this.radioHandler) this.radioHandler(msg); }
+}
+
+// ==================== WORKSPACE MUTATIONS ====================
+function updateInPath(list, path, updater) {
+  if(path.length===0) return updater(list);
+  const [idx, ...rest] = path;
+  return list.map((b,i)=>{
+    if(i!==idx) return b;
+    if(rest.length===1) { // rest[0] is 'body' or 'elseBody', no further
+      return {...b, [rest[0]]: updater(b[rest[0]]||[])};
+    }
+    const [key,...deeper]=rest;
+    return {...b, [key]: updateInPath(b[key]||[], deeper, updater)};
+  });
+}
+
+function deleteFromPath(list, path) {
+  if(path.length===1) return list.filter((_,i)=>i!==path[0]);
+  const [idx,key,...rest]=path;
+  return list.map((b,i)=>{
+    if(i!==idx) return b;
+    return {...b, [key]: deleteFromPath(b[key]||[], rest)};
+  });
+}
+
+function moveInPath(list, path, dir) {
+  if(path.length===1) {
+    const i=path[0], ni=i+dir;
+    if(ni<0||ni>=list.length) return list;
+    const nl=[...list];
+    [nl[i],nl[ni]]=[nl[ni],nl[i]];
+    return nl;
+  }
+  const [idx,key,...rest]=path;
+  return list.map((b,i)=>{
+    if(i!==idx) return b;
+    return {...b, [key]: moveInPath(b[key]||[], rest, dir)};
+  });
+}
+
+// ==================== BLOCK RENDER COMPONENT ====================
+function BlockView({block, cid, path, target, onSetTarget, onUpdate, onDelete, onMove, onAddToSub}) {
+  const def = getAllDef(block.type);
+  if(!def) return null;
+  const color = getBlockColor(block.type);
+  const isLeaf = path.length>1;
+
+  const e = (name) => {
+    const param = def.params.find(p=>p.name===name);
+    if(!param) return null;
+    const val = block.params[name];
+    const onChange = ev => onUpdate(path, name, ev.target.value);
+    if(param.type==='select') return <select value={val} onChange={onChange}>{param.opts.map(o=><option key={o} value={o}>{o}</option>)}</select>;
+    if(param.type==='number') return <input type="number" value={val} onChange={onChange} style={{width:'52px'}}/>;
+    return <input type="text" value={val} onChange={onChange} style={{width:'72px'}}/>;
+  };
+
+  const isBodyTarget = target && JSON.stringify(target.path)===JSON.stringify([...path,'body']);
+  const isElseTarget = target && JSON.stringify(target.path)===JSON.stringify([...path,'elseBody']);
+
+  return (
+    <div>
+      <div className="ws-block" style={{background:color}}>
+        {def.render(e)}
+        <div className="block-btns">
+          {!isLeaf && <>
+            <button className="block-mv" onClick={()=>onMove(path,-1)}>▲</button>
+            <button className="block-mv" onClick={()=>onMove(path,1)}>▼</button>
+          </>}
+          <button className="block-del" onClick={()=>onDelete(path)}>✕</button>
+        </div>
+      </div>
+
+      {def.hasBody && (
+        <div className="sub-block-wrap">
+          <div className="sub-label">실행</div>
+          <div className={`sub-body${isBodyTarget?' is-target':''}`}
+               onClick={()=>onSetTarget({cid, path:[...path,'body']})}>
+            {(block.body||[]).map((sub,i)=>(
+              <BlockView key={sub.id} block={sub} cid={cid}
+                path={[...path,'body',i]} target={target}
+                onSetTarget={onSetTarget} onUpdate={onUpdate}
+                onDelete={onDelete} onMove={onMove} onAddToSub={onAddToSub}/>
+            ))}
+            <button className="add-here-btn"
+              onClick={e=>{e.stopPropagation();onSetTarget({cid, path:[...path,'body']});}}>
+              {isBodyTarget?'← 팔레트에서 블록 선택':'+ 여기에 블록 추가'}
+            </button>
+          </div>
+
+          {def.hasElse && <>
+            <div className="sub-label" style={{marginTop:4}}>아니면</div>
+            <div className={`sub-body${isElseTarget?' is-target':''}`}
+                 onClick={()=>onSetTarget({cid, path:[...path,'elseBody']})}>
+              {(block.elseBody||[]).map((sub,i)=>(
+                <BlockView key={sub.id} block={sub} cid={cid}
+                  path={[...path,'elseBody',i]} target={target}
+                  onSetTarget={onSetTarget} onUpdate={onUpdate}
+                  onDelete={onDelete} onMove={onMove} onAddToSub={onAddToSub}/>
+              ))}
+              <button className="add-here-btn"
+                onClick={e=>{e.stopPropagation();onSetTarget({cid, path:[...path,'elseBody']});}}>
+                {isElseTarget?'← 팔레트에서 블록 선택':'+ 여기에 블록 추가'}
+              </button>
+            </div>
+          </>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==================== MAIN APP ====================
+const INIT_WS = [
+  {id:1, type:'on_start', blocks:[]},
+  {id:2, type:'forever',  blocks:[]},
+];
+const INIT_SIM = {
+  leds: EMPTY_LEDS(),
+  buttonA: false, buttonB: false,
+  temperature: 25, lightLevel: 128,
+  accel: {x:0, y:0, z:-1024},
+  radioLog: [],
+  displayText: null,
+};
+
+function App() {
+  const [ws, setWs]         = useState(INIT_WS);
+  const [sim, setSim]       = useState(INIT_SIM);
+  const [running, setRun]   = useState(false);
+  const [cat, setCat]       = useState('basic');
+  const [target, setTarget] = useState({cid:1, path:['blocks']});
+  const [radioIn, setRadioIn] = useState('');
+  const [simVars, setSimVars] = useState({});
+  const [btnADown, setBtnADown] = useState(false);
+  const [btnBDown, setBtnBDown] = useState(false);
+  const [tiltDir, setTiltDir] = useState(null);
+
+  const simRef = useRef(sim);
+  simRef.current = sim;
+  const interpRef = useRef(null);
+
+  const getSim = useCallback(()=>simRef.current, []);
+
+  const addRadioLog = useCallback(msg=>{
+    setSim(p=>({...p, radioLog:[...p.radioLog.slice(-24), msg]}));
+  },[]);
+
+  // ---- Workspace mutations ----
+  const mutWs = (cid, fn) => {
+    setWs(prev=>prev.map(c=>{if(c.id!==cid)return c;return {...c,blocks:fn(c.blocks)};}));
+  };
+
+  const handlePaletteClick = (def) => {
+    if(!target) return;
+    const {cid, path} = target;
+    const block = createBlock(def);
+    // path is like ['blocks'] or ['blocks', 2, 'body']
+    mutWs(cid, blocks=>{
+      if(path[0]==='blocks' && path.length===1) return [...blocks, block];
+      // nested path e.g. [0,'body'] or [0,'elseBody']
+      return updateInPath(blocks, path, arr=>[...arr, block]);
+    });
+  };
+
+  const handleUpdate = (cid) => (bPath, paramName, val) => {
+    mutWs(cid, blocks=>{
+      if(bPath.length===1) return blocks.map((b,i)=>i===bPath[0]?{...b,params:{...b.params,[paramName]:val}}:b);
+      const [idx,...rest]=bPath;
+      return updateInPath(blocks,[idx,...rest.slice(0,-1)], arr=>arr.map((b,i)=>i===rest[rest.length-1]?{...b,params:{...b.params,[paramName]:val}}:b));
+    });
+  };
+
+  const handleDelete = (cid) => (bPath) => {
+    mutWs(cid, blocks=>{
+      if(bPath.length===1) return blocks.filter((_,i)=>i!==bPath[0]);
+      const [idx,...rest]=bPath;
+      return updateInPath(blocks,[idx,...rest.slice(0,-1)],arr=>arr.filter((_,i)=>i!==rest[rest.length-1]));
+    });
+  };
+
+  const handleMove = (cid) => (bPath, dir) => {
+    mutWs(cid, blocks=>moveInPath(blocks,bPath,dir));
+  };
+
+  const addContainer = (evtType) => {
+    if(ws.find(c=>c.type===evtType)) return;
+    const c={id:uid(), type:evtType, blocks:[]};
+    setWs(p=>[...p,c]);
+    setTarget({cid:c.id, path:['blocks']});
+  };
+
+  const removeContainer = (cid) => {
+    setWs(p=>p.filter(c=>c.id!==cid));
+    if(target?.cid===cid) setTarget(null);
+  };
+
+  // ---- Run / Stop ----
+  const handleRun = () => {
+    if(running) return;
+    const interp = new Interp(getSim, setSim, addRadioLog, setSimVars);
+    interpRef.current = interp;
+    setSim(p=>({...p, leds:EMPTY_LEDS(), displayText:null}));
+    setSimVars({});
+    setRun(true);
+    interp.run(ws).then(()=>{ if(interpRef.current===interp) setRun(false); });
+  };
+
+  const handleStop = () => {
+    interpRef.current?.stop();
+    setRun(false);
+  };
+
+  const handleReset = () => {
+    handleStop();
+    setSim({...INIT_SIM, leds:EMPTY_LEDS(), radioLog:[]});
+    setSimVars({});
+  };
+
+  // ---- Button press ----
+  const pressBtn = (btn) => {
+    const key = btn==='A'?'buttonA':'buttonB';
+    setSim(p=>({...p,[key]:true}));
+    interpRef.current?.pressButton(btn);
+    setTimeout(()=>setSim(p=>({...p,[key]:false})), 200);
+  };
+
+  // ---- Tilt ----
+  const tilt = (dir) => {
+    const presets = {left:{x:-800,y:0},right:{x:800,y:0},up:{x:0,y:-800},down:{x:0,y:800},flat:{x:0,y:0}};
+    const v = presets[dir]||{x:0,y:0};
+    setSim(p=>({...p, accel:{...v, z:-512}}));
+    setTiltDir(dir==='flat'?null:dir);
+  };
+
+  // ---- Radio receive ----
+  const sendRadio = () => {
+    if(!radioIn.trim()) return;
+    const msg = radioIn.trim();
+    addRadioLog({type:'received', value:msg, time:new Date().toLocaleTimeString('ko-KR')});
+    interpRef.current?.receiveRadio(msg);
+    setRadioIn('');
+  };
+
+  const existingEvtTypes = new Set(ws.map(c=>c.type));
+
+  return (
+    <div id="root">
+      {/* HEADER */}
+      <div className="hdr">
+        <div className="hdr-logo">
+          <svg viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="6" fill="#1d4ed8"/>
+            {[0,1,2,3,4].flatMap(r=>[0,1,2,3,4].map(c=>(
+              <circle key={`${r}${c}`} cx={4+c*5} cy={4+r*5} r="1.8"
+                fill={ICON_PATTERNS.heart[r][c]?'#ff4444':'rgba(255,255,255,0.15)'}/>
+            )))}
+          </svg>
+          <span className="hdr-title">마이크로비트 시뮬레이터</span>
+        </div>
+        <span className="hdr-sub">micro:bit v2 에뮬레이터</span>
+        <div className="hdr-space"/>
+        <div className={`status-pill ${running?'running':'idle'}`}>
+          <div className="dot"/>
+          {running?'실행 중':'대기'}
+        </div>
+        {!running
+          ? <button className="btn btn-run" onClick={handleRun}>▶ 실행</button>
+          : <button className="btn btn-stop" onClick={handleStop}>■ 정지</button>
+        }
+        <button className="btn btn-reset" onClick={handleReset}>↺ 초기화</button>
+      </div>
+
+      <div className="main">
+        {/* PALETTE */}
+        <div className="palette">
+          <div className="palette-cats">
+            {CATS.map(c=>(
+              <button key={c.id} className={`cat-btn${cat===c.id?' active':''}`}
+                onClick={()=>setCat(c.id)}>
+                <div className="cat-dot" style={{background:c.color}}/>
+                {c.label}
+              </button>
+            ))}
+          </div>
+          <div className="palette-blocks">
+            {(BDEFS[cat]||[]).map(def=>(
+              <div key={def.type} className="palette-block"
+                style={{background:CAT_COLOR[cat]+'22', borderColor:CAT_COLOR[cat]+'44'}}
+                onClick={()=>handlePaletteClick(def)}>
+                <div className="pb-label" style={{color:CAT_COLOR[cat]}}>{def.label}</div>
+                {def.hint && <div className="pb-hint">{def.hint}</div>}
+              </div>
+            ))}
+          </div>
+          {target
+            ? <div className="palette-tip">
+                📌 블록 클릭 시<br/>
+                <b style={{color:'#4fc3f7'}}>{ws.find(c=>c.id===target.cid) ? EVTS.find(e=>e.type===ws.find(c=>c.id===target.cid).type)?.badge : '?'}</b>
+                에 추가됩니다
+              </div>
+            : <div className="palette-tip">컨테이너 또는 + 영역을 먼저 선택하세요</div>
+          }
+        </div>
+
+        {/* WORKSPACE */}
+        <div className="workspace">
+          {ws.map(container => {
+            const evtDef = EVTS.find(e=>e.type===container.type);
+            const isSelected = target?.cid===container.id && JSON.stringify(target.path)===JSON.stringify(['blocks']);
+            return (
+              <div key={container.id} className="evt-container">
+                <div className="evt-header" style={{background:evtDef?.color||'#374151'}}>
+                  <span className="evt-badge">{evtDef?.badge}</span>
+                  {evtDef?.label}
+                  <button className="evt-del" onClick={()=>removeContainer(container.id)}>✕</button>
+                </div>
+                <div className={`evt-body${isSelected?' is-target':''}`}
+                     onClick={()=>setTarget({cid:container.id, path:['blocks']})}>
+                  {container.blocks.map((block, i)=>(
+                    <BlockView key={block.id} block={block} cid={container.id}
+                      path={[i]}
+                      target={target?.cid===container.id ? target : null}
+                      onSetTarget={setTarget}
+                      onUpdate={handleUpdate(container.id)}
+                      onDelete={handleDelete(container.id)}
+                      onMove={handleMove(container.id)}
+                    />
+                  ))}
+                  <button className="add-here-btn"
+                    onClick={e=>{e.stopPropagation();setTarget({cid:container.id, path:['blocks']});}}>
+                    {isSelected ? '← 왼쪽 팔레트에서 블록 선택' : '+ 블록 추가'}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Add event container row */}
+          <div>
+            <div style={{fontSize:'11px',color:'#4a6070',marginBottom:'8px',fontWeight:600}}>+ 이벤트 추가</div>
+            <div className="add-evt-row">
+              {EVTS.filter(e=>!existingEvtTypes.has(e.type)).map(e=>(
+                <button key={e.type} className="add-evt-btn" onClick={()=>addContainer(e.type)}>
+                  {e.label}
+                </button>
+              ))}
+              {EVTS.every(e=>existingEvtTypes.has(e.type)) &&
+                <span style={{fontSize:'12px',color:'#2a4a60'}}>모든 이벤트가 추가되었습니다</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        {/* SIMULATOR */}
+        <div className="simulator">
+          {/* MICROBIT BOARD */}
+          <div className="sim-section">
+            <div className="sim-section-title">마이크로비트</div>
+            <div className="mb-board">
+              <div className="mb-logo">BBC micro:bit</div>
+              <div className="led-grid">
+                {sim.leds.map((row,r)=>row.map((on,c)=>(
+                  <div key={`${r}${c}`} className={`led${on?' on':''}`}/>
+                )))}
+              </div>
+              {sim.displayText && (
+                <div className="mb-display-text">{sim.displayText}</div>
+              )}
+              <div className="mb-usb"/>
+              <div className="mb-buttons">
+                <button className={`mb-btn${btnADown?' pressed':''}`}
+                  onMouseDown={()=>{setBtnADown(true);pressBtn('A');}}
+                  onMouseUp={()=>setBtnADown(false)}
+                  onMouseLeave={()=>setBtnADown(false)}>A</button>
+                <button className={`mb-btn${btnBDown?' pressed':''}`}
+                  onMouseDown={()=>{setBtnBDown(true);pressBtn('B');}}
+                  onMouseUp={()=>setBtnBDown(false)}
+                  onMouseLeave={()=>setBtnBDown(false)}>B</button>
+              </div>
+            </div>
+          </div>
+
+          {/* SENSORS */}
+          <div className="sim-section">
+            <div className="sim-section-title">센서</div>
+            <div className="sensor-row">
+              <div className="sensor-label">🌡️ 온도</div>
+              <input type="range" className="sensor-slider" min="-10" max="50" value={sim.temperature}
+                onChange={e=>setSim(p=>({...p,temperature:parseInt(e.target.value)}))}/>
+              <div className="sensor-val">{sim.temperature}°C</div>
+            </div>
+            <div className="sensor-row">
+              <div className="sensor-label">💡 빛</div>
+              <input type="range" className="sensor-slider" min="0" max="255" value={sim.lightLevel}
+                onChange={e=>setSim(p=>({...p,lightLevel:parseInt(e.target.value)}))}/>
+              <div className="sensor-val">{sim.lightLevel}</div>
+            </div>
+          </div>
+
+          {/* ACCELEROMETER */}
+          <div className="sim-section">
+            <div className="sim-section-title">가속도계 / 기울기</div>
+            <div className="accel-grid">
+              <div/>
+              <button className={`accel-btn${tiltDir==='up'?' active':''}`} onClick={()=>tilt(tiltDir==='up'?'flat':'up')}>⬆ 위</button>
+              <div/>
+              <button className={`accel-btn${tiltDir==='left'?' active':''}`} onClick={()=>tilt(tiltDir==='left'?'flat':'left')}>⬅ 왼쪽</button>
+              <button className={`accel-btn${!tiltDir?' active':''}`} onClick={()=>tilt('flat')}>평평</button>
+              <button className={`accel-btn${tiltDir==='right'?' active':''}`} onClick={()=>tilt(tiltDir==='right'?'flat':'right')}>오른쪽 ➡</button>
+              <div/>
+              <button className={`accel-btn${tiltDir==='down'?' active':''}`} onClick={()=>tilt(tiltDir==='down'?'flat':'down')}>⬇ 아래</button>
+              <div/>
+            </div>
+            <div className="accel-info">
+              X: <span>{sim.accel.x}</span> &nbsp;
+              Y: <span>{sim.accel.y}</span> &nbsp;
+              Z: <span>{sim.accel.z}</span>
+            </div>
+          </div>
+
+          {/* RADIO */}
+          <div className="sim-section">
+            <div className="sim-section-title">라디오</div>
+            <div className="radio-log">
+              {sim.radioLog.length===0 && <div className="radio-empty">라디오 메시지 없음</div>}
+              {sim.radioLog.map((m,i)=>(
+                <div key={i} className={`radio-msg ${m.type}`}>
+                  {m.type==='sent'?'📤':'📥'}
+                  <span>{m.value}</span>
+                  <span className="radio-msg-time">{m.time}</span>
+                </div>
+              ))}
+            </div>
+            <div className="radio-send-row">
+              <input className="radio-send-input" placeholder="받을 메시지 입력..." value={radioIn}
+                onChange={e=>setRadioIn(e.target.value)}
+                onKeyDown={e=>e.key==='Enter'&&sendRadio()}/>
+              <button className="radio-send-btn" onClick={sendRadio}>받기</button>
+            </div>
+          </div>
+
+          {/* VARIABLES */}
+          {Object.keys(simVars).length>0 && (
+            <div className="sim-section">
+              <div className="sim-section-title">변수 상태</div>
+              <div className="vars-list">
+                {Object.entries(simVars).map(([k,v])=>(
+                  <div key={k} className="var-row">
+                    <span className="var-name">{k}</span>
+                    <span className="var-value">{String(v)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* HELP */}
+          <div className="sim-section" style={{fontSize:'10px',color:'#94a3b8',lineHeight:1.6}}>
+            <div className="sim-section-title">도움말</div>
+            조건식 예시:<br/>
+            <span style={{color:'#2563eb',fontFamily:'JetBrains Mono,monospace'}}>온도 &gt; 30</span><br/>
+            <span style={{color:'#2563eb',fontFamily:'JetBrains Mono,monospace'}}>빛 &lt; 50</span><br/>
+            <span style={{color:'#2563eb',fontFamily:'JetBrains Mono,monospace'}}>A버튼</span><br/>
+            <span style={{color:'#2563eb',fontFamily:'JetBrains Mono,monospace'}}>가속도X &gt; 500</span><br/>
+            <span style={{color:'#7c3aed',fontFamily:'JetBrains Mono,monospace'}}>온도값 &gt; 25</span> (변수)
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
+
