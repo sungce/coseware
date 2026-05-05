@@ -1355,6 +1355,15 @@
             }
         }
 
+        // iframe에서 postMessage로 높이 변경 수신
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'resize' && e.data.height > 0) {
+                document.querySelectorAll('iframe').forEach(f => {
+                    try { if (f.contentWindow === e.source) f.style.height = e.data.height + 'px'; } catch(er) {}
+                });
+            }
+        });
+
         // ==================== 공용 iframe 뷰어 ====================
         function openIframe(url, title) {
             const frame = document.getElementById('viewer-frame');

@@ -10,7 +10,7 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-  body { font-family: 'Pretendard', 'Outfit', -apple-system, sans-serif; background: #f4f7f9; margin: 0; }
+  body { font-family: 'Pretendard', 'Outfit', -apple-system, sans-serif; background: #f4f7f9; margin: 0; overflow: visible; }
   .card { background: white; border-radius: 1.25rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
   .stat-card { transition: transform .15s, box-shadow .15s; }
   .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.08); }
@@ -519,7 +519,25 @@
     } catch(e) {}
   }
 
-  // 기본 Apps Script URL 자동 설정
+  // iframe 부모에 높이 변경 알림 (슬라이드바 없이 전체 표시)
+  if (window.self !== window.top) {
+    const notifyHeight = () => {
+      const h = document.documentElement.scrollHeight || document.body.scrollHeight;
+      if (h > 0) {
+        try { window.parent.postMessage({ type:'resize', height: h }, '*'); } catch(e) {}
+        try {
+          const frames = window.parent.document.querySelectorAll('iframe');
+          frames.forEach(f => { try { if(f.contentWindow===window) f.style.height=h+'px'; } catch(e){} });
+        } catch(e) {}
+      }
+    };
+    // MutationObserver로 DOM 변화 감지
+    new MutationObserver(notifyHeight).observe(document.body, { childList:true, subtree:true, attributes:true });
+    window.addEventListener('load', notifyHeight);
+    setTimeout(notifyHeight, 300);
+    setTimeout(notifyHeight, 800);
+    setTimeout(notifyHeight, 1500);
+  }
   const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeHjWrKlGwqSh30Bz_jRFCgPkLZ-HzfZjZaeOxkEzFvP_ZwmlH2W4UPDSPiY8c4TQZ/exec';
   document.getElementById('script-url-input').value = DEFAULT_SCRIPT_URL;
 
