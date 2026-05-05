@@ -61,9 +61,6 @@
       <button class="action-btn" onclick="loadSampleData()">
         <i data-lucide="database" class="w-3.5 h-3.5"></i>예시 데이터 불러오기
       </button>
-      <button class="action-btn" onclick="loadFromURL()">
-        <i data-lucide="link" class="w-3.5 h-3.5"></i>URL 불러오기
-      </button>
       <button class="action-btn success" onclick="saveToCSV()">
         <i data-lucide="download" class="w-3.5 h-3.5"></i>CSV 저장
       </button>
@@ -202,21 +199,7 @@
       <p class="text-xs text-slate-400 font-medium mb-3">첫 행은 헤더(이름,학번,과제명,점수,진도율,상태)여야 합니다.</p>
       <input type="file" id="csv-file" accept=".csv" onchange="loadCSV(this)" class="text-sm w-full px-3 py-2">
     </div>
-  </div>
-
-  <!-- URL 불러오기 모달 -->
-  <div id="url-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
-    onclick="if(event.target===this)closeURLModal()">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-      <h3 class="text-base font-black text-slate-900 mb-1">Apps Script URL 연결</h3>
-      <p class="text-xs text-slate-400 font-medium mb-4">Google Apps Script 웹앱 배포 URL을 입력하세요.</p>
-      <input type="text" id="script-url-input" placeholder="https://script.google.com/macros/s/.../exec"
-        class="w-full px-4 py-3 mb-3 text-sm">
-      <div class="flex gap-2">
-        <button class="action-btn primary flex-1 justify-center" onclick="fetchFromURL()">불러오기</button>
-        <button class="action-btn" onclick="closeURLModal()">취소</button>
-      </div>
-      <p id="url-err" class="text-xs text-rose-500 font-bold mt-2 hidden"></p>
+  </div>      <p id="url-err" class="text-xs text-rose-500 font-bold mt-2 hidden"></p>
     </div>
   </div>
 
@@ -261,40 +244,6 @@
     renderTable(filteredData);
     updateSummary();
     showToast('✅ 예시 데이터 10개가 불러와졌습니다!');
-  }
-
-  // ── URL 불러오기 ──────────────────────────────────────
-  function loadFromURL() {
-    document.getElementById('url-modal').classList.remove('hidden');
-    setTimeout(() => document.getElementById('script-url-input').focus(), 100);
-  }
-  function closeURLModal() { document.getElementById('url-modal').classList.add('hidden'); }
-
-  async function fetchFromURL() {
-    const url = document.getElementById('script-url-input').value.trim();
-    const errEl = document.getElementById('url-err');
-    if (!url) { errEl.textContent='URL을 입력해주세요.'; errEl.classList.remove('hidden'); return; }
-    errEl.classList.add('hidden');
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const json = await res.json();
-      allData = json.map(row => ({
-        name:     row['이름']   || row.name     || '-',
-        sid:      row['학번']   || row.sid      || '',
-        task:     row['과제명'] || row.task     || '-',
-        score:    Number(row['점수']   || row.score    || 0),
-        progress: Number(row['진도율'] || row.progress || 0),
-        status:   row['상태']   || row.status   || '진행중',
-      }));
-      filteredData = [...allData];
-      renderTable(filteredData); updateSummary();
-      closeURLModal();
-      showToast(`✅ ${allData.length}개 데이터를 불러왔습니다!`);
-    } catch(e) {
-      errEl.textContent = '불러오기 실패: ' + e.message;
-      errEl.classList.remove('hidden');
-    }
   }
 
   // ── CSV 파일 불러오기 ────────────────────────────────
