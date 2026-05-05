@@ -192,6 +192,9 @@
                                 <a href="#" onclick="openIframe('playground/code_play.html','코드 놀이터'); return false;" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-green-50 hover:text-green-600 transition-colors border-t border-slate-50">
                                     <i data-lucide="code-2" class="w-4 h-4"></i><span>코드 놀이터</span>
                                 </a>
+                                <a href="#" onclick="openIframe('microbit-simulator.html','마이크로비트 시뮬레이터'); return false;" class="flex items-center space-x-2 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors border-t border-slate-50">
+                                    <i data-lucide="cpu" class="w-4 h-4"></i><span>마이크로비트 시뮬레이터</span>
+                                </a>
                             </div>
                         </div>
 
@@ -1357,15 +1360,29 @@
             const frame = document.getElementById('viewer-frame');
             frame.style.height = '';
             frame.src = url;
-            // chatting.html 은 h-screen 레이아웃 → 고정 100vh
             if (url.includes('chatting')) {
                 frame.style.height = 'calc(100vh - 100px)';
                 frame.onload = null;
             } else {
                 frame.onload = function() {
                     try {
-                        const h = frame.contentDocument.documentElement.scrollHeight;
-                        if (h > 100) frame.style.height = h + 'px';
+                        const doc = frame.contentDocument || frame.contentWindow.document;
+                        if (doc.body) {
+                            doc.body.style.overflow = 'hidden';
+                            doc.documentElement.style.overflow = 'hidden';
+                        }
+                        const setH = () => {
+                            const h = Math.max(
+                                doc.documentElement.scrollHeight || 0,
+                                doc.body ? doc.body.scrollHeight : 0,
+                                doc.documentElement.offsetHeight || 0,
+                                400
+                            );
+                            frame.style.height = h + 'px';
+                        };
+                        setH();
+                        let n = 0;
+                        const iv = setInterval(() => { setH(); if (++n > 15) clearInterval(iv); }, 300);
                     } catch(e) {
                         frame.style.height = 'calc(100vh - 100px)';
                     }
