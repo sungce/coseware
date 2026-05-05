@@ -152,11 +152,11 @@
 
   <!-- 데이터 추가 -->
   <div id="panel-add" class="hidden">
-    <div class="card p-6 max-w-2xl">
+    <div class="card p-6">
       <h2 class="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
         <i data-lucide="plus-circle" class="w-4 h-4 text-indigo-500"></i>새 데이터 입력
       </h2>
-      <div class="grid grid-cols-2 gap-4 mb-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
         <div>
           <label class="text-xs font-black text-slate-400 uppercase tracking-wider block mb-1.5">이름 *</label>
           <input type="text" id="inp-name" placeholder="예) 홍길동" class="w-full px-3 py-2.5">
@@ -193,15 +193,6 @@
         </button>
         <button class="action-btn" onclick="clearForm()">초기화</button>
       </div>
-    </div>
-
-    <!-- CSV 불러오기 -->
-    <div class="card p-6 max-w-2xl mt-5">
-      <h2 class="text-sm font-black text-slate-800 mb-3 flex items-center gap-2">
-        <i data-lucide="upload" class="w-4 h-4 text-emerald-500"></i>CSV 파일 불러오기
-      </h2>
-      <p class="text-xs text-slate-400 font-medium mb-3">첫 행은 헤더(이름,학번,과제명,점수,진도율,상태)여야 합니다.</p>
-      <input type="file" id="csv-file" accept=".csv" onchange="loadCSV(this)" class="text-sm w-full px-3 py-2">
     </div>
   </div>      <p id="url-err" class="text-xs text-rose-500 font-bold mt-2 hidden"></p>
     </div>
