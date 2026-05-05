@@ -269,9 +269,8 @@ body { background-color: #f4f7f9; margin: 0; padding: 0; }
     </div>
     <div class="flowchart-wrap">
       <div class="fc-palette">
-        <h3>블록 팔레트</h3>
+        <h3>블록 팔레트 클릭해서 추가</h3>
         <div class="fc-section">
-          <div class="fc-section-title">클릭해서 추가</div>
           <div class="fc-block start"    onclick="addNode('start')">● 시작</div>
           <div class="fc-block end"      onclick="addNode('end')">● 끝</div>
           <div class="fc-block process"  onclick="addNode('process')">▭ 처리</div>
@@ -307,8 +306,7 @@ body { background-color: #f4f7f9; margin: 0; padding: 0; }
           <button class="fc-icon-btn" onclick="deleteSelected()"><span class="btn-tooltip">✂️</span>선택 삭제</button>
           <button class="fc-icon-btn" onclick="undoLastEdge()"><span class="btn-tooltip">↩</span>선 취소</button>
           <button class="fc-icon-btn" onclick="fcShare()"><span class="btn-tooltip">💬</span>피드백</button>
-          <div class="fc-divider"></div>
-          <button class="fc-icon-btn save-btn" onclick="saveAsImage()">📸이미지 저장<span class="btn-tooltip">이미지 저장</span></button>
+          <button class="fc-icon-btn save-btn" onclick="saveAsImage()"><span class="btn-tooltip"📸</span>이미지 저장</button>
         </div>
         <div id="fc-canvas">
           <div class="fc-drop-hint" id="fc-hint">← 블록을 클릭해 추가하고, 포트를 드래그해 연결하세요!</div>
