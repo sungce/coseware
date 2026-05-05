@@ -61,6 +61,10 @@
       <button class="action-btn" onclick="loadSampleData()">
         <i data-lucide="database" class="w-3.5 h-3.5"></i>예시 데이터 불러오기
       </button>
+      <button class="action-btn" onclick="document.getElementById('csv-file-btn').click()">
+        <i data-lucide="upload" class="w-3.5 h-3.5"></i>CSV 불러오기
+      </button>
+      <input type="file" id="csv-file-btn" accept=".csv" class="hidden" onchange="loadCSV(this)">
       <button class="action-btn success" onclick="saveToCSV()">
         <i data-lucide="download" class="w-3.5 h-3.5"></i>CSV 저장
       </button>
