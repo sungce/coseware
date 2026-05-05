@@ -299,15 +299,17 @@ body { background-color: #f4f7f9; margin: 0; padding: 0; }
         </div>
       </div>
       <div class="fc-canvas-wrap">
-        <div class="fc-toolbar">
-          <span class="fc-toolbar-title">내 순서도</span>
-          <div class="tab-nav">
-          <button class="fc-icon-btn" onclick="clearCanvas()"><span class="btn-tooltip">🗑</span>전체 지우기</button>
-          <button class="fc-icon-btn" onclick="deleteSelected()"><span class="btn-tooltip">✂️</span>선택 삭제</button>
-          <button class="fc-icon-btn" onclick="undoLastEdge()"><span class="btn-tooltip">↩</span>선 취소</button>
-          <button class="fc-icon-btn" onclick="fcShare()"><span class="btn-tooltip">💬</span>피드백</button>
-          <button class="fc-icon-btn save-btn" onclick="saveAsImage()"><span class="btn-tooltip"📸</span>이미지 저장</button>
-        </div>
+            <div class="fc-toolbar">
+  <span class="fc-toolbar-title">내 순서도</span>
+  <div class="tab-nav">
+    <button class="fc-icon-btn" onclick="clearCanvas()">🗑️ 전체 지우기</button>
+    <button class="fc-icon-btn" onclick="deleteSelected()">✂️ 선택 삭제</button>
+    <button class="fc-icon-btn" onclick="undoLastEdge()">↩️ 선 취소</button>
+    <button class="fc-icon-btn" onclick="fcShare()">💬 피드백</button>
+    <button class="fc-icon-btn save-btn" onclick="saveAsImage()">📸 이미지 저장</button>
+  </div>
+</div>
+         
         <div id="fc-canvas">
           <div class="fc-drop-hint" id="fc-hint">← 블록을 클릭해 추가하고, 포트를 드래그해 연결하세요!</div>
           <svg id="fc-svg" xmlns="http://www.w3.org/2000/svg">
