@@ -9,37 +9,7 @@
 <style>
   body { font-family: 'Pretendard', -apple-system, sans-serif; background: #f4f7f9; margin: 0; }
   .card { background: white; border-radius: 1.5rem; border: 1px solid #e2e8f0; }
-  /* 평가 기준 인라인 입력창 스타일 */
-.crit-name input {
-  width: 110px;
-  border: 1px solid transparent;
-  background: transparent;
-  font-size: 11px;
-  font-weight: 600;
-  color: #374151;
-  outline: none;
-  border-radius: 4px;
-  padding: 2px 4px;
-  margin-left: -4px;
-  transition: all 0.2s;
-}
-.crit-pts input {
-  width: 32px;
-  border: 1px solid transparent;
-  background: transparent;
-  font-size: 11px;
-  color: #9aa3b2;
-  text-align: right;
-  outline: none;
-  border-radius: 4px;
-  padding: 2px;
-  transition: all 0.2s;
-  font-family: inherit;
-}
-.crit-name input:hover, .crit-pts input:hover { border-color: #e5e7eb; background: #fff; }
-.crit-name input:focus, .crit-pts input:focus { border-color: #4f7ef7; background: #fff; color: #1a1d23; }
-/* 숫자 입력창 우측 위아래 화살표 숨기기 */
-.crit-pts input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
 </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -47,39 +17,7 @@
 
   <!-- 1. 네이티브 콘텐츠 영역 (코드 놀이터 원본 화면) -->
   <main id="native-content" class="max-w-[1400px] mx-auto px-6 pt-8 pb-16 w-full">
-    <div class="crit">
-  <div class="crit-hd">
-    <div class="crit-name"><input type="text" value="🎯 과제 완성도" id="cName1"></div>
-    <div class="crit-pts"><b id="p1">0</b> / <input type="number" value="40" id="m1">점</div>
-  </div>
-  <div class="crit-bar"><div class="crit-fill fill-b" id="b1" style="width:0%"></div></div>
-  <div class="crit-note" id="n1">평가를 실행하면 결과가 표시됩니다</div>
-</div>
-<div class="crit">
-  <div class="crit-hd">
-    <div class="crit-name"><input type="text" value="🧠 코드 구조" id="cName2"></div>
-    <div class="crit-pts"><b id="p2">0</b> / <input type="number" value="30" id="m2">점</div>
-  </div>
-  <div class="crit-bar"><div class="crit-fill fill-g" id="b2" style="width:0%"></div></div>
-  <div class="crit-note" id="n2">평가를 실행하면 결과가 표시됩니다</div>
-</div>
-<div class="crit">
-  <div class="crit-hd">
-    <div class="crit-name"><input type="text" value="🎨 창의성" id="cName3"></div>
-    <div class="crit-pts"><b id="p3">0</b> / <input type="number" value="20" id="m3">점</div>
-  </div>
-  <div class="crit-bar"><div class="crit-fill fill-a" id="b3" style="width:0%"></div></div>
-  <div class="crit-note" id="n3">평가를 실행하면 결과가 표시됩니다</div>
-</div>
-<div class="crit">
-  <div class="crit-hd">
-    <div class="crit-name"><input type="text" value="📝 제출 준수" id="cName4"></div>
-    <div class="crit-pts"><b id="p4">0</b> / <input type="number" value="10" id="m4">점</div>
-  </div>
-  <div class="crit-bar"><div class="crit-fill fill-b" id="b4" style="width:0%"></div></div>
-  <div class="crit-note" id="n4">평가를 실행하면 결과가 표시됩니다</div>
-</div>
-    <div class="mb-10">
+       <div class="mb-10">
       <div class="inline-flex items-center space-x-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-green-100">
         <i data-lucide="code-2" class="w-3.5 h-3.5"></i><span>인터렉티브 수업실</span>
       </div>
@@ -205,75 +143,8 @@ for i in range(5):
       const out  = document.getElementById('output');
       out.innerHTML = '<span class="text-yellow-400">⚡ Python 실행 환경은 서버 연동이 필요합니다.</span>\n\n<span class="text-slate-400">▶ 아래 온라인 환경을 활용해보세요:</span>\n\n<a href="https://colab.research.google.com" target="_blank" class="text-blue-400 underline outline-none focus:outline-none">Google Colab 열기 →</a>\n<a href="https://replit.com" target="_blank" class="text-green-400 underline outline-none focus:outline-none">Replit 열기 →</a>';
     }
-    function runEval() {
-  if (currentTask === -1) { showToast('⚠️ 먼저 과제를 선택해 주세요'); return; }
-  showToast('🤖 AI 평가 분석 중...');
+   
 
-  // 1. 선생님이 화면에 입력한 배점을 가져옴
-  let max1 = parseInt(document.getElementById('m1').value) || 0;
-  let max2 = parseInt(document.getElementById('m2').value) || 0;
-  let max3 = parseInt(document.getElementById('m3').value) || 0;
-  let max4 = parseInt(document.getElementById('m4').value) || 0;
-  let totalMax = max1 + max2 + max3 + max4;
-
-  if (totalMax === 0) { showToast('⚠️ 총 배점이 0점입니다. 배점을 설정해주세요.'); return; }
-
-  setTimeout(() => {
-    // 2. 각 배점에 맞춰 임의의 획득 점수 생성 (AI 연동 시 이 부분 교체)
-    const s = {
-      c1: Math.floor(Math.random() * (max1 * 0.3)) + Math.floor(max1 * 0.7),
-      c2: Math.floor(Math.random() * (max2 * 0.3)) + Math.floor(max2 * 0.7),
-      c3: Math.floor(Math.random() * (max3 * 0.3)) + Math.floor(max3 * 0.7),
-      c4: Math.floor(Math.random() * (max4 * 0.3)) + Math.floor(max4 * 0.7)
-    };
-    const total = s.c1 + s.c2 + s.c3 + s.c4;
-    const percent = (total / totalMax) * 100; // 100점 만점이 아닐 수 있으므로 백분율 계산
-
-    animRing(total, totalMax); 
-
-    // 3. 점수 텍스트 및 게이지 바 업데이트
-    [[1, s.c1, max1], [2, s.c2, max2], [3, s.c3, max3], [4, s.c4, max4]].forEach(([i, v, mx], idx) => {
-      setTimeout(() => {
-        document.getElementById('p'+i).textContent = v;
-        document.getElementById('b'+i).style.width = mx > 0 ? (v / mx * 100) + '%' : '0%';
-        document.getElementById('n'+i).textContent = (mx > 0 && (v / mx) >= 0.8) ? '✅ 우수한 수준입니다' : '⚠️ 개선이 필요합니다';
-      }, idx * 150);
-    });
-
-    // 4. 총점 등급 산출
-    const grades = [{t:90,g:'🏆 우수'},{t:75,g:'⭐ 양호'},{t:60,g:'👍 보통'},{t:0,g:'💪 노력 필요'}];
-    const gr = grades.find(g => percent >= g.t);
-    
-    document.getElementById('scoreGrade').textContent = gr.g;
-    document.getElementById('scoreSub').textContent = `총점 ${total}점 / 만점 ${totalMax}점`;
-    
-    // 피드백 텍스트
-    const fbs = [
-      '스프라이트 이동 블록을 잘 활용했습니다. 반복문을 추가하면 더 자연스러운 애니메이션을 만들 수 있어요!',
-      '블록 구조가 잘 정돈되어 있습니다. 조건문을 활용하면 더 풍부한 인터랙션을 구현할 수 있을 거예요.',
-      '창의적인 캐릭터 선택이 돋보입니다! 배경 전환 기능을 추가하면 완성도가 더 높아질 것 같아요.'
-    ];
-    document.getElementById('fbText').textContent = fbs[Math.floor(Math.random() * fbs.length)];
-    
-    evaluated = true;
-    showToast('✓ AI 평가 완료! 총점 ' + total + '점');
-  }, 1600);
-}
-
-// 링 애니메이션도 동적 만점에 맞춰 수정
-function animRing(total, totalMax) {
-  const ratio = totalMax > 0 ? (total / totalMax) : 0;
-  document.getElementById('ringProg').style.strokeDashoffset = 251 - (ratio * 251);
-  let cur = 0, step = total / 60;
-  const sc = document.getElementById('ringScore');
-  document.querySelector('.ring-lbl').textContent = `/ ${totalMax}점`; // 만점 표시 업데이트
-  
-  const t = setInterval(() => { 
-    cur = Math.min(cur + step, total); 
-    sc.textContent = Math.round(cur); 
-    if(cur >= total) clearInterval(t); 
-  }, 16);
-}
   </script>
 </body>
 </html>
