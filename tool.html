@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -7,179 +8,609 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
 <script src="https://unpkg.com/lucide@latest"></script>
-<!-- Firebase 연동이 필요 없으므로 SDK 제거 또는 유지 (여기서는 바로 열리게 로직만 수정) -->
+<!-- 물리 엔진 라이브러리 추가 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 <style>
-  body { font-family:'Pretendard',-apple-system,sans-serif; background:#f8fafc; }
-  .card { background:white; border-radius:1.5rem; border:1px solid #e2e8f0; }
+  body { font-family:'Pretendard',-apple-system,sans-serif; background:#f4f7f9; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  
+  .tool-item { transition: all 0.2s ease; border: 2px solid transparent; }
+  .tool-item:hover { border-color: #bfdbfe; background-color: #eff6ff; transform: translateX(4px); }
+  .tool-item.active { border-color: #3b82f6; background-color: #eff6ff; }
+  
+  canvas { touch-action: none; } 
 </style>
 </head>
 <body class="min-h-screen">
 
-<main class="max-w-[1400px] mx-auto px-6 pt-20 pb-16">
-  <!-- 헤더 -->
-  <div class="mb-10">
-    <div class="inline-flex items-center space-x-1 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-blue-100">
-      <i data-lucide="wrench" class="w-3.5 h-3.5"></i><span>수업 도구 모음</span>
+<main class="max-w-[1400px] mx-auto px-6 pt-12 pb-16">
+  
+  <div class="mb-8">
+    <div class="inline-flex items-center space-x-1 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-xs font-bold mb-3 border border-blue-100">
+      <i data-lucide="wrench" class="w-3.5 h-3.5"></i><span>인터렉티브 수업도구</span>
     </div>
-    <h1 class="text-4xl font-black text-slate-900 mb-3">수업 도구 <span class="text-blue-500">🛠️</span></h1>
-    <p class="text-lg text-slate-500 font-medium">관리자 로그인 없이 바로 사용할 수 있는 수업 도구입니다.</p>
+    <h1 class="text-3xl font-black text-slate-900 mb-2">수업 도구 모음 <span class="text-blue-500">🛠️</span></h1>
+    <p class="text-base text-slate-500 font-medium">원하는 도구를 왼쪽에서 선택하면 오른쪽에서 즉시 실행됩니다.</p>
   </div>
 
-  <!-- 도구 카드 그리드 -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <!-- 랜덤 모둠 생성기 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('random-group')">
-      <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="shuffle" class="w-6 h-6"></i>
+  <div class="flex flex-col lg:flex-row gap-6 h-[calc(100vh-200px)] min-h-[600px]">
+    
+    <aside class="lg:w-1/3 xl:w-1/4 flex-shrink-0 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-y-auto p-4 space-y-2">
+      
+      <div class="tool-item active flex items-center p-3 rounded-xl cursor-pointer" onclick="openTool('timer', this)">
+        <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center mr-4 shrink-0"><i data-lucide="timer" class="w-5 h-5"></i></div>
+        <div><h3 class="font-bold text-slate-800 text-sm">수업 타이머</h3><p class="text-xs text-slate-500">활동 시간 측정 및 알림</p></div>
       </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">랜덤 모둠 생성기</h3>
-      <p class="text-sm text-slate-500 font-medium">학생을 무작위로 모둠에 배정합니다.</p>
-    </div>
 
-    <!-- 타이머 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('timer')">
-      <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="timer" class="w-6 h-6"></i>
+      <div class="tool-item flex items-center p-3 rounded-xl cursor-pointer" onclick="openTool('stopwatch', this)">
+        <div class="w-10 h-10 bg-cyan-50 text-cyan-600 rounded-lg flex items-center justify-center mr-4 shrink-0"><i data-lucide="watch" class="w-5 h-5"></i></div>
+        <div><h3 class="font-bold text-slate-800 text-sm">스톱워치</h3><p class="text-xs text-slate-500">시간 측정 및 랩 기록</p></div>
       </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">수업 타이머</h3>
-      <p class="text-sm text-slate-500 font-medium">활동 시간을 측정하고 알림을 설정합니다.</p>
-    </div>
 
-    <!-- 스톱워치 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('stopwatch')">
-      <div class="w-12 h-12 bg-cyan-50 text-cyan-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="watch" class="w-6 h-6"></i>
+      <div class="tool-item flex items-center p-3 rounded-xl cursor-pointer" onclick="openTool('seating', this)">
+        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center mr-4 shrink-0"><i data-lucide="layout-grid" class="w-5 h-5"></i></div>
+        <div><h3 class="font-bold text-slate-800 text-sm">자리 배치</h3><p class="text-xs text-slate-500">시각적 무작위 자리 배정</p></div>
       </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">스톱워치</h3>
-      <p class="text-sm text-slate-500 font-medium">시간을 측정하고 랩 기록을 저장합니다.</p>
-    </div>
 
-    <!-- 사다리타기 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('ladder')">
-      <div class="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="align-justify" class="w-6 h-6"></i>
+      <div class="tool-item flex items-center p-3 rounded-xl cursor-pointer bg-violet-50 border-violet-200" onclick="openTool('pinball', this)">
+        <div class="w-10 h-10 bg-violet-100 text-violet-700 rounded-lg flex items-center justify-center mr-4 shrink-0"><i data-lucide="target" class="w-5 h-5"></i></div>
+        <div>
+          <h3 class="font-bold text-violet-900 text-sm flex items-center gap-1">마블런 대결 <span class="bg-violet-600 text-white text-[10px] px-1.5 py-0.5 rounded-full">HOT</span></h3>
+          <p class="text-xs text-violet-600 font-medium">호리병 병목 장애물</p>
+        </div>
       </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">사다리타기</h3>
-      <p class="text-sm text-slate-500 font-medium">참여자를 입력하고 사다리로 결과를 정합니다.</p>
-    </div>
 
-    <!-- 판서하기 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('whiteboard')">
-      <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="pen-tool" class="w-6 h-6"></i>
+      <div class="tool-item flex items-center p-3 rounded-xl cursor-pointer" onclick="openTool('random-group', this)">
+        <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center mr-4 shrink-0"><i data-lucide="shuffle" class="w-5 h-5"></i></div>
+        <div><h3 class="font-bold text-slate-800 text-sm">랜덤 모둠 생성기</h3><p class="text-xs text-slate-500">무작위 조 편성</p></div>
       </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">판서하기</h3>
-      <p class="text-sm text-slate-500 font-medium">자유롭게 그리고 판서할 수 있는 화이트보드입니다.</p>
-    </div>
 
-    <!-- 랜덤 발표자 선택 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('random-pick')">
-      <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="user-round-check" class="w-6 h-6"></i>
+      <div class="tool-item flex items-center p-3 rounded-xl cursor-pointer" onclick="openTool('random-pick', this)">
+        <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center mr-4 shrink-0"><i data-lucide="user-round-check" class="w-5 h-5"></i></div>
+        <div><h3 class="font-bold text-slate-800 text-sm">랜덤 발표자 선택</h3><p class="text-xs text-slate-500">무작위 학생 1명 추첨</p></div>
       </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">랜덤 발표자 선택</h3>
-      <p class="text-sm text-slate-500 font-medium">무작위로 발표할 학생을 선택합니다.</p>
-    </div>
 
-    <!-- 벽돌깨기 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('brickbreak')">
-      <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="layers" class="w-6 h-6"></i>
+      <div class="tool-item flex items-center p-3 rounded-xl cursor-pointer" onclick="openTool('whiteboard', this)">
+        <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center mr-4 shrink-0"><i data-lucide="pen-tool" class="w-5 h-5"></i></div>
+        <div><h3 class="font-bold text-slate-800 text-sm">판서하기</h3><p class="text-xs text-slate-500">자유로운 화이트보드</p></div>
       </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">벽돌깨기</h3>
-      <p class="text-sm text-slate-500 font-medium">쉬는시간용 미니게임입니다.</p>
-    </div>
 
-    <!-- 핀볼 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('pinball')">
-      <div class="w-12 h-12 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="target" class="w-6 h-6"></i>
+      <div class="tool-item flex items-center p-3 rounded-xl cursor-pointer" onclick="openTool('ladder', this)">
+        <div class="w-10 h-10 bg-green-50 text-green-600 rounded-lg flex items-center justify-center mr-4 shrink-0"><i data-lucide="align-justify" class="w-5 h-5"></i></div>
+        <div><h3 class="font-bold text-slate-800 text-sm">사다리타기</h3><p class="text-xs text-slate-500">역할 및 당첨자 뽑기</p></div>
       </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">핀볼 학생 선택</h3>
-      <p class="text-sm text-slate-500 font-medium">핀볼로 최종 1명을 선택합니다.</p>
-    </div>
 
-    <!-- QR 생성기 -->
-    <div class="card p-6 hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer" onclick="openTool('qr-gen')">
-      <div class="w-12 h-12 bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="qr-code" class="w-6 h-6"></i>
+      <div class="tool-item flex items-center p-3 rounded-xl cursor-pointer" onclick="openTool('qr-gen', this)">
+        <div class="w-10 h-10 bg-sky-50 text-sky-600 rounded-lg flex items-center justify-center mr-4 shrink-0"><i data-lucide="qr-code" class="w-5 h-5"></i></div>
+        <div><h3 class="font-bold text-slate-800 text-sm">QR 코드 생성기</h3><p class="text-xs text-slate-500">웹 주소를 QR로 변환</p></div>
       </div>
-      <h3 class="text-base font-black text-slate-900 mb-1">QR 코드 생성기</h3>
-      <p class="text-sm text-slate-500 font-medium">URL의 QR 코드를 생성합니다.</p>
-    </div>
-  </div>
 
-  <!-- 도구 실행 영역 -->
-  <div id="tool-area" class="hidden mt-10">
-    <div class="card p-8">
-      <div class="flex items-center justify-between mb-6">
-        <h2 id="tool-title" class="text-xl font-black text-slate-900"></h2>
-        <button onclick="closeTool()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+    </aside>
+
+    <section class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 relative flex flex-col overflow-hidden">
+      
+      <div class="px-8 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <h2 id="tool-title" class="text-xl font-black text-slate-900 flex items-center gap-2">
+          <i data-lucide="mouse-pointer-click" class="w-6 h-6 text-blue-500"></i> 도구를 선택해주세요
+        </h2>
       </div>
-      <div id="tool-content"></div>
-    </div>
+
+      <div id="tool-content" class="p-8 flex-1 overflow-y-auto flex items-center justify-center">
+        <div class="text-center text-slate-400">
+          <i data-lucide="box" class="w-16 h-16 mx-auto mb-4 opacity-50"></i>
+          <p class="font-medium">왼쪽 패널에서 사용할 도구를 클릭하면 이곳에서 실행됩니다.</p>
+        </div>
+      </div>
+
+    </section>
+
   </div>
 </main>
 
 <script>
-  // 아이콘 초기화
-  lucide.createIcons();
-
-  // 관리자 권한 체크 로직 삭제 - 페이지 로드 시 바로 아이콘 로드 및 대기
-  window.onload = () => {
-    lucide.createIcons();
-  };
-
-  /* 나머지 모든 게임 및 도구 함수(swStart, drawLadder, initWhiteboard, pbStart 등)는 기존과 동일하게 유지됩니다. */
-  
-  // (이하 생략 - 기존 스크립트의 도구 로직은 그대로 사용하시면 됩니다)
-  
-  // 예시: openTool 함수만 유지
+  // ====================================================
+  // 1. 도구 데이터 (HTML 템플릿) 설정
+  // ====================================================
   const tools = {
-    // ... 기존 도구 데이터 ...
     'timer': {
       title: '⏱️ 수업 타이머',
-      html: `<div class="text-center">
-          <div id="timer-display" class="text-7xl font-black text-slate-900 mb-8 tabular-nums tracking-tight">05:00</div>
-          <div class="flex justify-center gap-3 mb-6">
-            <button onclick="setTimer(3)" class="bg-slate-100 text-slate-700 font-bold px-4 py-2 rounded-xl hover:bg-slate-200 text-sm transition-colors">3분</button>
-            <button onclick="setTimer(5)" class="bg-blue-100 text-blue-700 font-bold px-4 py-2 rounded-xl hover:bg-blue-200 text-sm transition-colors">5분</button>
-            <button onclick="setTimer(10)" class="bg-slate-100 text-slate-700 font-bold px-4 py-2 rounded-xl hover:bg-slate-200 text-sm transition-colors">10분</button>
+      html: `
+        <div class="text-center w-full max-w-lg mx-auto">
+          <div id="t-disp" class="text-[5rem] font-black text-slate-900 mb-6 tabular-nums tracking-tighter">05:00</div>
+          <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <button onclick="setTimer(1)" class="bg-slate-100 text-slate-700 font-bold px-3 py-2 rounded-xl hover:bg-slate-200 transition-colors text-sm">+1분</button>
+            <button onclick="setTimer(3)" class="bg-slate-100 text-slate-700 font-bold px-3 py-2 rounded-xl hover:bg-slate-200 transition-colors text-sm">+3분</button>
+            <button onclick="setTimer(5)" class="bg-blue-100 text-blue-700 font-bold px-3 py-2 rounded-xl hover:bg-blue-200 transition-colors text-sm">+5분</button>
+            <button onclick="setTimer(10)" class="bg-blue-100 text-blue-700 font-bold px-3 py-2 rounded-xl hover:bg-blue-200 transition-colors text-sm">+10분</button>
+            <button onclick="setTimer(15)" class="bg-indigo-50 text-indigo-700 font-bold px-3 py-2 rounded-xl hover:bg-indigo-100 transition-colors text-sm">+15분</button>
+            <button onclick="setTimer(20)" class="bg-indigo-50 text-indigo-700 font-bold px-3 py-2 rounded-xl hover:bg-indigo-100 transition-colors text-sm">+20분</button>
+            <button onclick="setTimer(25)" class="bg-indigo-50 text-indigo-700 font-bold px-3 py-2 rounded-xl hover:bg-indigo-100 transition-colors text-sm">+25분</button>
+            <button onclick="setTimer(30)" class="bg-violet-50 text-violet-700 font-bold px-3 py-2 rounded-xl hover:bg-violet-100 transition-colors text-sm">+30분</button>
+            <button onclick="setTimer(35)" class="bg-violet-50 text-violet-700 font-bold px-3 py-2 rounded-xl hover:bg-violet-100 transition-colors text-sm">+35분</button>
+            <button onclick="setTimer(40)" class="bg-purple-50 text-purple-700 font-bold px-3 py-2 rounded-xl hover:bg-purple-100 transition-colors text-sm">+40분</button>
+            <button onclick="setTimer(45)" class="bg-purple-50 text-purple-700 font-bold px-3 py-2 rounded-xl hover:bg-purple-100 transition-colors text-sm">+45분</button>
           </div>
           <div class="flex justify-center gap-3">
-            <button onclick="startTimer()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-2xl flex items-center gap-2"><i data-lucide="play" class="w-5 h-5"></i>시작</button>
-            <button onclick="pauseTimer()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-2xl flex items-center gap-2"><i data-lucide="pause" class="w-5 h-5"></i>일시정지</button>
-            <button onclick="resetTimer()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-8 py-3 rounded-2xl flex items-center gap-2"><i data-lucide="rotate-ccw" class="w-5 h-5"></i>초기화</button>
+            <button onclick="startTimer()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-sm">시작</button>
+            <button onclick="pauseTimer()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 rounded-2xl shadow-sm">정지</button>
+            <button onclick="resetTimer()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 rounded-2xl shadow-sm">초기화</button>
           </div>
-        </div>`
+        </div>
+      `,
+      init: () => resetTimer()
     },
-    // 나머지 도구 데이터들...
+    'stopwatch': {
+      title: '⏱️ 스톱워치',
+      html: `
+        <div class="text-center w-full max-w-md mx-auto flex flex-col h-full">
+          <div id="sw-disp" class="text-6xl font-black text-slate-900 mb-6 tabular-nums">00:00.00</div>
+          <div class="flex justify-center gap-3 mb-6">
+            <button onclick="swStart()" class="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 rounded-2xl">시작</button>
+            <button onclick="swStop()" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 rounded-2xl">정지</button>
+            <button onclick="swLap()" class="flex-1 bg-slate-700 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl">랩타임</button>
+            <button onclick="swReset()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-2xl">초기화</button>
+          </div>
+          <div class="flex-1 overflow-y-auto border border-slate-200 rounded-xl bg-slate-50 p-4 text-left">
+            <ul id="sw-laps" class="space-y-2 text-slate-600 font-medium font-mono text-sm"></ul>
+          </div>
+        </div>
+      `,
+      init: () => swReset()
+    },
+    'seating': {
+      title: '🪑 랜덤 자리 배치',
+      html: `
+        <div class="w-full h-full flex flex-col gap-4 max-w-3xl mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="md:col-span-2">
+              <label class="block text-sm font-bold text-slate-700 mb-2">학생 명단 (쉼표로 구분)</label>
+              <textarea id="seat-names" rows="3" class="w-full border border-slate-300 rounded-xl p-3 text-sm outline-none focus:border-emerald-500" placeholder="1번, 2번, 3번... 또는 학생 이름"></textarea>
+            </div>
+            <div class="flex flex-col gap-3">
+              <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">한 줄에 앉을 학생 수 (열)</label>
+                <input type="number" id="seat-cols" value="4" min="2" max="10" class="w-full border border-slate-300 rounded-xl p-3 text-sm outline-none focus:border-emerald-500">
+              </div>
+              <button onclick="arrangeSeats()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl mt-auto shadow-md">자리 배치하기</button>
+            </div>
+          </div>
+          <div class="mt-4 bg-slate-50 p-6 rounded-2xl border border-slate-200 flex-1 overflow-y-auto">
+             <div class="text-center mb-8 font-black text-slate-400 border-b-4 border-slate-300 pb-3 mx-10 text-lg tracking-widest">칠 판 (교 탁)</div>
+             <div id="seat-grid" class="grid gap-4 justify-center max-w-2xl mx-auto"></div>
+          </div>
+        </div>
+      `
+    },
+    'pinball': {
+      title: '🎯 익스트림 마블런 대결',
+      html: `
+        <div class="text-center w-full flex flex-col items-center h-full relative">
+          <div class="mb-4 w-full flex gap-2 max-w-2xl z-20">
+            <input type="text" id="pb-names" class="flex-1 border border-slate-300 rounded-xl p-3 outline-none focus:border-violet-500 text-sm font-medium" placeholder="참가자 명단 입력 (쉼표 구분) 예: 강호동, 유재석, 신동엽...">
+            <button onclick="startMarbleRace()" class="bg-violet-600 hover:bg-violet-700 text-white font-bold px-6 py-3 rounded-xl shrink-0 shadow-md">경주 시작!</button>
+          </div>
+          <div class="relative w-full flex-1 bg-slate-900 rounded-2xl overflow-hidden shadow-inner min-h-[450px]">
+            <div id="pb-timer-disp" class="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-white px-4 py-2 rounded-xl font-mono text-2xl z-10 font-bold border border-slate-700 hidden shadow-lg tracking-wider">0.0s</div>
+            <div id="marble-container" class="absolute inset-0"></div>
+            <!-- 결과 팝업 -->
+            <div id="pb-result" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-md px-12 py-8 rounded-3xl shadow-2xl text-center hidden transition-all duration-500 scale-50 opacity-0 border-4 border-violet-500 z-50">
+              <div class="text-sm font-bold text-slate-500 mb-2 tracking-wide" id="pb-result-sub">🎉 호리병을 통과해 가장 먼저 도착한 학생 🎉</div>
+              <div class="text-5xl font-black text-violet-600 mb-6" id="pb-winner-name"></div>
+              <button onclick="resetPinball()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-3 rounded-xl w-full transition-colors">다시 준비하기</button>
+            </div>
+          </div>
+        </div>
+      `,
+      init: () => initPinball()
+    },
+    'random-group': {
+      title: '🎲 랜덤 모둠 생성기',
+      html: `
+        <div class="w-full max-w-2xl mx-auto flex flex-col gap-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-2">학생 명단 (쉼표로 구분)</label>
+              <textarea id="rg-names" rows="4" class="w-full border border-slate-300 rounded-xl p-3 text-sm outline-none focus:border-purple-500" placeholder="홍길동, 김철수, 이영희..."></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-2">생성할 모둠 수</label>
+              <input type="number" id="rg-count" value="4" min="2" max="10" class="w-full border border-slate-300 rounded-xl p-3 text-sm outline-none focus:border-purple-500 mb-3">
+              <button onclick="makeGroups()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl">모둠 생성하기</button>
+            </div>
+          </div>
+          <div id="rg-result" class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4"></div>
+        </div>
+      `
+    },
+    'random-pick': {
+      title: '🎯 랜덤 발표자 뽑기',
+      html: `
+        <div class="text-center w-full max-w-md mx-auto">
+          <textarea id="rp-names" rows="3" class="w-full border border-slate-300 rounded-xl p-3 text-sm outline-none focus:border-rose-500 mb-4" placeholder="학생 이름을 쉼표로 구분해 입력하세요 (예: 유재석, 강호동...)"></textarea>
+          <button onclick="pickRandom()" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 rounded-xl mb-6 text-lg">추첨 시작!</button>
+          <div id="rp-result" class="text-4xl font-black text-slate-800 bg-rose-50 py-10 border-2 border-dashed border-rose-200 rounded-2xl h-32 flex items-center justify-center">대기 중...</div>
+        </div>
+      `
+    },
+    'whiteboard': {
+      title: '🖍️ 판서 화이트보드',
+      html: `
+        <div class="w-full h-full flex flex-col min-h-[450px]">
+          <div class="flex gap-2 mb-3">
+            <button onclick="ctx.strokeStyle='#ef4444'" class="w-8 h-8 rounded-full bg-red-500 hover:ring-2 ring-offset-2 ring-red-500"></button>
+            <button onclick="ctx.strokeStyle='#3b82f6'" class="w-8 h-8 rounded-full bg-blue-500 hover:ring-2 ring-offset-2 ring-blue-500"></button>
+            <button onclick="ctx.strokeStyle='#10b981'" class="w-8 h-8 rounded-full bg-emerald-500 hover:ring-2 ring-offset-2 ring-emerald-500"></button>
+            <button onclick="ctx.strokeStyle='#0f172a'" class="w-8 h-8 rounded-full bg-slate-900 hover:ring-2 ring-offset-2 ring-slate-900"></button>
+            <button onclick="clearWb()" class="ml-auto bg-slate-200 text-slate-700 font-bold px-4 py-1.5 rounded-lg text-sm hover:bg-slate-300">전체 지우기</button>
+          </div>
+          <canvas id="wb-cvs" class="flex-1 bg-white border-2 border-slate-200 rounded-xl w-full cursor-crosshair"></canvas>
+        </div>
+      `,
+      init: () => initWhiteboard()
+    },
+    'qr-gen': {
+      title: '📱 QR 코드 생성기',
+      html: `
+        <div class="text-center w-full max-w-md mx-auto">
+          <label class="block text-sm font-bold text-slate-700 mb-2 text-left">URL 주소 입력</label>
+          <input type="text" id="qr-inp" class="w-full border border-slate-300 rounded-xl p-3 outline-none focus:border-sky-500 mb-4" placeholder="https://example.com">
+          <button onclick="makeQR()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-xl mb-6">QR 코드 만들기</button>
+          <div class="flex justify-center bg-slate-50 p-6 border border-slate-200 rounded-2xl min-h-[250px]">
+            <img id="qr-img" src="" alt="" class="hidden w-48 h-48 object-contain">
+          </div>
+        </div>
+      `
+    },
+    'ladder': {
+      title: '🪜 사다리타기 (간편 매칭)',
+      html: `
+        <div class="w-full max-w-2xl mx-auto text-center">
+          <div class="grid grid-cols-2 gap-4 mb-4 text-left">
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-2">참여자 (쉼표 구분)</label>
+              <textarea id="ld-users" rows="3" class="w-full border border-slate-300 rounded-xl p-3 text-sm">학생A, 학생B, 학생C</textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-2">결과 항목 (쉼표 구분)</label>
+              <textarea id="ld-results" rows="3" class="w-full border border-slate-300 rounded-xl p-3 text-sm">청소, 면제, 발표</textarea>
+            </div>
+          </div>
+          <button onclick="runLadder()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl mb-6">사다리 결과 보기</button>
+          <div id="ld-out" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left"></div>
+        </div>
+      `
+    }
   };
 
-  function openTool(id) {
-    const t = tools[id]; if (!t) return;
-    document.getElementById('tool-title').textContent = t.title;
-    document.getElementById('tool-content').innerHTML = t.html;
-    document.getElementById('tool-area').classList.remove('hidden');
-    document.getElementById('tool-area').scrollIntoView({ behavior:'smooth', block:'start' });
+  // ====================================================
+  // 2. 도구 실행 및 공통 로직
+  // ====================================================
+  function openTool(id, element) {
+    cleanupMatter(); 
+
+    document.querySelectorAll('.tool-item').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+
+    const t = tools[id]; 
+    if (!t) return;
+    document.getElementById('tool-title').innerHTML = t.title;
+    
+    const contentBox = document.getElementById('tool-content');
+    contentBox.innerHTML = t.html;
+    
+    if (id === 'whiteboard' || id === 'stopwatch' || id === 'pinball' || id === 'seating') {
+      contentBox.classList.remove('items-center');
+      contentBox.classList.add('items-stretch');
+    } else {
+      contentBox.classList.add('items-center');
+      contentBox.classList.remove('items-stretch');
+    }
+
+    if(t.init) {
+      setTimeout(() => t.init(), 50); 
+    }
     lucide.createIcons();
   }
 
-  function closeTool() {
-    document.getElementById('tool-area').classList.add('hidden');
+  window.onload = () => {
+    lucide.createIcons();
+    const firstTool = document.querySelector('.tool-item');
+    openTool('timer', firstTool);
+  };
+
+  // ====================================================
+  // 3. 개별 도구 자바스크립트 로직 모음
+  // ====================================================
+
+  /* 3-1. 타이머 / 3-2. 스톱워치 생략 */
+  let tInt = null, tSec = 300;
+  function setTimer(addMin) { tSec += (addMin * 60); updateT(); }
+  function updateT() {
+    const d = document.getElementById('t-disp');
+    if(d) d.innerText = String(Math.floor(tSec/60)).padStart(2,'0') + ':' + String(tSec%60).padStart(2,'0');
+  }
+  function startTimer() { if(!tInt) tInt = setInterval(() => { if(tSec > 0) { tSec--; updateT(); } else { pauseTimer(); alert("⏰ 시간이 종료되었습니다!"); } }, 1000); }
+  function pauseTimer() { clearInterval(tInt); tInt = null; }
+  function resetTimer() { pauseTimer(); tSec = 300; updateT(); }
+
+  let swInt = null, swTime = 0, swStartT = 0;
+  function swUpdate() {
+    const diff = Date.now() - swStartT;
+    const m = String(Math.floor(diff/60000)).padStart(2,'0');
+    const s = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    const ms = String(Math.floor((diff%1000)/10)).padStart(2,'0');
+    document.getElementById('sw-disp').innerText = `${m}:${s}.${ms}`;
+  }
+  function swStart() { if(!swInt) { swStartT = Date.now() - swTime; swInt = setInterval(() => { swTime = Date.now() - swStartT; swUpdate(); }, 10); } }
+  function swStop() { clearInterval(swInt); swInt = null; }
+  function swReset() { swStop(); swTime = 0; document.getElementById('sw-disp').innerText = "00:00.00"; document.getElementById('sw-laps').innerHTML=''; }
+  function swLap() {
+    if(!swInt) return;
+    const li = document.createElement('li'); li.className = "py-1 border-b border-slate-100 last:border-0";
+    li.innerText = `⏱️ 랩: ` + document.getElementById('sw-disp').innerText;
+    document.getElementById('sw-laps').prepend(li);
   }
 
-  // 타이머 로직 예시 (나머지 로직도 복사해서 사용하세요)
-  let timerInterval = null, timerSeconds = 300;
-  function setTimer(min) { timerSeconds = min*60; updateTimerDisplay(); }
-  function updateTimerDisplay() {
-    const m = String(Math.floor(timerSeconds/60)).padStart(2,'0');
-    const s = String(timerSeconds%60).padStart(2,'0');
-    const el = document.getElementById('timer-display');
-    if (el) el.textContent = `${m}:${s}`;
+  /* 3-3. 자리 배치 기능 */
+  function arrangeSeats() {
+    const inp = document.getElementById('seat-names').value;
+    const cols = parseInt(document.getElementById('seat-cols').value) || 4;
+    let names = inp.split(',').map(s=>s.trim()).filter(s=>s);
+    if(names.length === 0) { alert('학생 이름을 입력해주세요!'); return; }
+    for (let i = names.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [names[i], names[j]] = [names[j], names[i]]; }
+    const grid = document.getElementById('seat-grid');
+    grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+    grid.innerHTML = names.map((n, i) => `<div class="bg-white border-2 border-slate-200 rounded-2xl p-4 text-center shadow-sm hover:border-emerald-400 hover:shadow-md transition-all transform hover:-translate-y-1"><span class="text-[10px] font-bold text-slate-400 block mb-1 bg-slate-50 rounded-md py-0.5">${i+1}번 자리</span><span class="font-black text-slate-800 text-lg">${n}</span></div>`).join('');
   }
+
+  /* 3-4. 마블런 핀볼 (막힘 방지용 초대형 고탄성 범퍼 완벽 적용) */
+  let pbEngine, pbRender, pbRunner, pbMarbles = [], pbRunning = false, pbRaceTimer, pbStartTime = 0;
+  const pbTrackHeight = 6000; 
+
+  function cleanupMatter() {
+    if (pbEngine) {
+      pbRunning = false;
+      cancelAnimationFrame(pbRaceTimer);
+      Matter.Render.stop(pbRender);
+      Matter.Runner.stop(pbRunner);
+      Matter.Engine.clear(pbEngine);
+      if (pbRender.canvas) pbRender.canvas.remove();
+      pbEngine = null; pbRender = null; pbRunner = null; pbMarbles = [];
+    }
+  }
+
+  function initPinball() {
+    if (typeof Matter === 'undefined') return alert('물리 엔진(Matter.js) 로드에 실패했습니다.');
+    cleanupMatter();
+
+    const container = document.getElementById('marble-container');
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+
+    const Engine = Matter.Engine, Render = Matter.Render, Runner = Matter.Runner, Bodies = Matter.Bodies, Composite = Matter.Composite, Constraint = Matter.Constraint;
+
+    pbEngine = Engine.create();
+    pbEngine.world.gravity.y = 0.5; 
+
+    pbRender = Render.create({
+      element: container,
+      engine: pbEngine,
+      options: { width: cw, height: ch, wireframes: false, background: 'transparent' }
+    });
+
+    const walls = [
+      Bodies.rectangle(-25, pbTrackHeight/2, 50, pbTrackHeight, { isStatic: true, render: { fillStyle: '#334155' } }),
+      Bodies.rectangle(cw+25, pbTrackHeight/2, 50, pbTrackHeight, { isStatic: true, render: { fillStyle: '#334155' } })
+    ];
+
+    const pegs = [];
+    for(let i=0; i<130; i++) {
+        let x = Math.random() * (cw - 60) + 30;
+        let y = Math.random() * (pbTrackHeight - 1200) + 400; 
+        let r = Math.random() * 10 + 10; 
+        pegs.push(Bodies.circle(x, y, r, { isStatic: true, restitution: 1.2, render: { fillStyle: '#64748b' } }));
+    }
+
+    const shapes = [];
+    for(let i=0; i<70; i++) {
+        let x = Math.random() * (cw - 100) + 50;
+        let y = Math.random() * (pbTrackHeight - 1200) + 400;
+        let type = Math.random();
+        if (type < 0.33) shapes.push(Bodies.polygon(x, y, 3, Math.random()*20+20, { isStatic: true, angle: Math.random() * Math.PI, restitution: 1.3, render: { fillStyle: '#f59e0b' } }));
+        else if (type < 0.66) shapes.push(Bodies.rectangle(x, y, Math.random()*50+30, 20, { isStatic: true, angle: Math.random() * Math.PI, restitution: 1.2, render: { fillStyle: '#10b981' } }));
+        else shapes.push(Bodies.polygon(x, y, 5, Math.random()*15+15, { isStatic: true, angle: Math.random() * Math.PI, restitution: 1.2, render: { fillStyle: '#ec4899' } }));
+    }
+
+    const wedges = [];
+    for(let y = 200; y < pbTrackHeight - 1000; y += 150) { 
+        wedges.push(Bodies.rectangle(0, y, Math.random() * 100 + 80, 25, { isStatic: true, angle: Math.PI / 5, restitution: 1.3, render: { fillStyle: '#10b981' } }));
+        wedges.push(Bodies.rectangle(cw, y + 75, Math.random() * 100 + 80, 25, { isStatic: true, angle: -Math.PI / 5, restitution: 1.3, render: { fillStyle: '#f59e0b' } }));
+    }
+
+    function createCross(x, y) {
+       const rect1 = Bodies.rectangle(x, y, 140, 20, { render: { fillStyle: '#8b5cf6' }, frictionAir: 0.01, restitution: 1.1 });
+       const rect2 = Bodies.rectangle(x, y, 20, 140, { render: { fillStyle: '#8b5cf6' }, frictionAir: 0.01, restitution: 1.1 });
+       const cross = Matter.Body.create({ parts: [rect1, rect2], frictionAir: 0.01 });
+       const pivot = Constraint.create({ pointA: {x, y}, bodyB: cross, length: 0, stiffness: 1 });
+       return [cross, pivot];
+    }
+    const obstacles = [];
+    for(let y=700; y<pbTrackHeight-1000; y+=700) {
+        let x = (Math.random() > 0.5) ? cw*0.3 : cw*0.7; 
+        const [cross, pivot] = createCross(x, y);
+        obstacles.push(cross, pivot);
+    }
+
+    // 6. [오류 완벽 수정] 호리병 구조 개편 및 막힘 방지용 초대형 고탄성 범퍼 추가
+    const gourd = [];
+    
+    // 6-1. 상단 깔때기 (공이 자연스럽게 병목으로 모이도록)
+    gourd.push(Bodies.rectangle(cw/2 - 380, pbTrackHeight - 800, 700, 60, { isStatic: true, angle: Math.PI/5, restitution: 0.5, render: { fillStyle: '#1e293b' } }));
+    gourd.push(Bodies.rectangle(cw/2 + 380, pbTrackHeight - 800, 700, 60, { isStatic: true, angle: -Math.PI/5, restitution: 0.5, render: { fillStyle: '#1e293b' } }));
+
+    // 6-2. 수직 병목 기둥
+    gourd.push(Bodies.rectangle(cw/2 - 80, pbTrackHeight - 400, 40, 400, { isStatic: true, restitution: 0.2, render: { fillStyle: '#334155' } }));
+    gourd.push(Bodies.rectangle(cw/2 + 80, pbTrackHeight - 400, 40, 400, { isStatic: true, restitution: 0.2, render: { fillStyle: '#334155' } }));
+
+    // 6-3. [핵심] V자 골짜기를 덮어버리는 초대형 고탄성 둥근 범퍼 (막힘/끼임 원천 차단)
+    // 탄성(restitution)을 1.4로 아주 높게 주어 닿는 순간 하늘 위로 치솟게 만듭니다!
+    const megaBumperOpt = { isStatic: true, restitution: 1.4, render: { fillStyle: '#f43f5e' } };
+    
+    // 깔때기와 수직 기둥이 만나는 V자 틈새를 거대한 공으로 메워버립니다.
+    gourd.push(Bodies.circle(cw/2 - 110, pbTrackHeight - 610, 40, megaBumperOpt)); 
+    gourd.push(Bodies.circle(cw/2 + 110, pbTrackHeight - 610, 40, megaBumperOpt));
+
+    // 기둥 위쪽 모서리에도 둥근 캡을 씌워 수직으로 떨어져도 걸리지 않게 합니다.
+    gourd.push(Bodies.circle(cw/2 - 80, pbTrackHeight - 600, 20, megaBumperOpt)); 
+    gourd.push(Bodies.circle(cw/2 + 80, pbTrackHeight - 600, 20, megaBumperOpt)); 
+
+    // 6-4. 하단 팽창부 (아래쪽 출구도 끼임 방지를 위해 완만하게, 끝에는 둥근 범퍼 추가)
+    gourd.push(Bodies.rectangle(cw/2 - 250, pbTrackHeight - 150, 400, 60, { isStatic: true, angle: -Math.PI/6, restitution: 0.5, render: { fillStyle: '#1e293b' } }));
+    gourd.push(Bodies.rectangle(cw/2 + 250, pbTrackHeight - 150, 400, 60, { isStatic: true, angle: Math.PI/6, restitution: 0.5, render: { fillStyle: '#1e293b' } }));
+    
+    // 출구 하단부 모서리 보호 캡
+    gourd.push(Bodies.circle(cw/2 - 80, pbTrackHeight - 200, 20, megaBumperOpt)); 
+    gourd.push(Bodies.circle(cw/2 + 80, pbTrackHeight - 200, 20, megaBumperOpt));
+
+    // 7. 결승선 센서
+    const finishLine = Bodies.rectangle(cw/2, pbTrackHeight - 20, 600, 60, { isStatic: true, isSensor: true, label: 'finishLine', render: { fillStyle: '#22c55e' }});
+
+    Composite.add(pbEngine.world, [...walls, ...pegs, ...shapes, ...wedges, ...obstacles, ...gourd, finishLine]);
+
+    // 화면 자동 스크롤
+    Matter.Events.on(pbEngine, 'beforeUpdate', function() {
+        if(!pbRunning || pbMarbles.length === 0) return;
+        let leadY = 0;
+        pbMarbles.forEach(m => { if(m.body.position.y > leadY) leadY = m.body.position.y; });
+        let minY = leadY - ch * 0.7; 
+        if (minY < 0) minY = 0;
+        if (minY + ch > pbTrackHeight) minY = pbTrackHeight - ch;
+        Matter.Render.lookAt(pbRender, { min: { x: 0, y: minY }, max: { x: cw, y: minY + ch } });
+    });
+
+    Matter.Events.on(pbRender, 'afterRender', function() {
+        const ctx = pbRender.context;
+        ctx.font = "bold 14px Pretendard";
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillStyle = "#ffffff";
+        const bounds = pbRender.bounds; 
+        pbMarbles.forEach(m => {
+            let bx = m.body.position.x;
+            let by = m.body.position.y;
+            if(by > bounds.min.y - 20 && by < bounds.max.y + 20) {
+               ctx.fillText(m.name, bx - bounds.min.x, by - bounds.min.y);
+            }
+        });
+    });
+
+    Matter.Events.on(pbEngine, 'collisionStart', function(event) {
+        if(!pbRunning) return;
+        event.pairs.forEach(pair => {
+            if (pair.bodyA.label === 'finishLine' || pair.bodyB.label === 'finishLine') {
+                const ballBody = pair.bodyA.label === 'finishLine' ? pair.bodyB : pair.bodyA;
+                const mObj = pbMarbles.find(m => m.body === ballBody);
+                if (mObj) finishRace(mObj);
+            }
+        });
+    });
+
+    Render.run(pbRender);
+    pbRunner = Runner.create();
+    Runner.run(pbRunner, pbEngine);
+  }
+
+  function startMarbleRace() {
+    if (!pbEngine || pbRunning) return;
+    const inp = document.getElementById('pb-names').value;
+    let names = inp.split(',').map(s=>s.trim()).filter(s=>s);
+    if(names.length === 0) return alert("참가자 명단을 쉼표로 구분해 입력해주세요!");
+
+    resetPinball();
+    const cw = pbRender.options.width;
+    const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6'];
+
+    names.forEach((name, i) => {
+        const startX = cw/2 + (Math.random()*200 - 100);
+        const body = Matter.Bodies.circle(startX, 50, 16, {
+            restitution: 0.9, friction: 0.001, frictionAir: 0.015, density: 0.05, 
+            render: { fillStyle: colors[i % colors.length] },
+            label: 'marble'
+        });
+        Matter.Composite.add(pbEngine.world, body);
+        pbMarbles.push({ name, body });
+    });
+
+    pbRunning = true;
+    pbStartTime = Date.now();
+    document.getElementById('pb-timer-disp').classList.remove('hidden');
+    document.getElementById('pb-timer-disp').innerText = "0.0s";
+    pbRaceTimer = requestAnimationFrame(updateRaceTimer);
+  }
+
+  function updateRaceTimer() {
+    if(!pbRunning) return;
+    let elapsed = Date.now() - pbStartTime;
+    document.getElementById('pb-timer-disp').innerText = (elapsed/1000).toFixed(1) + 's';
+    pbRaceTimer = requestAnimationFrame(updateRaceTimer);
+  }
+
+  function finishRace(winnerObj) {
+      pbRunning = false;
+      cancelAnimationFrame(pbRaceTimer);
+      const resEl = document.getElementById('pb-result');
+      document.getElementById('pb-winner-name').innerText = winnerObj ? winnerObj.name : '알 수 없음';
+      resEl.classList.remove('hidden');
+      setTimeout(() => resEl.classList.remove('scale-50', 'opacity-0'), 10);
+  }
+
+  function resetPinball() {
+      document.getElementById('pb-result').classList.add('hidden', 'scale-50', 'opacity-0');
+      document.getElementById('pb-timer-disp').classList.add('hidden');
+      Matter.Render.lookAt(pbRender, { min: { x: 0, y: 0 }, max: { x: pbRender.options.width, y: pbRender.options.height } });
+      pbMarbles.forEach(m => Matter.Composite.remove(pbEngine.world, m.body));
+      pbMarbles = [];
+  }
+
+  /* 3-5 ~ 3-9 기타 도구 (기존과 동일) */
+  function makeGroups() {
+    const names = document.getElementById('rg-names').value.split(',').map(n=>n.trim()).filter(n=>n);
+    const count = parseInt(document.getElementById('rg-count').value);
+    if(names.length < count) return alert("학생 수가 모둠 수보다 적습니다!");
+    for (let i = names.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [names[i], names[j]] = [names[j], names[i]]; }
+    let groups = Array.from({length: count}, () => []); names.forEach((n, i) => groups[i % count].push(n));
+    document.getElementById('rg-result').innerHTML = groups.map((g, i) => `<div class="bg-purple-50 border border-purple-100 rounded-xl p-4 shadow-sm"><h4 class="font-black text-purple-700 mb-2">${i+1} 모둠</h4><p class="text-sm font-medium text-slate-700 break-words">${g.join(', ')}</p></div>`).join('');
+  }
+  function pickRandom() {
+    const names = document.getElementById('rp-names').value.split(',').map(n=>n.trim()).filter(n=>n);
+    if(names.length === 0) return alert("이름을 입력해주세요!");
+    const res = document.getElementById('rp-result'); let ticks = 0;
+    const t = setInterval(() => {
+      res.innerText = names[Math.floor(Math.random() * names.length)];
+      if(++ticks > 15) { clearInterval(t); res.innerHTML = `<span class="text-rose-600 animate-bounce block">🎉 ${names[Math.floor(Math.random() * names.length)]} 🎉</span>`; }
+    }, 100);
+  }
+  let ctx, drawing = false;
+  function initWhiteboard() {
+    const canvas = document.getElementById('wb-cvs'); canvas.width = canvas.parentElement.clientWidth - 4; canvas.height = canvas.parentElement.clientHeight - 50; 
+    ctx = canvas.getContext('2d'); ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.strokeStyle = '#0f172a'; 
+    const startPos = (e) => { drawing = true; ctx.beginPath(); const rect = canvas.getBoundingClientRect(); ctx.moveTo((e.touches ? e.touches[0].clientX : e.clientX) - rect.left, (e.touches ? e.touches[0].clientY : e.clientY) - rect.top); e.preventDefault(); };
+    const drawLine = (e) => { if(!drawing) return; const rect = canvas.getBoundingClientRect(); ctx.lineTo((e.touches ? e.touches[0].clientX : e.clientX) - rect.left, (e.touches ? e.touches[0].clientY : e.clientY) - rect.top); ctx.stroke(); e.preventDefault(); };
+    const stopPos = () => { drawing = false; ctx.closePath(); };
+    canvas.onmousedown = startPos; canvas.onmousemove = drawLine; canvas.onmouseup = stopPos; canvas.onmouseout = stopPos; canvas.ontouchstart = startPos; canvas.ontouchmove = drawLine; canvas.ontouchend = stopPos;
+  }
+  function clearWb() { if(ctx) { const cvs=document.getElementById('wb-cvs'); ctx.clearRect(0, 0, cvs.width, cvs.height); } }
+  function makeQR() { const val = document.getElementById('qr-inp').value.trim(); if(!val) return alert("URL을 입력해주세요!"); const img = document.getElementById('qr-img'); img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(val)}`; img.classList.remove('hidden'); }
+  function runLadder() {
+    let users = document.getElementById('ld-users').value.split(',').map(s=>s.trim()).filter(s=>s); let results = document.getElementById('ld-results').value.split(',').map(s=>s.trim()).filter(s=>s);
+    if(users.length === 0 || results.length === 0) return alert("참여자와 결과를 모두 입력하세요.");
+    while(results.length < users.length) results.push('꽝 (통과)');
+    results.sort(() => Math.random() - 0.5); users.sort(() => Math.random() - 0.5);
+    document.getElementById('ld-out').innerHTML = users.map((u, i) => `<div class="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-200"><span class="font-bold text-slate-700">${u}</span><i data-lucide="arrow-right" class="w-4 h-4 text-slate-400"></i><span class="font-black text-green-600">${results[i]}</span></div>`).join(''); lucide.createIcons();
+  }
+
 </script>
 </body>
 </html>
