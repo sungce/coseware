@@ -112,10 +112,18 @@ body { background-color: #f4f7f9; margin: 0; padding: 0; }
 
 .fc-canvas-wrap { position: relative; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); }
 .fc-toolbar { flex-shrink: 0; display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--border); background: var(--bg2); min-height: 0; }
+.fc-toolbar-btns {
+  display: flex;
+  align-items: center;
+  gap: 12px;           /* ⭐ 버튼 사이의 간격을 넉넉하게 넓힙니다 */
+  margin-left: auto;   /* ⭐ 남는 공간을 왼쪽에 모두 몰아서 버튼들을 오른쪽 끝으로 밀어냅니다 */
+}
 .fc-toolbar-title { font-size: 13px; font-weight: 700; color: var(--txt); white-space: nowrap; flex-shrink: 0; margin-right: 4px; }
 .fc-divider { width: 1px; height: 16px; background: var(--border); flex-shrink: 0; margin: 0 4px; }
 .fc-icon-btn { 
-  flex-shrink: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; 
+  padding: 6px 12px; display: flex; align-items: center; justify-content: center; gap: 6px;
+  white-space: nowrap;     /* ⭐ 글자가 절대 2줄로 줄바꿈되지 않게 방지합니다 */
+  min-width: max-content;
   border-radius: 6px; border: 1px solid transparent; background: transparent; 
   cursor: pointer; font-size: 15px; line-height: 1; transition: all 0.2s ease; position: relative; color: var(--txt2);
 }
@@ -301,7 +309,8 @@ body { background-color: #f4f7f9; margin: 0; padding: 0; }
       <div class="fc-canvas-wrap">
             <div class="fc-toolbar">
   <span class="fc-toolbar-title">내 순서도</span>
-  <div class="tab-nav">
+ <!-- 오른쪽 정렬과 간격 조절을 위한 전용 상자로 변경 -->
+  <div class="fc-toolbar-btns">
     <button class="fc-icon-btn" onclick="clearCanvas()">🗑️ 전체 지우기</button>
     <button class="fc-icon-btn" onclick="deleteSelected()">✂️ 선택 삭제</button>
     <button class="fc-icon-btn" onclick="undoLastEdge()">↩️ 선 취소</button>
