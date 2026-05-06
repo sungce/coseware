@@ -1166,7 +1166,7 @@
             }
             const activeNav = document.getElementById('nav-' + activeNavId);
             if (activeNav) activeNav.classList.add('active');
-
+            if (sectionId === 'notices')     loadNotices();
             if (sectionId === 'question')    qiLoad();
             if (sectionId === 'assignments') {
                 loadAssignmentOptions();
