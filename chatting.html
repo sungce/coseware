@@ -159,6 +159,20 @@
                   <i data-lucide="hash" class="w-3 h-3"></i>모둠6 수다방
                   <span id="my-team-badge-team6" class="hidden ml-auto text-[9px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-black">내 모둠</span>
                 </button>
+                <div>
+  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2 flex justify-between items-center">
+    <span class="flex items-center gap-2">
+      접속 중
+      <!-- 초기화 버튼: 관리자에게만 노출됨 -->
+      <button id="reset-members-btn" onclick="resetMembers()" 
+        class="hidden hover:text-rose-500 transition-colors" title="멤버 전체 초기화">
+        <i data-lucide="refresh-ccw" class="w-3 h-3"></i>
+      </button>
+    </span>
+    <span id="online-count" class="bg-emerald-100 text-emerald-600 px-1.5 rounded-full text-[10px] font-black">0</span>
+  </p>
+  <div id="online-list" class="space-y-1"></div>
+</div>
               </div>
             </div>
 
@@ -257,7 +271,49 @@
   const ADMIN_EMAIL = 'sungce27@gmail.com';
   const TEAMS = ['team1','team2','team3','team4','team5','team6'];
   const TEAM_LABELS = { team1:'모둠1', team2:'모둠2', team3:'모둠3', team4:'모둠4', team5:'모둠5', team6:'모둠6' };
+// auth.onAuthStateChanged 내부의 관리자 체크 로직 수정 (Line 245 부근)
+if (currentUser.email === ADMIN_EMAIL) {
+  const btn = document.getElementById('group-mgmt-btn');
+  btn.classList.remove('hidden'); btn.classList.add('flex');
+  
+  // 멤버 초기화 버튼 활성화
+  const resetBtn = document.getElementById('reset-members-btn');
+  if(resetBtn) resetBtn.classList.remove('hidden');
+}
 
+// 멤버 전체 초기화 함수 추가
+async function resetMembers() {
+  if (!confirm('등록된 모든 학생(members) 정보를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+  
+  try {
+    const snap = await db.collection('members').get();
+    if (snap.empty) {
+      alert('초기화할 멤버 데이터가 없습니다.');
+      return;
+    }
+
+    const batch = db.batch();
+    snap.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    alert('멤버 데이터가 모두 초기화되었습니다.');
+    
+    // 모둠 정보도 함께 초기화하려면 아래 주석을 해제하세요.
+    // const groupSnap = await db.collection('chat_groups').get();
+    // const groupBatch = db.batch();
+    // groupSnap.docs.forEach(doc => groupBatch.delete(doc.ref));
+    // await groupBatch.commit();
+    
+    if (document.getElementById('group-mgmt-modal').classList.contains('flex')) {
+      renderGroupMgmt(); // 관리 창이 열려있다면 새로고침
+    }
+  } catch (e) {
+    console.error(e);
+    alert('초기화 중 오류가 발생했습니다: ' + e.message);
+  }
+}
   function toggleTeamDropdown() {
     const dd   = document.getElementById('team-dropdown');
     const chev = document.getElementById('team-chevron');
