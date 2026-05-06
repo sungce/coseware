@@ -1027,11 +1027,6 @@
 
   .hidden{display:none!important}to{opacity:1;transform:none}}
 
-  .unit-acc { border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:10px; }
-  .unit-acc-header { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; background:var(--bg); cursor:pointer; transition:background .15s; user-select:none; }
-  .unit-acc-header:hover { background:var(--bg-alt); }
-  .unit-acc-body.hidden { display:none; }
-  .unit-acc-body { }
 </style>
   
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1062,35 +1057,35 @@
     <div class="nav-section-label" style="margin-top:8px">단원</div>
 
     <a class="nav-item nav-unit1" id="nav-unit1-head" href="unit-01/index.html"
-       onclick=\"toggleUnit('I',event); setActive(this); return false;\">
+        onclick="filterLessons(null,'I'); setActive(this); return false;">
       <div class="nav-dot" style="background:var(--unit-1)"></div>
       I. 컴퓨팅 시스템
       <span class="nav-badge">13</span>
     </a>
 
     <a class="nav-item" id="nav-unit2-head" href="unit-02/index.html"
-       onclick=\"toggleUnit('II',event); setActive(this); return false;\">
+        onclick="filterLessons(null,'II'); setActive(this); return false;">
       <div class="nav-dot" style="background:var(--unit-2)"></div>
       II. 데이터
       <span class="nav-badge">13</span>
     </a>
 
     <a class="nav-item" id="nav-unit3-head" href="unit-03/index.html"
-       onclick=\"toggleUnit('III',event); setActive(this); return false;\">
+       onclick="filterLessons(null,'III'); setActive(this); return false;">
       <div class="nav-dot" style="background:var(--unit-3)"></div>
       III. 알고리즘·프로그래밍
       <span class="nav-badge">22</span>
     </a>
 
     <a class="nav-item" id="nav-unit4-head" href="unit-04/index.html"
-       onclick=\"toggleUnit('IV',event); setActive(this); return false;\">
+      onclick="filterLessons(null,'IV'); setActive(this); return false;">
       <div class="nav-dot" style="background:var(--unit-4)"></div>
       IV. 인공지능
       <span class="nav-badge">13</span>
     </a>
 
     <a class="nav-item" href="unit-05/index.html"
-       onclick=\"toggleUnit('V',event); setActive(this); return false;\">
+       onclick="filterLessons(null,'V'); setActive(this); return false;">
       <div class="nav-dot" style="background:var(--unit-5)"></div>
       V. 디지털 문화
       <span class="nav-badge">7</span>
@@ -1147,7 +1142,7 @@
     <div class="units-grid">
 
       <!-- I. 컴퓨팅 시스템 -->
-      <a class="unit-overview-card" href="unit-01/index.html" onclick="toggleUnit('I',event); return false;" style="text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
+      <a class="unit-overview-card" href="unit-01/index.html" onclick="filterLessons(null,'I'); return false;" style="text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-1)"></div>
         <div class="unit-roman" style="color:var(--unit-1)">I</div>
         <h4>컴퓨팅 시스템</h4>
@@ -1165,7 +1160,7 @@
       </a>
 
       <!-- II. 데이터 -->
-      <a class="unit-overview-card" href="unit-02/index.html" onclick="toggleUnit('II',event); return false;" style="text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
+       <a class="unit-overview-card" href="unit-02/index.html" onclick="filterLessons(null,'II'); return false;" style="text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-2)"></div>
         <div class="unit-roman" style="color:var(--unit-2)">II</div>
         <h4>데이터</h4>
@@ -1183,7 +1178,7 @@
       </a>
 
       <!-- III. 알고리즘과 프로그래밍 -->
-      <a class="unit-overview-card" href="unit-03/index.html" onclick="toggleUnit('III',event); return false;" style="border-color:#F0997B;text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
+      <a class="unit-overview-card" href="unit-03/index.html" onclick="filterLessons(null,'III'); return false;" style="border-color:#F0997B;text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-3)"></div>
         <div class="unit-roman" style="color:var(--unit-3)">III</div>
         <h4>알고리즘과 프로그래밍</h4>
@@ -1201,7 +1196,7 @@
       </a>
 
       <!-- IV. 인공지능 -->
-      <a class="unit-overview-card" href="unit-04/index.html" onclick="toggleUnit('IV',event); return false;" style="text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
+      <a class="unit-overview-card" href="unit-04/index.html" onclick="filterLessons(null,'IV'); return false;" style="text-decoration:none;display:block;cursor:pointer;position:relative;overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-4)"></div>
         <div class="unit-roman" style="color:var(--unit-4)">IV</div>
         <h4>인공지능</h4>
@@ -1219,7 +1214,7 @@
       </a>
 
       <!-- V. 디지털 문화 -->
-      <a href="unit-05/index.html" onclick="toggleUnit('V',event); return false;" class="unit-overview-card" style="text-decoration:none;color:inherit;position:relative;overflow:hidden;">
+      <a href="unit-05/index.html" onclick="filterLessons(null,'V'); return false;" class="unit-overview-card" style="text-decoration:none;color:inherit;position:relative;overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-5)"></div>
         <div class="unit-roman" style="color:var(--unit-5)">V</div>
         <h4>디지털 문화</h4>
@@ -1238,27 +1233,37 @@
 
     </div>
     <!-- Lesson list -->
+ <!-- 수행활동 바로가기 배너 -->
+    <div style="margin:8px 0 20px;background:linear-gradient(135deg,#F5EEF8,#EDE0F5);border:1.5px solid #CE93D8;border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:16px">
+      <div style="width:44px;height:44px;border-radius:12px;background:#9B59B6;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📋</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:#4A235A;margin-bottom:3px">과정 중심의 수행활동</div>
+        <div style="font-size:12px;color:#7D3C98;line-height:1.5">4개 단원 28개 소단원의 루브릭 평가 · 자기평가 체크리스트</div>
+      </div>
+      <a href="performance/index.html" style="display:inline-flex;align-items:center;gap:5px;padding:9px 16px;background:#9B59B6;color:#fff;border-radius:9px;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0;transition:opacity .15s">
+        전체 목록 보기 →
+      </a>
+    </div>
+<!-- Lesson list -->
+    <div class="section-header">
+      <h3>소단원 목록</h3>
+      <div class="unit-filter">
+        <button class="filter-btn active" onclick="filterLessons(this,'all')">전체</button>
+        <button class="filter-btn" onclick="filterLessons(this,'I')" style="color:var(--unit-1)">I</button>
+        <button class="filter-btn" onclick="filterLessons(this,'II')" style="color:var(--unit-2)">II</button>
+        <button class="filter-btn" onclick="filterLessons(this,'III')" style="color:var(--unit-3)">III</button>
+        <button class="filter-btn" onclick="filterLessons(this,'IV')" style="color:var(--unit-4)">IV</button>
+        <button class="filter-btn" onclick="filterLessons(this,'V')" style="color:var(--unit-5)">V</button>
+      </div>
+    </div>
 
-    
-    <!-- 단원별 소단원 아코디언 -->
-    <div id="unit-accordion">
+    <div class="lessons-list">
+      <div class="lessons-list-header">
+        <span>📚</span> 학습 목록
+      </div>
 
-      <!-- 단원 I 아코디언 -->
-      <div class="unit-acc" id="acc-I">
-        <div class="unit-acc-header" onclick="toggleUnit('I',event)" style="border-left:4px solid var(--unit-1)">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:18px">💻</span>
-            <div>
-              <div style="font-size:14px;font-weight:800;color:var(--unit-1)">단원 I. 컴퓨팅 시스템</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:2px">6소단원</div>
-            </div>
-          </div>
-          <span class="acc-chevron" id="chev-I" style="color:var(--unit-1);transition:transform .2s;font-size:14px">▼</span>
-        </div>
-        <div class="unit-acc-body hidden" id="body-I">
-          <div class="lessons-list" style="margin:0;border:none;border-radius:0;">
-      <a class="lesson-row" data-unit="I" href="unit-01/lesson-01/index.html" style="text-decoration:none;color:inherit">
-        <div class="lesson-icon" style="background:var(--unit-1-light);color:var(--unit-1)">💻</div>
+            <a class="lesson-row" data-unit="I" href="unit-01/lesson-01/index.html" style="text-decoration:none;color:inherit">
+            <div class="lesson-icon" style="background:var(--unit-1-light);color:var(--unit-1)">💻</div>
         <div class="lesson-info"><h5>I-1. 컴퓨팅 시스템의 구성과 동작 원리</h5><p>HW 5종·SW·운영 체제, 앱 동작 원리 분석 수행활동</p></div>
         <span class="lesson-status status-done">완료</span>
         <span class="lesson-time">1차시</span>
@@ -1293,24 +1298,7 @@
         <span class="lesson-status status-done">완료</span>
         <span class="lesson-time">3차시</span>
       </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 단원 II 아코디언 -->
-      <div class="unit-acc" id="acc-II">
-        <div class="unit-acc-header" onclick="toggleUnit('II',event)" style="border-left:4px solid var(--unit-2)">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:18px">📊</span>
-            <div>
-              <div style="font-size:14px;font-weight:800;color:var(--unit-2)">단원 II. 데이터</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:2px">6소단원</div>
-            </div>
-          </div>
-          <span class="acc-chevron" id="chev-II" style="color:var(--unit-2);transition:transform .2s;font-size:14px">▼</span>
-        </div>
-        <div class="unit-acc-body hidden" id="body-II">
-          <div class="lessons-list" style="margin:0;border:none;border-radius:0;">
+         
       <a class="lesson-row" data-unit="II" href="unit-02/lesson-01/index.html" style="text-decoration:none;color:inherit">
         <div class="lesson-icon" style="background:var(--unit-2-light);color:var(--unit-2)">💾</div>
         <div class="lesson-info"><h5>II-1. 디지털 형태의 데이터</h5><p>데이터 유형·아날로그 vs 디지털·저장·가공·전송 특징, 디지털 가치 탐색 수행활동</p></div>
@@ -1347,26 +1335,8 @@
         <span class="lesson-status status-done">완료</span>
         <span class="lesson-time">2차시</span>
       </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 단원 III 아코디언 -->
-      <div class="unit-acc" id="acc-III">
-        <div class="unit-acc-header" onclick="toggleUnit('III',event)" style="border-left:4px solid var(--unit-3)">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:18px">⚙️</span>
-            <div>
-              <div style="font-size:14px;font-weight:800;color:var(--unit-3)">단원 III. 알고리즘과 프로그래밍</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:2px">10소단원</div>
-            </div>
-          </div>
-          <span class="acc-chevron" id="chev-III" style="color:var(--unit-3);transition:transform .2s;font-size:14px">▼</span>
-        </div>
-        <div class="unit-acc-body hidden" id="body-III">
-          <div class="lessons-list" style="margin:0;border:none;border-radius:0;">
       <a class="lesson-row" data-unit="III" href="unit-03/lesson-01/index.html" style="text-decoration:none;color:inherit">
-        <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">🗺️</div>
+                <div class="lesson-icon" style="background:var(--unit-3-light);color:var(--unit-3)">🗺️</div>
         <div class="lesson-info"><h5>III-1. 문제의 상태와 구조화</h5><p>초기·현재·목표 상태 정의, 강 건너기 시뮬레이터</p></div>
         <span class="lesson-status status-done">완료</span>
         <span class="lesson-time">1차시</span>
@@ -1425,25 +1395,7 @@
         <span class="lesson-status status-done">완료</span>
         <span class="lesson-time">3차시</span>
       </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 단원 IV 아코디언 -->
-      <div class="unit-acc" id="acc-IV">
-        <div class="unit-acc-header" onclick="toggleUnit('IV',event)" style="border-left:4px solid var(--unit-4)">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:18px">🤖</span>
-            <div>
-              <div style="font-size:14px;font-weight:800;color:var(--unit-4)">단원 IV. 인공지능</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:2px">6소단원</div>
-            </div>
-          </div>
-          <span class="acc-chevron" id="chev-IV" style="color:var(--unit-4);transition:transform .2s;font-size:14px">▼</span>
-        </div>
-        <div class="unit-acc-body hidden" id="body-IV">
-          <div class="lessons-list" style="margin:0;border:none;border-radius:0;">
-      <a class="lesson-row" data-unit="IV" href="unit-04/lesson-01/index.html" style="text-decoration:none;color:inherit">
+        <a class="lesson-row" data-unit="IV" href="unit-04/lesson-01/index.html" style="text-decoration:none;color:inherit">
         <div class="lesson-icon" style="background:var(--unit-4-light);color:var(--unit-4)">🤖</div>
         <div class="lesson-info"><h5>IV-1. 인공지능의 개념과 특성</h5><p>4가지 특성·AI vs 일반SW 분류</p></div>
         <span class="lesson-status status-done">완료</span>
@@ -1479,28 +1431,13 @@
         <span class="lesson-status status-done">완료</span>
         <span class="lesson-time">1차시</span>
       </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 단원 V 아코디언 -->
-      <div class="unit-acc" id="acc-V">
-        <div class="unit-acc-header" onclick="toggleUnit('V',event)" style="border-left:4px solid var(--unit-5)">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:18px">🌐</span>
-            <div>
-              <div style="font-size:14px;font-weight:800;color:var(--unit-5)">단원 V. 디지털 문화</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:2px">0소단원</div>
-            </div>
-          </div>
-          <span class="acc-chevron" id="chev-V" style="color:var(--unit-5);transition:transform .2s;font-size:14px">▼</span>
-        </div>
-        <div class="unit-acc-body hidden" id="body-V">
-          <div class="lessons-list" style="margin:0;border:none;border-radius:0;">
-          </div>
-        </div>
-      </div>
-    </div>
+        <a class="lesson-row" data-unit="V" href="unit-05/lesson-01/index.html" style="text-decoration:none;color:inherit">
+        <div class="lesson-icon" style="background:var(--unit-5-light);color:var(--unit-5)">🌐</div>
+        <div class="lesson-info"><h5>V. 디지털 문화</h5><p>저작권, 사이버 윤리 토론</p></div>
+        <span class="lesson-status status-done" style="background:#f3e8fa;color:#7B3FA0">개발 완료</span>
+        <span class="lesson-time">7차시</span>
+      </a>
+       </div>
 
   </section>
 
@@ -1976,25 +1913,16 @@
   }
 
   // Lesson filter
-  function toggleUnit(uid, event) {
-    if (event) event.preventDefault();
-    const body = document.getElementById('body-' + uid);
-    const chev = document.getElementById('chev-' + uid);
-    if (!body) return;
-    const isOpen = !body.classList.contains('hidden');
-    // 모두 닫기
-    ['I','II','III','IV','V'].forEach(u => {
-      const b = document.getElementById('body-' + u);
-      const ch = document.getElementById('chev-' + u);
-      if (b) b.classList.add('hidden');
-      if (ch) ch.style.transform = '';
+  function filterLessons(btn, unit) {
+    // 1) 대시보드 뷰로 전환
+    showView('dashboard');
+
+    // 2) 필터 버튼 active 처리
+    document.querySelectorAll('.filter-btn').forEach(function(b) {
+      b.classList.remove('active');
+  
     });
-    if (!isOpen) {
-      body.classList.remove('hidden');
-      if (chev) chev.style.transform = 'rotate(180deg)';
-      body.scrollIntoView({ behavior:'smooth', block:'nearest' });
-    }
-  });
+   
     if (btn && btn.classList && btn.classList.contains('filter-btn')) {
       btn.classList.add('active');
     } else {
