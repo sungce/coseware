@@ -112,16 +112,17 @@
         </div>
       </div>
       <div class="overflow-x-auto">
-        <table>
-          <thead>
-            <tr>
-              <th>이름</th><th>학번</th><th>과제명</th><th>점수</th><th>진도율</th><th>상태</th><th>액션</th>
-            </tr>
-          </thead>
-          <tbody id="table-body">
-            <tr><td colspan="7" class="text-center py-12 text-slate-400 font-medium">데이터를 불러오거나 추가해주세요.</td></tr>
-          </tbody>
-        </table>
+        <!-- 기존 <div id="panel-table"> 안의 table 부분을 아래와 같이 수정합니다 -->
+<table>
+  <thead>
+    <tr id="table-head-row">
+      <!-- 헤더가 자바스크립트로 동적 생성됩니다 -->
+    </tr>
+  </thead>
+  <tbody id="table-body">
+    <tr><td colspan="10" class="text-center py-12 text-slate-400 font-medium">데이터를 불러오거나 추가해주세요.</td></tr>
+  </tbody>
+</table>
       </div>
     </div>
   </div>
@@ -201,27 +202,22 @@
 </main>
 
 <script>
-  lucide.createIcons();
+ lucide.createIcons();
 
   let allData = [];
   let filteredData = [];
+  let currentHeaders = ['이름', '학번', '과제명', '점수', '진도율', '상태']; // 기본 헤더값 설정
   let chartScores = null, chartStatus = null, chartProgress = null;
 
-  // ── 예시 데이터 5가지 ─────────────────────────────────
+  // ── 예시 데이터 ──────────────────────────────────────
   const SAMPLE_DATA = [
     { name:'김민준', sid:'30101', task:'알고리즘 퀴즈', score:92, progress:100, status:'완료' },
     { name:'이서연', sid:'30102', task:'데이터 라벨링', score:85, progress:100, status:'완료' },
     { name:'박지훈', sid:'30103', task:'순서도 그리기', score:70, progress:75,  status:'진행중' },
     { name:'최수아', sid:'30104', task:'웹 코딩 실습', score:95, progress:100, status:'완료' },
-    { name:'정도윤', sid:'30105', task:'블록코딩 과제', score:55, progress:40,  status:'진행중' },
-    { name:'강하은', sid:'30106', task:'AI 체험관',     score:88, progress:100, status:'완료' },
-    { name:'윤태양', sid:'30107', task:'미로 탐색 활동', score:62, progress:60,  status:'진행중' },
-    { name:'임나연', sid:'30108', task:'정렬 시각화',   score:78, progress:90,  status:'진행중' },
-    { name:'송민서', sid:'30109', task:'순서 맞히기',   score:0,  progress:0,   status:'미제출' },
-    { name:'한지호', sid:'30110', task:'프롬프트 작성', score:91, progress:100, status:'완료' },
+    { name:'정도윤', sid:'30105', task:'블록코딩 과제', score:55, progress:40,  status:'진행중' }
   ];
 
-  // ── 탭 전환 ──────────────────────────────────────────
   function switchTab(name, btn) {
     ['table','chart','add'].forEach(id => {
       document.getElementById('panel-'+id).classList.toggle('hidden', id !== name);
@@ -232,62 +228,67 @@
     lucide.createIcons();
   }
 
-  // ── 예시 데이터 ──────────────────────────────────────
   function loadSampleData() {
-    allData = SAMPLE_DATA.map(d => ({...d}));
+    currentHeaders = ['이름', '학번', '과제명', '점수', '진도율', '상태'];
+    allData = SAMPLE_DATA.map(d => ({
+      '이름': d.name, '학번': d.sid, '과제명': d.task, 
+      '점수': d.score, '진도율': d.progress, '상태': d.status
+    }));
     filteredData = [...allData];
-    renderTable(filteredData);
-    updateSummary();
-    showToast('✅ 예시 데이터 10개가 불러와졌습니다!');
+    renderTable(filteredData); updateSummary();
+    showToast('✅ 예시 데이터가 불러와졌습니다!');
   }
 
-  // ── CSV 파일 불러오기 ────────────────────────────────
+  // ── 💡 CSV 동적 불러오기 로직 ────────────────────────
   function loadCSV(input) {
     const file = input.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = e => {
       const lines = e.target.result.split('\n').filter(l => l.trim());
-      const headers = lines[0].split(',').map(h => h.trim());
+      if(lines.length === 0) return;
+
+      // 1. 첫 줄을 읽어 동적 헤더 생성
+      currentHeaders = lines[0].split(',').map(h => h.trim());
+
+      // 2. 헤더에 맞춰 데이터 객체 동적 생성
       allData = lines.slice(1).map(line => {
         const vals = line.split(',');
         const row = {};
-        headers.forEach((h, i) => row[h] = vals[i]?.trim() || '');
-        return {
-          name:     row['이름']   || '-',
-          sid:      row['학번']   || '',
-          task:     row['과제명'] || '-',
-          score:    Number(row['점수']   || 0),
-          progress: Number(row['진도율'] || 0),
-          status:   row['상태']   || '진행중',
-        };
-      }).filter(r => r.name !== '-');
+        currentHeaders.forEach((h, i) => {
+          let val = vals[i]?.trim() || '';
+          // 숫자로 변환 가능하면 숫자로 저장 (차트 연동을 위함)
+          if(val !== '' && !isNaN(val)) val = Number(val);
+          row[h] = val;
+        });
+        return row;
+      });
+
       filteredData = [...allData];
       renderTable(filteredData); updateSummary();
-      showToast(`✅ CSV에서 ${allData.length}개 데이터를 불러왔습니다!`);
+      showToast(`✅ CSV 형식에 맞춰 ${allData.length}개 데이터를 불러왔습니다!`);
+      input.value = ''; // 동일 파일 재업로드 가능하게 초기화
     };
     reader.readAsText(file, 'UTF-8');
   }
 
-  // ── 데이터 추가 ──────────────────────────────────────
   function addRow() {
-    const name  = document.getElementById('inp-name').value.trim();
-    const task  = document.getElementById('inp-task').value.trim();
-    const errEl = document.getElementById('add-err');
-    if (!name || !task) { errEl.classList.remove('hidden'); return; }
-    errEl.classList.add('hidden');
-    allData.push({
-      name,
-      sid:      document.getElementById('inp-sid').value.trim(),
-      task,
-      score:    Number(document.getElementById('inp-score').value) || 0,
-      progress: Number(document.getElementById('inp-prog').value) || 0,
-      status:   document.getElementById('inp-status').value,
-    });
+    const newRow = {};
+    currentHeaders.forEach(h => newRow[h] = '-'); // 기본값 초기화
+    
+    // 입력폼에 있는 데이터가 현재 헤더에 존재할 경우 매핑
+    if(currentHeaders.includes('이름')) newRow['이름'] = document.getElementById('inp-name').value.trim() || '이름없음';
+    if(currentHeaders.includes('과제명')) newRow['과제명'] = document.getElementById('inp-task').value.trim() || '-';
+    if(currentHeaders.includes('학번')) newRow['학번'] = document.getElementById('inp-sid').value.trim();
+    if(currentHeaders.includes('점수')) newRow['점수'] = Number(document.getElementById('inp-score').value) || 0;
+    if(currentHeaders.includes('진도율')) newRow['진도율'] = Number(document.getElementById('inp-prog').value) || 0;
+    if(currentHeaders.includes('상태')) newRow['상태'] = document.getElementById('inp-status').value;
+
+    allData.push(newRow);
     filteredData = [...allData];
-    renderTable(filteredData); updateSummary();
-    clearForm();
+    renderTable(filteredData); updateSummary(); clearForm();
     showToast('✅ 데이터가 추가됐습니다!');
   }
+
   function clearForm() {
     ['inp-name','inp-sid','inp-task','inp-score','inp-prog'].forEach(id => {
       document.getElementById(id).value = '';
@@ -295,44 +296,64 @@
     document.getElementById('inp-status').value = '진행중';
   }
 
-  // ── 행 삭제 ──────────────────────────────────────────
   function deleteRow(idx) {
-    if (!confirm(`"${allData[idx].name} — ${allData[idx].task}" 데이터를 삭제할까요?`)) return;
+    if (!confirm('해당 데이터를 삭제할까요?')) return;
     allData.splice(idx, 1);
     filteredData = [...allData];
     renderTable(filteredData); updateSummary();
   }
 
-  // ── 테이블 렌더 ──────────────────────────────────────
+  // ── 💡 동적 테이블 렌더링 ────────────────────────
   function renderTable(data) {
     const tbody = document.getElementById('table-body');
+    const theadRow = document.getElementById('table-head-row');
     document.getElementById('row-count').textContent = data.length + '행';
+
+    // 헤더 동적 렌더링
+    if(theadRow) {
+      theadRow.innerHTML = currentHeaders.map(h => `<th>${h}</th>`).join('') + '<th>액션</th>';
+    }
+
     if (!data.length) {
-      tbody.innerHTML = '<tr><td colspan="7" class="text-center py-12 text-slate-400 font-medium">데이터가 없습니다.</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="${currentHeaders.length + 1}" class="text-center py-12 text-slate-400 font-medium">데이터가 없습니다.</td></tr>`;
       return;
     }
+
     const BAR_COLORS = { '완료':'#22c55e', '진행중':'#f59e0b', '미제출':'#ef4444' };
+
     tbody.innerHTML = data.map((row, i) => {
       const realIdx = allData.indexOf(row);
-      const prog = Math.min(row.progress, 100);
-      const barColor = BAR_COLORS[row.status] || '#94a3b8';
-      const badge = row.status === '완료'
-        ? '<span class="badge" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0">완료</span>'
-        : row.status === '미제출'
-        ? '<span class="badge" style="background:#fff1f2;color:#b91c1c;border:1px solid #fecdd3">미제출</span>'
-        : '<span class="badge" style="background:#fffbeb;color:#b45309;border:1px solid #fde68a">진행중</span>';
+      
+      // 현재 헤더 배열(currentHeaders)을 순회하며 td를 생성합니다.
+      const tds = currentHeaders.map(h => {
+        let val = row[h] !== undefined ? row[h] : '-';
+
+        // 기존 UI(진도율 바, 상태 뱃지) 디자인 유지 조건문
+        if (h === '상태' && ['완료', '진행중', '미제출'].includes(String(val))) {
+          const badge = val === '완료' ? '<span class="badge" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0">완료</span>'
+            : val === '미제출' ? '<span class="badge" style="background:#fff1f2;color:#b91c1c;border:1px solid #fecdd3">미제출</span>'
+            : '<span class="badge" style="background:#fffbeb;color:#b45309;border:1px solid #fde68a">진행중</span>';
+          return `<td>${badge}</td>`;
+        } else if (h === '진도율' && !isNaN(val)) {
+          const prog = Math.min(Number(val), 100);
+          const barColor = BAR_COLORS[row['상태']] || '#6366f1';
+          return `<td>
+            <div style="display:flex;align-items:center;gap:8px;min-width:120px">
+              <div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:${prog}%;background:${barColor}"></div></div>
+              <span class="text-xs font-black text-slate-500">${prog}%</span>
+            </div>
+          </td>`;
+        } else if (h === '이름') {
+          return `<td><strong>${val}</strong></td>`;
+        } else if (h === '점수') {
+          return `<td class="font-black text-slate-900 tabular-nums">${val}</td>`;
+        } else {
+          return `<td>${val}</td>`;
+        }
+      }).join('');
+
       return `<tr>
-        <td><strong>${row.name}</strong></td>
-        <td class="text-slate-400">${row.sid || '-'}</td>
-        <td>${row.task}</td>
-        <td class="font-black text-slate-900 tabular-nums">${row.score}</td>
-        <td>
-          <div style="display:flex;align-items:center;gap:8px;min-width:120px">
-            <div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:${prog}%;background:${barColor}"></div></div>
-            <span class="text-xs font-black text-slate-500">${prog}%</span>
-          </div>
-        </td>
-        <td>${badge}</td>
+        ${tds}
         <td>
           <button onclick="deleteRow(${realIdx})" class="action-btn danger" style="padding:4px 10px;font-size:11px;">
             <i data-lucide="trash-2" style="width:12px;height:12px"></i>삭제
@@ -343,42 +364,44 @@
     lucide.createIcons();
   }
 
-  // ── 검색 필터 ────────────────────────────────────────
   function filterTable(q) {
     const kw = q.toLowerCase();
-    filteredData = allData.filter(r =>
-      r.name.toLowerCase().includes(kw) ||
-      r.task.toLowerCase().includes(kw) ||
-      (r.sid || '').toLowerCase().includes(kw)
-    );
+    filteredData = allData.filter(r => {
+      // 모든 열의 데이터를 검색 대상으로 변경
+      return currentHeaders.some(h => String(r[h]).toLowerCase().includes(kw));
+    });
     renderTable(filteredData);
   }
 
-  // ── 요약 카드 ────────────────────────────────────────
   function updateSummary() {
     const n = allData.length;
-    const scores = allData.map(r => r.score);
+    const scores = allData.map(r => Number(r['점수']) || 0); // '점수' 컬럼이 없으면 0으로 처리
     const avg = n ? Math.round(scores.reduce((a,b)=>a+b,0)/n) : 0;
-    const done = allData.filter(r => r.status === '완료').length;
+    const done = allData.filter(r => r['상태'] === '완료').length;
     const max = n ? Math.max(...scores) : 0;
+    
     document.getElementById('stat-total').textContent = n;
     document.getElementById('stat-avg').textContent = avg;
     document.getElementById('stat-comp').textContent = n ? Math.round(done/n*100) : 0;
     document.getElementById('stat-max').textContent = max;
   }
 
-  // ── 차트 렌더 ────────────────────────────────────────
   function renderCharts() {
     if (!allData.length) return;
     const PALETTE = ['#6366f1','#22c55e','#f59e0b','#ef4444','#3b82f6','#8b5cf6','#14b8a6','#f97316','#ec4899','#64748b'];
 
-    // 점수 막대
+    const getLabels = () => {
+       // '이름' 컬럼이 없으면 첫번째 컬럼을 라벨로 사용
+       const key = currentHeaders.includes('이름') ? '이름' : currentHeaders[0];
+       return allData.map(r => r[key]);
+    };
+
     if (chartScores) chartScores.destroy();
     chartScores = new Chart(document.getElementById('chart-scores'), {
       type: 'bar',
       data: {
-        labels: allData.map(r => r.name),
-        datasets: [{ label: '점수', data: allData.map(r => r.score),
+        labels: getLabels(),
+        datasets: [{ label: '점수', data: allData.map(r => r['점수'] || 0),
           backgroundColor: allData.map((_,i)=>PALETTE[i%PALETTE.length]+'cc'),
           borderColor: allData.map((_,i)=>PALETTE[i%PALETTE.length]),
           borderWidth: 1.5, borderRadius: 5 }]
@@ -386,11 +409,10 @@
       options: { responsive:true, plugins:{legend:{display:false}}, scales:{ y:{min:0,max:100,ticks:{font:{size:11}}} } }
     });
 
-    // 완료 현황 도넛
     if (chartStatus) chartStatus.destroy();
-    const done = allData.filter(r=>r.status==='완료').length;
-    const ing  = allData.filter(r=>r.status==='진행중').length;
-    const none = allData.filter(r=>r.status==='미제출').length;
+    const done = allData.filter(r=>r['상태']==='완료').length;
+    const ing  = allData.filter(r=>r['상태']==='진행중').length;
+    const none = allData.filter(r=>r['상태']==='미제출').length;
     chartStatus = new Chart(document.getElementById('chart-status'), {
       type: 'doughnut',
       data: {
@@ -400,14 +422,13 @@
       options: { responsive:true, cutout:'65%', plugins:{ legend:{ position:'bottom', labels:{font:{size:12},padding:16} } } }
     });
 
-    // 진도율 선
     if (chartProgress) chartProgress.destroy();
-    const sorted = [...allData].sort((a,b)=>b.progress-a.progress);
+    const sorted = [...allData].sort((a,b)=>(b['진도율']||0)-(a['진도율']||0));
     chartProgress = new Chart(document.getElementById('chart-progress'), {
       type: 'line',
       data: {
-        labels: sorted.map(r => r.name),
-        datasets: [{ label:'진도율(%)', data: sorted.map(r=>r.progress),
+        labels: sorted.map(r => r['이름'] || r[currentHeaders[0]]),
+        datasets: [{ label:'진도율(%)', data: sorted.map(r=>r['진도율']||0),
           borderColor:'#6366f1', backgroundColor:'rgba(99,102,241,.1)',
           fill:true, tension:.35, pointRadius:4, pointBackgroundColor:'#6366f1' }]
       },
@@ -415,12 +436,10 @@
     });
   }
 
-  // ── CSV 저장 ─────────────────────────────────────────
   function saveToCSV() {
     if (!allData.length) { showToast('⚠️ 저장할 데이터가 없습니다.'); return; }
-    const rows = [['이름','학번','과제명','점수','진도율','상태'],
-      ...allData.map(r=>[r.name,r.sid,r.task,r.score,r.progress,r.status])
-    ];
+    // 동적 헤더를 그대로 저장
+    const rows = [currentHeaders, ...allData.map(r => currentHeaders.map(h => r[h]))];
     const csv = rows.map(r=>r.join(',')).join('\n');
     const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
     const a = document.createElement('a');
@@ -430,14 +449,12 @@
     showToast('✅ CSV 파일이 저장됐습니다!');
   }
 
-  // ── 로컬스토리지 저장/불러오기 ──────────────────────
   function saveToLocalStorage() {
     if (!allData.length) { showToast('⚠️ 저장할 데이터가 없습니다.'); return; }
-    localStorage.setItem('data_dash_data', JSON.stringify(allData));
+    localStorage.setItem('data_dash_data', JSON.stringify({ headers: currentHeaders, data: allData }));
     showToast('✅ 브라우저에 저장됐습니다!');
   }
 
-  // ── 토스트 ───────────────────────────────────────────
   let toastTimer;
   function showToast(msg) {
     let t = document.getElementById('toast');
@@ -452,59 +469,22 @@
     toastTimer = setTimeout(() => t.style.opacity = '0', 2500);
   }
 
-  // 로컬스토리지 복원
   const saved = localStorage.getItem('data_dash_data');
   if (saved) {
     try {
-      allData = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      if(parsed.headers && parsed.data) {
+        currentHeaders = parsed.headers;
+        allData = parsed.data;
+      } else {
+        // 하위 호환성 (구버전 로컬스토리지 구조 대응)
+        allData = parsed;
+      }
       filteredData = [...allData];
       renderTable(filteredData); updateSummary();
       showToast('💾 저장된 데이터를 복원했습니다.');
     } catch(e) {}
   }
-
-  // iframe 부모에 높이 변경 알림 (슬라이드바 없이 전체 표시)
-  if (window.self !== window.top) {
-    const notifyHeight = () => {
-      const h = document.documentElement.scrollHeight || document.body.scrollHeight;
-      if (h > 0) {
-        try { window.parent.postMessage({ type:'resize', height: h }, '*'); } catch(e) {}
-        try {
-          const frames = window.parent.document.querySelectorAll('iframe');
-          frames.forEach(f => { try { if(f.contentWindow===window) f.style.height=h+'px'; } catch(e){} });
-        } catch(e) {}
-      }
-    };
-    // MutationObserver로 DOM 변화 감지
-    new MutationObserver(notifyHeight).observe(document.body, { childList:true, subtree:true, attributes:true });
-    window.addEventListener('load', notifyHeight);
-    setTimeout(notifyHeight, 300);
-    setTimeout(notifyHeight, 800);
-    setTimeout(notifyHeight, 1500);
-  }
-  const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeHjWrKlGwqSh30Bz_jRFCgPkLZ-HzfZjZaeOxkEzFvP_ZwmlH2W4UPDSPiY8c4TQZ/exec';
-  document.getElementById('script-url-input').value = DEFAULT_SCRIPT_URL;
-
-  // 페이지 로드 시 자동으로 데이터 불러오기
-  (async () => {
-    try {
-      const res = await fetch(DEFAULT_SCRIPT_URL);
-      if (!res.ok) return;
-      const json = await res.json();
-      if (!Array.isArray(json) || !json.length) return;
-      allData = json.map(row => ({
-        name:     row['이름']   || row.name     || '-',
-        sid:      row['학번']   || row.sid      || '',
-        task:     row['과제명'] || row.task     || '-',
-        score:    Number(row['점수']   || row.score    || 0),
-        progress: Number(row['진도율'] || row.progress || 0),
-        status:   row['상태']   || row.status   || '진행중',
-      }));
-      filteredData = [...allData];
-      renderTable(filteredData); updateSummary();
-      showToast(`✅ 스프레드시트에서 ${allData.length}개 데이터를 불러왔습니다!`);
-    } catch(e) { /* 실패 시 조용히 무시 */ }
-  })();
 </script>
 </body>
 </html>
