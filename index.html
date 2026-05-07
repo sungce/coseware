@@ -1365,41 +1365,18 @@
         });
 
         // ==================== 공용 iframe 뷰어 ====================
-
 function openIframe(url, title) {
     const frame = document.getElementById('viewer-frame');
-    const viewerSection = document.getElementById('iframe-viewer');
-    
-    // 초기화
+    frame.style.height = '';
+    frame.removeAttribute('scrolling');
     frame.src = url;
-    
-    if (url.includes('chatting.html')) {
-        // Vibe Room(채팅)일 경우: 화면을 꽉 채우도록 설정
-        frame.style.height = '85vh'; 
-        frame.onload = null; // 자동 리사이즈 해제
-    } else if (url.includes('gallery.html')) {
-        // 갤러리 페이지일 경우: 콘텐츠가 많으므로 높이를 충분히 확보 (또는 자동 조절)
-        frame.style.height = '2000px'; // 기본적으로 크게 설정
-        frame.onload = function() {
-            // 브라우저 보안 정책상 같은 도메인일 경우 내부 높이에 맞게 재조정
-            try {
-                const innerHeight = this.contentWindow.document.body.scrollHeight;
-                this.style.height = (innerHeight + 50) + 'px';
-            } catch (e) {
-                console.log("Cross-origin restriction or resize issue");
-            }
-        };
+
+    if (url.includes('chatting')) {
+        // 채팅: 뷰포트 고정 높이
+        frame.style.height = 'calc(100vh - 100px)';
+        frame.onload = null;
+
     } else {
-        // 일반 실습실일 경우: 콘텐츠 길이에 맞게 자동 조절
-        frame.onload = function() {
-            autoResizeFrame(this);
-        };
-    }
-    
-    // 섹션 표시
-    showSection('iframe-viewer');
-}
- else {
         // microbit 포함 모든 페이지: 콘텐츠 전체 높이로 자동 조절
         frame.onload = function() {
             try {
