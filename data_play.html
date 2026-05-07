@@ -1,338 +1,185 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Project Gallery - 정보 클래스룸</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" as="style" crossorigin
-        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <style>
-        body { font-family: 'Pretendard', sans-serif; -webkit-font-smoothing: antialiased; }
-        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-        .card-hover { transition: all 0.3s cubic-bezier(0.16,1,0.3,1); }
-        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(0,0,0,.12); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 실습실 — Sungce AI-ON</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { font-family: 'Pretendard', -apple-system, sans-serif; background: #f4f7f9; margin: 0; }
+  .card { background: white; border-radius: 1.5rem; border: 1px solid #e2e8f0; }
+</style>
 </head>
-<body class="bg-slate-50 min-h-screen" style="background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:32px 32px;">
-
-    <!-- 네비게이션 -->
-    <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/50">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-4">
-                    <a href="index.html" class="text-slate-400 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors">
-                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                    </a>
-                    <div class="flex items-center space-x-3">
-                        <div class="bg-gradient-to-br from-amber-400 to-orange-500 text-white p-2.5 rounded-xl shadow-lg shadow-amber-500/30">
-                            <i data-lucide="sparkles" class="w-5 h-5"></i>
-                        </div>
-                        <span class="font-black text-xl text-slate-900">My Project Gallery</span>
-                    </div>
-                </div>
-                <a href="index.html" class="flex items-center space-x-2 text-slate-500 hover:text-blue-600 transition-colors text-sm font-bold">
-                    <i data-lucide="home" class="w-4 h-4"></i>
-                    <span class="hidden sm:inline">메인으로</span>
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <main class="max-w-7xl mx-auto px-6 pt-28 pb-24 fade-in">
-
-        <!-- 헤더 -->
-        <div class="mb-10">
-            <div class="inline-flex items-center space-x-2 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-amber-100">
-                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                <span>프로젝트 갤러리</span>
-                <span id="total-count" class="bg-amber-100 text-amber-600 px-1.5 rounded-full text-[10px] font-black ml-1">0개</span>
-            </div>
-            <h1 class="text-4xl font-black text-slate-900 mb-3">My Project Gallery <span class="text-amber-500">🏆</span></h1>
-            <p class="text-lg text-slate-500 font-medium">학생들의 창의적인 아이디어가 현실이 된 공간입니다.</p>
-        </div>
-
-        <!-- 검색 + 필터 -->
-        <div class="flex flex-col sm:flex-row gap-4 mb-8">
-            <div class="relative flex-1">
-                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                <input type="text" id="gallery-search" placeholder="프로젝트 검색..."
-                    oninput="filterGallery()"
-                    class="w-full bg-white border border-slate-200 rounded-2xl pl-10 pr-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all shadow-sm">
-            </div>
-            <div class="flex gap-2" id="year-filter">
-                <button onclick="setYearFilter('all')" id="year-all"
-                    class="px-4 py-3 rounded-2xl text-sm font-bold bg-amber-500 text-white transition-all shadow-sm">전체</button>
-                <button onclick="setYearFilter('2026')" id="year-2026"
-                    class="px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 transition-all">2026</button>
-                <button onclick="setYearFilter('2025')" id="year-2025"
-                    class="px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 transition-all">2025</button>
-            </div>
-        </div>
-
-        <!-- 갤러리 그리드 -->
-        <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        </div>
-
-        <!-- 빈 상태 -->
-        <div id="gallery-empty" class="hidden text-center py-20">
-            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-3xl flex items-center justify-center mx-auto mb-4">
-                <i data-lucide="search-x" class="w-8 h-8"></i>
-            </div>
-            <p class="text-lg font-bold text-slate-500">검색 결과가 없습니다.</p>
-        </div>
-
-    </main>
-
-    <!-- 작품 상세 모달 -->
-    <div id="project-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4"
-        onclick="if(event.target===this) closeProjectModal()">
-        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg">
-            <div class="h-52 rounded-t-[2rem] flex items-center justify-center relative overflow-hidden" id="modal-cover">
-                <h2 class="text-2xl font-black text-white text-center px-6 z-10 drop-shadow-lg" id="modal-title-display"></h2>
-            </div>
-            <div class="p-8">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1.5 rounded-xl" id="modal-team"></span>
-                    <div class="flex items-center space-x-2 text-sm font-bold text-slate-400">
-                        <span id="modal-year"></span>
-                    </div>
-                </div>
-                <p class="text-slate-600 font-medium leading-relaxed mb-6" id="modal-desc"></p>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-2 text-rose-500 font-bold text-sm">
-                        <i data-lucide="heart" class="w-4 h-4"></i>
-                        <span id="modal-likes"></span>
-                    </div>
-                    <a id="modal-link" href="#" target="_blank"
-                        class="hidden items-center space-x-2 bg-slate-900 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-colors text-sm">
-                        <i data-lucide="external-link" class="w-4 h-4"></i>
-                        <span>프로젝트 보기</span>
-                    </a>
-                </div>
-            </div>
-            <button onclick="closeProjectModal()"
-                class="absolute top-5 right-5 w-8 h-8 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center transition-colors">
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-        </div>
+<body class="min-h-screen flex flex-col">
+  <!-- 1. 네이티브 콘텐츠 영역 -->
+  <main id="native-content" class="max-w-[1400px] mx-auto px-6 pt-8 pb-16 w-full">
+    <div class="mb-8">
+      <div class="inline-flex items-center space-x-2 bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-bold mb-4 border border-orange-100">
+        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i><span>인터렉티브 수업실</span>
+      </div>
+      <h1 class="text-4xl font-black text-slate-900 mb-2">데이터 실습실 <span class="text-orange-500">📊</span></h1>
+      <p class="text-lg text-slate-500 font-medium">데이터를 입력하고 다양한 차트로 시각화해보세요.</p>
     </div>
+     <!-- 데이터 입력 및 차트 UI -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8"> 
+        <div class="lg:col-span-4 card p-6">
+        <h2 class="text-base font-black text-slate-800 mb-4 flex items-center space-x-2">
+          <i data-lucide="table" class="w-5 h-5 text-orange-500"></i><span>데이터 입력</span>
+        </h2>
+        <div id="data-rows" class="space-y-2 mb-4">
+     <div class="flex space-x-2"><input type="text" placeholder="항목명" value="월요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="23" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"></div>       
+ <div class="flex space-x-2"><input type="text" placeholder="항목명" value="화요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="45" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"></div>
+          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="수요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="31" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"></div>
+          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="목요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="58" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"></div>
+          <div class="flex space-x-2"><input type="text" placeholder="항목명" value="금요일" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" value="42" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"></div>
+ <div class="flex space-x-2 mb-4">
+          <button onclick="addRow()" class="flex-1 border border-slate-200 text-slate-600 text-sm font-bold py-2 rounded-xl hover:bg-slate-50 transition-colors outline-none focus:outline-none">+ 행 추가</button>
+          <button onclick="drawChart()" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold py-2 rounded-xl transition-colors outline-none focus:outline-none">차트 그리기</button>
+ </div>
+        <div class="space-y-2">
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">차트 종류</p>
+          <div class="grid grid-cols-3 gap-2" id="chart-types">
+            <button onclick="setType('bar')" class="chart-type-btn active text-xs font-bold py-2 rounded-xl border transition-colors outline-none focus:outline-none">막대</button>
+            <button onclick="setType('line')" class="chart-type-btn text-xs font-bold py-2 rounded-xl border transition-colors outline-none focus:outline-none">꺾은선</button>
+            <button onclick="setType('pie')" class="chart-type-btn text-xs font-bold py-2 rounded-xl border transition-colors outline-none focus:outline-none">원형</button>
+          </div>            
+ </div>
+      </div>
+      <div class="lg:col-span-8 card p-6">
+        <h2 class="text-base font-black text-slate-800 mb-4 flex items-center space-x-2">
+          <i data-lucide="trending-up" class="w-5 h-5 text-orange-500"></i><span>시각화 결과</span>
+        </h2>
+        <canvas id="myChart" height="220"></canvas>
+        <div id="stats" class="mt-4 grid grid-cols-3 gap-3"></div>
+      </div>
+    </div>
+  </main>
 
-    <!-- 푸터 -->
-    <footer class="border-t border-slate-200/60 bg-white/60 backdrop-blur-sm">
-        <div class="max-w-7xl mx-auto px-6 py-6 text-center text-sm text-slate-400 font-medium">
-            © 2026 수완하나중학교 정보 교과. All rights reserved.
-        </div>
-    </footer>
+  <!-- 2. Iframe 콘텐츠 영역 -->
+  <section id="iframe-section" class="hidden fixed left-0 right-0 bottom-0 overflow-hidden" style="top:56px;">
+    <iframe id="content-frame" onload="hideIframeNav()" class="w-full h-full border-0 bg-white" src=""></iframe>
+  </section>
 
-    <script>
-        const firebaseConfig = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
-        const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
-        const db  = firebase.firestore(app);
+  <script>
+    lucide.createIcons();
 
-        let projects = [];
-        let currentFilter = { year: 'all', query: '' };
+  // index.html iframe 안에서 열렸을 때 nav 숨김 + 콘텐츠 상단 여백 유지
+  if (window.self !== window.top) {
+    const nav = document.querySelector('nav');
+    if (nav) { nav.style.display = 'none'; }
+    const main = document.getElementById('native-content');
+    if (main) { main.style.paddingTop = '2rem'; }
+  }
+    
+    // ======== Iframe 메뉴 전환 스크립트 ========
+    function loadInIframe(event, url, element) {
+      event.preventDefault();
+      
+      // 메뉴 스타일 초기화 및 선택된 메뉴 강조 (검은색 박스 방지를 위해 outline-none 포함)
+      document.querySelectorAll('.nav-menu').forEach(el => {
+        el.className = 'nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors';
+      });
+      element.className = 'nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1';
 
-        async function loadProjects() {
-            document.getElementById('gallery-grid').innerHTML = `<div class="col-span-full py-16 flex flex-col items-center space-y-3 text-slate-400"><svg class="w-8 h-8 animate-spin text-amber-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg><span class="font-medium">불러오는 중...</span></div>`;
-            try {
-                const snap = await db.collection('gallery_projects').orderBy('createdAt','desc').get();
-                projects = snap.docs.map(doc => ({ id: doc.id, ...doc.data(), year: String(doc.data().year) }));
-                document.getElementById('total-count').textContent = `${projects.length}개 작품`;
-                buildYearFilters();
-                renderGallery();
-            } catch(e) {
-                document.getElementById('gallery-grid').innerHTML = `<div class="col-span-full py-16 text-center text-slate-400">불러오기 실패: ${e.message}</div>`;
-            }
-        }
+      // 네이티브 데이터 실습실 숨기고 iframe 보이기
+      document.getElementById('native-content').classList.add('hidden');
+      document.getElementById('iframe-section').classList.remove('hidden');
+      
+      // iframe 주소 변경
+      document.getElementById('content-frame').src = url;
+    }
 
-        function buildYearFilters() {
-            const years = [...new Set(projects.map(p => p.year))].sort((a,b)=>b-a);
-            const filterDiv = document.getElementById('year-filter');
-            filterDiv.innerHTML = `<button onclick="setYearFilter('all')" id="year-all" class="px-4 py-3 rounded-2xl text-sm font-bold bg-amber-500 text-white transition-all shadow-sm">전체</button>`;
-            years.forEach(y => {
-                filterDiv.innerHTML += `<button onclick="setYearFilter('${y}')" id="year-${y}" class="px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 transition-all">${y}</button>`;
-            });
-        }
+    function showDataLab(event, element) {
+      event.preventDefault();
+      
+      // 메뉴 스타일 초기화 및 선택된 메뉴 강조
+      document.querySelectorAll('.nav-menu').forEach(el => {
+        el.className = 'nav-menu outline-none focus:outline-none hover:text-blue-600 transition-colors';
+      });
+      element.className = 'nav-menu outline-none focus:outline-none text-blue-600 border-b-2 border-blue-600 pb-1';
 
-        function renderGallery() {
-            const grid  = document.getElementById('gallery-grid');
-            const empty = document.getElementById('gallery-empty');
-            const filtered = projects.filter(p => {
-                const matchYear  = currentFilter.year === 'all' || p.year === currentFilter.year;
-                const matchQuery = p.title.toLowerCase().includes(currentFilter.query) ||
-                                   p.team.toLowerCase().includes(currentFilter.query) ||
-                                   p.desc.toLowerCase().includes(currentFilter.query);
-                return matchYear && matchQuery;
-            });
+      // iframe 숨기고 네이티브 데이터 실습실 보이기
+      document.getElementById('iframe-section').classList.add('hidden');
+      document.getElementById('native-content').classList.remove('hidden');
+      
+      // 불필요한 iframe 메모리 비우기
+      document.getElementById('content-frame').src = '';
+    }
 
-            document.getElementById('total-count').textContent = `${filtered.length}개 작품`;
+    // iframe 안에서 로드된 페이지의 네비게이션 숨기기 (메뉴 2중 중복 방지)
+    function hideIframeNav() {
+      try {
+        const iframe = document.getElementById('content-frame');
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        
+        // iframe 내부의 <nav> 요소 찾아서 숨김 처리
+        const nav = iframeDoc.querySelector('nav');
+        if (nav) { nav.style.display = 'none'; nav.style.height = '0'; nav.style.overflow = 'hidden'; }
+        
+        // 상단 네비게이션이 사라졌으므로 main 영역의 padding-top 조정
+        const main = iframeDoc.querySelector('main');
+        if (main) main.style.paddingTop = '0';
+      } catch (error) {
+        // 보안(CORS) 이유로 로컬 파일 환경 등에서는 접근이 거부될 수 있습니다. (서버 환경에선 정상 작동)
+      }
+    }
+    // ============================================
 
-            if (!filtered.length) {
-                grid.innerHTML = '';
-                empty.classList.remove('hidden');
-                return;
-            }
-            empty.classList.add('hidden');
+    // ======== 기존 데이터 실습실 차트 스크립트 ========
+    let currentType = 'bar';
+    let myChart = null;
+    const COLORS = ['#3b82f6','#f97316','#10b981','#8b5cf6','#ec4899','#14b8a6','#f59e0b'];
 
-            grid.innerHTML = filtered.map(p => `
-                <div onclick="openProjectModal('${p.id}')"
-                    class="card-hover bg-white rounded-[1.75rem] overflow-hidden border border-slate-100 shadow-sm cursor-pointer group">
-                    <div class="h-44 relative overflow-hidden ${p.thumbUrl ? '' : 'bg-gradient-to-br ' + p.imgColor}">
-                        ${p.thumbUrl
-                            ? `<img src="${p.thumbUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${p.title}">`
-                            : `<div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
-                               <h3 class="absolute inset-0 flex items-center justify-center text-white font-black text-xl text-center px-5 z-10 drop-shadow-md leading-snug transform group-hover:scale-105 transition-transform duration-500">${p.title}</h3>`}
-                    </div>
-                    <div class="p-5">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1 rounded-lg">${p.team||''}</span>
-                            <span class="text-xs font-bold text-slate-300">${p.year||''}</span>
-                        </div>
-                        <p class="text-sm font-black text-slate-800 mb-1">${p.thumbUrl ? p.title : ''}</p>
-                        <p class="text-sm text-slate-500 font-medium leading-relaxed line-clamp-2">${p.desc||''}</p>
-                        <div class="flex items-center justify-between mt-4">
-                            <button onclick="event.stopPropagation(); toggleLike('${p.id}', this)" 
-                                class="flex items-center space-x-1 text-xs font-bold text-slate-400 hover:text-rose-500 transition-colors"
-                                data-liked="${localStorage.getItem('liked_${p.id}')?'true':'false'}">
-                                <i data-lucide="heart" class="w-3.5 h-3.5 ${localStorage.getItem('liked_'+p.id)?'text-rose-500 fill-rose-500':'text-rose-300'}"></i>
-                                <span class="like-count">${p.likes||0}</span>
-                            </button>
-                            <span class="text-xs text-amber-500 font-bold group-hover:underline">자세히 보기 →</span>
-                        </div>
-                    </div>
-                </div>`).join('');
-            lucide.createIcons();
-        }
+    function setType(t) {
+      currentType = t;
+      document.querySelectorAll('.chart-type-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.trim() === {bar:'막대',line:'꺾은선',pie:'원형'}[t]);
+        b.className = b.classList.contains('active')
+          ? 'chart-type-btn active outline-none focus:outline-none text-xs font-bold py-2 rounded-xl border border-orange-400 bg-orange-50 text-orange-600 transition-colors'
+          : 'chart-type-btn outline-none focus:outline-none text-xs font-bold py-2 rounded-xl border border-slate-200 text-slate-500 hover:border-orange-300 transition-colors';
+      });
+      drawChart();
+    }
 
-        function setYearFilter(year) {
-            currentFilter.year = year;
-            document.querySelectorAll('[id^="year-"]').forEach(btn => {
-                const y = btn.id.replace('year-','');
-                btn.className = y === year
-                    ? 'px-4 py-3 rounded-2xl text-sm font-bold bg-amber-500 text-white transition-all shadow-sm'
-                    : 'px-4 py-3 rounded-2xl text-sm font-bold bg-white border border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 transition-all';
-            });
-            renderGallery();
-        }
+    function addRow() {
+      const div = document.createElement('div');
+      div.className = 'flex space-x-2';
+      div.innerHTML = `<input type="text" placeholder="항목명" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400"><input type="number" placeholder="값" class="w-1/2 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-orange-400">`;
+      document.getElementById('data-rows').appendChild(div);
+    }
 
-        function filterGallery() {
-            currentFilter.query = document.getElementById('gallery-search').value.toLowerCase();
-            renderGallery();
-        }
+    function getData() {
+      const rows = document.querySelectorAll('#data-rows > div');
+      const labels = [], values = [];
+      rows.forEach(r => {
+        const ins = r.querySelectorAll('input');
+        if (ins[0].value && ins[1].value) { labels.push(ins[0].value); values.push(parseFloat(ins[1].value)); }
+      });
+      return { labels, values };
+    }
 
-        function openProjectModal(id) {
-            const p = projects.find(x => x.id === id);
-            if (!p) { console.warn('Project not found:', id); return; }
+    function drawChart() {
+      const { labels, values } = getData();
+      if (!labels.length) return;
+      if (myChart) myChart.destroy();
+      const ctx = document.getElementById('myChart').getContext('2d');
+      myChart = new Chart(ctx, {
+        type: currentType,
+        data: { labels, datasets: [{ label: '데이터', data: values, backgroundColor: COLORS.map(c => c + 'cc'), borderColor: COLORS, borderWidth: 2, borderRadius: currentType === 'bar' ? 8 : 0 }] },
+        options: { responsive: true, plugins: { legend: { display: currentType === 'pie' } }, scales: currentType === 'pie' ? {} : { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+      });
+      const avg = (values.reduce((a,b)=>a+b,0)/values.length).toFixed(1);
+      const max = Math.max(...values);
+      const min = Math.min(...values);
+      document.getElementById('stats').innerHTML = [
+        ['평균값', avg, 'blue'], ['최댓값', max, 'green'], ['최솟값', min, 'orange']
+      ].map(([l,v,c]) => `<div class="bg-${c}-50 border border-${c}-100 rounded-2xl p-3 text-center"><p class="text-xs font-bold text-${c}-400 mb-1">${l}</p><p class="text-xl font-black text-${c}-700">${v}</p></div>`).join('');
+    }
 
-            // 모달 커버: 썸네일 or 그라데이션
-            const cover = document.getElementById('modal-cover');
-            if (p.thumbUrl) {
-                cover.className = 'h-52 rounded-t-[2rem] relative overflow-hidden bg-slate-100';
-                cover.innerHTML = `<img src="${p.thumbUrl}" class="w-full h-full object-cover" alt="${p.title}">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                    <h2 class="absolute bottom-4 left-6 right-6 text-2xl font-black text-white drop-shadow-lg leading-snug" id="modal-title-display">${p.title}</h2>`;
-            } else {
-                cover.className = `h-52 rounded-t-[2rem] flex items-center justify-center relative overflow-hidden bg-gradient-to-br ${p.imgColor||'from-amber-400 to-orange-500'}`;
-                cover.innerHTML = `<h2 class="text-2xl font-black text-white text-center px-6 z-10 drop-shadow-lg" id="modal-title-display">${p.title}</h2>`;
-            }
-
-            document.getElementById('modal-team').textContent  = p.team  || '';
-            document.getElementById('modal-year').textContent  = (p.year || '') + '년';
-            document.getElementById('modal-desc').textContent  = p.desc  || '';
-            document.getElementById('modal-likes').textContent = p.likes || 0;
-
-            const linkBtn = document.getElementById('modal-link');
-            if (p.link) {
-                linkBtn.href = p.link;
-                linkBtn.classList.remove('hidden'); linkBtn.classList.add('flex');
-            } else {
-                linkBtn.classList.add('hidden'); linkBtn.classList.remove('flex');
-            }
-
-            // 첨부파일 버튼
-            let attachBtn = document.getElementById('modal-attach');
-            if (!attachBtn) {
-                attachBtn = document.createElement('a');
-                attachBtn.id = 'modal-attach';
-                attachBtn.target = '_blank';
-                attachBtn.className = 'hidden items-center space-x-2 bg-slate-100 text-slate-700 font-bold px-5 py-2.5 rounded-xl hover:bg-slate-200 transition-colors text-sm';
-                attachBtn.innerHTML = '<i data-lucide="paperclip" class="w-4 h-4"></i><span>첨부파일</span>';
-                linkBtn.parentNode.insertBefore(attachBtn, linkBtn);
-            }
-            if (p.attachUrl) {
-                attachBtn.href = p.attachUrl;
-                attachBtn.classList.remove('hidden'); attachBtn.classList.add('flex');
-            } else {
-                attachBtn.classList.add('hidden'); attachBtn.classList.remove('flex');
-            }
-
-            const modal = document.getElementById('project-modal');
-            modal.classList.remove('hidden'); modal.classList.add('flex');
-            lucide.createIcons();
-        }
-
-        let currentModalId = null;
-
-        async function toggleLike(id, cardBtn) {
-            if (!id) return;
-            const p = projects.find(x => x.id === id);
-            if (!p) return;
-
-            const likedKey = 'liked_' + id;
-            const isLiked  = !!localStorage.getItem(likedKey);
-            const newLikes = isLiked ? Math.max(0, (p.likes||0)-1) : (p.likes||0)+1;
-
-            // Optimistic UI
-            p.likes = newLikes;
-            if (isLiked) localStorage.removeItem(likedKey);
-            else         localStorage.setItem(likedKey, '1');
-
-            // Update card button
-            if (cardBtn) {
-                const icon  = cardBtn.querySelector('[data-lucide="heart"]');
-                const count = cardBtn.querySelector('.like-count');
-                if (count) count.textContent = newLikes;
-                if (icon)  {
-                    icon.className = isLiked
-                        ? 'w-3.5 h-3.5 text-rose-300'
-                        : 'w-3.5 h-3.5 text-rose-500 fill-rose-500';
-                    lucide.createIcons();
-                }
-            }
-
-            // Update modal if open
-            const modalLikes = document.getElementById('modal-likes');
-            const modalIcon  = document.getElementById('modal-heart-icon');
-            if (modalLikes) modalLikes.textContent = newLikes;
-            if (modalIcon)  {
-                modalIcon.className = (!isLiked)
-                    ? 'w-5 h-5 text-rose-500 fill-rose-500'
-                    : 'w-5 h-5 text-rose-400';
-                lucide.createIcons();
-            }
-
-            // Firestore update
-            try {
-                await db.collection('gallery_projects').doc(id).update({
-                    likes: firebase.firestore.FieldValue.increment(isLiked ? -1 : 1)
-                });
-            } catch(e) { console.warn('좋아요 저장 실패:', e); }
-        }
-
-        function closeProjectModal() {
-            document.getElementById('project-modal').classList.add('hidden');
-            document.getElementById('project-modal').classList.remove('flex');
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            loadProjects();
-        });
-    </script>
+    window.onload = () => { setType('bar'); drawChart(); };
+  </script>
 </body>
 </html>
+      
