@@ -1366,40 +1366,44 @@
 
         // ==================== 공용 iframe 뷰어 ====================
         function openIframe(url, title) {
-            const frame = document.getElementById('viewer-frame');
-            frame.style.height = '';
-            frame.src = url;
-            if (url.includes('chatting')) {
-                frame.style.height = 'calc(100vh - 100px)';
-                frame.onload = null;
-            } else {
-                frame.onload = function() {
-                    try {
-                        const doc = frame.contentDocument || frame.contentWindow.document;
-                        if (doc.body) {
-                            doc.body.style.overflow = 'hidden';
-                            doc.documentElement.style.overflow = 'hidden';
-                        }
-                        const setH = () => {
-                            const h = Math.max(
-                                doc.documentElement.scrollHeight || 0,
-                                doc.body ? doc.body.scrollHeight : 0,
-                                doc.documentElement.offsetHeight || 0,
-                                400
-                            );
-                            frame.style.height = h + 'px';
-                        };
-                        setH();
-                        let n = 0;
-                        const iv = setInterval(() => { setH(); if (++n > 15) clearInterval(iv); }, 300);
-                    } catch(e) {
-                        frame.style.height = 'calc(100vh - 100px)';
-                    }
-                };
-            }
-            showSection('iframe-viewer');
-        }
+    const frame = document.getElementById('viewer-frame');
+    frame.src = url;
 
+    if (url.includes('chatting')) {
+        frame.style.height = 'calc(100vh - 100px)';
+        frame.onload = null;
+
+    } else if (url.includes('microbit')) {
+        // ★ 마이크로비트: 내부 스크롤 허용 + 충분한 고정 높이
+        frame.style.height = 'calc(100vh - 80px)';
+        frame.scrolling = 'yes';
+        frame.setAttribute('scrolling', 'yes');
+        frame.style.overflow = 'auto';
+        frame.onload = null;
+
+    } else {
+        frame.onload = function() {
+            try {
+                const doc = frame.contentDocument || frame.contentWindow.document;
+                // ← body overflow 막는 코드 제거
+                const setH = () => {
+                    const h = Math.max(
+                        doc.documentElement.scrollHeight || 0,
+                        doc.body ? doc.body.scrollHeight : 0,
+                        400
+                    );
+                    frame.style.height = h + 'px';
+                };
+                setH();
+                let n = 0;
+                const iv = setInterval(() => { setH(); if (++n > 15) clearInterval(iv); }, 300);
+            } catch(e) {
+                frame.style.height = 'calc(100vh - 100px)';
+            }
+        };
+    }
+    showSection('iframe-viewer');
+}
         // ==================== 질문있어요 인라인 ====================
         let qiSelectedCat = '수업 내용';
         const QI_GS_URL = 'https://script.google.com/macros/s/AKfycbywcUQg705jicQUv-i7RiqAm5-FoogN3d2efXLrg9xGAkfP_OQw6jW3XnrGlsBSa-LN/exec';
