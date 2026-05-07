@@ -53,22 +53,186 @@ for i in range(5):
     </div>
 
     <h2 class="text-lg font-black text-slate-800 mb-4">🧩 예제 코드 모음</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <button onclick="loadExample('hello')" class="card p-5 text-left hover:border-green-200 hover:bg-green-50/40 transition-all group outline-none focus:outline-none">
-        <div class="w-10 h-10 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"><i data-lucide="smile" class="w-5 h-5"></i></div>
-        <p class="text-sm font-black text-slate-800">Hello, World!</p>
-        <p class="text-xs text-slate-400 mt-1">기본 출력 예제</p>
+
+    <!-- 카테고리 필터 -->
+    <div class="flex flex-wrap gap-2 mb-5">
+      <button onclick="filterExamples('all')" id="filter-all" class="filter-btn active-filter px-3 py-1.5 rounded-full text-xs font-bold border transition-all outline-none">전체</button>
+      <button onclick="filterExamples('basic')" id="filter-basic" class="filter-btn px-3 py-1.5 rounded-full text-xs font-bold border transition-all outline-none">🟢 기초</button>
+      <button onclick="filterExamples('control')" id="filter-control" class="filter-btn px-3 py-1.5 rounded-full text-xs font-bold border transition-all outline-none">🔵 제어문</button>
+      <button onclick="filterExamples('data')" id="filter-data" class="filter-btn px-3 py-1.5 rounded-full text-xs font-bold border transition-all outline-none">🟣 자료구조</button>
+      <button onclick="filterExamples('func')" id="filter-func" class="filter-btn px-3 py-1.5 rounded-full text-xs font-bold border transition-all outline-none">🟠 함수</button>
+      <button onclick="filterExamples('algo')" id="filter-algo" class="filter-btn px-3 py-1.5 rounded-full text-xs font-bold border transition-all outline-none">🔴 알고리즘</button>
+    </div>
+
+    <style>
+      .filter-btn { background: white; color: #64748b; border-color: #e2e8f0; }
+      .filter-btn:hover { background: #f8fafc; color: #334155; }
+      .active-filter { background: #0f172a !important; color: white !important; border-color: #0f172a !important; }
+      .example-card { transition: all 0.2s; }
+      .example-card.hidden-card { display: none; }
+    </style>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" id="example-grid">
+
+      <!-- 🟢 기초 -->
+      <button onclick="loadExample('hello')" data-cat="basic" class="example-card card p-4 text-left hover:border-green-200 hover:bg-green-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">👋</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">Hello, World!</p>
+        <p class="text-[10px] text-slate-400 mt-1">기본 출력</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-green-50 text-green-600 px-1.5 py-0.5 rounded-full border border-green-100">기초</span>
       </button>
-      <button onclick="loadExample('loop')" class="card p-5 text-left hover:border-blue-200 hover:bg-blue-50/40 transition-all group outline-none focus:outline-none">
-        <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"><i data-lucide="repeat" class="w-5 h-5"></i></div>
-        <p class="text-sm font-black text-slate-800">반복문 예제</p>
-        <p class="text-xs text-slate-400 mt-1">for / while 반복</p>
+
+      <button onclick="loadExample('variable')" data-cat="basic" class="example-card card p-4 text-left hover:border-green-200 hover:bg-green-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">📦</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">변수와 자료형</p>
+        <p class="text-[10px] text-slate-400 mt-1">int, str, float</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-green-50 text-green-600 px-1.5 py-0.5 rounded-full border border-green-100">기초</span>
       </button>
-      <button onclick="loadExample('list')" class="card p-5 text-left hover:border-purple-200 hover:bg-purple-50/40 transition-all group outline-none focus:outline-none">
-        <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"><i data-lucide="list" class="w-5 h-5"></i></div>
-        <p class="text-sm font-black text-slate-800">리스트 예제</p>
-        <p class="text-xs text-slate-400 mt-1">리스트 생성과 활용</p>
+
+      <button onclick="loadExample('input')" data-cat="basic" class="example-card card p-4 text-left hover:border-green-200 hover:bg-green-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">⌨️</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">입력과 출력</p>
+        <p class="text-[10px] text-slate-400 mt-1">input / print</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-green-50 text-green-600 px-1.5 py-0.5 rounded-full border border-green-100">기초</span>
       </button>
+
+      <button onclick="loadExample('operator')" data-cat="basic" class="example-card card p-4 text-left hover:border-green-200 hover:bg-green-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">➕</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">연산자</p>
+        <p class="text-[10px] text-slate-400 mt-1">산술·비교·논리</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-green-50 text-green-600 px-1.5 py-0.5 rounded-full border border-green-100">기초</span>
+      </button>
+
+      <!-- 🔵 제어문 -->
+      <button onclick="loadExample('ifelse')" data-cat="control" class="example-card card p-4 text-left hover:border-blue-200 hover:bg-blue-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">🔀</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">조건문</p>
+        <p class="text-[10px] text-slate-400 mt-1">if / elif / else</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full border border-blue-100">제어문</span>
+      </button>
+
+      <button onclick="loadExample('loop')" data-cat="control" class="example-card card p-4 text-left hover:border-blue-200 hover:bg-blue-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">🔁</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">반복문</p>
+        <p class="text-[10px] text-slate-400 mt-1">for / while</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full border border-blue-100">제어문</span>
+      </button>
+
+      <button onclick="loadExample('nestedloop')" data-cat="control" class="example-card card p-4 text-left hover:border-blue-200 hover:bg-blue-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">🔢</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">중첩 반복문</p>
+        <p class="text-[10px] text-slate-400 mt-1">구구단 출력</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full border border-blue-100">제어문</span>
+      </button>
+
+      <button onclick="loadExample('breakcon')" data-cat="control" class="example-card card p-4 text-left hover:border-blue-200 hover:bg-blue-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">⏹️</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">break / continue</p>
+        <p class="text-[10px] text-slate-400 mt-1">반복 제어</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full border border-blue-100">제어문</span>
+      </button>
+
+      <!-- 🟣 자료구조 -->
+      <button onclick="loadExample('list')" data-cat="data" class="example-card card p-4 text-left hover:border-purple-200 hover:bg-purple-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">📋</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">리스트</p>
+        <p class="text-[10px] text-slate-400 mt-1">생성과 활용</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full border border-purple-100">자료구조</span>
+      </button>
+
+      <button onclick="loadExample('dict')" data-cat="data" class="example-card card p-4 text-left hover:border-purple-200 hover:bg-purple-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">📖</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">딕셔너리</p>
+        <p class="text-[10px] text-slate-400 mt-1">key-value 구조</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full border border-purple-100">자료구조</span>
+      </button>
+
+      <button onclick="loadExample('tuple')" data-cat="data" class="example-card card p-4 text-left hover:border-purple-200 hover:bg-purple-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">📌</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">튜플과 집합</p>
+        <p class="text-[10px] text-slate-400 mt-1">tuple / set</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full border border-purple-100">자료구조</span>
+      </button>
+
+      <button onclick="loadExample('string')" data-cat="data" class="example-card card p-4 text-left hover:border-purple-200 hover:bg-purple-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">🔤</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">문자열 처리</p>
+        <p class="text-[10px] text-slate-400 mt-1">슬라이싱·메서드</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full border border-purple-100">자료구조</span>
+      </button>
+
+      <!-- 🟠 함수 -->
+      <button onclick="loadExample('func')" data-cat="func" class="example-card card p-4 text-left hover:border-orange-200 hover:bg-orange-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">⚙️</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">함수 기초</p>
+        <p class="text-[10px] text-slate-400 mt-1">def / return</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded-full border border-orange-100">함수</span>
+      </button>
+
+      <button onclick="loadExample('recursion')" data-cat="func" class="example-card card p-4 text-left hover:border-orange-200 hover:bg-orange-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">🌀</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">재귀 함수</p>
+        <p class="text-[10px] text-slate-400 mt-1">팩토리얼·피보나치</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded-full border border-orange-100">함수</span>
+      </button>
+
+      <button onclick="loadExample('lambda')" data-cat="func" class="example-card card p-4 text-left hover:border-orange-200 hover:bg-orange-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">λ</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">람다 함수</p>
+        <p class="text-[10px] text-slate-400 mt-1">map / filter</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded-full border border-orange-100">함수</span>
+      </button>
+
+      <button onclick="loadExample('class')" data-cat="func" class="example-card card p-4 text-left hover:border-orange-200 hover:bg-orange-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">🏗️</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">클래스 기초</p>
+        <p class="text-[10px] text-slate-400 mt-1">객체지향 입문</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded-full border border-orange-100">함수</span>
+      </button>
+
+      <!-- 🔴 알고리즘 -->
+      <button onclick="loadExample('bubblesort')" data-cat="algo" class="example-card card p-4 text-left hover:border-rose-200 hover:bg-rose-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">🫧</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">버블 정렬</p>
+        <p class="text-[10px] text-slate-400 mt-1">bubble sort</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded-full border border-rose-100">알고리즘</span>
+      </button>
+
+      <button onclick="loadExample('binsearch')" data-cat="algo" class="example-card card p-4 text-left hover:border-rose-200 hover:bg-rose-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">🔍</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">이진 탐색</p>
+        <p class="text-[10px] text-slate-400 mt-1">binary search</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded-full border border-rose-100">알고리즘</span>
+      </button>
+
+      <button onclick="loadExample('prime')" data-cat="algo" class="example-card card p-4 text-left hover:border-rose-200 hover:bg-rose-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">🔢</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">소수 판별</p>
+        <p class="text-[10px] text-slate-400 mt-1">에라토스테네스</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded-full border border-rose-100">알고리즘</span>
+      </button>
+
+      <button onclick="loadExample('stack')" data-cat="algo" class="example-card card p-4 text-left hover:border-rose-200 hover:bg-rose-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">📚</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">스택 / 큐</p>
+        <p class="text-[10px] text-slate-400 mt-1">stack / queue</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded-full border border-rose-100">알고리즘</span>
+      </button>
+
+      <button onclick="loadExample('comprehension')" data-cat="algo" class="example-card card p-4 text-left hover:border-rose-200 hover:bg-rose-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">⚡</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">리스트 컴프리헨션</p>
+        <p class="text-[10px] text-slate-400 mt-1">고급 리스트 생성</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded-full border border-rose-100">알고리즘</span>
+      </button>
+
+      <button onclick="loadExample('random')" data-cat="algo" class="example-card card p-4 text-left hover:border-rose-200 hover:bg-rose-50/40 hover:-translate-y-0.5 hover:shadow-md transition-all group outline-none focus:outline-none">
+        <div class="w-9 h-9 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform text-base">🎲</div>
+        <p class="text-xs font-black text-slate-800 leading-tight">랜덤 & 게임</p>
+        <p class="text-[10px] text-slate-400 mt-1">숫자 맞추기 게임</p>
+        <span class="inline-block mt-2 text-[9px] font-bold bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded-full border border-rose-100">알고리즘</span>
+      </button>
+
     </div>
   </main>
 
@@ -130,13 +294,546 @@ for i in range(5):
 
     // ======== 코드 놀이터 스크립트 ========
     const examples = {
-      hello: `# Hello, World! 예제\nprint("Hello, World!")\nprint("안녕하세요, Python!")\nname = "학생"\nprint(f"반갑습니다, {name}님!")`,
-      loop: `# 반복문 예제\nprint("=== for 반복문 ===")\nfor i in range(1, 6):\n    print(f"  {i}번: {'★' * i}")\n\nprint("\\n=== while 반복문 ===")\nn = 1\nwhile n <= 5:\n    print(f"  {n} × {n} = {n*n}")\n    n += 1`,
-      list: `# 리스트 예제\nfruits = ["사과", "바나나", "딸기", "포도"]\nprint("과일 목록:")\nfor i, fruit in enumerate(fruits, 1):\n    print(f"  {i}. {fruit}")\n\nprint(f"\\n총 {len(fruits)}개의 과일")\nfruits.append("망고")\nprint(f"망고 추가 후: {fruits}")`
+
+      // ── 🟢 기초 ──────────────────────────────────────────
+      hello: `# Hello, World! 예제
+print("Hello, World!")
+print("안녕하세요, Python!")
+name = "학생"
+print(f"반갑습니다, {name}님!")`,
+
+      variable: `# 변수와 자료형
+name   = "홍길동"       # 문자열 (str)
+age    = 17             # 정수 (int)
+height = 173.5          # 실수 (float)
+is_student = True       # 불리언 (bool)
+
+print("=== 변수 출력 ===")
+print(f"이름: {name}")
+print(f"나이: {age}세")
+print(f"키  : {height}cm")
+print(f"학생: {is_student}")
+
+print("\\n=== 자료형 확인 ===")
+for val in [name, age, height, is_student]:
+    print(f"{str(val):>10}  →  {type(val).__name__}")`,
+
+      input: `# 입력과 출력 시뮬레이션
+# (실제 input()은 서버 실행 환경 필요 — 여기서는 값을 직접 지정합니다)
+name  = "김민준"
+score = 92
+
+print("=== 성적 출력 프로그램 ===")
+print(f"이름 : {name}")
+print(f"점수 : {score}점")
+
+if score >= 90:
+    grade = 'A'
+elif score >= 80:
+    grade = 'B'
+elif score >= 70:
+    grade = 'C'
+else:
+    grade = 'F'
+
+print(f"등급 : {grade}")
+print(f"결과 : {'합격 🎉' if grade != 'F' else '불합격 😢'}")`,
+
+      operator: `# 연산자 총정리
+a, b = 17, 5
+
+print("=== 산술 연산자 ===")
+print(f"{a} + {b} = {a+b}")
+print(f"{a} - {b} = {a-b}")
+print(f"{a} * {b} = {a*b}")
+print(f"{a} / {b} = {a/b:.2f}")
+print(f"{a} // {b} = {a//b}  (몫)")
+print(f"{a} % {b} = {a%b}  (나머지)")
+print(f"{a} ** {b} = {a**b}  (거듭제곱)")
+
+print("\\n=== 비교 연산자 ===")
+print(f"{a} > {b}  : {a>b}")
+print(f"{a} == {b} : {a==b}")
+print(f"{a} != {b} : {a!=b}")
+
+print("\\n=== 논리 연산자 ===")
+print(f"True and False : {True and False}")
+print(f"True or  False : {True or False}")
+print(f"not True       : {not True}")`,
+
+      // ── 🔵 제어문 ─────────────────────────────────────────
+      ifelse: `# 조건문 — if / elif / else
+score = 85
+
+print("=== 학점 계산기 ===")
+if score >= 90:
+    grade, msg = 'A', '매우 우수 🌟'
+elif score >= 80:
+    grade, msg = 'B', '우수 👍'
+elif score >= 70:
+    grade, msg = 'C', '보통 😐'
+elif score >= 60:
+    grade, msg = 'D', '노력 필요 😅'
+else:
+    grade, msg = 'F', '재수강 필요 😢'
+
+print(f"점수 : {score}")
+print(f"학점 : {grade}")
+print(f"평가 : {msg}")
+
+# 홀수 / 짝수 판별
+print("\\n=== 홀짝 판별 ===")
+for n in [1, 2, 7, 10, 13]:
+    kind = "짝수" if n % 2 == 0 else "홀수"
+    print(f"  {n:>3} → {kind}")`,
+
+      loop: `# 반복문 예제
+print("=== for 반복문 ===")
+for i in range(1, 6):
+    print(f"  {i}번: {'★' * i}")
+
+print("\\n=== while 반복문 ===")
+n = 1
+while n <= 5:
+    print(f"  {n} × {n} = {n*n}")
+    n += 1
+
+print("\\n=== enumerate 활용 ===")
+fruits = ["🍎 사과", "🍌 바나나", "🍓 딸기"]
+for idx, fruit in enumerate(fruits, start=1):
+    print(f"  {idx}번째: {fruit}")`,
+
+      nestedloop: `# 중첩 반복문 — 구구단
+print("=" * 40)
+print("           구 구 단")
+print("=" * 40)
+for i in range(2, 10):
+    row = ""
+    for j in range(1, 10):
+        row += f"{i}×{j}={i*j:>2}  "
+    print(row)
+
+print("\\n=== 별 피라미드 ===")
+n = 5
+for i in range(1, n+1):
+    print(" " * (n-i) + "★" * (2*i-1))`,
+
+      breakcon: `# break / continue
+print("=== break: 5 찾으면 종료 ===")
+for i in range(1, 11):
+    if i == 5:
+        print(f"  {i} 발견! 반복 종료")
+        break
+    print(f"  탐색 중: {i}")
+
+print("\\n=== continue: 짝수만 건너뜀 ===")
+for i in range(1, 11):
+    if i % 2 == 0:
+        continue
+    print(f"  홀수: {i}")
+
+print("\\n=== while + break: 비밀번호 ===")
+password = "python"
+attempts = ["hello", "world", "python"]
+for attempt in attempts:
+    if attempt == password:
+        print(f"  '{attempt}' → 로그인 성공! ✅")
+        break
+    print(f"  '{attempt}' → 틀렸습니다 ❌")`,
+
+      // ── 🟣 자료구조 ───────────────────────────────────────
+      list: `# 리스트 예제
+fruits = ["사과", "바나나", "딸기", "포도"]
+print("과일 목록:")
+for i, fruit in enumerate(fruits, 1):
+    print(f"  {i}. {fruit}")
+
+print(f"\\n총 {len(fruits)}개의 과일")
+fruits.append("망고")
+print(f"망고 추가 후: {fruits}")
+
+print("\\n=== 리스트 주요 메서드 ===")
+nums = [5, 2, 8, 1, 9, 3]
+print(f"원본    : {nums}")
+print(f"정렬    : {sorted(nums)}")
+print(f"최솟값  : {min(nums)}")
+print(f"최댓값  : {max(nums)}")
+print(f"합계    : {sum(nums)}")
+print(f"평균    : {sum(nums)/len(nums):.1f}")`,
+
+      dict: `# 딕셔너리
+student = {
+    "이름": "이수아",
+    "학번": "30205",
+    "국어": 90,
+    "수학": 85,
+    "영어": 92
+}
+
+print("=== 학생 성적표 ===")
+print(f"이름 : {student['이름']} ({student['학번']})")
+subjects = ["국어", "수학", "영어"]
+total = 0
+for sub in subjects:
+    score = student[sub]
+    total += score
+    bar = "█" * (score // 10)
+    print(f"  {sub}: {score:>3}점  {bar}")
+
+avg = total / len(subjects)
+print(f"\\n총점: {total}점  평균: {avg:.1f}점")
+
+# 딕셔너리 추가/수정
+student["정보"] = 97
+print(f"\\n정보 추가 후 keys: {list(student.keys())}")`,
+
+      tuple: `# 튜플과 집합
+# 튜플: 변경 불가능한 순서 있는 자료
+point = (3, 7)
+rgb   = (255, 128, 0)
+print(f"좌표: {point[0]}, {point[1]}")
+print(f"RGB : R={rgb[0]} G={rgb[1]} B={rgb[2]}")
+
+# 튜플 언패킹
+x, y = point
+print(f"언패킹: x={x}, y={y}")
+
+# 집합: 중복 없음, 순서 없음
+print("\\n=== 집합 ===")
+a = {1, 2, 3, 4, 5}
+b = {3, 4, 5, 6, 7}
+print(f"A = {a}")
+print(f"B = {b}")
+print(f"합집합  : {a | b}")
+print(f"교집합  : {a & b}")
+print(f"차집합  : {a - b}")
+
+# 중복 제거 활용
+nums = [1, 2, 2, 3, 3, 3, 4]
+print(f"\\n중복 제거: {nums} → {list(set(nums))}")`,
+
+      string: `# 문자열 처리
+s = "Hello, Python World!"
+print(f"원본     : {s}")
+print(f"대문자   : {s.upper()}")
+print(f"소문자   : {s.lower()}")
+print(f"길이     : {len(s)}")
+print(f"찾기     : 'Python' 위치 = {s.find('Python')}")
+print(f"교체     : {s.replace('Python', '파이썬')}")
+
+print("\\n=== 슬라이싱 ===")
+print(f"s[0:5]   = {s[0:5]}")
+print(f"s[-6:]   = {s[-6:]}")
+print(f"s[::2]   = {s[::2]}")
+print(f"거꾸로   = {s[::-1]}")
+
+print("\\n=== 분리와 결합 ===")
+words = s.split()
+print(f"단어 목록: {words}")
+print(f"'-'.join : {'-'.join(words)}")
+
+print("\\n=== f-string 포맷 ===")
+name, score = "홍길동", 98.5
+print(f"{'이름':^10} | {'점수':^10}")
+print(f"{name:^10} | {score:^10.1f}")`,
+
+      // ── 🟠 함수 ───────────────────────────────────────────
+      func: `# 함수 기초
+def greet(name, greeting="안녕하세요"):
+    """인사 메시지를 반환하는 함수"""
+    return f"{greeting}, {name}님! 👋"
+
+def calc_bmi(weight, height_cm):
+    """BMI 계산 함수"""
+    h = height_cm / 100
+    bmi = weight / (h ** 2)
+    if   bmi < 18.5: status = "저체중"
+    elif bmi < 23.0: status = "정상"
+    elif bmi < 25.0: status = "과체중"
+    else:            status = "비만"
+    return bmi, status
+
+print(greet("김민준"))
+print(greet("이수아", "반가워요"))
+
+print("\\n=== BMI 계산 ===")
+for name, w, h in [("철수", 65, 175), ("영희", 52, 162), ("민준", 88, 170)]:
+    bmi, status = calc_bmi(w, h)
+    print(f"  {name}: BMI {bmi:.1f} ({status})")`,
+
+      recursion: `# 재귀 함수
+def factorial(n):
+    """팩토리얼: n!"""
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+def fibonacci(n):
+    """피보나치 수열"""
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+def power(base, exp):
+    """거듭제곱 (재귀)"""
+    if exp == 0:
+        return 1
+    return base * power(base, exp-1)
+
+print("=== 팩토리얼 ===")
+for i in range(1, 8):
+    print(f"  {i}! = {factorial(i)}")
+
+print("\\n=== 피보나치 수열 (앞 10개) ===")
+fibs = [fibonacci(i) for i in range(10)]
+print("  " + " → ".join(map(str, fibs)))
+
+print("\\n=== 거듭제곱 ===")
+print(f"  2^10 = {power(2, 10)}")
+print(f"  3^5  = {power(3, 5)}")`,
+
+      lambda: `# 람다 함수 / map / filter
+# 기본 람다
+square = lambda x: x ** 2
+add    = lambda x, y: x + y
+
+print(f"square(7) = {square(7)}")
+print(f"add(3, 5) = {add(3, 5)}")
+
+# map: 리스트 각 요소에 함수 적용
+nums = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x**2, nums))
+print(f"\\nmap(제곱): {nums} → {squared}")
+
+# filter: 조건을 만족하는 요소만 추출
+evens = list(filter(lambda x: x % 2 == 0, range(1, 11)))
+print(f"filter(짝수): {evens}")
+
+# sorted + key
+students = [("이수아", 92), ("김민준", 85), ("박지호", 97), ("최유진", 88)]
+by_score = sorted(students, key=lambda s: s[1], reverse=True)
+print("\\n=== 점수 순 정렬 ===")
+for rank, (name, score) in enumerate(by_score, 1):
+    print(f"  {rank}위: {name} — {score}점")`,
+
+      class_: `# 클래스 기초`,  // placeholder, replaced below
+
+      // ── 🔴 알고리즘 ───────────────────────────────────────
+      bubblesort: `# 버블 정렬 (Bubble Sort)
+def bubble_sort(arr):
+    n = len(arr)
+    steps = []
+    a = arr[:]
+    for i in range(n):
+        for j in range(n - i - 1):
+            if a[j] > a[j+1]:
+                a[j], a[j+1] = a[j+1], a[j]
+        steps.append(a[:])
+    return a, steps
+
+data = [64, 34, 25, 12, 22, 11, 90]
+print(f"정렬 전: {data}")
+sorted_data, steps = bubble_sort(data)
+print("\\n=== 정렬 과정 ===")
+for i, step in enumerate(steps, 1):
+    print(f"  {i}회전: {step}")
+print(f"\\n정렬 후: {sorted_data}")`,
+
+      binsearch: `# 이진 탐색 (Binary Search)
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    step = 0
+    while left <= right:
+        step += 1
+        mid = (left + right) // 2
+        print(f"  [{step}회] 범위={arr[left:right+1]} → 중앙값={arr[mid]}", end="")
+        if arr[mid] == target:
+            print(f" ✅ 발견!")
+            return mid
+        elif arr[mid] < target:
+            print(f" → 오른쪽 탐색")
+            left = mid + 1
+        else:
+            print(f" → 왼쪽 탐색")
+            right = mid - 1
+    return -1
+
+data = sorted([3, 1, 8, 5, 2, 9, 4, 7, 6, 10])
+target = 7
+print(f"데이터: {data}")
+print(f"찾는 값: {target}")
+print("\\n=== 탐색 과정 ===")
+idx = binary_search(data, target)
+if idx != -1:
+    print(f"\\n인덱스 {idx}에서 {target} 발견! (총 {idx+1}번째 위치)")`,
+
+      prime: `# 소수 판별 — 에라토스테네스의 체
+def sieve(n):
+    is_prime = [True] * (n + 1)
+    is_prime[0] = is_prime[1] = False
+    for i in range(2, int(n**0.5) + 1):
+        if is_prime[i]:
+            for j in range(i*i, n+1, i):
+                is_prime[j] = False
+    return [i for i in range(2, n+1) if is_prime[i]]
+
+def is_prime_simple(n):
+    if n < 2: return False
+    for i in range(2, int(n**0.5)+1):
+        if n % i == 0: return False
+    return True
+
+N = 50
+primes = sieve(N)
+print(f"=== {N} 이하의 소수 ({len(primes)}개) ===")
+print(primes)
+
+print("\\n=== 소수 시각화 ===")
+for i in range(2, N+1):
+    mark = "🟦" if is_prime_simple(i) else "⬜"
+    print(mark, end=" ")
+    if i % 10 == 0: print(f"  ← {i//10*10-9}~{i//10*10}")`,
+
+      stack: `# 스택 / 큐
+from collections import deque
+
+# ── 스택 (LIFO) ──
+print("=== 스택 (Stack) — 후입선출 ===")
+stack = []
+for item in ["📄 A", "📄 B", "📄 C", "📄 D"]:
+    stack.append(item)
+    print(f"  push {item}  →  {stack}")
+
+print()
+while stack:
+    item = stack.pop()
+    print(f"  pop  {item}  →  {stack}")
+
+# ── 큐 (FIFO) ──
+print("\\n=== 큐 (Queue) — 선입선출 ===")
+queue = deque()
+for item in ["🙋 철수", "🙋 영희", "🙋 민준"]:
+    queue.append(item)
+    print(f"  enqueue {item}  →  {list(queue)}")
+
+print()
+while queue:
+    item = queue.popleft()
+    print(f"  dequeue {item}  →  {list(queue)}")`,
+
+      comprehension: `# 리스트 컴프리헨션
+# 기본 형식: [표현식 for 변수 in 반복가능 if 조건]
+
+# 1. 제곱수
+squares = [x**2 for x in range(1, 11)]
+print(f"제곱수: {squares}")
+
+# 2. 짝수 필터
+evens = [x for x in range(1, 21) if x % 2 == 0]
+print(f"짝수  : {evens}")
+
+# 3. 문자열 처리
+words = ["hello", "world", "python", "is", "fun"]
+upper = [w.upper() for w in words if len(w) > 3]
+print(f"긴 단어(대문자): {upper}")
+
+# 4. 2차원 → 1차원 (flatten)
+matrix = [[1,2,3],[4,5,6],[7,8,9]]
+flat = [n for row in matrix for n in row]
+print(f"행렬 평탄화: {flat}")
+
+# 5. 딕셔너리 컴프리헨션
+scores = {"국어":85, "수학":92, "영어":78, "정보":97}
+passed = {k:v for k,v in scores.items() if v >= 85}
+print(f"85점 이상 과목: {passed}")`,
+
+      random: `# 랜덤 & 숫자 맞추기 게임 시뮬레이션
+import random
+
+# 랜덤 기초
+print("=== random 모듈 ===")
+print(f"randint(1,10)   : {random.randint(1, 10)}")
+print(f"random()        : {random.random():.4f}")
+print(f"choice(리스트)  : {random.choice(['가위','바위','보'])}")
+
+nums = list(range(1, 11))
+random.shuffle(nums)
+print(f"shuffle         : {nums}")
+print(f"sample(5개)     : {random.sample(range(1,46), 5)}")
+
+# 숫자 맞추기 게임 시뮬레이션
+print("\\n=== 숫자 맞추기 게임 시뮬레이션 ===")
+secret = random.randint(1, 20)
+guesses = random.sample(range(1, 21), 20)  # 플레이어 추측값들
+print(f"(정답: {secret})")
+
+for attempt, guess in enumerate(guesses, 1):
+    if guess < secret:
+        hint = "⬆️  더 큽니다"
+    elif guess > secret:
+        hint = "⬇️  더 작습니다"
+    else:
+        print(f"  [{attempt}번째] {guess} → 🎉 정답! ({attempt}번 만에 성공)")
+        break
+    print(f"  [{attempt}번째] {guess} → {hint}")`,
     };
 
+    // class 예제 별도 (템플릿 리터럴 충돌 방지)
+    examples['class'] = [
+      '# 클래스 기초 — 객체지향 프로그래밍',
+      'class Student:',
+      '    def __init__(self, name, student_id):',
+      '        self.name = name',
+      '        self.student_id = student_id',
+      '        self.scores = {}',
+      '',
+      '    def add_score(self, subject, score):',
+      '        self.scores[subject] = score',
+      '',
+      '    def average(self):',
+      '        if not self.scores: return 0',
+      '        return sum(self.scores.values()) / len(self.scores)',
+      '',
+      '    def report(self):',
+      '        print(f"\\n학생: {self.name} ({self.student_id})")',
+      '        print("-" * 28)',
+      '        for sub, score in self.scores.items():',
+      '            bar = "█" * (score // 10)',
+      '            print(f"  {sub:4}: {score:>3}점  {bar}")',
+      '        print(f"  평균 : {self.average():.1f}점")',
+      '',
+      '# 학생 객체 생성',
+      's1 = Student("이수아", "30201")',
+      's1.add_score("국어", 90)',
+      's1.add_score("수학", 85)',
+      's1.add_score("영어", 92)',
+      's1.add_score("정보", 98)',
+      's1.report()',
+      '',
+      's2 = Student("김민준", "30205")',
+      's2.add_score("국어", 78)',
+      's2.add_score("수학", 94)',
+      's2.add_score("영어", 82)',
+      's2.add_score("정보", 100)',
+      's2.report()',
+    ].join('\n');
+
     function loadExample(key) {
-      document.getElementById('code-input').value = examples[key];
+      document.getElementById('code-input').value = examples[key] || '';
+    }
+
+    // ── 카테고리 필터 ──
+    function filterExamples(cat) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active-filter'));
+      document.getElementById('filter-' + cat).classList.add('active-filter');
+      document.querySelectorAll('.example-card').forEach(card => {
+        const cardCat = card.dataset.cat;
+        if (cat === 'all' || cardCat === cat) {
+          card.classList.remove('hidden-card');
+        } else {
+          card.classList.add('hidden-card');
+        }
+      });
     }
 
     function runCode() {
