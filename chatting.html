@@ -6,7 +6,7 @@
 <title>Vibe Room — Sungce AI-ON</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
-<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://unpkg.com/lucide@0.378.0/dist/umd/lucide.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -30,36 +30,7 @@
 <body class="h-screen flex flex-col overflow-hidden">
 
 <!-- ══ 네비게이션 1줄 ══════════════════════════════════════ -->
-<nav class="shrink-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/80 shadow-sm" style="margin-top:0;padding-top:0;">
-  <div class="max-w-7xl mx-auto px-5 md:px-8">
-    <div class="flex justify-between items-center h-14">
-      <a href="index.html" class="flex items-center space-x-2.5 shrink-0 outline-none focus:outline-none">
-        <div class="bg-gradient-to-br from-indigo-500 to-violet-600 text-white w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shadow-md shadow-indigo-500/20">AI</div>
-        <div>
-          <div class="text-[15px] font-bold text-slate-900 leading-tight">Sungce <span class="text-indigo-600">AI-ON</span></div>
-          <div class="text-[12px] font-medium text-slate-400 leading-tight">정보 교과 클래스룸</div>
-        </div>
-      </a>
-      <div class="flex items-center gap-6">
-        <div class="hidden md:flex items-center gap-6 text-[13px] font-bold text-slate-600">
-          <a href="curriculum/index.html" target="_blank" class="hover:text-indigo-600 transition-colors">교과 수업</a>
-          <a href="code_play.html" target="_blank" class="hover:text-indigo-600 transition-colors">코드 놀이터</a>
-          <a href="data_play.html" target="_blank" class="hover:text-indigo-600 transition-colors">데이터 실습실</a>
-          <span class="text-indigo-600 border-b-2 border-indigo-600 pb-0.5">Vibe Room</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <div id="nav-user" class="hidden items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
-            <div id="nav-avatar" class="avatar w-6 h-6 rounded-lg text-[10px]"></div>
-            <span id="nav-name" class="text-sm font-bold text-slate-700"></span>
-          </div>
-          <a href="index.html" class="flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 text-sm font-bold bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl transition-colors outline-none">
-            <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</nav>
+<!-- nav 제거됨 -->
 
 <!-- 로그인 필요 -->
 <div id="login-wall" class="hidden flex-1 flex-col items-center justify-center bg-slate-50">
@@ -159,7 +130,7 @@
                   <i data-lucide="hash" class="w-3 h-3"></i>모둠6 수다방
                   <span id="my-team-badge-team6" class="hidden ml-auto text-[9px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-black">내 모둠</span>
                 </button>
-                     </div>
+              </div>
             </div>
 
             <button class="channel-btn" data-room="general" onclick="switchRoom('general','자유 수다방',this)"><i data-lucide="hash" class="w-3.5 h-3.5"></i>자유 수다방</button>
@@ -172,8 +143,12 @@
           </button>
         </div>
         <div>
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2 flex justify-between">
-            <span>접속 중</span><span id="online-count" class="bg-emerald-100 text-emerald-600 px-1.5 rounded-full text-[10px] font-black">0</span>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-2 flex justify-between items-center">
+            <span>접속 중</span>
+            <span class="flex items-center gap-1.5">
+              <span id="online-count" class="bg-emerald-100 text-emerald-600 px-1.5 rounded-full text-[10px] font-black">0</span>
+              <button onclick="clearAllPresence()" title="접속 회원 초기화" class="text-[10px] font-black text-slate-400 hover:text-rose-500 bg-slate-100 hover:bg-rose-50 px-1.5 py-0.5 rounded-full transition-colors border border-slate-200 hover:border-rose-200">초기화</button>
+            </span>
           </p>
           <div id="online-list" class="space-y-1"></div>
         </div>
@@ -185,6 +160,9 @@
             <p id="my-name" class="text-xs font-bold text-slate-800 truncate"></p>
             <p class="text-[10px] text-emerald-500 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span>온라인</p>
           </div>
+          <button onclick="logout()" title="로그아웃" class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors shrink-0">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          </button>
         </div>
       </div>
     </aside>
@@ -199,9 +177,15 @@
           <h2 id="room-title" class="text-sm font-black text-slate-800">자유 수다방</h2>
           <span id="room-count" class="text-xs text-slate-400 font-medium ml-2"></span>
         </div>
-        <button onclick="clearMyMessages()" class="text-xs text-slate-400 hover:text-rose-500 font-bold transition-colors outline-none flex items-center gap-1">
-          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>내 메시지 삭제
-        </button>
+        <div class="flex items-center gap-3">
+          <button onclick="clearAllMessages()" class="text-xs text-slate-400 hover:text-amber-500 font-bold transition-colors outline-none flex items-center gap-1">
+            <i data-lucide="refresh-ccw" class="w-3.5 h-3.5"></i>메시지 초기화
+          </button>
+          <span class="text-slate-200">|</span>
+          <button onclick="clearMyMessages()" class="text-xs text-slate-400 hover:text-rose-500 font-bold transition-colors outline-none flex items-center gap-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>내 메시지 삭제
+          </button>
+        </div>
       </header>
 
       <!-- 메시지 목록 -->
@@ -264,15 +248,16 @@
     const open = !dd.classList.contains('hidden');
     dd.classList.toggle('hidden', open);
     chev.style.transform = open ? '' : 'rotate(180deg)';
-    lucide.createIcons();
+    safeCreateIcons();
   }
 
-  lucide.createIcons();
-
-  if (window.self !== window.top) {
-    const nav = document.querySelector('nav');
-    if (nav) { nav.style.display = 'none'; nav.style.height = '0'; }
+  function safeCreateIcons() {
+    if (typeof lucide !== 'undefined') lucide.createIcons();
   }
+
+  document.addEventListener('DOMContentLoaded', safeCreateIcons);
+
+  // nav 제거됨
 
   const cfg = { apiKey:"AIzaSyAIiqU7pLdcibQM3u7Jy88-jSZahIM_jMM", authDomain:"book-c2d05.firebaseapp.com", projectId:"book-c2d05", storageBucket:"book-c2d05.firebasestorage.app", messagingSenderId:"566939045493", appId:"1:566939045493:web:da65c6ad61f528d446f23c" };
   const app  = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg);
@@ -282,7 +267,7 @@
   // ── 로그인 모달 ────────────────────────────────────────
   function openLoginModal() {
     document.getElementById('login-modal').classList.remove('hidden');
-    lucide.createIcons();
+    safeCreateIcons();
     setTimeout(() => document.getElementById('modal-name')?.focus(), 150);
   }
   function closeLoginModal() {
@@ -329,7 +314,13 @@
 
   auth.onAuthStateChanged(async user => {
     if (!user) {
+      currentUser = null;
+      userName = ''; studentId = '';
       document.getElementById('login-wall').classList.replace('hidden','flex');
+      document.getElementById('chat-app').classList.replace('flex','hidden');
+      document.getElementById('online-list').innerHTML = '';
+      document.getElementById('online-count').textContent = '0';
+      safeCreateIcons();
       return;
     }
     currentUser = user;
@@ -337,10 +328,6 @@
     studentId = localStorage.getItem('studentId_' + user.uid) || '';
 
     const [bg, tc] = getColor(userName);
-    document.getElementById('nav-avatar').className = `avatar w-6 h-6 rounded-lg text-[10px] ${bg} ${tc}`;
-    document.getElementById('nav-avatar').textContent = userName.charAt(0);
-    document.getElementById('nav-name').textContent   = userName;
-    document.getElementById('nav-user').classList.replace('hidden','flex');
 
     document.getElementById('my-avatar').className   = `avatar w-7 h-7 rounded-lg text-[10px] ${bg} ${tc}`;
     document.getElementById('my-avatar').textContent  = userName.charAt(0);
@@ -349,7 +336,7 @@
     if(ia){ia.className=`avatar w-8 h-8 rounded-xl text-[11px] shrink-0 mb-0.5 ${bg} ${tc}`;ia.textContent=userName.charAt(0);}
 
     document.getElementById('chat-app').classList.replace('hidden','flex');
-    lucide.createIcons();
+    safeCreateIcons();
 
     if (currentUser.email === ADMIN_EMAIL) {
       const btn = document.getElementById('group-mgmt-btn');
@@ -506,7 +493,7 @@
             Firebase 콘솔 > Firestore Database > Rules 탭에서 읽기/쓰기 권한(allow read, write: if request.auth != null;)을 허용으로 변경해주세요.
           </span>
         </div>`;
-      lucide.createIcons();
+      safeCreateIcons();
     }
   }
 
@@ -539,7 +526,7 @@
     if (btn) btn.classList.add('active');
     updatePresenceRoom(room);
     listenMessages(room);
-    lucide.createIcons();
+    safeCreateIcons();
   }
 
   function listenMessages(room) {
@@ -563,7 +550,7 @@
               el.innerHTML = renderMessage(d, mid, isMine);
               msgs.appendChild(el);
               scrollBottom();
-              lucide.createIcons();
+              safeCreateIcons();
             }
           }
           if (change.type === 'removed') {
@@ -574,7 +561,7 @@
 
         if (snap.empty) {
           msgs.innerHTML = '<div class="flex flex-col items-center py-12 text-slate-400 space-y-2"><i data-lucide="message-square" class="w-10 h-10 text-slate-200"></i><p class="text-sm font-medium">첫 메시지를 남겨보세요!</p></div>';
-          lucide.createIcons();
+          safeCreateIcons();
         }
         document.getElementById('room-count').textContent = snap.size + '개 메시지';
       });
@@ -627,6 +614,49 @@
       await db.collection('chat_rooms').doc(currentRoom)
         .collection('messages').doc(mid).delete();
     } catch(e) { console.warn('삭제 실패:', e); }
+  }
+
+  // ── 현재 방 전체 메시지 초기화 (관리자 or 확인 후) ──
+  async function clearAllMessages() {
+    if (!confirm(`[${document.getElementById('room-title').textContent}] 채팅방의 모든 메시지를 초기화할까요?\n이 작업은 되돌릴 수 없습니다.`)) return;
+    try {
+      const snap = await db.collection('chat_rooms').doc(currentRoom).collection('messages').get();
+      const batch = db.batch();
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+    } catch(e) { alert('초기화 오류: ' + e.message); }
+  }
+
+  // ── 접속 회원 전체 초기화 ──
+  async function clearAllPresence() {
+    if (!confirm('접속 회원 목록을 전체 초기화할까요?\n(현재 접속 중인 모든 유저의 presence가 삭제됩니다)')) return;
+    try {
+      const snap = await db.collection('chat_presence').get();
+      const batch = db.batch();
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+      presenceDocId = null; // 내 presence도 지워졌으므로 재등록
+      await registerPresence();
+    } catch(e) { alert('초기화 오류: ' + e.message); }
+  }
+
+  // ── 로그아웃 ──
+  async function logout() {
+    if (!confirm('로그아웃 하시겠습니까?')) return;
+    try {
+      await removePresence();     // presence 먼저 삭제
+      presenceDocId = null;
+      if (unsubscribeMessages) { unsubscribeMessages(); unsubscribeMessages = null; }
+      if (unsubscribePresence)  { unsubscribePresence();  unsubscribePresence  = null; }
+      await auth.signOut();
+      // UI 초기화
+      document.getElementById('chat-app').classList.replace('flex','hidden');
+      document.getElementById('online-list').innerHTML = '';
+      document.getElementById('online-count').textContent = '0';
+      document.getElementById('chat-messages').innerHTML = '';
+      document.getElementById('login-wall').classList.replace('hidden','flex');
+      safeCreateIcons();
+    } catch(e) { alert('로그아웃 오류: ' + e.message); }
   }
 
   function formatTime(date) {
