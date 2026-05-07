@@ -800,8 +800,7 @@
         <section id="iframe-viewer" class="fade-in hidden max-w-[1400px] mx-auto w-full">
             <iframe id="viewer-frame" src=""
                 class="w-full block"
-                style="border:0;overflow:hidden;"
-                scrolling="no">
+                style="border:0;">
             </iframe>
         </section>
 
@@ -1367,37 +1366,39 @@
         // ==================== 공용 iframe 뷰어 ====================
 function openIframe(url, title) {
     const frame = document.getElementById('viewer-frame');
+    frame.style.height = '';
+    frame.removeAttribute('scrolling');
     frame.src = url;
 
     if (url.includes('chatting')) {
+        // 채팅: 뷰포트 고정 높이
         frame.style.height = 'calc(100vh - 100px)';
         frame.onload = null;
 
-    } else if (url.includes('microbit')) {
-        // ★ 마이크로비트: 내부 스크롤 허용 + 충분한 고정 높이
-        frame.style.height = 'calc(100vh - 80px)';
-        frame.scrolling = 'yes';
-        frame.setAttribute('scrolling', 'yes');
-        frame.style.overflow = 'auto';
-        frame.onload = null;
-
     } else {
+        // microbit 포함 모든 페이지: 콘텐츠 전체 높이로 자동 조절
         frame.onload = function() {
             try {
                 const doc = frame.contentDocument || frame.contentWindow.document;
-                // ← body overflow 막는 코드 제거
                 const setH = () => {
+                    // body/html overflow 강제 차단 제거 — 콘텐츠가 자유롭게 늘어남
                     const h = Math.max(
                         doc.documentElement.scrollHeight || 0,
                         doc.body ? doc.body.scrollHeight : 0,
-                        400
+                        doc.documentElement.offsetHeight || 0,
+                        600
                     );
                     frame.style.height = h + 'px';
                 };
                 setH();
+                // React 렌더 완료 대기 (microbit 등) — 30회 × 300ms = 9초
                 let n = 0;
-                const iv = setInterval(() => { setH(); if (++n > 15) clearInterval(iv); }, 300);
+                const iv = setInterval(() => {
+                    setH();
+                    if (++n > 30) clearInterval(iv);
+                }, 300);
             } catch(e) {
+                // cross-origin 등 접근 불가 시 뷰포트 높이로 fallback
                 frame.style.height = 'calc(100vh - 100px)';
             }
         };
