@@ -11,9 +11,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <style>
 /* CSS 수정된 부분: html, body, #root의 높이와 overflow 속성 변경 */
-html { min-height: 100%; width: 100%; }
-body { min-height: 100vh; overflow-y: auto; }
-#root { display: flex; flex-direction: column; min-height: 100vh; }
+html { width: 100%; }
+body { overflow-y: visible; overflow-x: hidden; }
+#root { display: flex; flex-direction: column; }
 .main { overflow: visible; }   /* hidden → visible */
   
 /* PAGE TITLE */
@@ -45,7 +45,7 @@ body { min-height: 100vh; overflow-y: auto; }
 .btn-reset:hover{background:#e2e8f0;color:#334155;}
 
 /* MAIN LAYOUT */
-.main{display:flex;flex:1;overflow:hidden;}
+.main{display:flex;flex:1;overflow:visible;min-height:600px;}
 
 /* PALETTE */
 .palette{width:215px;background:#ffffff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;flex-shrink:0;box-shadow:2px 0 8px rgba(0,0,0,0.04);}
@@ -54,7 +54,7 @@ body { min-height: 100vh; overflow-y: auto; }
 .cat-btn:hover{background:#f1f5f9;color:#1e293b;}
 .cat-btn.active{color:#1e293b;background:#e8f0fe;box-shadow:inset 0 0 0 1px #c7d7fd;}
 .cat-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
-.palette-blocks{flex:1;overflow-y:auto;padding:10px 8px;display:flex;flex-direction:column;gap:5px;}
+.palette-blocks{flex:1;overflow-y:visible;padding:10px 8px;display:flex;flex-direction:column;gap:5px;}
 .palette-block{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:12px;color:#1e293b;transition:all 0.15s;border:1px solid rgba(0,0,0,0.07);position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
 .palette-block::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.15s;}
 .palette-block:hover::before{background:rgba(0,0,0,0.04);}
@@ -65,7 +65,7 @@ body { min-height: 100vh; overflow-y: auto; }
 .palette-tip{font-size:10px;color:#64748b;text-align:center;padding:10px 8px;line-height:1.6;border-top:1px solid #f1f5f9;}
 
 /* WORKSPACE */
-.workspace{flex:1;overflow-y:auto;padding:16px;background:#f0f4f8;display:flex;flex-direction:column;gap:14px;}
+.workspace{flex:1;overflow-y:visible;padding:16px;background:#f0f4f8;display:flex;flex-direction:column;gap:14px;}
 .add-evt-row{display:flex;flex-wrap:wrap;gap:8px;}
 .add-evt-btn{background:#ffffff;border:1.5px dashed #cbd5e1;color:#64748b;padding:7px 14px;border-radius:9px;cursor:pointer;font-size:12px;font-weight:600;font-family:'Pretendard', -apple-system, sans-serif;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
 .add-evt-btn:hover{border-color:#3b82f6;color:#3b82f6;background:#eff6ff;}
@@ -102,7 +102,7 @@ body { min-height: 100vh; overflow-y: auto; }
 .sub-body.is-target{outline:1.5px dashed #93c5fd;background:#eff6ff;}
 
 /* SIMULATOR */
-.simulator{width:288px;background:#ffffff;border-left:1px solid #e2e8f0;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;flex-shrink:0;box-shadow:-2px 0 8px rgba(0,0,0,0.04);}
+.simulator{width:288px;background:#ffffff;border-left:1px solid #e2e8f0;overflow-y:visible;padding:14px;display:flex;flex-direction:column;gap:12px;flex-shrink:0;box-shadow:-2px 0 8px rgba(0,0,0,0.04);}
 .sim-section{background:#f8fafc;border-radius:11px;padding:12px;border:1px solid #e2e8f0;}
 .sim-section-title{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:6px;font-family:'Pretendard',-apple-system,sans-serif;}
 .sim-section-title::after{content:'';flex:1;height:1px;background:#e2e8f0;}
