@@ -189,20 +189,20 @@
       </header>
 
       <!-- 메시지 목록 -->
-      <div id="chat-messages" class="flex-1 w-full overflow-y-auto px-6 md:px-10 py-7 space-y-6 bg-slate-50/50">
+      <div id="chat-messages" class="flex-1 w-full overflow-y-auto px-6 md:px-10 py-4 space-y-4 bg-slate-50/50">
         <div id="msgs-loading" class="flex justify-center py-16">
           <p class="text-sm text-slate-400 font-medium">메시지 불러오는 중...</p>
         </div>
       </div>
 
       <!-- 입력창 -->
-      <div class="shrink-0 w-full bg-white border-t border-slate-200 px-6 md:px-10 py-5">
-        <div class="flex items-end gap-4 bg-slate-50 border-2 border-slate-200 rounded-2xl px-6 py-4 focus-within:border-indigo-400 focus-within:bg-white focus-within:shadow-md transition-all">
+      <div class="shrink-0 w-full bg-white border-t border-slate-200 px-6 md:px-10 py-3">
+        <div class="flex items-end gap-3 bg-slate-50 border-2 border-slate-200 rounded-xl px-6 py-4 focus-within:border-indigo-400 focus-within:bg-white focus-within:shadow-md transition-all">
           <div id="input-avatar" class="avatar w-10 h-10 rounded-xl text-[13px] shrink-0 mb-0.5"></div>
           <textarea id="chat-input"
             class="flex-1 bg-transparent text-base text-slate-800 placeholder-slate-400 outline-none font-medium leading-relaxed"
             placeholder="메시지를 입력하세요… (Enter: 전송 / Shift+Enter: 줄바꿈)"
-            rows="2"></textarea>
+            rows="1"></textarea>
           <button onclick="sendMessage()" id="send-btn"
             class="w-12 h-12 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl flex items-center justify-center transition-all shrink-0 outline-none mb-0.5 shadow-md shadow-indigo-500/20">
             <i data-lucide="send" class="w-5 h-5"></i>
