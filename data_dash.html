@@ -129,24 +129,23 @@
 
   <!-- 차트 보기 -->
   <div id="panel-chart" class="hidden">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div id="chart-empty" class="hidden card p-10 text-center text-slate-400 font-medium">
+      데이터를 먼저 불러와주세요.
+    </div>
+    <div id="chart-body" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="card p-6">
-        <h3 class="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
-          <i data-lucide="bar-chart" class="w-4 h-4 text-indigo-500"></i>학생별 점수
+        <h3 class="text-sm font-black text-slate-800 mb-1 flex items-center gap-2">
+          <i data-lucide="bar-chart" class="w-4 h-4 text-indigo-500"></i>
+          <span id="chart-main-title">수치 데이터 비교</span>
         </h3>
-        <canvas id="chart-scores" height="240"></canvas>
+        <p id="chart-main-desc" class="text-xs text-slate-400 font-medium mb-4"></p>
+        <canvas id="chart-scores"></canvas>
       </div>
       <div class="card p-6">
-        <h3 class="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
-          <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-500"></i>완료 현황
+        <h3 class="text-sm font-black text-slate-800 mb-3 flex items-center gap-2">
+          <i data-lucide="brain" class="w-4 h-4 text-violet-500"></i>데이터 분석
         </h3>
-        <canvas id="chart-status" height="240"></canvas>
-      </div>
-      <div class="card p-6 lg:col-span-2">
-        <h3 class="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
-          <i data-lucide="trending-up" class="w-4 h-4 text-amber-500"></i>진도율 분포
-        </h3>
-        <canvas id="chart-progress" height="120"></canvas>
+        <div id="analysis-box" class="space-y-3 text-sm text-slate-600 leading-relaxed"></div>
       </div>
     </div>
   </div>
@@ -401,53 +400,162 @@
   }
 
   function renderCharts() {
-    if (!allData.length) return;
+    if (!allData.length) {
+      document.getElementById('chart-empty').classList.remove('hidden');
+      document.getElementById('chart-body').classList.add('hidden');
+      return;
+    }
+    document.getElementById('chart-empty').classList.add('hidden');
+    document.getElementById('chart-body').classList.remove('hidden');
+
     const PALETTE = ['#6366f1','#22c55e','#f59e0b','#ef4444','#3b82f6','#8b5cf6','#14b8a6','#f97316','#ec4899','#64748b'];
 
-    const getLabels = () => {
-       // '이름' 컬럼이 없으면 첫번째 컬럼을 라벨로 사용
-       const key = currentHeaders.includes('이름') ? '이름' : currentHeaders[0];
-       return allData.map(r => r[key]);
-    };
+    // ── 라벨 컬럼 (문자열 컬럼 첫 번째) ─────────────────
+    const labelCol = currentHeaders.find(h => {
+      const vals = allData.map(r => r[h]);
+      return vals.some(v => typeof v === 'string' && isNaN(v) && v.trim() !== '');
+    }) || currentHeaders[0];
 
-    if (chartScores) chartScores.destroy();
-    chartScores = new Chart(document.getElementById('chart-scores'), {
-      type: 'bar',
-      data: {
-        labels: getLabels(),
-        datasets: [{ label: '점수', data: allData.map(r => r['점수'] || 0),
-          backgroundColor: allData.map((_,i)=>PALETTE[i%PALETTE.length]+'cc'),
-          borderColor: allData.map((_,i)=>PALETTE[i%PALETTE.length]),
-          borderWidth: 1.5, borderRadius: 5 }]
-      },
-      options: { responsive:true, plugins:{legend:{display:false}}, scales:{ y:{min:0,max:100,ticks:{font:{size:11}}} } }
+    // ── 수치 컬럼들 찾기 ──────────────────────────────────
+    const numCols = currentHeaders.filter(h => {
+      if (h === labelCol) return false;
+      return allData.some(r => typeof r[h] === 'number' && !isNaN(r[h]));
     });
 
-    if (chartStatus) chartStatus.destroy();
-    const done = allData.filter(r=>r['상태']==='완료').length;
-    const ing  = allData.filter(r=>r['상태']==='진행중').length;
-    const none = allData.filter(r=>r['상태']==='미제출').length;
-    chartStatus = new Chart(document.getElementById('chart-status'), {
-      type: 'doughnut',
-      data: {
-        labels: ['완료','진행중','미제출'],
-        datasets: [{ data:[done,ing,none], backgroundColor:['#22c55e','#f59e0b','#ef4444'], borderWidth:0 }]
-      },
-      options: { responsive:true, cutout:'65%', plugins:{ legend:{ position:'bottom', labels:{font:{size:12},padding:16} } } }
+    const labels = allData.map(r => String(r[labelCol] || ''));
+
+    // ── 차트 렌더 ─────────────────────────────────────────
+    if (chartScores) { chartScores.destroy(); chartScores = null; }
+
+    if (numCols.length === 0) {
+      // 수치 컬럼 없음: 문자열 빈도 카운트로 파이차트
+      const freqCol = currentHeaders.find(h => h !== labelCol) || currentHeaders[0];
+      const freq = {};
+      allData.forEach(r => { const v = String(r[freqCol]||'기타'); freq[v] = (freq[v]||0)+1; });
+      document.getElementById('chart-main-title').textContent = `${freqCol} 분포`;
+      document.getElementById('chart-main-desc').textContent = '항목별 빈도수';
+      chartScores = new Chart(document.getElementById('chart-scores'), {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(freq),
+          datasets: [{ data: Object.values(freq),
+            backgroundColor: Object.keys(freq).map((_,i)=>PALETTE[i%PALETTE.length]),
+            borderWidth: 0 }]
+        },
+        options: { responsive:true, plugins:{ legend:{ position:'bottom', labels:{ font:{size:12}, padding:12 } } } }
+      });
+    } else if (numCols.length === 1) {
+      // 수치 1개: 막대차트
+      const col = numCols[0];
+      const vals = allData.map(r => Number(r[col]) || 0);
+      const maxV = Math.max(...vals, 1);
+      document.getElementById('chart-main-title').textContent = `${labelCol}별 ${col}`;
+      document.getElementById('chart-main-desc').textContent = `${col} 데이터 비교`;
+      chartScores = new Chart(document.getElementById('chart-scores'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{ label: col, data: vals,
+            backgroundColor: vals.map((_,i)=>PALETTE[i%PALETTE.length]+'cc'),
+            borderColor: vals.map((_,i)=>PALETTE[i%PALETTE.length]),
+            borderWidth: 1.5, borderRadius: 5 }]
+        },
+        options: { responsive:true,
+          plugins: { legend:{ display:false } },
+          scales: { y:{ beginAtZero:true, max: maxV > 100 ? undefined : 100, ticks:{ font:{ size:11 } } } }
+        }
+      });
+    } else {
+      // 수치 여러개: 그룹 막대차트
+      document.getElementById('chart-main-title').textContent = `${labelCol}별 수치 비교`;
+      document.getElementById('chart-main-desc').textContent = numCols.join(' · ');
+      chartScores = new Chart(document.getElementById('chart-scores'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: numCols.map((col, ci) => ({
+            label: col,
+            data: allData.map(r => Number(r[col]) || 0),
+            backgroundColor: PALETTE[ci%PALETTE.length] + 'cc',
+            borderColor: PALETTE[ci%PALETTE.length],
+            borderWidth: 1.5, borderRadius: 4
+          }))
+        },
+        options: { responsive:true,
+          plugins: { legend:{ position:'top', labels:{ font:{ size:11 }, padding:12 } } },
+          scales: { y:{ beginAtZero:true, ticks:{ font:{ size:11 } } } }
+        }
+      });
+    }
+
+    // ── 데이터 분석 텍스트 ────────────────────────────────
+    renderAnalysis(labels, numCols, labelCol);
+  }
+
+  function renderAnalysis(labels, numCols, labelCol) {
+    const box = document.getElementById('analysis-box');
+    const n = allData.length;
+    let html = '';
+
+    // 기본 통계
+    html += `<div class="bg-indigo-50 rounded-xl p-3 border border-indigo-100">
+      <p class="text-xs font-black text-indigo-600 mb-1.5">📋 기본 현황</p>
+      <p class="text-slate-700">전체 <strong>${n}개</strong> 데이터, <strong>${currentHeaders.length}개</strong> 컬럼</p>
+      <p class="text-slate-500 text-xs mt-0.5">컬럼: ${currentHeaders.join(' · ')}</p>
+    </div>`;
+
+    // 수치 컬럼 분석
+    numCols.forEach((col, idx) => {
+      const vals = allData.map(r => Number(r[col])).filter(v => !isNaN(v));
+      if (!vals.length) return;
+      const sum = vals.reduce((a,b)=>a+b,0);
+      const avg = (sum/vals.length).toFixed(1);
+      const max = Math.max(...vals);
+      const min = Math.min(...vals);
+      const maxIdx = allData.findIndex(r => Number(r[col]) === max);
+      const minIdx = allData.findIndex(r => Number(r[col]) === min);
+      const maxName = maxIdx >= 0 ? String(allData[maxIdx][labelCol]||'') : '';
+      const minName = minIdx >= 0 ? String(allData[minIdx][labelCol]||'') : '';
+
+      // 분포 분석
+      const high = vals.filter(v => v >= avg*1.1).length;
+      const low  = vals.filter(v => v < avg*0.9).length;
+      const trend = high > low ? '상위권 집중' : low > high ? '하위권 집중' : '고른 분포';
+
+      const colors = ['indigo','emerald','amber','rose','blue'];
+      const c = colors[idx % colors.length];
+
+      html += `<div class="bg-${c}-50 rounded-xl p-3 border border-${c}-100">
+        <p class="text-xs font-black text-${c}-600 mb-1.5">📈 ${col} 분석</p>
+        <div class="space-y-1 text-slate-700">
+          <p>평균 <strong>${avg}</strong> | 최고 <strong>${max}</strong>${maxName?` (${maxName})`:''} | 최저 <strong>${min}</strong>${minName?` (${minName})`:''}</p>
+          <p class="text-xs text-slate-500">분포: ${trend} · 평균 이상 ${high}명 / 이하 ${vals.length-high}명</p>
+        </div>
+      </div>`;
     });
 
-    if (chartProgress) chartProgress.destroy();
-    const sorted = [...allData].sort((a,b)=>(b['진도율']||0)-(a['진도율']||0));
-    chartProgress = new Chart(document.getElementById('chart-progress'), {
-      type: 'line',
-      data: {
-        labels: sorted.map(r => r['이름'] || r[currentHeaders[0]]),
-        datasets: [{ label:'진도율(%)', data: sorted.map(r=>r['진도율']||0),
-          borderColor:'#6366f1', backgroundColor:'rgba(99,102,241,.1)',
-          fill:true, tension:.35, pointRadius:4, pointBackgroundColor:'#6366f1' }]
-      },
-      options: { responsive:true, scales:{ y:{min:0,max:100,ticks:{font:{size:11}}} }, plugins:{ legend:{display:false} } }
+    // 문자열 컬럼 빈도 분석
+    const strCols = currentHeaders.filter(h => {
+      if (h === labelCol) return false;
+      return allData.some(r => typeof r[h] === 'string' && isNaN(r[h]) && r[h].trim());
     });
+    strCols.slice(0,2).forEach(col => {
+      const freq = {};
+      allData.forEach(r => { const v = String(r[col]||'(없음)'); freq[v]=(freq[v]||0)+1; });
+      const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]);
+      const top = sorted.slice(0,3).map(([k,v])=>`${k}(${v})`).join(', ');
+      html += `<div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+        <p class="text-xs font-black text-slate-600 mb-1.5">🏷️ ${col} 현황</p>
+        <p class="text-slate-700">상위: ${top}</p>
+        <p class="text-xs text-slate-400 mt-0.5">전체 ${Object.keys(freq).length}개 분류</p>
+      </div>`;
+    });
+
+    if (!numCols.length && !strCols.length) {
+      html += `<div class="bg-slate-50 rounded-xl p-3"><p class="text-slate-400">분석할 수 있는 수치 데이터가 없습니다.</p></div>`;
+    }
+
+    box.innerHTML = html;
   }
 
   function saveToCSV() {
