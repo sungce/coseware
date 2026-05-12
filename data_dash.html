@@ -242,33 +242,47 @@
   // ── 💡 CSV 동적 불러오기 로직 ────────────────────────
   function loadCSV(input) {
     const file = input.files[0]; if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      const lines = e.target.result.split('\n').filter(l => l.trim());
-      if(lines.length === 0) return;
 
-      // 1. 첫 줄을 읽어 동적 헤더 생성
-      currentHeaders = lines[0].split(',').map(h => h.trim());
+    function parseCSVText(text) {
+      // BOM 제거 (UTF-8 BOM: \uFEFF, EUC-KR BOM도 처리)
+      const cleaned = text.replace(/^\uFEFF/, '');
+      const lines = cleaned.split(/\r\n|\r|\n/).filter(l => l.trim());
+      if (lines.length === 0) return;
 
-      // 2. 헤더에 맞춰 데이터 객체 동적 생성
+      currentHeaders = lines[0].split(',').map(h => h.trim().replace(/^\uFEFF/, ''));
+
       allData = lines.slice(1).map(line => {
         const vals = line.split(',');
         const row = {};
         currentHeaders.forEach((h, i) => {
           let val = vals[i]?.trim() || '';
-          // 숫자로 변환 가능하면 숫자로 저장 (차트 연동을 위함)
-          if(val !== '' && !isNaN(val)) val = Number(val);
+          if (val !== '' && !isNaN(val)) val = Number(val);
           row[h] = val;
         });
         return row;
-      });
+      }).filter(r => Object.values(r).some(v => v !== '' && v !== 0));
 
       filteredData = [...allData];
       renderTable(filteredData); updateSummary();
-      showToast(`✅ CSV 형식에 맞춰 ${allData.length}개 데이터를 불러왔습니다!`);
-      input.value = ''; // 동일 파일 재업로드 가능하게 초기화
+      showToast(`✅ CSV ${allData.length}개 데이터를 불러왔습니다!`);
+      input.value = '';
+    }
+
+    // 1차: UTF-8로 시도
+    const r1 = new FileReader();
+    r1.onload = e => {
+      const text = e.target.result;
+      // 한글 깨짐 감지 (UTF-8 실패 시 EUC-KR로 재시도)
+      const hasGarbled = /[\ufffd]/.test(text) || /[\x80-\x9f]/.test(text);
+      if (hasGarbled) {
+        const r2 = new FileReader();
+        r2.onload = e2 => parseCSVText(e2.target.result);
+        r2.readAsText(file, 'EUC-KR');
+      } else {
+        parseCSVText(text);
+      }
     };
-    reader.readAsText(file, 'UTF-8');
+    r1.readAsText(file, 'UTF-8');
   }
 
   function addRow() {
