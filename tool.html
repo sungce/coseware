@@ -309,7 +309,7 @@
             </button>
           </div>
           <p class="text-xs text-slate-400 mb-2">← → 방향키 또는 마우스로 패들 이동</p>
-          <canvas id="bk-canvas" width="560" height="400"
+          <canvas id="bk-canvas" width="820" height="600"
             class="rounded-2xl border-2 border-slate-200 shadow-lg cursor-none"
             style="max-width:100%;background:#0f172a;"></canvas>
           <div id="bk-msg" class="mt-3 text-base font-black text-slate-600 min-h-[24px]"></div>
@@ -652,7 +652,7 @@
   let bkCanvas, bkCtx;
   let bkBall, bkPaddle, bkBricks;
   let bkScore = 0, bkLives = 3, bkLevel = 1;
-  const BK_COLS = 10, BK_ROWS = 5;
+  const BK_COLS = 12, BK_ROWS = 7;
   const BK_COLORS = ['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6','#ec4899','#06b6d4'];
 
   function bkInit() {
@@ -673,7 +673,7 @@
     const W = bkCanvas.width, H = bkCanvas.height;
     const speed = 4 + bkLevel * 0.8;
     bkBall = { x: W/2, y: H - 80, vx: speed * (Math.random() > 0.5 ? 1 : -1), vy: -speed, r: 8 };
-    bkPaddle = { x: W/2 - 50, y: H - 30, w: 100, h: 12 };
+    bkPaddle = { x: W/2 - 65, y: H - 35, w: 130, h: 14 };
     bkBricks = [];
     const bw = (W - 40) / BK_COLS, bh = 22;
     for (let r = 0; r < BK_ROWS; r++) {
