@@ -107,6 +107,52 @@
     </div>
   </div>
 
+  <!-- 프롬프트 예시 -->
+  <div class="card p-6 mb-8">
+    <h2 class="text-base font-black text-slate-900 mb-1 flex items-center gap-2">
+      <i data-lucide="lightbulb" class="w-5 h-5 text-amber-400"></i>프롬프트 예시 5가지
+    </h2>
+    <p class="text-xs text-slate-400 font-medium mb-4">카드를 클릭하면 아래 입력창에 자동으로 채워집니다.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+
+      <!-- 예시 1 -->
+      <div onclick="fillExample(0)" class="cursor-pointer border border-pink-100 bg-pink-50 hover:bg-pink-100 hover:border-pink-300 rounded-2xl p-4 transition-all group">
+        <div class="text-lg mb-2">🤖</div>
+        <p class="text-xs font-black text-pink-700 mb-1">인공지능 개념 설명</p>
+        <p class="text-[11px] text-pink-500 leading-relaxed">AI가 무엇인지 초등학생도 이해할 수 있게 설명 요청</p>
+      </div>
+
+      <!-- 예시 2 -->
+      <div onclick="fillExample(1)" class="cursor-pointer border border-blue-100 bg-blue-50 hover:bg-blue-100 hover:border-blue-300 rounded-2xl p-4 transition-all group">
+        <div class="text-lg mb-2">📝</div>
+        <p class="text-xs font-black text-blue-700 mb-1">독서 감상문 작성</p>
+        <p class="text-[11px] text-blue-500 leading-relaxed">책 제목과 주제를 주면 감상문 초안 작성 요청</p>
+      </div>
+
+      <!-- 예시 3 -->
+      <div onclick="fillExample(2)" class="cursor-pointer border border-emerald-100 bg-emerald-50 hover:bg-emerald-100 hover:border-emerald-300 rounded-2xl p-4 transition-all group">
+        <div class="text-lg mb-2">🔢</div>
+        <p class="text-xs font-black text-emerald-700 mb-1">수학 문제 풀이</p>
+        <p class="text-[11px] text-emerald-500 leading-relaxed">수학 문제를 단계별로 풀어서 설명 요청</p>
+      </div>
+
+      <!-- 예시 4 -->
+      <div onclick="fillExample(3)" class="cursor-pointer border border-violet-100 bg-violet-50 hover:bg-violet-100 hover:border-violet-300 rounded-2xl p-4 transition-all group">
+        <div class="text-lg mb-2">💡</div>
+        <p class="text-xs font-black text-violet-700 mb-1">아이디어 브레인스토밍</p>
+        <p class="text-[11px] text-violet-500 leading-relaxed">특정 주제로 창의적인 아이디어 목록 생성 요청</p>
+      </div>
+
+      <!-- 예시 5 -->
+      <div onclick="fillExample(4)" class="cursor-pointer border border-amber-100 bg-amber-50 hover:bg-amber-100 hover:border-amber-300 rounded-2xl p-4 transition-all group">
+        <div class="text-lg mb-2">🌍</div>
+        <p class="text-xs font-black text-amber-700 mb-1">영어 번역 & 교정</p>
+        <p class="text-[11px] text-amber-500 leading-relaxed">한국어 문장을 자연스러운 영어로 번역 요청</p>
+      </div>
+
+    </div>
+  </div>
+
   <!-- 프롬프트 실습 -->
   <div class="card p-6 mb-8">
     <h2 class="text-base font-black text-white mb-2 flex items-center gap-2">
@@ -159,6 +205,58 @@
 
 <script>
   lucide.createIcons();
+  // ── 프롬프트 예시 5가지 ──────────────────────────────
+  const EXAMPLES = [
+    {
+      role: '친절한 선생님',
+      context: '초등학교 5학년 학생',
+      format: '짧은 문장과 비유를 사용해서',
+      task: '인공지능(AI)이 무엇인지, 우리 생활에서 어떻게 사용되는지 설명해주세요.',
+      level: '쉽게'
+    },
+    {
+      role: '국어 선생님',
+      context: '중학교 2학년 학생',
+      format: '서론-본론-결론 구조로 3단락',
+      task: '책 "어린 왕자"를 읽고 느낀 점과 인상 깊었던 장면을 담은 독서 감상문을 작성해주세요.',
+      level: '보통으로'
+    },
+    {
+      role: '수학 튜터',
+      context: '중학교 1학년 학생',
+      format: '단계별로 번호를 붙여 설명',
+      task: '일차방정식 2x + 5 = 13 을 풀고, 왜 그렇게 계산하는지 이유도 함께 설명해주세요.',
+      level: '쉽게'
+    },
+    {
+      role: '창의력 코치',
+      context: '중학생 팀 프로젝트',
+      format: '아이디어 5가지를 목록으로',
+      task: '학교 환경 문제를 해결하기 위한 창의적인 프로젝트 아이디어를 제안해주세요.',
+      level: '보통으로'
+    },
+    {
+      role: '영어 번역 전문가',
+      context: '중학교 영어 수업',
+      format: '번역문과 어색한 부분 설명을 함께',
+      task: '"우리는 서로 도와가며 살아가야 합니다. 작은 친절이 세상을 바꿀 수 있어요." 이 문장을 자연스러운 영어로 번역해주세요.',
+      level: '보통으로'
+    },
+  ];
+
+  function fillExample(idx) {
+    const ex = EXAMPLES[idx];
+    document.getElementById('role-input').value    = ex.role;
+    document.getElementById('context-input').value = ex.context;
+    document.getElementById('format-input').value  = ex.format;
+    document.getElementById('task-input').value    = ex.task;
+    // 난이도 설정
+    setLevel(ex.level);
+    // 프롬프트 자동 생성 후 실습 영역으로 스크롤
+    buildPrompt();
+    document.getElementById('built-prompt').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
   let currentLevel = '쉽게';
 
   function setLevel(l) {
@@ -186,20 +284,51 @@
     return prompt;
   }
 
+  const GEMINI_KEY = 'AIzaSyCk8CIys1pwORVtS3WGwuwpfy3GoxuGbwc';
+  const GEMINI_MODELS = [
+    'gemini-2.5-flash-preview-05-20',
+    'gemini-2.5-flash',
+    'gemini-2.0-flash-exp',
+    'gemini-1.5-pro',
+    'gemini-pro'
+  ];
+
   async function sendPrompt() {
     const prompt = buildPrompt();
     if (!prompt) return;
     const el = document.getElementById('ai-response');
-    el.textContent = '🤔 AI가 답변을 생성 중입니다...'; el.className = 'result-box text-slate-400';
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})
-      });
-      const d = await res.json();
-      el.textContent = d.content?.map(c=>c.text||'').join('') || '응답 오류';
-      el.className = 'result-box text-slate-200';
-    } catch(e) { el.textContent = '오류가 발생했습니다: '+e.message; }
+    el.textContent = '🤔 AI가 답변을 생성 중입니다...';
+    el.className = 'result-box text-slate-400';
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    for (const model of GEMINI_MODELS) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { maxOutputTokens: 1000 }
+          })
+        });
+        const d = await res.json();
+        if (d.error) {
+          // not found or unavailable → try next model
+          if (d.error.code === 404 || d.error.message?.includes('not found') || d.error.message?.includes('no longer available')) continue;
+          throw new Error(d.error.message);
+        }
+        const text = d.candidates?.[0]?.content?.parts?.[0]?.text || '응답을 받지 못했습니다.';
+        el.textContent = text;
+        el.className = 'result-box text-slate-800';
+        return;
+      } catch(e) {
+        if (model === GEMINI_MODELS[GEMINI_MODELS.length - 1]) {
+          el.textContent = '⚠️ 오류: ' + e.message;
+          el.className = 'result-box text-rose-500';
+        }
+      }
+    }
   }
 
   if (window.self !== window.top) {
