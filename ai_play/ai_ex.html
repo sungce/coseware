@@ -3,225 +3,446 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 체험관 — Sungce AI-ON</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>AI 체험관</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;700;900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:'Pretendard',sans-serif;background:#f4f7f9;color:#1e293b;min-height:100vh;}
-  .glass{background:rgba(255,255,255,.9);border:1px solid #e2e8f0;backdrop-filter:blur(12px);}
-  .glow{box-shadow:0 4px 20px rgba(139,92,246,.15);}
-  .tool-card{background:#fff;border:1px solid #e2e8f0;border-radius:1.5rem;padding:1.5rem;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.04);}
-  .tool-card:hover{background:#f5f3ff;border-color:#c4b5fd;transform:translateY(-2px);}
-  nav{background:rgba(255,255,255,.9);border-bottom:1px solid #e2e8f0;backdrop-filter:blur(12px);}
-  .nav-link{font-size:13px;font-weight:700;color:#475569;transition:color .15s;white-space:nowrap;}
-  .nav-link:hover,.nav-link.active{color:#7c3aed;}
-  .nav-link.active{border-bottom:2px solid #7c3aed;padding-bottom:2px;}
-  textarea,input[type="text"]{background:#fff;border:1px solid #e2e8f0;border-radius:.75rem;color:#1e293b;font-family:inherit;outline:none;resize:none;width:100%;}
-  textarea:focus,input[type="text"]:focus{border-color:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,.15);}
-  .badge{font-size:10px;font-weight:800;padding:2px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;}
-  @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(139,92,246,.2);}50%{box-shadow:0 0 40px rgba(139,92,246,.5);}}
-  .pulsing{animation:pulse-glow 2s infinite;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#f0f2f8;color:#1e293b;min-height:100vh;line-height:1.6}
+button,input,textarea{font-family:inherit}
+.header{background:#f0f2f8;padding:36px 24px 32px;border-bottom:1px solid #e2e8f0}
+.header-inner{max-width:1020px;margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:6px;background:#ede9fe;border:1px solid #ddd6fe;border-radius:100px;padding:4px 14px;font-size:12px;font-weight:700;color:#6d28d9;margin-bottom:14px;letter-spacing:.04em}
+.header h1{font-size:34px;font-weight:900;letter-spacing:-.03em;margin-bottom:8px;color:#0f172a}
+.header-sub{font-size:15px;color:#64748b}
+.container{max-width:1020px;margin:0 auto;padding:28px 20px 60px;background:#f0f2f8}
+.tool-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+@media(max-width:820px){.tool-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.tool-grid{grid-template-columns:repeat(2,1fr)}}
+.tool-card{background:#fff;border:2px solid #e8ecf0;border-radius:16px;padding:15px 13px;transition:all .2s;text-align:left;width:100%;cursor:pointer}
+.tool-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.tool-card.active{transform:translateY(-2px)}
+.t-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px}
+.t-name{font-size:12.5px;font-weight:700;color:#1e293b;margin-bottom:3px;line-height:1.3}
+.t-desc{font-size:11px;color:#94a3b8;line-height:1.4}
+.tool-card.active .t-name{color:#fff!important}
+.tool-card.active .t-desc{color:rgba(255,255,255,.78)!important}
+.t-cat{display:inline-block;font-size:10px;font-weight:700;border-radius:4px;padding:2px 6px;margin-bottom:6px}
+.panel{background:#fff;border-radius:20px;padding:28px;box-shadow:0 2px 20px rgba(0,0,0,.06);border:1.5px solid #e8ecf0}
+.panel-head{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.p-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.p-title{font-size:22px;font-weight:900;color:#1e293b}
+.p-divider{height:3px;border-radius:3px;margin:14px 0 20px;width:80px}
+.p-desc{font-size:14px;color:#64748b;margin-bottom:18px}
+.inp{width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:11px 14px;font-size:14px;outline:none;color:#1e293b;background:#fafafa;transition:border-color .2s}
+.inp:focus{background:#fff}
+.ta{width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;color:#1e293b;background:#fafafa;resize:vertical;min-height:100px;transition:border-color .2s}
+.ta:focus{background:#fff}
+.btn-p{padding:10px 22px;border:none;border-radius:10px;font-size:14px;font-weight:700;transition:all .15s;display:inline-flex;align-items:center;gap:6px;margin-top:12px;color:#fff;cursor:pointer}
+.btn-p:disabled{background:#e2e8f0!important;color:#94a3b8!important;cursor:not-allowed}
+.rbox{border-radius:12px;padding:18px 20px;margin-top:16px}
+.dots{display:inline-flex;gap:4px;align-items:center}
+.dots span{width:6px;height:6px;border-radius:50%;background:currentColor;animation:db 1.2s infinite}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes db{0%,80%,100%{transform:scale(0);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.drop{border:2px dashed #cbd5e1;border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#fafafa}
+.drop:hover{border-color:#94a3b8;background:#f1f5f9}
+.chip{display:inline-block;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:600;margin:2px}
+.sel-btn{border-radius:8px;padding:6px 13px;font-size:12.5px;cursor:pointer;transition:all .15s;border:1.5px solid #e2e8f0;background:#fff;color:#475569;font-weight:400}
+.chatbox{height:300px;overflow-y:auto;border:1.5px solid #e2e8f0;border-radius:12px;padding:14px;background:#f8fafc;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.6;white-space:pre-line}
+.msg.user{background:#3b82f6;color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.msg.ai{background:#fff;color:#1e293b;align-self:flex-start;border:1.5px solid #e2e8f0;border-bottom-left-radius:4px}
+.chat-row{display:flex;gap:8px}
+.chat-inp{flex:1;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-size:14px;outline:none}
+.bar-track{background:#e2e8f0;border-radius:99px;height:12px;overflow:hidden;margin:6px 0}
+.bar-fill{height:100%;border-radius:99px;transition:width .8s ease}
+.qitem{background:#fafafa;border:1.5px solid #e8ecf0;border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.qopts{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.qopt{text-align:left;padding:9px 14px;border-radius:8px;font-size:13.5px;transition:all .15s;border:1.5px solid #e2e8f0;background:#fff;color:#475569;cursor:pointer}
+.poem{border-radius:12px;padding:24px;text-align:center;font-size:15px;line-height:2.1;white-space:pre-line}
+.jcard{background:#fafafa;border:1.5px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.mstep{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9}
+.mstep:last-child{border:none}
+.mnum{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+.footer{text-align:center;padding:24px;color:#94a3b8;font-size:12px;border-top:1px solid #e2e8f0}
 </style>
 </head>
 <body>
-
-<nav class="sticky top-0 z-50 w-full">
-  <div class="max-w-[1400px] mx-auto px-4 md:px-6 flex justify-between items-center h-14">
-    <a href="../index.html" class="flex items-center gap-2.5 shrink-0">
-      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center text-xs font-black text-white">AI</div>
-      <div>
-        <div class="text-[15px] font-black text-white leading-tight">Sungce <span class="text-violet-400">AI-ON</span></div>
-        <div class="text-[11px] text-slate-400 leading-tight">정보 교과 클래스룸</div>
-      </div>
-    </a>
-    <div class="hidden md:flex items-center gap-6">
-      <span class="nav-link active">AI 체험관</span>
-      <a href="prompt.html" class="nav-link">프롬프트 엔지니어</a>
-      <a href="labeling.html" class="nav-link">데이터 라벨링</a>
-    </div>
-    <a href="../index.html" class="nav-link flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shrink-0">
-      <i data-lucide="home" class="w-4 h-4"></i><span class="hidden sm:inline">메인으로</span>
-    </a>
+<div class="header">
+  <div class="header-inner">
+    <div class="badge">🤖 AI 탐험</div>
+    <h1>AI 체험관 🤖</h1>
+    <p class="header-sub">다양한 인공지능 도구를 직접 체험하고 비교해보세요. — 10가지 AI 기능 체험</p>
   </div>
-</nav>
-
-<main class="max-w-[1400px] mx-auto px-4 md:px-6 pt-6 pb-16">
-
-  <!-- 헤더 -->
-  <div class="mb-12">
-    <div class="inline-flex items-center gap-2 badge bg-violet-500/20 text-violet-300 border border-violet-500/30 mb-4">
-      <i data-lucide="brain" class="w-3 h-3"></i> AI 탐험
-    </div>
-    <h1 class="text-5xl font-black mb-3 text-slate-900">AI 체험관 🤖</h1>
-    <p class="text-lg text-slate-400 font-medium">다양한 인공지능 도구를 직접 체험하고 비교해보세요.</p>
-  </div>
-
-  <!-- 체험 도구 그리드 -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-
-    <!-- AI 이미지 인식 -->
-    <div class="tool-card" onclick="openTool('vision')">
-      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4">
-        <i data-lucide="scan-eye" class="w-6 h-6 text-white"></i>
-      </div>
-      <h3 class="font-black text-slate-900 mb-1">AI 이미지 인식</h3>
-      <p class="text-sm text-slate-500">이미지를 업로드하면 AI가 내용을 분석합니다.</p>
-    </div>
-
-    <!-- 감정 분석 -->
-    <div class="tool-card" onclick="openTool('sentiment')">
-      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mb-4">
-        <i data-lucide="heart" class="w-6 h-6 text-white"></i>
-      </div>
-      <h3 class="font-black text-slate-900 mb-1">텍스트 감정 분석</h3>
-      <p class="text-sm text-slate-500">문장을 입력하면 AI가 감정을 분석합니다.</p>
-    </div>
-
-    <!-- AI 번역 -->
-    <div class="tool-card" onclick="openTool('translate')">
-      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-4">
-        <i data-lucide="languages" class="w-6 h-6 text-white"></i>
-      </div>
-      <h3 class="font-black text-slate-900 mb-1">AI 언어 번역</h3>
-      <p class="text-sm text-slate-500">다양한 언어로 자동 번역을 체험해보세요.</p>
-    </div>
-
-    <!-- AI 글쓰기 -->
-    <div class="tool-card" onclick="openTool('writing')">
-      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-4">
-        <i data-lucide="pencil-line" class="w-6 h-6 text-white"></i>
-      </div>
-      <h3 class="font-black text-slate-900 mb-1">AI 글쓰기 도우미</h3>
-      <p class="text-sm text-slate-500">주제를 입력하면 AI가 글을 작성해줍니다.</p>
-    </div>
-
-    <!-- 이미지 생성 -->
-    <div class="tool-card" onclick="openTool('imagegen')">
-      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center mb-4">
-        <i data-lucide="image" class="w-6 h-6 text-white"></i>
-      </div>
-      <h3 class="font-black text-slate-900 mb-1">AI 이미지 생성</h3>
-      <p class="text-sm text-slate-500">텍스트로 이미지를 생성하는 AI를 체험합니다.</p>
-    </div>
-
-    <!-- AI 퀴즈 -->
-    <div class="tool-card" onclick="openTool('quiz')">
-      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center mb-4">
-        <i data-lucide="help-circle" class="w-6 h-6 text-white"></i>
-      </div>
-      <h3 class="font-black text-slate-900 mb-1">AI 퀴즈 생성기</h3>
-      <p class="text-sm text-slate-500">주제를 입력하면 AI가 퀴즈를 만들어줍니다.</p>
-    </div>
-  </div>
-
-  <!-- 체험 영역 -->
-  <div id="tool-area" class="hidden bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
-    <div class="flex items-center justify-between mb-6">
-      <h2 id="tool-title" class="text-xl font-black text-white"></h2>
-      <button onclick="closeTool()" class="text-slate-500 hover:text-white p-2 rounded-xl hover:bg-white/5 transition-colors">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-    </div>
-    <div id="tool-content"></div>
-  </div>
-
-</main>
-
+</div>
+<div class="container">
+  <div class="tool-grid" id="toolGrid"></div>
+  <div class="panel" id="panel"></div>
+</div>
+<div class="footer">
+  ※ 이 앱은 Google Gemini AI를 활용한 중학교 정보 수업용 AI 탐험 도구입니다.<br>
+  텍스트 분석·생성: Gemini 2.0 Flash | 이미지 생성: Pollinations AI
+</div>
 <script>
-  lucide.createIcons();
-  const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
+var TOOLS=[
+  {id:'img-rec',   icon:'👁️',label:'AI 이미지 인식',  desc:'이미지를 업로드하면 AI가 내용을 분석합니다.',  color:'#4F8EF7',bg:'#EEF4FF',cat:'인식'},
+  {id:'sentiment', icon:'💬',label:'감정 분석기',      desc:'문장을 입력하면 감정을 분석합니다.',           color:'#E8527A',bg:'#FFF0F4',cat:'분석'},
+  {id:'translate', icon:'🌐',label:'AI 언어 번역',     desc:'다양한 언어로 자동 번역합니다.',               color:'#14B8A6',bg:'#F0FDFB',cat:'언어'},
+  {id:'writing',   icon:'✍️',label:'글쓰기 도우미',    desc:'주제를 입력하면 AI가 글을 씁니다.',            color:'#F97316',bg:'#FFF7F0',cat:'생성'},
+  {id:'img-gen',   icon:'🎨',label:'AI 이미지 생성',   desc:'텍스트로 이미지를 생성합니다.',                color:'#8B5CF6',bg:'#F5F0FF',cat:'생성'},
+  {id:'quiz',      icon:'❓',label:'AI 퀴즈 생성기',   desc:'주제로 퀴즈를 만들어줍니다.',                  color:'#0EA5E9',bg:'#F0F9FF',cat:'교육'},
+  {id:'chatbot',   icon:'🤖',label:'AI 챗봇',          desc:'AI와 자유롭게 대화해보세요.',                  color:'#10B981',bg:'#F0FDF4',cat:'대화'},
+  {id:'poem',      icon:'🌸',label:'시 창작 도우미',   desc:'주제를 주면 AI가 시를 써줍니다.',              color:'#EC4899',bg:'#FDF2F8',cat:'창작'},
+  {id:'jobs',      icon:'🔮',label:'미래 직업 탐색기', desc:'내 관심사로 미래 직업을 찾아요.',              color:'#F59E0B',bg:'#FFFBEB',cat:'진로'},
+  {id:'math',      icon:'📐',label:'수학 풀이 도우미', desc:'수학 문제를 단계별로 풀어줍니다.',             color:'#6366F1',bg:'#EEF2FF',cat:'학습'}
+];
+var LANGS=[{c:'영어',f:'🇺🇸'},{c:'일본어',f:'🇯🇵'},{c:'중국어',f:'🇨🇳'},{c:'프랑스어',f:'🇫🇷'},{c:'스페인어',f:'🇪🇸'},{c:'독일어',f:'🇩🇪'},{c:'아랍어',f:'🇸🇦'},{c:'러시아어',f:'🇷🇺'},{c:'이탈리아어',f:'🇮🇹'},{c:'포르투갈어',f:'🇧🇷'}];
+var WRITE_TYPES=['이야기','편지','설명문','일기','광고문','뉴스기사'];
+var POEM_MOODS=['설레는','슬픈','재미있는','신비로운','따뜻한','용감한'];
+var activeTool='img-rec',chatHistory=[],selectedLang='영어',selectedWriteType='이야기',selectedMood='설레는';
+var uploadedImgData=null,uploadedImgType=null,quizData=null,quizAnswers={},quizSubmitted=false;
+var GEMINI_KEY='AIzaSyCk8CIys1pwORVtS3WGwuwpfy3GoxuGbwc';
+var GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+GEMINI_KEY;
+function tc(){return(TOOLS.find(function(t){return t.id===activeTool})||{color:'#3b82f6'}).color}
+function tbg(){return(TOOLS.find(function(t){return t.id===activeTool})||{bg:'#EEF4FF'}).bg}
 
-  const tools = {
-    sentiment: {
-      title:'😊 텍스트 감정 분석',
-      html:`<div>
-        <textarea id="sent-input" class="p-3 text-sm leading-relaxed" rows="4" placeholder="감정을 분석할 문장을 입력하세요...&#10;예) 오늘 친구와 싸워서 너무 속상해요. 어떻게 화해해야 할까요?"></textarea>
-        <button onclick="analyzeSentiment()" class="mt-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black px-6 py-3 rounded-2xl hover:opacity-90 transition-opacity flex items-center gap-2 text-sm">
-          <i data-lucide="brain" class="w-4 h-4"></i>감정 분석하기</button>
-        <div id="sent-result" class="mt-4 hidden p-5 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap"></div></div>`
-    },
-    writing: {
-      title:'✍️ AI 글쓰기 도우미',
-      html:`<div>
-        <input type="text" id="write-input" class="p-3 text-sm mb-3" placeholder="글쓰기 주제를 입력하세요... 예) 인공지능이 미래 교육에 미치는 영향">
-        <div class="flex gap-2 mb-3 flex-wrap">
-          ${['서론 작성','본론 아이디어','결론 정리','요약 정리'].map(t=>`<button onclick="setWriteType('${t}')" class="text-xs font-bold px-3 py-1.5 rounded-xl bg-white/5 hover:bg-violet-500/20 border border-white/10 hover:border-violet-500/30 transition-colors text-slate-300">${t}</button>`).join('')}
-        </div>
-        <button onclick="generateWriting()" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black px-6 py-3 rounded-2xl hover:opacity-90 transition-opacity flex items-center gap-2 text-sm">
-          <i data-lucide="pencil-line" class="w-4 h-4"></i>글 생성하기</button>
-        <div id="write-result" class="mt-4 hidden p-5 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap"></div></div>`
-    },
-    quiz: {
-      title:'📝 AI 퀴즈 생성기',
-      html:`<div>
-        <input type="text" id="quiz-input" class="p-3 text-sm mb-3" placeholder="퀴즈 주제를 입력하세요... 예) 인공지능의 역사">
-        <button onclick="generateQuiz()" class="bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black px-6 py-3 rounded-2xl hover:opacity-90 transition-opacity flex items-center gap-2 text-sm">
-          <i data-lucide="help-circle" class="w-4 h-4"></i>퀴즈 만들기</button>
-        <div id="quiz-result" class="mt-4 hidden p-5 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap"></div></div>`
-    },
-    vision: {title:'🔍 AI 이미지 인식',html:`<div class="text-center py-8"><p class="text-slate-400 mb-4">Google Vision API 연동이 필요합니다.</p><a href="https://teachablemachine.withgoogle.com/" target="_blank" class="inline-flex items-center gap-2 bg-blue-600 text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-blue-700 transition-colors"><i data-lucide="external-link" class="w-4 h-4"></i>Teachable Machine 체험하기</a></div>`},
-    translate: {title:'🌐 AI 언어 번역',html:`<div class="text-center py-8"><a href="https://translate.google.com/" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-emerald-700 transition-colors"><i data-lucide="external-link" class="w-4 h-4"></i>Google 번역 열기</a></div>`},
-    imagegen: {title:'🎨 AI 이미지 생성',html:`<div class="text-center py-8"><a href="https://www.bing.com/images/create" target="_blank" class="inline-flex items-center gap-2 bg-violet-600 text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-violet-700 transition-colors"><i data-lucide="external-link" class="w-4 h-4"></i>Bing Image Creator 체험하기</a></div>`},
+/* Claude 형식 메시지 → Gemini 형식으로 변환 후 호출 */
+async function callClaude(messages,system){
+  /* contents 변환 */
+  var contents=messages.map(function(m){
+    var role=m.role==='assistant'?'model':'user';
+    /* content가 배열인 경우 (이미지+텍스트 멀티모달) */
+    if(Array.isArray(m.content)){
+      var parts=m.content.map(function(c){
+        if(c.type==='text') return {text:c.text};
+        if(c.type==='image') return {inlineData:{mimeType:c.source.media_type,data:c.source.data}};
+        return {text:''};
+      });
+      return {role:role,parts:parts};
+    }
+    return {role:role,parts:[{text:m.content}]};
+  });
+  var body={contents:contents};
+  if(system) body.systemInstruction={parts:[{text:system}]};
+  body.generationConfig={maxOutputTokens:1000};
+
+  var res=await fetch(GEMINI_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  var data=await res.json();
+  if(data.error) throw new Error(data.error.message||JSON.stringify(data.error));
+  return data.candidates[0].content.parts[0].text;
+}
+function dots(){return '<span class="dots" style="color:'+tc()+'"><span></span><span></span><span></span></span>'}
+function rbox(c){return '<div class="rbox" style="background:'+tc()+'09;border:1.5px solid '+tc()+'30">'+c+'</div>'}
+function setHTML(id,h){var e=document.getElementById(id);if(e)e.innerHTML=h}
+function setBtn(id,h,d){var e=document.getElementById(id);if(!e)return;e.innerHTML=h;e.disabled=!!d}
+function getVal(id){var e=document.getElementById(id);return e?e.value.trim():''}
+function errBox(m){return rbox('<p style="margin:0;font-size:14px;color:#ef4444">⚠️ '+m+'</p>')}
+function parseJSON(raw){try{return JSON.parse(raw.replace(/```json|```/g,'').trim())}catch(e){throw new Error('JSON 파싱 실패')}}
+function setActiveTool(id){
+  activeTool=id;chatHistory=[];uploadedImgData=null;quizData=null;quizAnswers={};quizSubmitted=false;
+  renderGrid();renderPanel();
+}
+function renderGrid(){
+  document.getElementById('toolGrid').innerHTML=TOOLS.map(function(t){
+    var on=t.id===activeTool;
+    return '<button class="tool-card '+(on?'active':'')+'" onclick="setActiveTool(\''+t.id+'\')" style="'+(on?'background:'+t.color+';border-color:'+t.color+';box-shadow:0 4px 18px '+t.color+'40':'')+'">'
+      +'<span class="t-cat" style="background:'+(on?'rgba(255,255,255,.22)':t.bg)+';color:'+(on?'#fff':t.color)+'">'+t.cat+'</span><br>'
+      +'<div class="t-icon" style="background:'+(on?'rgba(255,255,255,.22)':t.bg)+'">'+t.icon+'</div>'
+      +'<div class="t-name">'+t.label+'</div>'
+      +'<div class="t-desc">'+t.desc+'</div>'
+      +'</button>';
+  }).join('');
+}
+function renderPanel(){
+  var tool=TOOLS.find(function(t){return t.id===activeTool});
+  document.getElementById('panel').innerHTML='<div class="panel-head"><div class="p-icon" style="background:'+tool.bg+'">'+tool.icon+'</div><div><div class="p-title">'+tool.label+'</div></div></div><div class="p-divider" style="background:linear-gradient(90deg,'+tool.color+',transparent)"></div><div id="toolContent"></div>';
+  var R={
+    'img-rec':renderImgRec,'sentiment':renderSentiment,'translate':renderTranslate,
+    'writing':renderWriting,'img-gen':renderImgGen,'quiz':renderQuiz,
+    'chatbot':renderChatbot,'poem':renderPoem,'jobs':renderJobs,'math':renderMath
   };
-
-  let writeType = '서론 작성';
-  function setWriteType(t) { writeType = t; }
-
-  function openTool(id) {
-    const t = tools[id]; if (!t) return;
-    document.getElementById('tool-title').textContent = t.title;
-    document.getElementById('tool-content').innerHTML = t.html;
-    document.getElementById('tool-area').classList.remove('hidden');
-    document.getElementById('tool-area').scrollIntoView({behavior:'smooth'});
-    lucide.createIcons();
-  }
-  function closeTool() { document.getElementById('tool-area').classList.add('hidden'); }
-
-  async function callClaude(prompt) {
-    const res = await fetch(ANTHROPIC_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000,
-        messages:[{role:'user',content:prompt}]})
+  if(R[activeTool])R[activeTool]();
+}
+/* 1. 이미지 인식 */
+function renderImgRec(){
+  setHTML('toolContent','<p class="p-desc">이미지 파일을 업로드하면 AI가 이미지 속 내용, 색상, 분위기를 분석해드립니다.</p>'
+    +'<div class="drop" id="dropZone" onclick="document.getElementById(\'fileInput\').click()">'
+    +'<div style="font-size:40px;margin-bottom:10px">📁</div><p style="color:#94a3b8;font-size:14px;margin:0">클릭하여 이미지 선택 (JPG, PNG, GIF)</p></div>'
+    +'<input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">'
+    +'<button class="btn-p" id="analyzeBtn" onclick="analyzeImg()" disabled style="background:'+tc()+'">🔍 이미지 분석하기</button>'
+    +'<div id="imgResult"></div>');
+}
+function handleFile(e){
+  var f=e.target.files[0];if(!f)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    uploadedImgData=ev.target.result.split(',')[1];uploadedImgType=f.type;
+    var dz=document.getElementById('dropZone');
+    dz.innerHTML='<img src="'+ev.target.result+'" style="max-width:100%;max-height:200px;border-radius:8px">';
+    document.getElementById('analyzeBtn').disabled=false;
+  };
+  reader.readAsDataURL(f);
+}
+async function analyzeImg(){
+  if(!uploadedImgData)return;
+  setBtn('analyzeBtn',dots(),true);setHTML('imgResult','');
+  try{
+    var r=await callClaude([{role:'user',content:[
+      {type:'image',source:{type:'base64',media_type:uploadedImgType,data:uploadedImgData}},
+      {type:'text',text:'이 이미지를 한국어로 자세히 분석해주세요. 무엇이 있는지, 주요 특징, 색상, 분위기를 설명해주세요. 중학생이 이해할 수 있는 쉬운 언어로 3~4문장으로 작성해주세요.'}
+    ]}]);
+    setHTML('imgResult',rbox('<p style="margin:0 0 6px;font-size:12px;font-weight:700;color:'+tc()+'">🤖 AI 분석 결과</p><p style="margin:0;font-size:14px;line-height:1.8;color:#1e293b">'+r+'</p>'));
+  }catch(e){setHTML('imgResult',errBox(e.message));}
+  setBtn('analyzeBtn','🔍 이미지 분석하기',false);
+}
+/* 2. 감정 분석 */
+function renderSentiment(){
+  setHTML('toolContent','<p class="p-desc">한국어 문장을 입력하면 AI가 감정(긍정/부정/중립)을 점수와 함께 분석합니다.</p>'
+    +'<textarea class="ta" id="sentText" placeholder="예: 오늘 친구들과 함께 맛있는 점심을 먹었어요! 정말 행복한 하루였습니다." oninput="document.getElementById(\'sentBtn\').disabled=!this.value.trim()"></textarea>'
+    +'<button class="btn-p" id="sentBtn" onclick="doSentiment()" disabled style="background:'+tc()+'">💬 감정 분석하기</button>'
+    +'<div id="sentResult"></div>');
+}
+async function doSentiment(){
+  var text=getVal('sentText');if(!text)return;
+  setBtn('sentBtn',dots(),true);setHTML('sentResult','');
+  try{
+    var raw=await callClaude([{role:'user',content:'다음 문장의 감정을 분석해주세요: "'+text+'"\n반드시 JSON만 응답:\n{"sentiment":"긍정/부정/중립","score":0~100,"emoji":"이모지","reason":"이유 한 문장","keywords":["단어1","단어2","단어3"]}'}],'감정 분석 전문가. 순수 JSON만.');
+    var d=parseJSON(raw);
+    var sc={'긍정':'#22c55e','부정':'#ef4444','중립':'#94a3b8'}[d.sentiment]||tc();
+    var sb={'긍정':'#f0fdf4','부정':'#fef2f2','중립':'#f8fafc'}[d.sentiment]||'#fafafa';
+    setHTML('sentResult','<div style="margin-top:16px;background:'+sb+';border:1.5px solid '+sc+'30;border-radius:12px;padding:20px">'
+      +'<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px"><span style="font-size:46px">'+d.emoji+'</span>'
+      +'<div><span style="background:'+sc+';color:#fff;border-radius:8px;padding:4px 14px;font-size:15px;font-weight:700">'+d.sentiment+'</span>'
+      +'<p style="margin:6px 0 0;font-size:13px;color:#64748b">'+d.reason+'</p></div></div>'
+      +'<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:4px"><span>감정 강도</span><span style="font-weight:700;color:'+sc+'">'+d.score+'점</span></div>'
+      +'<div class="bar-track"><div class="bar-fill" style="width:'+d.score+'%;background:'+sc+'"></div></div></div>'
+      +'<div>'+(d.keywords||[]).map(function(k){return '<span class="chip" style="background:'+sc+'18;color:'+sc+'">#'+k+'</span>';}).join('')+'</div></div>');
+  }catch(e){setHTML('sentResult',errBox(e.message));}
+  setBtn('sentBtn','💬 감정 분석하기',false);
+}
+/* 3. 번역 */
+function renderTranslate(){
+  setHTML('toolContent','<p class="p-desc">한국어 텍스트를 10가지 언어로 번역해보세요.</p>'
+    +'<textarea class="ta" id="transText" placeholder="번역할 한국어 텍스트를 입력하세요." oninput="document.getElementById(\'transBtn\').disabled=!this.value.trim()"></textarea>'
+    +'<div style="margin:12px 0 4px"><label style="font-size:13px;font-weight:600;color:#475569;display:block;margin-bottom:6px">번역 언어 선택</label>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:7px">'+LANGS.map(function(l){return '<button class="sel-btn" id="lang_'+l.c+'" onclick="pickLang(\''+l.c+'\')" style="'+(selectedLang===l.c?'border-color:'+tc()+';background:'+tc()+'15;color:'+tc()+';font-weight:700':'')+'">'+l.f+' '+l.c+'</button>';}).join('')+'</div></div>'
+    +'<button class="btn-p" id="transBtn" onclick="doTranslate()" disabled style="background:'+tc()+'">🌐 번역하기</button>'
+    +'<div id="transResult"></div>');
+}
+function pickLang(c){
+  selectedLang=c;
+  LANGS.forEach(function(l){
+    var b=document.getElementById('lang_'+l.c);if(!b)return;
+    var on=l.c===c;b.style.borderColor=on?tc():'#e2e8f0';b.style.background=on?tc()+'15':'#fff';b.style.color=on?tc():'#475569';b.style.fontWeight=on?'700':'400';
+  });
+}
+async function doTranslate(){
+  var text=getVal('transText');if(!text)return;
+  setBtn('transBtn',dots(),true);setHTML('transResult','');
+  try{
+    var r=await callClaude([{role:'user',content:'다음 한국어를 '+selectedLang+'로 번역해주세요. 번역문만 출력하세요.\n원문: '+text}]);
+    var flag=(LANGS.find(function(l){return l.c===selectedLang})||{f:''}).f;
+    setHTML('transResult',rbox('<p style="margin:0 0 8px;font-size:12px;font-weight:700;color:'+tc()+'">'+flag+' '+selectedLang+' 번역 결과</p>'
+      +'<p style="margin:0;font-size:15px;color:#1e293b;line-height:1.8">'+r.trim()+'</p>'
+      +'<div style="margin-top:10px;padding-top:8px;border-top:1px solid '+tc()+'20"><span style="font-size:12px;color:#94a3b8">원문: </span><span style="font-size:12px;color:#64748b">'+(text.length>50?text.slice(0,50)+'…':text)+'</span></div>'));
+  }catch(e){setHTML('transResult',errBox(e.message));}
+  setBtn('transBtn','🌐 번역하기',false);
+}
+/* 4. 글쓰기 */
+function renderWriting(){
+  setHTML('toolContent','<p class="p-desc">주제와 글의 종류를 선택하면 AI가 창의적인 글을 작성해드립니다.</p>'
+    +'<div style="margin-bottom:12px"><label style="font-size:13px;font-weight:600;color:#475569;display:block;margin-bottom:6px">글 종류 선택</label>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:7px">'+WRITE_TYPES.map(function(t){return '<button class="sel-btn" id="wtype_'+t+'" onclick="pickWType(\''+t+'\')" style="'+(selectedWriteType===t?'border-color:'+tc()+';background:'+tc()+'15;color:'+tc()+';font-weight:700':'')+'">'+t+'</button>';}).join('')+'</div></div>'
+    +'<input type="text" class="inp" id="writeTopic" placeholder="'+selectedWriteType+' 주제를 입력하세요 (예: 봄날의 소풍, 로봇과 인간...)" oninput="document.getElementById(\'writeBtn\').disabled=!this.value.trim()">'
+    +'<button class="btn-p" id="writeBtn" onclick="doWriting()" disabled style="background:'+tc()+'">✍️ 글 생성하기</button>'
+    +'<div id="writeResult"></div>');
+}
+function pickWType(t){
+  selectedWriteType=t;
+  WRITE_TYPES.forEach(function(w){
+    var b=document.getElementById('wtype_'+w);if(!b)return;
+    var on=w===t;b.style.borderColor=on?tc():'#e2e8f0';b.style.background=on?tc()+'15':'#fff';b.style.color=on?tc():'#475569';b.style.fontWeight=on?'700':'400';
+  });
+  var inp=document.getElementById('writeTopic');if(inp)inp.placeholder=t+' 주제를 입력하세요';
+}
+async function doWriting(){
+  var topic=getVal('writeTopic');if(!topic)return;
+  setBtn('writeBtn',dots(),true);setHTML('writeResult','');
+  try{
+    var r=await callClaude([{role:'user',content:'\''+topic+'\'을(를) 주제로 '+selectedWriteType+'를 작성해주세요. 중학생 수준에 맞게 자연스럽고 창의적으로 200~300자 분량으로 작성해주세요. 글만 출력하세요.'}]);
+    setHTML('writeResult',rbox('<p style="margin:0 0 8px;font-size:12px;font-weight:700;color:'+tc()+'">'+topic+' — '+selectedWriteType+'</p><p style="margin:0;font-size:14px;color:#1e293b;line-height:1.9;white-space:pre-line">'+r.trim()+'</p><p style="margin:10px 0 0;font-size:12px;color:#94a3b8">'+r.trim().length+'자</p>'));
+  }catch(e){setHTML('writeResult',errBox(e.message));}
+  setBtn('writeBtn','✍️ 글 생성하기',false);
+}
+/* 5. 이미지 생성 */
+function renderImgGen(){
+  setHTML('toolContent','<p class="p-desc">상상하는 장면을 한국어로 설명하면 AI가 이미지를 생성합니다. (10~20초 소요)</p>'
+    +'<input type="text" class="inp" id="igPrompt" placeholder="예: 우주에서 피아노를 연주하는 고양이, 눈 내리는 한국 전통 마을..." oninput="document.getElementById(\'igBtn\').disabled=!this.value.trim()" onkeydown="if(event.key===\'Enter\')doImgGen()">'
+    +'<button class="btn-p" id="igBtn" onclick="doImgGen()" disabled style="background:'+tc()+'">🎨 이미지 생성하기</button>'
+    +'<div id="igResult"></div>');
+}
+async function doImgGen(){
+  var prompt=getVal('igPrompt');if(!prompt)return;
+  setBtn('igBtn',dots(),true);
+  setHTML('igResult','<div style="text-align:center;padding:36px 0;color:#94a3b8;font-size:14px"><div style="font-size:38px;margin-bottom:8px;display:inline-block;animation:spin 2s linear infinite">🎨</div><p>AI가 이미지를 그리는 중입니다...</p><p style="font-size:12px;margin-top:4px">10~20초 정도 걸릴 수 있어요</p></div>');
+  try{
+    var en=await callClaude([{role:'user',content:'다음을 영어 이미지 생성 프롬프트로 번역하세요. 영어만 출력: "'+prompt+'"'}]);
+    var clean=en.trim().replace(/"/g,'');
+    var seed=Math.floor(Math.random()*99999);
+    var url='https://image.pollinations.ai/prompt/'+encodeURIComponent(clean+', high quality, detailed, colorful, digital art')+'?width=512&height=512&nologo=true&seed='+seed;
+    setHTML('igResult',rbox('<p style="margin:0 0 10px;font-size:12px;font-weight:700;color:'+tc()+'">"'+prompt+'" 생성 결과</p>'
+      +'<img src="'+url+'" alt="AI 생성 이미지" style="width:100%;max-width:420px;border-radius:10px;display:block;margin:0 auto;transition:opacity .5s;opacity:0" onload="this.style.opacity=1" onerror="this.parentElement.innerHTML+=\'<p style=color:#ef4444;margin:8px 0 0;font-size:13px>이미지 로딩 실패. 다시 시도해주세요.</p>\'">'
+      +'<p style="margin:10px 0 0;font-size:12px;color:#94a3b8;text-align:center">※ Pollinations AI로 생성된 이미지입니다.</p>'));
+  }catch(e){setHTML('igResult',errBox(e.message));}
+  setBtn('igBtn','🎨 이미지 생성하기',false);
+}
+/* 6. 퀴즈 */
+function renderQuiz(){
+  setHTML('toolContent','<p class="p-desc">공부하고 싶은 주제를 입력하면 AI가 4지선다 5문제를 만들어줍니다.</p>'
+    +'<input type="text" class="inp" id="quizTopic" placeholder="예: 태양계, 조선 시대, 광합성, 인공지능, 세계 지리..." oninput="document.getElementById(\'quizBtn\').disabled=!this.value.trim()" onkeydown="if(event.key===\'Enter\')doQuiz()">'
+    +'<button class="btn-p" id="quizBtn" onclick="doQuiz()" disabled style="background:'+tc()+'">❓ 퀴즈 생성하기</button>'
+    +'<div id="quizResult"></div>');
+}
+async function doQuiz(){
+  var topic=getVal('quizTopic');if(!topic)return;
+  setBtn('quizBtn',dots(),true);quizData=null;quizAnswers={};quizSubmitted=false;setHTML('quizResult','');
+  try{
+    var raw=await callClaude([{role:'user',content:'\''+topic+'\' 주제로 객관식 5문제를 만들어주세요. 순수 JSON만:\n{"questions":[{"q":"질문","options":["①답1","②답2","③답3","④답4"],"answer":0,"explanation":"해설"}]}'}],'중학생 퀴즈 생성기. answer는 0부터 시작하는 인덱스. 순수 JSON만.');
+    quizData=parseJSON(raw).questions;
+    renderQuizUI();
+  }catch(e){setHTML('quizResult',errBox(e.message));}
+  setBtn('quizBtn','❓ 퀴즈 생성하기',false);
+}
+function renderQuizUI(){
+  if(!quizData)return;
+  setHTML('quizResult','<div style="margin-top:16px">'+quizData.map(function(q,qi){
+    return '<div class="qitem"><p style="margin:0 0 10px;font-weight:700;font-size:14px;color:#1e293b"><span style="color:'+tc()+'">Q'+(qi+1)+'.</span> '+q.q+'</p><div class="qopts">'+q.options.map(function(opt,oi){return '<button class="qopt" id="qo_'+qi+'_'+oi+'" onclick="pickOpt('+qi+','+oi+')">'+opt+'</button>';}).join('')+'</div><div id="qexp_'+qi+'" style="display:none;margin-top:10px;font-size:12px;color:#64748b;background:#f1f5f9;border-radius:6px;padding:8px 10px">💡 '+q.explanation+'</div></div>';
+  }).join('')+'<button id="submitBtn" onclick="submitQuiz()" style="background:#e2e8f0;color:#94a3b8;border:none;border-radius:10px;padding:10px 24px;font-size:14px;font-weight:700;cursor:not-allowed;margin-top:4px">채점하기</button><div id="quizScore"></div></div>');
+}
+function pickOpt(qi,oi){
+  if(quizSubmitted)return;
+  quizAnswers[qi]=oi;
+  if(quizData)quizData[qi].options.forEach(function(_,i){
+    var b=document.getElementById('qo_'+qi+'_'+i);if(!b)return;
+    var on=i===oi;b.style.borderColor=on?tc():'#e2e8f0';b.style.background=on?tc()+'10':'#fff';b.style.color=on?tc():'#475569';b.style.fontWeight=on?'600':'400';
+  });
+  var sb=document.getElementById('submitBtn');
+  if(sb&&quizData&&Object.keys(quizAnswers).length>=quizData.length){sb.style.background=tc();sb.style.color='#fff';sb.style.cursor='pointer';}
+}
+function submitQuiz(){
+  if(!quizData||Object.keys(quizAnswers).length<quizData.length)return;
+  quizSubmitted=true;var score=0;
+  quizData.forEach(function(q,qi){
+    var correct=q.answer,sel=quizAnswers[qi];
+    q.options.forEach(function(_,oi){
+      var b=document.getElementById('qo_'+qi+'_'+oi);if(!b)return;b.disabled=true;
+      if(oi===correct){b.style.borderColor='#22c55e';b.style.background='#f0fdf4';b.style.color='#16a34a';b.style.fontWeight='700';b.innerHTML+=' ✓';}
+      else if(oi===sel&&oi!==correct){b.style.borderColor='#ef4444';b.style.background='#fef2f2';b.style.color='#dc2626';b.innerHTML+=' ✗';}
     });
-    const d = await res.json();
-    return d.content?.map(c=>c.text||'').join('') || '응답을 받지 못했습니다.';
-  }
-
-  async function analyzeSentiment() {
-    const text = document.getElementById('sent-input').value.trim();
-    if (!text) { alert('텍스트를 입력해주세요.'); return; }
-    const el = document.getElementById('sent-result');
-    el.textContent = '🤔 분석 중...'; el.classList.remove('hidden');
-    const result = await callClaude(`다음 텍스트의 감정을 분석해주세요. 한국어로 답변하고, 감정 종류(긍정/부정/중립), 강도(1-10), 주요 감정 키워드, 한줄 해설을 포함해주세요:\n\n"${text}"`);
-    el.textContent = result;
-  }
-
-  async function generateWriting() {
-    const topic = document.getElementById('write-input').value.trim();
-    if (!topic) { alert('주제를 입력해주세요.'); return; }
-    const el = document.getElementById('write-result');
-    el.textContent = '✍️ 글 작성 중...'; el.classList.remove('hidden');
-    const result = await callClaude(`주제: "${topic}"\n\n위 주제로 중학생 수준에 맞는 ${writeType}을 한국어로 작성해주세요. 200자 내외로 작성해주세요.`);
-    el.textContent = result;
-  }
-
-  async function generateQuiz() {
-    const topic = document.getElementById('quiz-input').value.trim();
-    if (!topic) { alert('주제를 입력해주세요.'); return; }
-    const el = document.getElementById('quiz-result');
-    el.textContent = '📝 퀴즈 생성 중...'; el.classList.remove('hidden');
-    const result = await callClaude(`"${topic}" 주제로 중학생 수준의 4지선다 퀴즈 3문제를 만들어주세요. 한국어로 작성하고, 각 문제의 정답과 간단한 해설도 포함해주세요.`);
-    el.textContent = result;
-  }
-
-  if (window.self !== window.top) {
-    const nav=document.querySelector('nav'); if(nav)nav.style.display='none';
-    const main=document.querySelector('main'); if(main){main.style.paddingTop='1rem';main.style.paddingBottom='2rem';}
-  }
+    var exp=document.getElementById('qexp_'+qi);if(exp)exp.style.display='block';
+    if(sel===correct)score++;
+  });
+  var sb=document.getElementById('submitBtn');if(sb)sb.style.display='none';
+  var msg=score===quizData.length?'🎉 완벽해요! 모두 맞혔습니다!':score>=quizData.length/2?'👍 잘했어요! 조금만 더 공부해보세요.':'📚 다시 공부하고 도전해보세요!';
+  setHTML('quizScore','<div style="margin-top:12px;background:'+tc()+'10;border:1.5px solid '+tc()+'30;border-radius:12px;padding:18px 20px;text-align:center"><p style="margin:0;font-size:26px;font-weight:900;color:'+tc()+'">'+score+' / '+quizData.length+'점</p><p style="margin:6px 0 10px;font-size:13px;color:#64748b">'+msg+'</p><button onclick="doQuiz()" style="background:#fff;border:1.5px solid '+tc()+';color:'+tc()+';border-radius:8px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer">새 퀴즈 생성</button></div>');
+}
+/* 7. 챗봇 */
+function renderChatbot(){
+  chatHistory=[];
+  setHTML('toolContent','<p class="p-desc">AI와 자유롭게 대화해보세요. 궁금한 것, 도움이 필요한 것 무엇이든 물어보세요!</p>'
+    +'<div class="chatbox" id="chatBox"><div class="msg ai">안녕하세요! 저는 AI 친구예요 🤖<br>무엇이든 편하게 물어보세요!</div></div>'
+    +'<div class="chat-row"><input type="text" class="chat-inp" id="chatInput" placeholder="메시지를 입력하세요..." onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();sendMsg()}">'
+    +'<button id="chatSendBtn" onclick="sendMsg()" style="background:'+tc()+';color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer">전송</button></div>'
+    +'<button onclick="clearChat()" style="margin-top:8px;background:transparent;border:1.5px solid #e2e8f0;color:#94a3b8;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer">🗑 대화 초기화</button>');
+}
+async function sendMsg(){
+  var input=document.getElementById('chatInput');var text=input?input.value.trim():'';if(!text)return;
+  if(input)input.value='';
+  var box=document.getElementById('chatBox');
+  if(box){box.innerHTML+='<div class="msg user">'+text+'</div><div class="msg ai" id="chatLoading">'+dots()+'</div>';box.scrollTop=box.scrollHeight;}
+  var sb=document.getElementById('chatSendBtn'),ci=document.getElementById('chatInput');
+  if(sb)sb.disabled=true;if(ci)ci.disabled=true;
+  chatHistory.push({role:'user',content:text});
+  try{
+    var reply=await callClaude(chatHistory,'당신은 중학생을 위한 친절한 AI 친구입니다. 쉽고 재미있는 언어로 답변해주세요. 한국어로 대화하세요.');
+    chatHistory.push({role:'assistant',content:reply});
+    var ld=document.getElementById('chatLoading');if(ld)ld.outerHTML='<div class="msg ai">'+reply+'</div>';
+  }catch(e){var ld=document.getElementById('chatLoading');if(ld)ld.outerHTML='<div class="msg ai" style="color:#ef4444">오류: '+e.message+'</div>';}
+  if(box)box.scrollTop=box.scrollHeight;if(sb)sb.disabled=false;if(ci){ci.disabled=false;ci.focus();}
+}
+function clearChat(){chatHistory=[];var box=document.getElementById('chatBox');if(box)box.innerHTML='<div class="msg ai">대화가 초기화되었습니다. 새로운 대화를 시작해보세요! 🤖</div>';}
+/* 8. 시 창작 */
+function renderPoem(){
+  setHTML('toolContent','<p class="p-desc">주제와 분위기를 선택하면 AI가 아름다운 시를 창작해줍니다.</p>'
+    +'<input type="text" class="inp" id="poemTopic" placeholder="시 주제 (예: 봄비, 우정, 미래, 바다, 고향...)" oninput="document.getElementById(\'poemBtn\').disabled=!this.value.trim()" style="margin-bottom:10px">'
+    +'<div><label style="font-size:13px;font-weight:600;color:#475569;display:block;margin-bottom:6px">분위기 선택</label>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:7px">'+POEM_MOODS.map(function(m){return '<button class="sel-btn" id="mood_'+m+'" onclick="pickMood(\''+m+'\')" style="'+(selectedMood===m?'border-color:'+tc()+';background:'+tc()+'15;color:'+tc()+';font-weight:700':'')+'">'+m+'</button>';}).join('')+'</div></div>'
+    +'<button class="btn-p" id="poemBtn" onclick="doPoem()" disabled style="background:'+tc()+'">🌸 시 창작하기</button>'
+    +'<div id="poemResult"></div>');
+}
+function pickMood(m){
+  selectedMood=m;
+  POEM_MOODS.forEach(function(x){
+    var b=document.getElementById('mood_'+x);if(!b)return;
+    var on=x===m;b.style.borderColor=on?tc():'#e2e8f0';b.style.background=on?tc()+'15':'#fff';b.style.color=on?tc():'#475569';b.style.fontWeight=on?'700':'400';
+  });
+}
+async function doPoem(){
+  var topic=getVal('poemTopic');if(!topic)return;
+  setBtn('poemBtn',dots(),true);setHTML('poemResult','');
+  try{
+    var r=await callClaude([{role:'user',content:'\''+topic+'\'을(를) 주제로 '+selectedMood+' 분위기의 시를 창작해주세요. 4~6연, 각 연 3~4행으로 작성하세요. 중학생이 감동받을 수 있는 아름다운 시로 만들어주세요. 시만 출력하세요.'}]);
+    setHTML('poemResult','<div style="margin-top:16px"><div class="poem" style="background:linear-gradient(135deg,'+tc()+'12,'+tc()+'22);border:1.5px solid '+tc()+'30;color:#1e293b">'+r.trim().replace(/\n/g,'<br>')+'</div><p style="text-align:right;font-size:12px;color:#94a3b8;margin:8px 0 0">— AI가 창작한 「'+topic+'」 ('+selectedMood+' 분위기)</p></div>');
+  }catch(e){setHTML('poemResult',errBox(e.message));}
+  setBtn('poemBtn','🌸 시 창작하기',false);
+}
+/* 9. 직업 탐색 */
+function renderJobs(){
+  setHTML('toolContent','<p class="p-desc">나의 관심사와 잘하는 것을 입력하면 AI가 어울리는 미래 직업을 추천해줍니다.</p>'
+    +'<div style="margin-bottom:12px"><label style="font-size:13px;font-weight:600;color:#475569;display:block;margin-bottom:6px">관심사 / 좋아하는 것</label>'
+    +'<input type="text" class="inp" id="jobInterest" placeholder="예: 그림 그리기, 게임, 과학 실험, 요리, 음악..." oninput="checkJobInput()"></div>'
+    +'<div><label style="font-size:13px;font-weight:600;color:#475569;display:block;margin-bottom:6px">잘하는 것 / 특기</label>'
+    +'<input type="text" class="inp" id="jobSkill" placeholder="예: 수학, 글쓰기, 코딩, 발표, 친구 사귀기..." oninput="checkJobInput()"></div>'
+    +'<button class="btn-p" id="jobBtn" onclick="doJobs()" disabled style="background:'+tc()+'">🔮 직업 탐색하기</button>'
+    +'<div id="jobResult"></div>');
+}
+function checkJobInput(){var i=getVal('jobInterest'),s=getVal('jobSkill');var b=document.getElementById('jobBtn');if(b)b.disabled=!(i||s);}
+async function doJobs(){
+  var interest=getVal('jobInterest'),skill=getVal('jobSkill');if(!interest&&!skill)return;
+  setBtn('jobBtn',dots(),true);setHTML('jobResult','');
+  try{
+    var raw=await callClaude([{role:'user',content:'관심사: '+(interest||'없음')+', 잘하는 것: '+(skill||'없음')+'\n이 학생에게 어울리는 미래 직업 4개를 추천해주세요. 순수 JSON만:\n{"jobs":[{"title":"직업명","emoji":"이모지","desc":"직업 설명 1~2줄","why":"추천 이유","salary":"예상 연봉 범위","growth":"성장 전망"}]}'}],'진로 상담사. 중학생 맞춤 미래 직업 추천. 순수 JSON만.');
+    var data=parseJSON(raw);
+    setHTML('jobResult','<div style="margin-top:16px"><p style="font-size:13px;color:#64748b;margin:0 0 12px">나의 관심사와 특기를 바탕으로 추천된 직업들이에요!</p>'+data.jobs.map(function(j){return '<div class="jcard"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="font-size:30px">'+j.emoji+'</span><div><p style="margin:0;font-weight:700;font-size:15px;color:#1e293b">'+j.title+'</p><p style="margin:0;font-size:12px;color:#94a3b8">'+j.salary+' · '+j.growth+'</p></div></div><p style="margin:0 0 7px;font-size:13px;color:#475569">'+j.desc+'</p><p style="margin:0;font-size:12px;color:'+tc()+';background:'+tc()+'10;border-radius:6px;padding:6px 10px">💡 추천 이유: '+j.why+'</p></div>';}).join('')+'</div>');
+  }catch(e){setHTML('jobResult',errBox(e.message));}
+  setBtn('jobBtn','🔮 직업 탐색하기',false);
+}
+/* 10. 수학 도우미 */
+function renderMath(){
+  setHTML('toolContent','<p class="p-desc">수학 문제를 입력하면 AI가 단계별 풀이 과정을 쉽게 설명해드립니다.</p>'
+    +'<textarea class="ta" id="mathProblem" placeholder="예:&#10;• 2x + 5 = 13을 풀어라&#10;• 삼각형의 밑변이 6cm, 높이가 4cm일 때 넓이를 구하라&#10;• 1부터 100까지 자연수의 합을 구하라" oninput="document.getElementById(\'mathBtn\').disabled=!this.value.trim()"></textarea>'
+    +'<button class="btn-p" id="mathBtn" onclick="doMath()" disabled style="background:'+tc()+'">📐 풀이 시작하기</button>'
+    +'<div id="mathResult"></div>');
+}
+async function doMath(){
+  var prob=getVal('mathProblem');if(!prob)return;
+  setBtn('mathBtn',dots(),true);setHTML('mathResult','');
+  try{
+    var raw=await callClaude([{role:'user',content:'다음 수학 문제를 단계별로 풀어주세요: "'+prob+'"\n순수 JSON만 응답:\n{"answer":"최종 답","steps":[{"step":1,"title":"단계명","explain":"설명","formula":"수식(없으면 빈 문자열)"}]}'}],'수학 선생님. 중학생 눈높이 단계별 풀이. 순수 JSON만.');
+    var d=parseJSON(raw);
+    setHTML('mathResult',rbox('<p style="margin:0 0 14px;font-size:13px;color:#64748b">풀이 과정</p>'+d.steps.map(function(s){return '<div class="mstep"><div class="mnum" style="background:'+tc()+'15;color:'+tc()+'">'+s.step+'</div><div style="flex:1"><p style="margin:0 0 3px;font-weight:700;font-size:13px;color:#1e293b">'+s.title+'</p><p style="margin:0;font-size:13px;color:#475569">'+s.explain+'</p>'+(s.formula?'<code style="display:block;margin-top:6px;background:#f1f5f9;border-radius:6px;padding:6px 10px;font-size:14px;color:'+tc()+';font-family:monospace">'+s.formula+'</code>':'')+'</div></div>';}).join('')+'<div style="margin-top:14px;padding:12px 16px;background:'+tc()+';border-radius:10px;text-align:center"><p style="margin:0;font-size:13px;color:rgba(255,255,255,.8)">정답</p><p style="margin:4px 0 0;font-size:22px;font-weight:900;color:#fff">'+d.answer+'</p></div>'));
+  }catch(e){setHTML('mathResult',errBox(e.message));}
+  setBtn('mathBtn','📐 풀이 시작하기',false);
+}
+/* INIT */
+renderGrid();renderPanel();
 </script>
 </body>
 </html>
