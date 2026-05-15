@@ -215,7 +215,7 @@
                             <tr class="bg-slate-50 border-b border-slate-100">
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">번호</th>
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">학번</th>
-                                <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">이름</th>
+                                <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest whitespace-nowrap" style="width:80px;min-width:80px">이름</th>
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">과제명</th>
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">제출물</th>
                                 <th class="text-left px-4 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">첨부파일</th>
@@ -563,7 +563,7 @@
                 return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                     <td class="px-4 py-3.5 text-xs font-bold text-slate-400">${i+1}</td>
                     <td class="px-4 py-3.5 text-slate-500 font-medium text-sm">${s.studentId || '-'}</td>
-                    <td class="px-4 py-3.5 font-bold text-slate-800">${s.name || '-'}</td>
+                   <td class="px-4 py-3.5 font-bold text-slate-800 whitespace-nowrap" style="min-width:80px">${s.name || '-'}</td>
                     <td class="px-4 py-3.5 text-slate-600 font-medium text-sm max-w-[140px]">
                         <span class="bg-violet-50 text-violet-700 text-xs font-bold px-2 py-0.5 rounded-lg">${s.assignment || '-'}</span>
                     </td>
