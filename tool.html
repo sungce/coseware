@@ -185,8 +185,15 @@
             </div>
           </div>
           <div class="mt-4 bg-slate-50 p-6 rounded-2xl border border-slate-200 flex-1 overflow-y-auto">
-             <div class="text-center mb-8 font-black text-slate-400 border-b-4 border-slate-300 pb-3 mx-10 text-lg tracking-widest">칠 판 (교 탁)</div>
-             <div id="seat-grid" class="grid gap-4 justify-center max-w-2xl mx-auto"></div>
+            <div id="seat-board-top" class="text-center mb-6 font-black text-slate-400 border-b-4 border-slate-300 pb-3 mx-10 text-lg tracking-widest">⬛ 칠 판 (교 탁)</div>
+            <div id="seat-grid" class="grid gap-4 justify-center max-w-2xl mx-auto"></div>
+            <div id="seat-board-bottom" class="hidden text-center mt-6 font-black text-slate-400 border-t-4 border-slate-300 pt-3 mx-10 text-lg tracking-widest">⬛ 칠 판 (교 탁)</div>
+            <div id="seat-flip-row" class="hidden mt-5 flex justify-center">
+              <button onclick="flipSeats()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md transition-colors text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                칠판/교탁 위치 뒤집기
+              </button>
+            </div>
           </div>
         </div>
       `
@@ -389,6 +396,8 @@
   }
 
   /* 3-3. 자리 배치 기능 */
+  let seatFlipped = false;
+
   function arrangeSeats() {
     const inp = document.getElementById('seat-names').value;
     const cols = parseInt(document.getElementById('seat-cols').value) || 4;
@@ -398,6 +407,42 @@
     const grid = document.getElementById('seat-grid');
     grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
     grid.innerHTML = names.map((n, i) => `<div class="bg-white border-2 border-slate-200 rounded-2xl p-4 text-center shadow-sm hover:border-emerald-400 hover:shadow-md transition-all transform hover:-translate-y-1"><span class="text-[10px] font-bold text-slate-400 block mb-1 bg-slate-50 rounded-md py-0.5">${i+1}번 자리</span><span class="font-black text-slate-800 text-lg">${n}</span></div>`).join('');
+    // 뒤집기 버튼·하단 칠판 초기화
+    seatFlipped = false;
+    document.getElementById('seat-board-top').classList.remove('hidden');
+    document.getElementById('seat-board-bottom').classList.add('hidden');
+    document.getElementById('seat-flip-row').classList.remove('hidden');
+    document.getElementById('seat-flip-row').style.display = 'flex';
+  }
+
+  function flipSeats() {
+    seatFlipped = !seatFlipped;
+    const top    = document.getElementById('seat-board-top');
+    const bottom = document.getElementById('seat-board-bottom');
+    const grid   = document.getElementById('seat-grid');
+    const container = grid.parentElement;
+
+    if (seatFlipped) {
+      // 칠판이 아래로 → 자리 순서 뒤집기
+      top.classList.add('hidden');
+      bottom.classList.remove('hidden');
+      // 그리드 자식 순서 reverse
+      [...grid.children].reverse().forEach(el => grid.appendChild(el));
+      // 자리 번호 재배열
+      [...grid.children].forEach((el, i) => {
+        const numEl = el.querySelector('span');
+        if (numEl) numEl.textContent = `${i+1}번 자리`;
+      });
+    } else {
+      // 칠판이 위로 → 원래대로
+      top.classList.remove('hidden');
+      bottom.classList.add('hidden');
+      [...grid.children].reverse().forEach(el => grid.appendChild(el));
+      [...grid.children].forEach((el, i) => {
+        const numEl = el.querySelector('span');
+        if (numEl) numEl.textContent = `${i+1}번 자리`;
+      });
+    }
   }
 
   /* 3-4. 마블런 핀볼 (막힘 방지용 초대형 고탄성 범퍼 완벽 적용) */
